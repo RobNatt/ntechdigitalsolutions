@@ -4,10 +4,11 @@
 
 Open your Supabase project → **SQL Editor** and run:
 
-1. `supabase/migrations/004_leads.sql` — ensures leads table has required columns
-2. `supabase/migrations/005_lead_pipeline.sql` — adds pipeline stages (stage, stage_updated_at)
-3. `supabase/migrations/006_default_company.sql` — creates companies table if needed, inserts nTech. Set `DEFAULT_COMPANY_ID` in Vercel to use.
-4. **`supabase/migrations/007_leads_company_id_nullable.sql`** — **CRITICAL**: makes company_id nullable. Run this so lead form works even before 006/companies setup.
+1. **`supabase/migrations/008_leads_table_ensure.sql`** — run first if 004 fails with "relation leads does not exist" (creates table).
+2. `supabase/migrations/004_leads.sql` — ensures leads table has required columns
+3. `supabase/migrations/005_lead_pipeline.sql` — adds pipeline stages (stage, stage_updated_at)
+4. `supabase/migrations/006_default_company.sql` — creates companies table if needed, inserts nTech.
+5. **`supabase/migrations/007_leads_company_id_nullable.sql`** — **CRITICAL**: makes company_id nullable. Run this so lead form works.
 
 ## 2. Environment variables (Vercel)
 
@@ -35,7 +36,13 @@ In Vercel → Project → Settings → Environment Variables:
 
 See **`CLIENT-ONBOARDING-CHECKLIST.md`** for documentation needed to close clients and assign pages (Twilio 2FA, Vercel AI lead verification, company setup).
 
-## 5. Test before launch
+## 5. If lead form still returns 500
+
+1. **Vercel** → Project → Logs → filter by `/api/leads/submit` — check the actual error.
+2. **Supabase** → Table Editor → confirm `leads` table exists and `company_id` is nullable.
+3. **Vercel** → Settings → Environment Variables — confirm `SUPABASE_SERVICE_ROLE_KEY` and `NEXT_PUBLIC_SUPABASE_URL` are set.
+
+## 6. Test before launch
 
 1. Submit a test lead from `/lead_roofing` and `/client_roofing`
 2. Confirm entries in Supabase → Table Editor → `leads`

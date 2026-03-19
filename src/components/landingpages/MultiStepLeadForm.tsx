@@ -178,7 +178,14 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
         body: JSON.stringify({ ...formData, source })
       });
 
-      const data = await response.json();
+      let data: { error?: string; hint?: string };
+      try {
+        data = await response.json();
+      } catch {
+        const text = await response.text();
+        alert(`Server error (${response.status}). Check Vercel logs.\n\n${text.slice(0, 200)}`);
+        return;
+      }
 
       if (response.ok) {
         setSubmitted(true);
