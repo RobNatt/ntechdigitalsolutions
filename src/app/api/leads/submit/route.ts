@@ -107,6 +107,7 @@ export async function POST(request: Request) {
       name,
       full_name: name,
       phone,
+      phone_number: phone,
       address,
       email,
       details,
