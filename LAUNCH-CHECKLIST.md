@@ -9,6 +9,7 @@ Open your Supabase project → **SQL Editor** and run:
 3. `supabase/migrations/005_lead_pipeline.sql` — adds pipeline stages (stage, stage_updated_at)
 4. `supabase/migrations/006_default_company.sql` — creates companies table if needed, inserts nTech.
 5. **`supabase/migrations/007_leads_company_id_nullable.sql`** — **CRITICAL**: makes company_id nullable. Run this so lead form works.
+6. **`supabase/migrations/009_leads_user_id_nullable.sql`** — **CRITICAL**: makes user_id nullable. Public form submissions have no user.
 
 ## 2. Environment variables (Vercel)
 
