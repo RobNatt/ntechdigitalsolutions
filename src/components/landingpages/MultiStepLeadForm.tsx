@@ -193,12 +193,24 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     const address = [formData.addressStreet, formData.addressCity, formData.addressState, formData.addressZip]
       .filter(Boolean)
       .join(', ');
+
+    // Attribution for ad tracking (Facebook click + UTM parameters).
+    // Saved into `leads.details` by the API route.
+    const attribution: Record<string, string> = {};
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const keys = ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+      for (const k of keys) {
+        const v = sp.get(k);
+        if (v) attribution[k] = v;
+      }
+    }
     
     try {
       const response = await fetch('/api/leads/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, address, source })
+        body: JSON.stringify({ ...formData, address, source, ...attribution })
       });
 
       let data: { error?: string; hint?: string };
