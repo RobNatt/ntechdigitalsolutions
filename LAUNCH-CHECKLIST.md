@@ -6,7 +6,7 @@ Open your Supabase project → **SQL Editor** and run:
 
 1. `supabase/migrations/004_leads.sql` — ensures leads table has required columns
 2. `supabase/migrations/005_lead_pipeline.sql` — adds pipeline stages (stage, stage_updated_at)
-3. **`supabase/migrations/006_leads_company_id_nullable.sql`** — **CRITICAL**: makes company_id nullable. Without this, lead form submissions return 500 (null value in column "company_id" violates not-null constraint).
+3. **`supabase/migrations/006_default_company.sql`** — **CRITICAL**: creates companies table if needed, inserts nTech as default company. Leads from main pages use this company_id.
 
 ## 2. Environment variables (Vercel)
 
