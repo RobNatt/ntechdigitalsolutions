@@ -32,7 +32,6 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [leadType, setLeadType] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   // Form data state
@@ -110,68 +109,11 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Send SMS verification code
-  const sendVerificationCode = async () => {
+  // Continue to details (SMS verification bypassed for launch - add later)
+  const goToDetailsStep = () => {
     if (!validateStep1()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Call your Vercel API to send SMS
-      const response = await fetch('https://YOUR-VERCEL-URL.vercel.app/api/send-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: formData.phone,
-          name: formData.name
-        })
-      });
-
-      if (response.ok) {
-        setVerificationSent(true);
-        setCurrentStep(2);
-      } else {
-        alert('Error sending verification code. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error sending code. Please check your phone number.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Verify SMS code
-  const verifyCode = async () => {
-    if (formData.verificationCode.length !== 6) {
-      setErrors({ verificationCode: "Please enter the 6-digit code" });
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      const response = await fetch('https://YOUR-VERCEL-URL.vercel.app/api/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: formData.phone,
-          code: formData.verificationCode
-        })
-      });
-
-      if (response.ok) {
-        setLeadType(formData.leadType);
-        setCurrentStep(3);
-      } else {
-        setErrors({ verificationCode: "Invalid code. Please try again." });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error verifying code.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setLeadType(formData.leadType);
+    setCurrentStep(3);
   };
 
   // Validate Step 3 (Homeowner)
@@ -215,9 +157,8 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Final submission
+  // Final submission - save to Supabase via API
   const handleFinalSubmit = async () => {
-    // Validate based on lead type
     const isValid = leadType === 'homeowner' 
       ? validateHomeownerStep() 
       : leadType === 'renter'
@@ -228,21 +169,25 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     
     setIsSubmitting(true);
     
+    const source = variant === 'roof-qualification' ? 'lead_roofing' : variant === 'roofer-qualification' ? 'client_roofing' : 'unknown';
+    
     try {
-      const response = await fetch('https://YOUR-VERCEL-URL.vercel.app/api/submit', {
+      const response = await fetch('/api/leads/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, source })
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         setSubmitted(true);
       } else {
-        alert('Error submitting form. Please try again.');
+        alert(data.error || 'Error submitting form. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error submitting form.');
+      alert('Error submitting form. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -268,20 +213,15 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
 
   return (
     <div className="multi-step-form">
-      {/* Progress Bar */}
+      {/* Progress Bar - 2 steps (Contact → Details) */}
       <div className="progress-bar">
         <div className={`progress-step ${currentStep >= 1 ? 'active' : ''}`}>
           <div className="step-number">1</div>
           <div className="step-label">Contact Info</div>
         </div>
-        <div className={`progress-line ${currentStep >= 2 ? 'active' : ''}`}></div>
-        <div className={`progress-step ${currentStep >= 2 ? 'active' : ''}`}>
-          <div className="step-number">2</div>
-          <div className="step-label">Verify</div>
-        </div>
         <div className={`progress-line ${currentStep >= 3 ? 'active' : ''}`}></div>
         <div className={`progress-step ${currentStep >= 3 ? 'active' : ''}`}>
-          <div className="step-number">3</div>
+          <div className="step-number">2</div>
           <div className="step-label">Details</div>
         </div>
       </div>
@@ -377,60 +317,15 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
 
           <button 
             className="btn-primary"
-            onClick={sendVerificationCode}
+            onClick={goToDetailsStep}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Sending Code...' : 'Continue →'}
+            Continue →
           </button>
         </div>
       )}
 
-      {/* Step 2: SMS Verification */}
-      {currentStep === 2 && (
-        <div className="form-step">
-          <h2>Verify Your Phone</h2>
-          <p>We sent a 6-digit code to <strong>{formData.phone}</strong></p>
-
-          <div className="form-group">
-            <label>Enter Code *</label>
-            <input
-              type="text"
-              maxLength={6}
-              value={formData.verificationCode}
-              onChange={(e) => updateField('verificationCode', e.target.value.replace(/\D/g, ''))}
-              placeholder="000000"
-              className="verification-input"
-            />
-            {errors.verificationCode && <span className="error">{errors.verificationCode}</span>}
-          </div>
-
-          <button 
-            className="btn-link"
-            onClick={sendVerificationCode}
-            disabled={isSubmitting}
-          >
-            Didn't get it? Resend code
-          </button>
-
-          <div className="button-group">
-            <button 
-              className="btn-secondary"
-              onClick={() => setCurrentStep(1)}
-            >
-              ← Back
-            </button>
-            <button 
-              className="btn-primary"
-              onClick={verifyCode}
-              disabled={isSubmitting || formData.verificationCode.length !== 6}
-            >
-              {isSubmitting ? 'Verifying...' : 'Verify →'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3A: Homeowner-Specific Questions */}
+      {/* Step 2: Homeowner-Specific Questions */}
       {currentStep === 3 && leadType === 'homeowner' && (
         <div className="form-step">
           <h2>About Your Property</h2>
@@ -546,7 +441,7 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           <div className="button-group">
             <button 
               className="btn-secondary"
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(1)}
             >
               ← Back
             </button>
@@ -647,7 +542,7 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           <div className="button-group">
             <button 
               className="btn-secondary"
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(1)}
             >
               ← Back
             </button>
@@ -740,7 +635,7 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           <div className="button-group">
             <button 
               className="btn-secondary"
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(1)}
             >
               ← Back
             </button>
