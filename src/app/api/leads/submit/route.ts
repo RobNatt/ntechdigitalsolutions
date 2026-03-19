@@ -103,9 +103,6 @@ export async function POST(request: Request) {
 
     const insertPayload: Record<string, unknown> = {
       ...(companyId && { company_id: companyId }),
-      // Some historical schemas use `status` (NOT NULL) rather than `stage`.
-      // Initialize both to keep inserts working across schema variants.
-      status: "submitted",
       stage: "submitted",
       stage_updated_at: nowIso,
       source: validSource,
