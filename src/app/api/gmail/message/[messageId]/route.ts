@@ -52,7 +52,7 @@ export async function GET(
     const getHeader = (name: string) =>
       headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value;
 
-    const parseAddr = (h: string | undefined) => {
+    const parseAddr = (h: string | null | undefined) => {
       if (!h) return "";
       const m = h.match(/<([^>]+)>/);
       return m ? m[1] : h.trim();

@@ -9,7 +9,7 @@ const FOLDER_TO_LABEL: Record<string, string> = {
   spam: "SPAM",
 };
 
-function parseEmailAddress(header: string | undefined): string {
+function parseEmailAddress(header: string | null | undefined): string {
   if (!header) return "";
   const match = header.match(/<([^>]+)>/);
   return match ? match[1] : header.trim();
