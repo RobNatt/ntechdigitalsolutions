@@ -8,8 +8,12 @@ interface MultiStepLeadFormProps {
 interface FormDataState {
   name: string;
   phone: string;
-  address: string;
+  email: string;
   leadType: string;
+  addressStreet: string;
+  addressCity: string;
+  addressState: string;
+  addressZip: string;
   verificationCode: string;
   propertyOwner: string;
   damages: string[];
@@ -39,8 +43,12 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     // Step 1: Common fields
     name: '',
     phone: '',
-    address: '',
+    email: '',
     leadType: '',
+    addressStreet: '',
+    addressCity: '',
+    addressState: '',
+    addressZip: '',
     
     // Step 2: Verification
     verificationCode: '',
@@ -102,7 +110,7 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     if (!formData.phone.trim() || formData.phone.length < 10) {
       newErrors.phone = "Valid phone number required";
     }
-    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.leadType) newErrors.leadType = "Please select who you are";
     
     setErrors(newErrors);
@@ -120,6 +128,10 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
   const validateHomeownerStep = () => {
     const newErrors: Record<string, string> = {};
     
+    if (!formData.addressStreet.trim()) newErrors.addressStreet = "Street address required";
+    if (!formData.addressCity.trim()) newErrors.addressCity = "City required";
+    if (!formData.addressState.trim()) newErrors.addressState = "State required";
+    if (!formData.addressZip.trim() || formData.addressZip.length < 5) newErrors.addressZip = "Valid ZIP required";
     if (!formData.propertyOwner) newErrors.propertyOwner = "Required";
     if (formData.damages.length === 0) newErrors.damages = "Select at least one";
     if (!formData.budget) newErrors.budget = "Required";
@@ -134,6 +146,10 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
   const validateRenterStep = () => {
     const newErrors: Record<string, string> = {};
     
+    if (!formData.addressStreet.trim()) newErrors.addressStreet = "Street address required";
+    if (!formData.addressCity.trim()) newErrors.addressCity = "City required";
+    if (!formData.addressState.trim()) newErrors.addressState = "State required";
+    if (!formData.addressZip.trim() || formData.addressZip.length < 5) newErrors.addressZip = "Valid ZIP required";
     if (!formData.landlordContact.trim()) newErrors.landlordContact = "Required";
     if (!formData.landlordPermission) newErrors.landlordPermission = "Required";
     if (formData.renterDamages.length === 0) newErrors.renterDamages = "Select at least one";
@@ -147,6 +163,10 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
   const validateRooferStep = () => {
     const newErrors: Record<string, string> = {};
     
+    if (!formData.addressStreet.trim()) newErrors.addressStreet = "Street address required";
+    if (!formData.addressCity.trim()) newErrors.addressCity = "City required";
+    if (!formData.addressState.trim()) newErrors.addressState = "State required";
+    if (!formData.addressZip.trim() || formData.addressZip.length < 5) newErrors.addressZip = "Valid ZIP required";
     if (!formData.companyName.trim()) newErrors.companyName = "Required";
     if (!formData.serviceArea.trim()) newErrors.serviceArea = "Required";
     if (!formData.targetRevenue) newErrors.targetRevenue = "Required";
@@ -170,12 +190,15 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     setIsSubmitting(true);
     
     const source = variant === 'roof-qualification' ? 'lead_roofing' : variant === 'roofer-qualification' ? 'client_roofing' : 'unknown';
+    const address = [formData.addressStreet, formData.addressCity, formData.addressState, formData.addressZip]
+      .filter(Boolean)
+      .join(', ');
     
     try {
       const response = await fetch('/api/leads/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, source })
+        body: JSON.stringify({ ...formData, address, source })
       });
 
       let data: { error?: string; hint?: string };
@@ -311,14 +334,14 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           </div>
 
           <div className="form-group">
-            <label>Address *</label>
+            <label>Email *</label>
             <input
-              type="text"
-              value={formData.address}
-              onChange={(e) => updateField('address', e.target.value)}
-              placeholder={formData.leadType === 'homeowner' ? 'Property address' : formData.leadType === 'renter' ? 'Rental property address' : 'Business address'}
+              type="email"
+              value={formData.email}
+              onChange={(e) => updateField('email', e.target.value)}
+              placeholder="you@example.com"
             />
-            {errors.address && <span className="error">{errors.address}</span>}
+            {errors.email && <span className="error">{errors.email}</span>}
           </div>
 
           <button 
@@ -336,6 +359,49 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
         <div className="form-step">
           <h2>About Your Property</h2>
           <p>Help us understand your roofing needs</p>
+
+          <div className="form-group">
+            <label>Property Address *</label>
+            <input
+              type="text"
+              value={formData.addressStreet}
+              onChange={(e) => updateField('addressStreet', e.target.value)}
+              placeholder="Street address"
+            />
+            {errors.addressStreet && <span className="error">{errors.addressStreet}</span>}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>City *</label>
+              <input
+                type="text"
+                value={formData.addressCity}
+                onChange={(e) => updateField('addressCity', e.target.value)}
+                placeholder="City"
+              />
+              {errors.addressCity && <span className="error">{errors.addressCity}</span>}
+            </div>
+            <div className="form-group">
+              <label>State *</label>
+              <input
+                type="text"
+                value={formData.addressState}
+                onChange={(e) => updateField('addressState', e.target.value)}
+                placeholder="State"
+              />
+              {errors.addressState && <span className="error">{errors.addressState}</span>}
+            </div>
+            <div className="form-group">
+              <label>ZIP Code *</label>
+              <input
+                type="text"
+                value={formData.addressZip}
+                onChange={(e) => updateField('addressZip', e.target.value)}
+                placeholder="ZIP"
+              />
+              {errors.addressZip && <span className="error">{errors.addressZip}</span>}
+            </div>
+          </div>
 
           <div className="form-group">
             <label>Are you the property owner? *</label>
@@ -479,6 +545,49 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           <p>We&apos;ll help you get your landlord to address roofing issues</p>
 
           <div className="form-group">
+            <label>Property Address *</label>
+            <input
+              type="text"
+              value={formData.addressStreet}
+              onChange={(e) => updateField('addressStreet', e.target.value)}
+              placeholder="Street address"
+            />
+            {errors.addressStreet && <span className="error">{errors.addressStreet}</span>}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>City *</label>
+              <input
+                type="text"
+                value={formData.addressCity}
+                onChange={(e) => updateField('addressCity', e.target.value)}
+                placeholder="City"
+              />
+              {errors.addressCity && <span className="error">{errors.addressCity}</span>}
+            </div>
+            <div className="form-group">
+              <label>State *</label>
+              <input
+                type="text"
+                value={formData.addressState}
+                onChange={(e) => updateField('addressState', e.target.value)}
+                placeholder="State"
+              />
+              {errors.addressState && <span className="error">{errors.addressState}</span>}
+            </div>
+            <div className="form-group">
+              <label>ZIP Code *</label>
+              <input
+                type="text"
+                value={formData.addressZip}
+                onChange={(e) => updateField('addressZip', e.target.value)}
+                placeholder="ZIP"
+              />
+              {errors.addressZip && <span className="error">{errors.addressZip}</span>}
+            </div>
+          </div>
+
+          <div className="form-group">
             <label>Landlord or Property Manager Contact *</label>
             <input
               type="text"
@@ -578,6 +687,49 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
         <div className="form-step">
           <h2>About Your Business</h2>
           <p>Help us understand your lead needs</p>
+
+          <div className="form-group">
+            <label>Business Address *</label>
+            <input
+              type="text"
+              value={formData.addressStreet}
+              onChange={(e) => updateField('addressStreet', e.target.value)}
+              placeholder="Street address"
+            />
+            {errors.addressStreet && <span className="error">{errors.addressStreet}</span>}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>City *</label>
+              <input
+                type="text"
+                value={formData.addressCity}
+                onChange={(e) => updateField('addressCity', e.target.value)}
+                placeholder="City"
+              />
+              {errors.addressCity && <span className="error">{errors.addressCity}</span>}
+            </div>
+            <div className="form-group">
+              <label>State *</label>
+              <input
+                type="text"
+                value={formData.addressState}
+                onChange={(e) => updateField('addressState', e.target.value)}
+                placeholder="State"
+              />
+              {errors.addressState && <span className="error">{errors.addressState}</span>}
+            </div>
+            <div className="form-group">
+              <label>ZIP Code *</label>
+              <input
+                type="text"
+                value={formData.addressZip}
+                onChange={(e) => updateField('addressZip', e.target.value)}
+                placeholder="ZIP"
+              />
+              {errors.addressZip && <span className="error">{errors.addressZip}</span>}
+            </div>
+          </div>
 
           <div className="form-group">
             <label>Company Name *</label>

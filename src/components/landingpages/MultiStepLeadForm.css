@@ -73,6 +73,18 @@
   .form-group {
     margin-bottom: 24px;
   }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 0.8fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 500px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
   
   .form-group label {
     display: block;
