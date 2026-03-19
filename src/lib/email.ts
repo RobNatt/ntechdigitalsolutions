@@ -11,6 +11,7 @@ interface LeadNotificationPayload {
 export async function sendLeadNotification(payload: LeadNotificationPayload): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
 
   if (!apiKey || !toEmail) {
     console.warn("Lead notification skipped: missing RESEND_API_KEY and/or LEAD_NOTIFICATION_EMAIL", {
@@ -32,7 +33,7 @@ export async function sendLeadNotification(payload: LeadNotificationPayload): Pr
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "nTech Leads <onboarding@resend.dev>",
+      from,
       to: toEmail,
       subject: `New lead: ${payload.name} (${payload.leadType})`,
       text: [
@@ -56,6 +57,7 @@ export async function sendLeadNotification(payload: LeadNotificationPayload): Pr
 
   console.log("Lead notification email sent", {
     to: toEmail,
+    from,
     leadName: payload.name,
     leadType: payload.leadType,
     source: payload.source,
