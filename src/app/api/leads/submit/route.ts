@@ -99,9 +99,16 @@ export async function POST(request: Request) {
 
     // Include company_id only when DEFAULT_COMPANY_ID is set (after 006). Otherwise omit — requires 007 (nullable).
     const companyId = process.env.DEFAULT_COMPANY_ID;
+    const nowIso = new Date().toISOString();
 
     const insertPayload: Record<string, unknown> = {
       ...(companyId && { company_id: companyId }),
+      // Some historical schemas use `status` (NOT NULL) rather than `stage`.
+      // Initialize both to keep inserts working across schema variants.
+      status: "submitted",
+      stage: "submitted",
+      status_updated_at: nowIso,
+      stage_updated_at: nowIso,
       source: validSource,
       lead_type: leadType,
       name,

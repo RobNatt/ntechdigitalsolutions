@@ -4,6 +4,8 @@
 -- ============================================
 -- Creates companies table if missing, inserts nTech as default.
 -- Leads from /lead_roofing and /client_roofing use this company_id.
+-- If companies already exists with different structure, run only the INSERT
+-- (adjust columns as needed) or add the row manually with id = b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11.
 
 CREATE TABLE IF NOT EXISTS public.companies (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
