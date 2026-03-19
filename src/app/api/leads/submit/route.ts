@@ -2,6 +2,25 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendLeadNotification } from "@/lib/email";
 
+/** GET /api/leads/submit — health check (env + Supabase connection) */
+export async function GET() {
+  const ok = { supabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL, serviceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY };
+  if (!ok.supabaseUrl || !ok.serviceRoleKey) {
+    return NextResponse.json({ ok: false, error: "Missing env vars", ...ok }, { status: 500 });
+  }
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase.from("leads").select("id").limit(1).maybeSingle();
+    if (error) {
+      return NextResponse.json({ ok: false, error: "Supabase error", hint: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, message: "Supabase connected, leads table accessible" });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({ ok: false, error: "Connection failed", hint: msg }, { status: 500 });
+  }
+}
+
 // Simple rate limit: max 5 submissions per IP per minute (in-memory, resets on cold start)
 const submittedIps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -118,7 +137,7 @@ export async function POST(request: Request) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Leads submit error:", message, err);
     return NextResponse.json(
-      { error: "Failed to process submission. Please try again." },
+      { error: "Failed to process submission. Please try again.", hint: message },
       { status: 500 }
     );
   }
