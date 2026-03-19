@@ -10,6 +10,7 @@ Open your Supabase project → **SQL Editor** and run:
 4. `supabase/migrations/006_default_company.sql` — creates companies table if needed, inserts nTech.
 5. **`supabase/migrations/007_leads_company_id_nullable.sql`** — **CRITICAL**: makes company_id nullable. Run this so lead form works.
 6. **`supabase/migrations/009_leads_user_id_nullable.sql`** — **CRITICAL**: makes user_id nullable. Public form submissions have no user.
+7. **`supabase/migrations/010_leads_status_nullable.sql`** — **CRITICAL**: makes status nullable. Some schemas require status but allowed values may differ.
 
 ## 2. Environment variables (Vercel)
 
