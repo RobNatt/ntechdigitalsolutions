@@ -133,9 +133,21 @@ export async function POST(request: Request) {
       );
     }
 
-    sendLeadNotification({ id: inserted?.id, name, phone, address, leadType, source: validSource, details }).catch((e) =>
-      console.error("Email notification failed:", e)
-    );
+    // Important: await so the serverless function reliably performs the outgoing Resend request
+    // (otherwise the runtime may return before the async fetch finishes).
+    try {
+      await sendLeadNotification({
+        id: inserted?.id,
+        name,
+        phone,
+        address,
+        leadType,
+        source: validSource,
+        details,
+      });
+    } catch (e) {
+      console.error("Email notification failed:", e);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
