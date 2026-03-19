@@ -78,10 +78,11 @@ export async function POST(request: Request) {
     const emailVal = body.email;
     const email = typeof emailVal === "string" ? emailVal.trim() || null : null;
 
-    const defaultCompanyId = process.env.DEFAULT_COMPANY_ID || "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11";
+    // Include company_id only when DEFAULT_COMPANY_ID is set (after 006). Otherwise omit — requires 007 (nullable).
+    const companyId = process.env.DEFAULT_COMPANY_ID;
 
     const insertPayload: Record<string, unknown> = {
-      company_id: defaultCompanyId,
+      ...(companyId && { company_id: companyId }),
       source: validSource,
       lead_type: leadType,
       name,
