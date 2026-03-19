@@ -406,12 +406,15 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
           </div>
 
           <div className="form-group">
-            <label>Who is your insurance company? *</label>
+            <label htmlFor="insurance-company">Who is your insurance company? *</label>
             <input
+              id="insurance-company"
               type="text"
+              name="insuranceCompany"
               value={formData.insuranceCompany}
               onChange={(e) => updateField('insuranceCompany', e.target.value)}
               placeholder="e.g., State Farm, Allstate, USAA"
+              autoComplete="organization"
             />
             {errors.insuranceCompany && <span className="error">{errors.insuranceCompany}</span>}
           </div>

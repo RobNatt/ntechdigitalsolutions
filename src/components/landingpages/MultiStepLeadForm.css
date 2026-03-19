@@ -99,13 +99,22 @@
     border-radius: 6px;
     font-size: 15px;
     transition: border-color 0.2s;
-    background-color: #fff;
-    color: #333;
+    background-color: #fff !important;
+    color: #1a1a1a !important;
+  }
+
+  .form-group input::placeholder {
+    color: #666 !important;
   }
 
   .form-group select option {
-    background-color: #fff;
-    color: #333;
+    background-color: #fff !important;
+    color: #1a1a1a !important;
+  }
+
+  .form-input-visible {
+    background-color: #fff !important;
+    color: #1a1a1a !important;
   }
   
   .form-group input:focus,
@@ -131,7 +140,7 @@
     display: block;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #333;
+    color: #1a1a1a !important;
     margin-bottom: 8px;
   }
 
