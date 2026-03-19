@@ -105,6 +105,7 @@ export async function POST(request: Request) {
       source: validSource,
       lead_type: leadType,
       name,
+      full_name: name,
       phone,
       address,
       email,
