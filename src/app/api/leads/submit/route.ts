@@ -107,7 +107,6 @@ export async function POST(request: Request) {
       // Initialize both to keep inserts working across schema variants.
       status: "submitted",
       stage: "submitted",
-      status_updated_at: nowIso,
       stage_updated_at: nowIso,
       source: validSource,
       lead_type: leadType,
