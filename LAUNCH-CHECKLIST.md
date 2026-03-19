@@ -30,9 +30,14 @@ In Vercel → Project → Settings → Environment Variables:
 - **Success page** — "A representative will reach out in the next hour..."
 - **Auth middleware** — Dashboard requires sign-in + 2FA
 
-## 4. Test before launch
+## 4. Client onboarding
+
+See **`CLIENT-ONBOARDING-CHECKLIST.md`** for documentation needed to close clients and assign pages (Twilio 2FA, Vercel AI lead verification, company setup).
+
+## 5. Test before launch
 
 1. Submit a test lead from `/lead_roofing` and `/client_roofing`
 2. Confirm entries in Supabase → Table Editor → `leads`
 3. Confirm leads appear in Dashboard → Leads tab (with pipeline summary)
 4. Update a lead's stage and verify it persists
+5. Test 2FA sign-in (Twilio SMS in production)
