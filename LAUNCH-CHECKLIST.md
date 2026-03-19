@@ -1,29 +1,37 @@
 # Launch Checklist — Tomorrow
 
-## 1. Run the leads migration in Supabase
+## 1. Run migrations in Supabase
 
-1. Open your Supabase project → **SQL Editor**
-2. Run the contents of `supabase/migrations/004_leads.sql` to create the `leads` table
+Open your Supabase project → **SQL Editor** and run:
+
+1. `supabase/migrations/004_leads.sql` — ensures leads table has required columns
+2. `supabase/migrations/005_lead_pipeline.sql` — adds pipeline stages (stage, stage_updated_at)
 
 ## 2. Environment variables (Vercel)
 
-Ensure these are set in Vercel → Project → Settings → Environment Variables:
+In Vercel → Project → Settings → Environment Variables:
 
+**Required:**
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY` (required for leads + admin operations)
+- `SUPABASE_SERVICE_ROLE_KEY` — required for leads and admin operations
 
-## 3. What’s in place
+**Email notifications (optional):**
+- `RESEND_API_KEY` — from [resend.com](https://resend.com)
+- `LEAD_NOTIFICATION_EMAIL` — email address to receive new lead alerts
 
-- **Leads table** — Form submissions from `/lead_roofing` and `/client_roofing` are stored in Supabase
-- **Leads API** — `POST /api/leads/submit` (public, rate-limited) and `GET /api/leads` (auth required for dashboard)
-- **Dashboard Leads tab** — View incoming leads from Email | Leads | Calendar | CEO
-- **Auth middleware** — Dashboard requires sign-in + 2FA cookie
-- **Security headers** — X-Content-Type-Options, X-Frame-Options, Referrer-Policy
-- **SMS verification skipped** — Forms go from Contact → Details → Submit; SMS can be added later with Twilio
+## 3. What's in place
+
+- **Leads table** — Form submissions stored in Supabase
+- **Leads API** — `POST /api/leads/submit` (public, rate-limited), `GET /api/leads` (auth required)
+- **Email notifications** — New leads trigger an email (if Resend is configured)
+- **CRM pipeline** — Dashboard Leads tab: pipeline stages (Submitted → Contacted → Appt Set → Qualified → Closed Won/Lost), update stage per lead
+- **Success page** — "A representative will reach out in the next hour..."
+- **Auth middleware** — Dashboard requires sign-in + 2FA
 
 ## 4. Test before launch
 
 1. Submit a test lead from `/lead_roofing` and `/client_roofing`
 2. Confirm entries in Supabase → Table Editor → `leads`
-3. Confirm leads appear in the dashboard → Leads tab (while signed in)
+3. Confirm leads appear in Dashboard → Leads tab (with pipeline summary)
+4. Update a lead's stage and verify it persists

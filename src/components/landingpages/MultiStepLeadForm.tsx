@@ -48,7 +48,7 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     // Homeowner fields
     propertyOwner: '',
     damages: [] as string[],
-    budget: '',
+    budget: '5000',
     insuranceCompany: '',
     claimFiledLastYear: '',
     
@@ -198,15 +198,13 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
     return (
       <div className="success-container">
         <div className="success-icon">✓</div>
-        <h2>Thank You!</h2>
-        <p>
-          {leadType === 'homeowner' 
-            ? "We're processing your inspection request. You'll hear from us within 24 hours."
-            : leadType === 'renter'
-              ? "We're processing your request. We'll help you get your landlord to address the roofing issues."
-              : "Thanks for your interest! Our team will reach out shortly to discuss your lead needs."
-          }
+        <h2>Successful</h2>
+        <p className="success-message">
+          A representative will reach out to you in the next hour to discuss your concerns and
+          confirm an appointment date and time with you. If you miss their call, they will call
+          you at least 3 times to take care of you.
         </p>
+        <p className="success-thanks">Thank you!</p>
       </div>
     );
   }
@@ -385,17 +383,24 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
 
           <div className="form-group">
             <label>What is your budget for the repair? *</label>
-            <select
-              value={formData.budget}
-              onChange={(e) => updateField('budget', e.target.value)}
-            >
-              <option value="">Select budget range...</option>
-              <option value="under-5k">Under $5,000</option>
-              <option value="5k-10k">$5,000 - $10,000</option>
-              <option value="10k-20k">$10,000 - $20,000</option>
-              <option value="20k-plus">$20,000+</option>
-              <option value="not-sure">Not sure yet</option>
-            </select>
+            <div className="budget-slider-container">
+              <span className="budget-value">
+                ${Number(formData.budget || 5000).toLocaleString()}
+              </span>
+              <input
+                type="range"
+                min="500"
+                max="50000"
+                step="500"
+                value={formData.budget || 5000}
+                onChange={(e) => updateField('budget', e.target.value)}
+                className="budget-slider"
+              />
+              <div className="budget-range-labels">
+                <span>$500</span>
+                <span>$50,000</span>
+              </div>
+            </div>
             <small>We're doing an initial inspection free of charge</small>
             {errors.budget && <span className="error">{errors.budget}</span>}
           </div>

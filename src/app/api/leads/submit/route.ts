@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendLeadNotification } from "@/lib/email";
 
 // Simple rate limit: max 5 submissions per IP per minute (in-memory, resets on cold start)
 const submittedIps = new Map<string, number[]>();
@@ -23,7 +24,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = (await request.json()) as Record<string, unknown>;
+    } catch {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
 
     const name = String(body.name || "").trim();
     const phone = String(body.phone || "").trim();
@@ -44,32 +53,66 @@ export async function POST(request: Request) {
     const source = String(body.source || "unknown").trim();
     const validSource = ["lead_roofing", "client_roofing"].includes(source) ? source : "unknown";
 
-    const details: Record<string, unknown> = { ...body };
-    delete details.name;
-    delete details.phone;
-    delete details.address;
-    delete details.leadType;
-    delete details.source;
+    const details: Record<string, unknown> = {};
+    const skipKeys = ["name", "phone", "address", "leadType", "source", "verificationCode", "email"];
+    for (const [k, v] of Object.entries(body)) {
+      if (skipKeys.includes(k) || v === undefined) continue;
+      try {
+        details[k] = typeof v === "object" && v !== null ? JSON.parse(JSON.stringify(v)) : v;
+      } catch {
+        details[k] = String(v);
+      }
+    }
 
-    const supabase = createAdminClient();
-    const { error } = await supabase.from("leads").insert({
+    let supabase;
+    try {
+      supabase = createAdminClient();
+    } catch (e) {
+      console.error("Supabase client error (check SUPABASE_SERVICE_ROLE_KEY):", e);
+      return NextResponse.json(
+        { error: "Service configuration error. Please try again later." },
+        { status: 500 }
+      );
+    }
+
+    const emailVal = body.email;
+    const email = typeof emailVal === "string" ? emailVal.trim() || null : null;
+
+    const insertPayload: Record<string, unknown> = {
       source: validSource,
       lead_type: leadType,
       name,
       phone,
       address,
-      email: body.email?.trim() || null,
+      email,
       details,
-    });
+    };
+
+    const { data: inserted, error } = await supabase
+      .from("leads")
+      .insert(insertPayload)
+      .select("id")
+      .maybeSingle();
 
     if (error) {
-      console.error("Leads insert error:", error);
-      return NextResponse.json({ error: "Failed to save lead." }, { status: 500 });
+      console.error("Leads insert error:", error.message, error.details, error.hint);
+      return NextResponse.json(
+        { error: "Failed to save lead. Please try again." },
+        { status: 500 }
+      );
     }
+
+    sendLeadNotification({ id: inserted?.id, name, phone, address, leadType, source: validSource, details }).catch((e) =>
+      console.error("Email notification failed:", e)
+    );
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Leads submit error:", err);
-    return NextResponse.json({ error: "Failed to process submission." }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Leads submit error:", message, err);
+    return NextResponse.json(
+      { error: "Failed to process submission. Please try again." },
+      { status: 500 }
+    );
   }
 }

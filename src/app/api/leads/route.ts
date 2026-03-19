@@ -19,14 +19,14 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const source = searchParams.get("source");
+    const stage = searchParams.get("stage");
     const limit = Math.min(parseInt(searchParams.get("limit") || "100", 10), 500);
 
     const admin = createAdminClient();
     let query = admin.from("leads").select("*").order("created_at", { ascending: false }).limit(limit);
 
-    if (source) {
-      query = query.eq("source", source);
-    }
+    if (source) query = query.eq("source", source);
+    if (stage) query = query.eq("stage", stage);
 
     const { data, error } = await query;
 
