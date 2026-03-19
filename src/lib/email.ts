@@ -13,6 +13,10 @@ export async function sendLeadNotification(payload: LeadNotificationPayload): Pr
   const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
 
   if (!apiKey || !toEmail) {
+    console.warn("Lead notification skipped: missing RESEND_API_KEY and/or LEAD_NOTIFICATION_EMAIL", {
+      hasResendApiKey: !!apiKey,
+      hasLeadNotificationEmail: !!toEmail,
+    });
     return;
   }
 
@@ -49,4 +53,11 @@ export async function sendLeadNotification(payload: LeadNotificationPayload): Pr
     const err = await res.text();
     throw new Error(`Resend API error: ${err}`);
   }
+
+  console.log("Lead notification email sent", {
+    to: toEmail,
+    leadName: payload.name,
+    leadType: payload.leadType,
+    source: payload.source,
+  });
 }
