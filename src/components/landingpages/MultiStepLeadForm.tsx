@@ -183,7 +183,8 @@ export default function MultiStepLeadForm({ variant }: MultiStepLeadFormProps) {
       if (response.ok) {
         setSubmitted(true);
       } else {
-        alert(data.error || 'Error submitting form. Please try again.');
+        const msg = data.hint ? `${data.error}\n\n(Details: ${data.hint})` : (data.error || 'Error submitting form. Please try again.');
+        alert(msg);
       }
     } catch (error) {
       console.error('Error:', error);

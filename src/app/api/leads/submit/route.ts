@@ -97,7 +97,10 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Leads insert error:", error.message, error.details, error.hint);
       return NextResponse.json(
-        { error: "Failed to save lead. Please try again." },
+        {
+          error: "Failed to save lead. Please try again.",
+          hint: error.message,
+        },
         { status: 500 }
       );
     }
