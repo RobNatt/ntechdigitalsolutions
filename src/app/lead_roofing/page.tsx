@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { GridWithDots } from "@/components/landingpages/BackgroundGridWithDots";
 import LeadForm from "@/components/landingpages/MultiStepLeadForm";
 import { ArrowRight, Check, Shield } from "lucide-react";
@@ -381,8 +382,16 @@ export default function LeadRoofingPage() {
 
         {/* Footer */}
         <footer className="bg-[#0f0f0f] border-t border-gray-800 px-6 py-8">
-          <div className="max-w-5xl mx-auto text-center text-gray-500 text-sm">
+          <div className="max-w-5xl mx-auto text-center text-gray-500 text-sm space-y-3">
             <p>© {new Date().getFullYear()} N-Tech Digital Solutions. All rights reserved.</p>
+            <div className="flex items-center justify-center gap-5 text-sm">
+              <Link href="/privacy-policy" className="text-gray-400 hover:text-gray-200 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-and-conditions" className="text-gray-400 hover:text-gray-200 transition-colors">
+                Terms & Conditions
+              </Link>
+            </div>
           </div>
         </footer>
       </div>

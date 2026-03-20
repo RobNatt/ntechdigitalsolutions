@@ -321,8 +321,12 @@ export default function ClientRoofingPage() {
             </div>
             <p className="text-slate-400 text-sm">© {new Date().getFullYear()} N-Tech Digital Solutions. All rights reserved.</p>
             <div className="flex gap-4">
-              <Link href="#" className="text-slate-400 hover:text-slate-300 text-sm">Privacy</Link>
-              <Link href="#" className="text-slate-400 hover:text-slate-300 text-sm">Terms</Link>
+              <Link href="/privacy-policy" className="text-slate-400 hover:text-slate-300 text-sm">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-and-conditions" className="text-slate-400 hover:text-slate-300 text-sm">
+                Terms & Conditions
+              </Link>
             </div>
           </div>
         </footer>

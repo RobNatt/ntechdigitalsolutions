@@ -70,8 +70,16 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 mt-20 py-8">
-        <div className="max-w-5xl mx-auto px-6 text-center text-slate-500 text-sm">
-          © {new Date().getFullYear()} nTech Digital Solutions. All rights reserved.
+        <div className="max-w-5xl mx-auto px-6 text-center text-slate-500 text-sm space-y-3">
+          <p>© {new Date().getFullYear()} nTech Digital Solutions. All rights reserved.</p>
+          <div className="flex items-center justify-center gap-5">
+            <Link href="/privacy-policy" className="hover:text-slate-700 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-and-conditions" className="hover:text-slate-700 transition-colors">
+              Terms & Conditions
+            </Link>
+          </div>
         </div>
       </footer>
     </main>
