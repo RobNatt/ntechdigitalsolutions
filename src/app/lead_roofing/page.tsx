@@ -1,10 +1,36 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { GridWithDots } from "@/components/landingpages/BackgroundGridWithDots";
 import LeadForm from "@/components/landingpages/MultiStepLeadForm";
 import { ArrowRight, Check, Shield } from "lucide-react";
 
 export default function LeadRoofingPage() {
+  const photos = useMemo(
+    () => [
+      "/IMG_5883.jpg",
+      "/IMG_5845.jpg",
+      "/IMG_5792.jpg",
+      "/IMG_8843.JPG",
+      "/IMG_5788.jpg",
+      "/IMG_8841.JPG",
+      "/IMG_6187.jpg",
+      "/IMG_8844.JPG",
+      "/IMG_6193.jpg",
+      "/IMG_6161.jpg",
+    ],
+    []
+  );
+
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  useEffect(() => {
+    if (!photos.length) return;
+    const t = setInterval(() => {
+      setActivePhotoIdx((prev) => (prev + 1) % photos.length);
+    }, 4500);
+    return () => clearInterval(t);
+  }, [photos.length]);
+
   const scrollToForm = () => {
     document.getElementById("roof-qualification-form")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -102,21 +128,45 @@ export default function LeadRoofingPage() {
               {/* Visual placeholder */}
               <div className="relative">
                 <div className="rounded-3xl border border-sky-400/20 bg-slate-900 overflow-hidden shadow-2xl">
-                  <div className="aspect-[4/3] w-full bg-gradient-to-br from-sky-500/20 via-slate-900 to-slate-900 relative">
-                    <div className="absolute inset-0 opacity-40">
-                      <div className="absolute left-6 top-6 w-24 h-24 rounded-2xl bg-sky-500/20 blur-[1px]" />
-                      <div className="absolute right-8 bottom-8 w-28 h-28 rounded-2xl bg-white/10 blur-[1px]" />
-                    </div>
+                  <div className="aspect-[4/3] w-full relative">
+                    {photos.map((src, idx) => (
+                      // eslint-disable-next-line jsx-a11y/alt-text
+                      <img
+                        key={src}
+                        src={src}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                          idx === activePhotoIdx ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    ))}
+
+                    <div className="absolute inset-0 bg-black/35" />
+
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
                       <div className="px-4 py-2 bg-black/30 border border-white/10 rounded-full text-sky-100 font-semibold text-sm">
-                        Inspection Visual (placeholder)
+                        Close-up inspection photos (auto-rotate)
                       </div>
                       <p className="mt-4 text-white/90 font-bold text-lg">
-                        Close-up hail damage / roof inspection
+                        Hidden storm damage can look subtle.
                       </p>
                       <p className="mt-2 text-gray-300 text-sm">
-                        Replace this box with your photo or video later.
+                        Tap anywhere below to fill out the quick homeowner check.
                       </p>
+                    </div>
+
+                    {/* Dots */}
+                    <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
+                      {photos.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          aria-label={`Show photo ${idx + 1}`}
+                          onClick={() => setActivePhotoIdx(idx)}
+                          className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                            idx === activePhotoIdx ? "bg-sky-400" : "bg-white/30 hover:bg-white/50"
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
                 </div>
