@@ -126,49 +126,21 @@ export default function LeadRoofingPage() {
                 </p>
               </div>
 
-              {/* Visual placeholder */}
+              {/* Hero survey (duplicate) */}
               <div className="relative">
-                <div className="rounded-3xl border border-sky-400/20 bg-slate-900 overflow-hidden shadow-2xl">
-                  <div className="aspect-[4/3] w-full relative">
-                    {photos.map((src, idx) => (
-                      // eslint-disable-next-line jsx-a11y/alt-text
-                      <img
-                        key={src}
-                        src={src}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-                          idx === activePhotoIdx ? "opacity-100" : "opacity-0"
-                        }`}
-                      />
-                    ))}
-
-                    <div className="absolute inset-0 bg-black/35" />
-
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                      <div className="px-4 py-2 bg-black/30 border border-white/10 rounded-full text-sky-100 font-semibold text-sm">
-                        Close-up inspection photos (auto-rotate)
-                      </div>
-                      <p className="mt-4 text-white/90 font-bold text-lg">
-                        Hidden storm damage can look subtle.
-                      </p>
-                      <p className="mt-2 text-gray-300 text-sm">
-                        Tap anywhere below to fill out the quick homeowner check.
-                      </p>
+                <div id="roof-qualification-form" className="bg-white rounded-xl overflow-hidden shadow-2xl">
+                  <div className="h-2 bg-gradient-to-r from-sky-500 to-sky-400" />
+                  <div className="p-6 lg:p-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Shield className="w-7 h-7 text-sky-500" />
+                      <h2 className="text-xl lg:text-2xl font-bold text-gray-900">
+                        Check Your Roof Now
+                      </h2>
                     </div>
-
-                    {/* Dots */}
-                    <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
-                      {photos.map((_, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          aria-label={`Show photo ${idx + 1}`}
-                          onClick={() => setActivePhotoIdx(idx)}
-                          className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                            idx === activePhotoIdx ? "bg-sky-400" : "bg-white/30 hover:bg-white/50"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <p className="text-gray-600 mb-5 text-sm">
+                      30 seconds to start. If there&apos;s no real damage, we&apos;ll tell you.
+                    </p>
+                    <LeadForm variant="roof-qualification" />
                   </div>
                 </div>
               </div>
@@ -213,6 +185,49 @@ export default function LeadRoofingPage() {
                   <p className="text-gray-300 mt-2">
                     Recent Omaha storms have caused hidden roof damage that doesn&apos;t show up right away.
                   </p>
+                </div>
+              </div>
+
+              {/* Moved from hero: close-up inspection carousel */}
+              <div className="mt-10 max-w-3xl mx-auto">
+                <div className="rounded-3xl border border-sky-400/20 bg-slate-900 overflow-hidden shadow-2xl">
+                  <div className="aspect-[4/3] w-full relative">
+                    {photos.map((src, idx) => (
+                      // eslint-disable-next-line jsx-a11y/alt-text
+                      <img
+                        key={src}
+                        src={src}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                          idx === activePhotoIdx ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    ))}
+
+                    <div className="absolute inset-0 bg-black/35" />
+
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                      <div className="px-4 py-2 bg-black/30 border border-white/10 rounded-full text-sky-100 font-semibold text-sm">
+                        Close-up inspection photos (auto-rotate)
+                      </div>
+                      <p className="mt-4 text-white/90 font-bold text-lg">
+                        Hidden storm damage can look subtle.
+                      </p>
+                    </div>
+
+                    <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
+                      {photos.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          aria-label={`Show photo ${idx + 1}`}
+                          onClick={() => setActivePhotoIdx(idx)}
+                          className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                            idx === activePhotoIdx ? "bg-sky-400" : "bg-white/30 hover:bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -359,7 +374,7 @@ export default function LeadRoofingPage() {
           </section>
 
           {/* 7) Form */}
-          <section id="roof-qualification-form" className="px-6 py-16">
+          <section id="roof-qualification-form-bottom" className="px-6 py-16">
             <div className="max-w-2xl mx-auto">
               <div className="bg-white rounded-xl overflow-hidden shadow-2xl">
                 <div className="h-2 bg-gradient-to-r from-sky-500 to-sky-400" />
