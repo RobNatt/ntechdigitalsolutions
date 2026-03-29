@@ -1,246 +1,165 @@
 "use client";
+
 import React from "react";
-import { IconCheck, IconPlus } from "@tabler/icons-react";
+import Link from "next/link";
+import { IconCheck } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
+import { ShootingStarsBackground } from "@/components/ui/shooting-stars-background";
 
-export enum plan {
-  hobby = "hobby",
-  starter = "starter",
-  pro = "pro",
-}
-
-export type Plan = {
-  id: string;
-  name: string;
-  price: number | string;
-  subText?: string;
-  currency: string;
-  features: string[];
-  featured?: boolean;
-  buttonText?: string;
-  additionalFeatures?: string[];
-  onClick: () => void;
-};
-
-const plans: Array<Plan> = [
+const TIERS = [
   {
-    id: plan.hobby,
-    name: "Hobby",
-    price: 99,
-    subText: "/month",
-    currency: "$",
+    id: "starter",
+    label: "Starter",
+    price: "$997",
+    subline: "one-time build + $149/mo maintenance",
+    featured: false,
+    cta: { label: "Get Started", style: "outline" as const },
     features: [
-      "Access to basic analytics reports",
-      "Up to 10,000 data points per month",
-      "Email support",
-      "Community forum access",
-      "Cancel anytime",
+      "5-page SEO-optimized website",
+      "WordPress CMS with full training",
+      "Mobile-first responsive design",
+      "Google Analytics setup",
+      "Basic contact lead form",
+      "14-day delivery guarantee",
     ],
-    buttonText: "Get Hobby",
-    onClick: () => {
-      console.log("Get Hobby");
-    },
   },
   {
-    id: plan.starter,
-    name: "Starter",
-    price: 299,
-    subText: "/month",
-    currency: "$",
+    id: "growth",
+    label: "Growth",
+    price: "$2,497",
+    subline: "one-time build + $299/mo AI system",
     featured: true,
+    badge: "Most popular",
+    cta: { label: "Book a Call →", style: "primary" as const },
     features: [
-      "Advanced analytics dashboard",
-      "Customizable reports and charts",
-      "Real-time data tracking",
-      "Integration with third-party tools",
+      "Everything in Starter",
+      "Custom lead funnel + landing pages",
+      "AI lead tracking & scoring",
+      "Automated follow-up sequences",
+      "CRM integration",
+      "Monthly performance report",
+      "Conversion rate optimization",
     ],
-    buttonText: "Get Starter",
-    additionalFeatures: ["Everything in Hobby Plan"],
-    onClick: () => {
-      console.log("Get Starter");
-    },
   },
   {
-    id: plan.pro,
-    name: "Pro",
-    price: 1490,
-    subText: "/month",
-    currency: "$",
+    id: "pro",
+    label: "Pro",
+    price: "$4,997",
+    subline: "one-time build + $499/mo full management",
+    featured: false,
+    cta: { label: "Contact Sales", style: "outline" as const },
     features: [
-      "Unlimited data storage",
-      "Customizable dashboards",
-      "Advanced data segmentation",
-      "Real-time data processing",
-      "AI-powered insights and recommendations",
+      "Everything in Growth",
+      "Full AI automation suite",
+      "Lead generation & selling service",
+      "Ongoing SEO content strategy",
+      "A/B testing & funnel optimization",
+      "Dedicated account manager",
+      "Priority support & development",
     ],
-    additionalFeatures: ["Everything in Hobby Plan", "Everything in Pro Plan"],
-    buttonText: "Get Pro",
-    onClick: () => {
-      console.log("Get Pro");
-    },
   },
-];
+] as const;
 
 export function Pricing() {
   return (
-    <div
+    <section
       id="pricing"
-      className="relative isolate bg-white dark:bg-neutral-950 w-full px-4 py-0 sm:py-20 lg:px-4 "
+      className="relative isolate w-full overflow-hidden bg-white py-16 sm:py-20 dark:bg-neutral-950"
     >
-      <div
-        className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <>
-        <h2 className="pt-4 font-bold text-lg md:text-4xl text-center text-neutral-800 dark:text-neutral-100">
-          Simple pricing for advanced people
-        </h2>
-        <p className="max-w-md mx-auto text-base text-center text-neutral-600 dark:text-neutral-300 mt-4">
-          Our pricing is designed for advanced people who need more features and
-          more flexibility.
-        </p>
-      </>
+      <ShootingStarsBackground />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 lg:px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 md:text-4xl dark:text-neutral-100">
+            Simple pricing. Serious results.
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Transparent packages built for small businesses ready to grow. No
+            hidden fees — just systems that work.
+          </p>
+        </div>
 
-      <div
-        className={cn(
-          "mx-auto grid grid-cols-1 gap-4  mt-20 ",
-          "max-w-7xl mx-auto  md:grid-cols-2 xl:grid-cols-3"
-        )}
-      >
-        {plans.map((tier, tierIdx) => {
-          return <Card plan={tier} key={tier.id} onClick={tier.onClick} />;
-        })}
+        <div className="mx-auto mt-14 grid max-w-7xl grid-cols-1 gap-6 lg:mt-20 lg:grid-cols-3 lg:gap-6">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.id}
+              className={cn(
+                "relative flex h-full flex-col rounded-2xl border p-6 md:p-8",
+                tier.featured
+                  ? "border-sky-500/60 bg-gradient-to-b from-sky-50/80 to-white shadow-[0_0_40px_-8px_rgba(14,165,233,0.35)] dark:border-sky-500/50 dark:from-neutral-900 dark:to-neutral-950 dark:shadow-[0_0_48px_-12px_rgba(34,211,238,0.2)]"
+                  : "border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900/60"
+              )}
+            >
+              {tier.featured && tier.badge && (
+                <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+                  <span className="rounded-full bg-sky-400 px-4 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-950 shadow-sm">
+                    {tier.badge}
+                  </span>
+                </div>
+              )}
+
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                {tier.label}
+              </p>
+              <p
+                className={cn(
+                  "mt-4 font-bold tracking-tight text-neutral-900 dark:text-neutral-50",
+                  "text-4xl md:text-5xl"
+                )}
+              >
+                {tier.price}
+              </p>
+              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+                {tier.subline}
+              </p>
+
+              <ul className="mt-8 flex-1 space-y-4">
+                {tier.features.map((line) => (
+                  <li key={line} className="flex gap-3 text-left text-sm">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/40">
+                      <IconCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                    </span>
+                    <span className="text-neutral-700 dark:text-neutral-300">
+                      {line}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8">
+                {tier.cta.style === "primary" ? (
+                  <Link
+                    href={`/#contact?plan=${tier.id}`}
+                    scroll={true}
+                    className={cn(
+                      "flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2.5 text-sm font-bold transition",
+                      "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
+                      "shadow-[0_0_28px_rgba(14,165,233,0.35)] hover:from-sky-300 hover:to-sky-500",
+                      "focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-400"
+                    )}
+                  >
+                    {tier.cta.label}
+                  </Link>
+                ) : (
+                  <Button
+                    as={Link}
+                    href={`/#contact?plan=${tier.id}`}
+                    scroll={true}
+                    variant="secondary"
+                    className={cn(
+                      "w-full border border-neutral-300 bg-transparent font-bold",
+                      "text-neutral-900 hover:bg-neutral-100",
+                      "dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+                    )}
+                  >
+                    {tier.cta.label}
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
-
-const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
-  return (
-    <div
-      className={cn(
-        "p-1 sm:p-4 md:p-4 rounded-3xl bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800"
-      )}
-    >
-      <div className="flex flex-col gap-4 h-full justify-start">
-        <div
-          className={cn(
-            "p-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-input w-full dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)]"
-          )}
-        >
-          <div className="flex justify-between items-start ">
-            <div className="flex gap-2 flex-col">
-              <p
-                className={cn("font-medium text-lg text-black dark:text-white")}
-              >
-                {plan.name}
-              </p>
-            </div>
-
-            {plan.featured && (
-              <div
-                className={cn(
-                  "font-medium text-xs px-3 py-1 rounded-full relative bg-neutral-900 dark:bg-white dark:text-black text-white"
-                )}
-              >
-                <div className="absolute inset-x-0 bottom-0 w-3/4 mx-auto h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
-                Featured
-              </div>
-            )}
-          </div>
-          <div className="mt-8 ">
-            <div className="flex items-end">
-              <span
-                className={cn(
-                  "text-lg font-bold text-neutral-500 dark:text-neutral-200"
-                )}
-              >
-                {plan.currency}
-              </span>
-              <div className="flex items-start gap-2">
-                <span
-                  className={cn(
-                    "text-3xl md:text-7xl font-bold dark:text-neutral-50 text-neutral-800"
-                  )}
-                >
-                  {plan?.price}
-                </span>
-              </div>
-              <span
-                className={cn(
-                  "text-base font-normal text-neutral-500 dark:text-neutral-200 mb-1 md:mb-2"
-                )}
-              >
-                {plan.subText}
-              </span>
-            </div>
-          </div>
-          <Button variant="gradient" className="w-full mt-10" onClick={onClick}>
-            {plan.buttonText}
-          </Button>
-        </div>
-        <div className="mt-1 p-4">
-          {plan.features.map((feature, idx) => (
-            <Step key={idx}>{feature}</Step>
-          ))}
-        </div>
-        {plan.additionalFeatures && plan.additionalFeatures.length > 0 && (
-          <Divider />
-        )}
-        <div className="p-4">
-          {plan.additionalFeatures?.map((feature, idx) => (
-            <Step additional key={idx}>
-              {feature}
-            </Step>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Step = ({
-  children,
-  additional,
-}: {
-  children: React.ReactNode;
-  additional?: boolean;
-  featured?: boolean;
-}) => {
-  return (
-    <div className="flex items-start justify-start gap-2 my-4">
-      <div
-        className={cn(
-          "h-4 w-4 rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0 mt-0.5",
-          additional ? "bg-sky-500" : "bg-neutral-700"
-        )}
-      >
-        <IconCheck className="h-3 w-3 [stroke-width:4px] text-neutral-300" />
-      </div>
-      <div className={cn("font-medium text-black text-sm dark:text-white")}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const Divider = () => {
-  return (
-    <div className="relative">
-      <div className={cn("w-full h-px dark:bg-neutral-950 bg-white")} />
-      <div className={cn("w-full h-px bg-neutral-200 dark:bg-neutral-800")} />
-      <div
-        className={cn(
-          "absolute inset-0 h-5 w-5 m-auto rounded-xl dark:bg-neutral-800 bg-white shadow-[0px_-1px_0px_0px_var(--neutral-200)] dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)] flex items-center justify-center"
-        )}
-      >
-        <IconPlus
-          className={cn(
-            "h-3 w-3 [stroke-width:4px] dark:text-neutral-300 text-black"
-          )}
-        />
-      </div>
-    </div>
-  );
-};

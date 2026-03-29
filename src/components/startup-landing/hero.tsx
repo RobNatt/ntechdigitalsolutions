@@ -1,13 +1,18 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
+import Link from "next/link";
+import { HolographicDashboardTabs } from "@/components/dashboard/HolographicDashboardTabs";
 import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
-import Link from "next/link";
 import { Button } from "./button";
+import { HeroTicker } from "./hero-ticker";
 import { useCalEmbed } from "@/app/hooks/useCalEmbed";
 import { CONSTANTS } from "@/constants/links";
+
+const HEADLINE_WORDS =
+  "Turn Clicks Into Paying Customers. On Autopilot.".split(" ");
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,6 +27,7 @@ export function Hero() {
     hideEventTypeDetails: CONSTANTS.CALCOM_HIDE_EVENT_TYPE_DETAILS,
     layout: CONSTANTS.CALCOM_LAYOUT,
   });
+
   return (
     <div
       ref={parentRef}
@@ -69,33 +75,36 @@ export function Hero() {
         }}
       />
 
-      <div className="text-balance relative z-20 mx-auto mb-4 mt-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
+      <div className="relative z-20 mb-4 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
+        <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+        AI-Driven Growth Systems for Small Business
+      </div>
+
+      <div className="text-balance relative z-20 mx-auto mb-4 mt-2 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
         <Balancer>
           <motion.h2>
-            {"Deploy your website in seconds, not hours."
-              .split(" ")
-              .map((word, index) => (
-                <motion.span
-                  initial={{
-                    filter: "blur(10px)",
-                    opacity: 0,
-                    y: 10,
-                  }}
-                  animate={{
-                    filter: "blur(0px)",
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    delay: index * 0.05,
-                  }}
-                  className="inline-block"
-                  key={index}
-                >
-                  {word}&nbsp;
-                </motion.span>
-              ))}
+            {HEADLINE_WORDS.map((word, index) => (
+              <motion.span
+                key={index}
+                initial={{
+                  filter: "blur(10px)",
+                  opacity: 0,
+                  y: 10,
+                }}
+                animate={{
+                  filter: "blur(0px)",
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.4,
+                  delay: index * 0.05,
+                }}
+                className="inline-block"
+              >
+                {word}&nbsp;
+              </motion.span>
+            ))}
           </motion.h2>
         </Balancer>
       </div>
@@ -103,53 +112,56 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.5 }}
-        className="relative z-20 mx-auto mt-4 max-w-lg px-4 text-center text-base/6 text-gray-600 dark:text-gray-200"
+        className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 md:text-lg"
       >
-        With our state of the art, cutting edge, we are so back kinda hosting
-        services, you can deploy your website in seconds.
+        N-Tech builds high-converting websites, intelligent lead funnels, and
+        AI-automated systems that capture, nurture, and convert leads — so you
+        can focus on running your business.
       </motion.p>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.7 }}
-        className="mb-10 mt-8 flex w-full flex-col items-center justify-center gap-4 px-8 sm:flex-row md:mb-20"
+        className="mb-4 mt-8 flex w-full flex-col items-center justify-center gap-4 px-8 sm:flex-row md:mb-6"
       >
-        <Button
-          as={Link}
-          href="/signin"
-          variant="dark"
-          className="hidden md:block w-40 text-center"
-        >
-          Create account
-        </Button>
-
         <Button
           data-cal-namespace={calOptions.namespace}
           data-cal-link={CONSTANTS.CALCOM_LINK}
           data-cal-config={`{"layout":"${calOptions.layout}"}`}
           as="button"
           variant="primary"
-          className="hidden md:block w-40"
+          className="hidden w-48 text-center md:block"
         >
-          Book a call
+          Get My Free Lead Audit →
+        </Button>
+
+        <Button
+          as={Link}
+          href="/#features"
+          variant="dark"
+          className="hidden w-48 text-center md:block"
+        >
+          See What We Build
         </Button>
       </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.82, ease: "easeOut" }}
+        className="relative z-20 w-full px-4"
+      >
+        <HeroTicker />
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.9, ease: "easeOut" }}
         ref={containerRef}
-        className="relative mx-auto max-w-7xl rounded-[32px] border border-neutral-200/50 bg-neutral-100 p-2 backdrop-blur-lg dark:border-neutral-700 dark:bg-neutral-800/50 md:p-4"
+        className="relative z-20 mx-auto w-full max-w-7xl px-1 sm:px-2"
       >
-        <div className="rounded-[24px] border border-neutral-200 bg-white p-2 dark:border-neutral-700 dark:bg-black">
-          <Image
-            src="https://assets.aceternity.com/pro/dashboard-new.webp"
-            alt="header"
-            width={1920}
-            height={1080}
-            className="rounded-[20px]"
-          />
-        </div>
+        <HolographicDashboardTabs className="h-[min(68vh,640px)] md:h-[min(72vh,720px)]" />
       </motion.div>
     </div>
   );
@@ -178,24 +190,25 @@ const BackgroundGrids = () => {
   );
 };
 
-const CollisionMechanism = React.forwardRef<
-  HTMLDivElement,
-  {
-    containerRef: React.RefObject<HTMLDivElement | null>;
-    parentRef: React.RefObject<HTMLDivElement | null>;
-    beamOptions?: {
-      initialX?: number;
-      translateX?: number;
-      initialY?: number;
-      translateY?: number;
-      rotate?: number;
-      className?: string;
-      duration?: number;
-      delay?: number;
-      repeatDelay?: number;
-    };
-  }
->(({ parentRef, containerRef, beamOptions = {} }, ref) => {
+const CollisionMechanism = ({
+  parentRef,
+  containerRef,
+  beamOptions = {},
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
+  beamOptions?: {
+    initialX?: number;
+    translateX?: number;
+    initialY?: number;
+    translateY?: number;
+    rotate?: number;
+    className?: string;
+    duration?: number;
+    delay?: number;
+    repeatDelay?: number;
+  };
+}) => {
   const beamRef = useRef<HTMLDivElement>(null);
   const [collision, setCollision] = useState<{
     detected: boolean;
@@ -249,13 +262,11 @@ const CollisionMechanism = React.forwardRef<
       setTimeout(() => {
         setCollision({ detected: false, coordinates: null });
         setCycleCollisionDetected(false);
-        // Set beam opacity to 0
         if (beamRef.current) {
           beamRef.current.style.opacity = "1";
         }
       }, 2000);
 
-      // Reset the beam animation after a delay
       setTimeout(() => {
         setBeamKey((prevKey) => prevKey + 1);
       }, 2000);
@@ -308,9 +319,7 @@ const CollisionMechanism = React.forwardRef<
       </AnimatePresence>
     </>
   );
-});
-
-CollisionMechanism.displayName = "CollisionMechanism";
+};
 
 const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
   const spans = Array.from({ length: 20 }, (_, index) => ({
@@ -329,7 +338,7 @@ const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
         exit={{ opacity: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
         className="absolute -inset-x-10 top-0 m-auto h-[4px] w-10 rounded-full bg-gradient-to-r from-transparent via-orange-500 to-transparent blur-sm"
-      ></motion.div>
+      />
       {spans.map((span) => (
         <motion.span
           key={span.id}
@@ -363,7 +372,7 @@ const GridLineVertical = ({
           "--height": "5px",
           "--width": "1px",
           "--fade-stop": "90%",
-          "--offset": offset || "150px", //-100px if you want to keep the line inside
+          "--offset": offset || "150px",
           "--color-dark": "rgba(255, 255, 255, 0.3)",
           maskComposite: "exclude",
         } as React.CSSProperties
@@ -378,6 +387,6 @@ const GridLineVertical = ({
         "dark:bg-[linear-gradient(to_bottom,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
         className
       )}
-    ></div>
+    />
   );
 };

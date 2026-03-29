@@ -1,6 +1,6 @@
 "use client";
 
-import { HolographicDashboard } from "@/components/dashboard/HolographicDashboard";
+import { HolographicDashboardTabs } from "@/components/dashboard/HolographicDashboardTabs";
 
 export default function DashboardPage() {
   return (
@@ -36,7 +36,7 @@ export default function DashboardPage() {
         })}
       </div>
 
-      <HolographicDashboard />
+      <HolographicDashboardTabs />
     </main>
   );
 }
