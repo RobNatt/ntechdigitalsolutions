@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { CONSTANTS } from "@/constants/links";
 import { Logo } from "./logo";
 
 export function Footer() {
@@ -19,7 +20,7 @@ export function Footer() {
     },
     {
       title: "Contact",
-      href: "#",
+      href: CONSTANTS.LEAD_AGENT_APP_URL,
     },
     {
       title: "Blog",

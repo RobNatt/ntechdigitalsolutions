@@ -1,4 +1,3 @@
-import { ContactSection } from "@/components/startup-landing/contact-section";
 import { Features } from "@/components/startup-landing/features";
 import { Footer } from "@/components/startup-landing/footer";
 import { Hero } from "@/components/startup-landing/hero";
@@ -17,7 +16,6 @@ export default function HomePage() {
         <Process />
         <Pricing />
         <Testimonials />
-        <ContactSection />
       </main>
       <Footer />
     </>

@@ -35,7 +35,7 @@ export const Navbar = () => {
     },
     {
       name: "Contact",
-      link: "/#contact",
+      link: CONSTANTS.LEAD_AGENT_APP_URL,
     },
   ];
 
