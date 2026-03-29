@@ -132,7 +132,7 @@ export function Pricing() {
                   <Link
                     href={`${CONSTANTS.LEAD_AGENT_APP_URL}?plan=${tier.id}`}
                     className={cn(
-                      "flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2.5 text-sm font-bold transition",
+                      "btn-primary flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2.5 text-sm font-bold transition",
                       "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
                       "shadow-[0_0_28px_rgba(14,165,233,0.35)] hover:from-sky-300 hover:to-sky-500",
                       "focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-400"
@@ -146,7 +146,7 @@ export function Pricing() {
                     href={`${CONSTANTS.LEAD_AGENT_APP_URL}?plan=${tier.id}`}
                     variant="secondary"
                     className={cn(
-                      "w-full border border-neutral-300 bg-transparent font-bold",
+                      "btn-primary w-full border border-neutral-300 bg-transparent font-bold",
                       "text-neutral-900 hover:bg-neutral-100",
                       "dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
                     )}

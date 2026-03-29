@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { CONSTANTS } from "@/constants/links";
+import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 
 export function Footer() {
@@ -97,7 +98,10 @@ export function Footer() {
               {pages.map((page, idx) => (
                 <li key={"pages" + idx} className="list-none">
                   <Link
-                    className="transition-colors hover:text-text-neutral-800 "
+                    className={cn(
+                      "transition-colors hover:text-text-neutral-800 ",
+                      page.href === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+                    )}
                     href={page.href}
                   >
                     {page.title}

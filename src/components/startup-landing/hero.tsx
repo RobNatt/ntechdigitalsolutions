@@ -130,7 +130,7 @@ export function Hero() {
           data-cal-config={`{"layout":"${calOptions.layout}"}`}
           as="button"
           variant="primary"
-          className="hidden w-48 text-center md:block"
+          className="btn-primary hidden w-48 text-center md:block"
         >
           Get My Free Lead Audit →
         </Button>

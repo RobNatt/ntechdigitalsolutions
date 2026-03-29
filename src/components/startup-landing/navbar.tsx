@@ -107,7 +107,10 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         {navItems.map((navItem: any, idx: number) => (
           <Link
             onMouseEnter={() => setHovered(idx)}
-            className="text-neutral-600 dark:text-neutral-300 relative px-4 py-2"
+            className={cn(
+              "text-neutral-600 dark:text-neutral-300 relative px-4 py-2",
+              navItem.link === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+            )}
             key={`link=${idx}`}
             href={navItem.link}
           >
@@ -161,7 +164,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
           data-cal-config={`{"layout":"${calOptions.layout}"}`}
           as="button"
           variant="primary"
-          className="hidden md:block "
+          className="btn-primary hidden md:block "
         >
           Book a call
         </Button>
@@ -238,7 +241,10 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   key={`link=${idx}`}
                   href={navItem.link}
                   onClick={() => setOpen(false)}
-                  className="relative text-neutral-600 dark:text-neutral-300"
+                  className={cn(
+                    "relative text-neutral-600 dark:text-neutral-300",
+                    navItem.link === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+                  )}
                 >
                   <motion.span className="block">{navItem.name} </motion.span>
                 </Link>
@@ -259,7 +265,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                 as="button"
                 onClick={() => setOpen(false)}
                 variant="primary"
-                className="block md:hidden w-full"
+                className="btn-primary block md:hidden w-full"
               >
                 Book a call
               </Button>
