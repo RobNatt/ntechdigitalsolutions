@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/context/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,9 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
 export const metadata: Metadata = {
-  title: "nTech Digital Solutions",
-  description: "nTech Digital Solutions",
+  title: "N-Tech Digital Solutions",
+  description:
+    "N-Tech Digital Solutions — websites, lead generation, and automation for your business.",
 };
 
 export default function RootLayout({
@@ -23,11 +28,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(
+          geistSans.variable,
+          geistMono.variable,
+          inter.variable,
+          inter.className,
+          "min-h-screen bg-background antialiased"
+        )}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
