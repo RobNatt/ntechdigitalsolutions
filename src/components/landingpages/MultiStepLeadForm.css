@@ -5,6 +5,9 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
   }
   
   /* Progress Bar */
@@ -62,11 +65,14 @@
   .form-step h2 {
     margin-bottom: 8px;
     color: #333;
+    font-size: 1.8rem;
+    line-height: 1.25;
   }
   
   .form-step > p {
     color: #666;
     margin-bottom: 30px;
+    font-size: 1.05rem;
   }
   
   /* Form Groups */
@@ -88,16 +94,17 @@
   
   .form-group label {
     display: block;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 8px;
     color: #333;
+    font-size: 1rem;
   }
   
   .form-group small {
     display: block;
     margin-top: 4px;
     color: #666;
-    font-size: 13px;
+    font-size: 15px;
   }
   
   .form-group input[type="text"],
@@ -109,7 +116,7 @@
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 15px;
+    font-size: 17px;
     transition: border-color 0.2s;
     background-color: #fff !important;
     color: #1a1a1a !important;
@@ -231,12 +238,12 @@
   
   .radio-title {
     font-weight: 500;
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 4px;
   }
   
   .radio-subtitle {
-    font-size: 13px;
+    font-size: 15px;
     color: #666;
   }
   
@@ -298,7 +305,7 @@
   .btn-link {
     padding: 12px 24px;
     border-radius: 6px;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -355,7 +362,7 @@
   .error {
     display: block;
     color: #dc3545;
-    font-size: 13px;
+    font-size: 15px;
     margin-top: 4px;
   }
   
@@ -404,6 +411,7 @@
     .multi-step-form {
       margin: 20px;
       padding: 20px;
+      font-size: 16px;
     }
     
     .checkbox-group {

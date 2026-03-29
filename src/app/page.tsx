@@ -9,9 +9,9 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-sky-600 rounded flex items-center justify-center font-bold text-white text-lg">
-              NTS
+              Logo
             </div>
-            <span className="font-bold text-xl text-slate-800">nTech Digital Solutions</span>
+            <span className="font-bold text-xl text-slate-800">N-Tech Digital Solutions</span>
           </div>
           <Link
             href="/signin"
@@ -25,11 +25,10 @@ export default function HomePage() {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 py-20 text-center">
         <h1 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-          Roofing Leads That Actually Close
+          We generate leads, build websites, and use AI to automate both for your business.
         </h1>
         <p className="text-xl text-slate-600 mb-12 max-w-2xl mx-auto">
-          We connect homeowners with storm damage to qualified roofers — and help contractors
-          fill their pipeline with exclusive, high-intent leads.
+        N-Tech Digital Solutions specializes in high-converting website development paired with strategic lead generation systems—turning your digital presence into a 24/7 sales engine.
         </p>
 
         {/* Two paths */}

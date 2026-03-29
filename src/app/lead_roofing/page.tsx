@@ -1,414 +1,210 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { GridWithDots } from "@/components/landingpages/BackgroundGridWithDots";
 import LeadForm from "@/components/landingpages/MultiStepLeadForm";
-import { ArrowRight, Check, Shield } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, TriangleAlert } from "lucide-react";
+import gsap from "gsap";
+
+const painPoints = [
+  "Small storm damage can become interior leaks within weeks.",
+  "Many homeowners miss claim windows by waiting too long.",
+  "Most damage is hard to spot from the ground.",
+];
+
+const processSteps = [
+  { title: "Tell us about your roof", desc: "30-second form. No commitment." },
+  { title: "Quick call from our team", desc: "We confirm details and schedule." },
+  { title: "Get clear recommendations", desc: "Honest advice and documented findings." },
+];
+
+const faqs = [
+  {
+    q: "Is the inspection really free?",
+    a: "Yes. The initial storm-damage inspection is free for Omaha-area homeowners.",
+  },
+  {
+    q: "Will I be pressured to replace my roof?",
+    a: "No. If replacement does not make sense, we will tell you directly.",
+  },
+  {
+    q: "Do you help with insurance?",
+    a: "Yes. When appropriate, we explain next steps and help you understand claim options.",
+  },
+];
 
 export default function LeadRoofingPage() {
-  const photos = useMemo(
-    () => [
-      "/IMG_5883.jpg",
-      "/IMG_5845.jpg",
-      "/IMG_5792.jpg",
-      "/IMG_8843.JPG",
-      "/IMG_5788.jpg",
-      "/IMG_8841.JPG",
-      "/IMG_6187.jpg",
-      "/IMG_8844.JPG",
-      "/IMG_6193.jpg",
-      "/IMG_6161.jpg",
-    ],
-    []
-  );
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   useEffect(() => {
-    if (!photos.length) return;
-    const t = setInterval(() => {
-      setActivePhotoIdx((prev) => (prev + 1) % photos.length);
-    }, 4500);
-    return () => clearInterval(t);
-  }, [photos.length]);
+    if (!rootRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".reveal",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.65, stagger: 0.1, ease: "power2.out" }
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, []);
 
   const scrollToForm = () => {
-    document.getElementById("roof-qualification-form")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("roof-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const ctaButton = (
-    <button
-      onClick={scrollToForm}
-      className="inline-flex items-center gap-2 px-6 py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors shadow-lg hover:shadow-xl"
-    >
-      Check My Roof for Hidden Storm Damage
-      <ArrowRight className="w-5 h-5" />
-    </button>
-  );
-
   return (
-    <div className="relative min-h-screen bg-[#0f0f0f] text-white overflow-hidden">
-      <GridWithDots
-        gridSize={80}
-        dotSize={3}
-        lineColor="stroke-gray-800"
-        dotColor="fill-gray-700"
-        className="opacity-60"
-      />
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="bg-sky-600/90 backdrop-blur px-6 py-4 flex items-center justify-between border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-white rounded flex items-center justify-center font-bold text-sky-600 text-lg">
-              NTS
+    <div ref={rootRef} className="min-h-screen bg-slate-950 text-white font-sans antialiased">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(56,189,248,0.22),transparent_35%),radial-gradient(circle_at_85%_15%,rgba(14,165,233,0.16),transparent_30%)]" />
+
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500 font-bold text-slate-950">
+              NT
             </div>
-            <span className="text-white font-bold text-xl">Omaha Roof Check</span>
+            <div>
+              <p className="text-sm text-slate-300">N-Tech Digital Solutions</p>
+              <p className="text-base font-semibold">Omaha Roof Damage Check</p>
+            </div>
           </div>
           <button
             onClick={scrollToForm}
-            className="px-4 py-2 border-2 border-white text-white font-medium rounded hover:bg-white/10 transition-colors"
+            className="rounded-lg bg-sky-500 px-4 py-2 font-semibold text-slate-950 transition hover:bg-sky-400"
           >
-            Check My Roof
+            Free Inspection
           </button>
-        </header>
+        </div>
+      </header>
 
-        {/* Main */}
-        <main>
-          {/* 1) Hero */}
-          <section className="px-6 pt-10 lg:pt-16 pb-10 lg:pb-14 max-w-5xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-500/10 border border-sky-400/20 rounded-full text-sky-100 font-semibold text-sm">
-                  Omaha Homeowners: Your Roof Might Already Be Damaged — You Just Can’t See It Yet
-                </div>
+      <main className="relative z-10">
+        <section className="mx-auto grid w-full max-w-6xl gap-10 px-6 pb-16 pt-14 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+              <p className="reveal inline-flex items-center rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-base font-medium text-sky-200">
+              Omaha homeowners: storm damage may already be costing you
+            </p>
+            <h1 className="reveal mt-5 text-4xl font-extrabold leading-tight lg:text-6xl">
+              Stop guessing. Get a free roof damage inspection in 24-48 hours.
+            </h1>
+            <p className="reveal mt-5 max-w-2xl text-xl leading-relaxed text-slate-200">
+              We inspect your roof, show you exactly what we find, and give honest next steps. If there is no real damage,
+              we will tell you.
+            </p>
 
-                <h1 className="mt-5 text-3xl lg:text-5xl font-bold leading-tight">
-                  Check for hidden storm damage before it turns into a big bill.
-                </h1>
-
-                <p className="mt-4 text-gray-300 text-lg">
-                  Recent Omaha storms can cause damage that stays out of sight for months.
-                </p>
-
-                {/* Trust immediately */}
-                <div className="mt-6 bg-slate-800/70 border border-white/10 rounded-2xl p-5">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-6 h-6 text-sky-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-white font-semibold text-lg">
-                        If there’s no real damage, we’ll tell you.
-                      </p>
-                      <p className="text-gray-300 mt-1">
-                        No pressure. No obligation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-7 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  {ctaButton}
-                </div>
-
-                <ul className="mt-6 space-y-2 text-slate-200">
-                  {["Free inspection", "Help with insurance claim guidance", "Homeowner only pays deductible (if approved)"].map(
-                    (item, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-base">{item}</span>
-                      </li>
-                    )
-                  )}
-                </ul>
-
-                {/* Anti-scam opener */}
-                <p className="mt-6 text-sm text-gray-400">
-                  Most roofing companies push replacements. We don’t recommend filing a claim unless it actually makes sense.
-                </p>
-              </div>
-
-              {/* Hero survey (duplicate) */}
-              <div className="relative">
-                <div id="roof-qualification-form" className="bg-white rounded-xl overflow-hidden shadow-2xl">
-                  <div className="h-2 bg-gradient-to-r from-sky-500 to-sky-400" />
-                  <div className="p-6 lg:p-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Shield className="w-7 h-7 text-sky-500" />
-                      <h2 className="text-xl lg:text-2xl font-bold text-gray-900">
-                        Check Your Roof Now
-                      </h2>
-                    </div>
-                    <p className="text-gray-600 mb-5 text-sm">
-                      30 seconds to start. If there&apos;s no real damage, we&apos;ll tell you.
-                    </p>
-                    <LeadForm variant="roof-qualification" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 2) Problem */}
-          <section className="px-6 py-14 lg:py-18 bg-slate-800/70 border-t border-white/5 border-b border-white/5">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl lg:text-3xl font-bold text-center">
-                Hidden storm damage is expensive when you wait.
-              </h2>
-
-              <div className="mt-8 grid md:grid-cols-2 gap-8">
-                <div>
-                  <ul className="space-y-3 text-gray-200">
-                    <li className="flex gap-3">
-                      <Check className="w-6 h-6 text-sky-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-base">
-                        You can&apos;t always see it from the ground.
-                      </span>
-                    </li>
-                    <li className="flex gap-3">
-                      <Check className="w-6 h-6 text-sky-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-base">
-                        Waiting can reduce your claim options.
-                      </span>
-                    </li>
-                    <li className="flex gap-3">
-                      <Check className="w-6 h-6 text-sky-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-base">
-                        Small issues can turn into leaks and structural damage.
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="bg-slate-900/60 border border-white/10 rounded-2xl p-6">
-                  <p className="text-white font-semibold text-lg">
-                    Storm damage claims can be denied if you wait too long.
-                  </p>
-                  <p className="text-gray-300 mt-2">
-                    Recent Omaha storms have caused hidden roof damage that doesn&apos;t show up right away.
-                  </p>
-                </div>
-              </div>
-
-              {/* Moved from hero: close-up inspection carousel */}
-              <div className="mt-10 max-w-3xl mx-auto">
-                <div className="rounded-3xl border border-sky-400/20 bg-slate-900 overflow-hidden shadow-2xl">
-                  <div className="aspect-[4/3] w-full relative">
-                    {photos.map((src, idx) => (
-                      // eslint-disable-next-line jsx-a11y/alt-text
-                      <img
-                        key={src}
-                        src={src}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-                          idx === activePhotoIdx ? "opacity-100" : "opacity-0"
-                        }`}
-                      />
-                    ))}
-
-                    <div className="absolute inset-0 bg-black/35" />
-
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                      <div className="px-4 py-2 bg-black/30 border border-white/10 rounded-full text-sky-100 font-semibold text-sm">
-                        Close-up inspection photos (auto-rotate)
-                      </div>
-                      <p className="mt-4 text-white/90 font-bold text-lg">
-                        Hidden storm damage can look subtle.
-                      </p>
-                    </div>
-
-                    <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
-                      {photos.map((_, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          aria-label={`Show photo ${idx + 1}`}
-                          onClick={() => setActivePhotoIdx(idx)}
-                          className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                            idx === activePhotoIdx ? "bg-sky-400" : "bg-white/30 hover:bg-white/50"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 3) Solution */}
-          <section className="px-6 py-14 lg:py-18">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl lg:text-3xl font-bold text-center">
-                A free inspection + honest answers.
-              </h2>
-
-              <div className="mt-8 grid md:grid-cols-3 gap-6">
-                {[
-                  {
-                    title: "Inspect",
-                    desc: "We check for storm-related damage you can’t see."
-                  },
-                  {
-                    title: "Explain",
-                    desc: "We show you what we find and what it means."
-                  },
-                  {
-                    title: "Decide",
-                    desc: "No pressure. You choose next steps."
-                  },
-                ].map((c, i) => (
-                  <div key={i} className="bg-slate-900/40 border border-white/10 rounded-2xl p-6">
-                    <p className="text-white font-semibold text-lg">{c.title}</p>
-                    <p className="text-gray-300 mt-2 text-sm">{c.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 bg-sky-500/10 border border-sky-400/20 rounded-2xl p-6">
-                <ul className="space-y-3 text-gray-200">
-                  {[
-                    "If it doesn’t make sense, we’ll say so.",
-                    "Only recommend filing a claim when it actually helps.",
-                    "Homeowner guidance — you know what you’re getting.",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-base">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          {/* 4) How it works */}
-          <section className="px-6 py-14 lg:py-18 bg-slate-800/70">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl lg:text-3xl font-bold text-center">3 simple steps</h2>
-
-              <div className="mt-10 grid md:grid-cols-3 gap-6">
-                {[
-                  { n: "1", title: "Fill out the form", desc: "Takes about 30 seconds." },
-                  { n: "2", title: "We call you", desc: "We confirm the details and next step." },
-                  { n: "3", title: "Get your answers", desc: "Honest options — no pressure." },
-                ].map((s) => (
-                  <div key={s.n} className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 text-center">
-                    <div className="w-12 h-12 rounded-full bg-sky-500/80 flex items-center justify-center text-white font-bold mx-auto text-lg">
-                      {s.n}
-                    </div>
-                    <p className="text-white font-semibold mt-4">{s.title}</p>
-                    <p className="text-gray-300 mt-2 text-sm">{s.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* 5) Trust builders */}
-          <section className="px-6 py-14 lg:py-18">
-            <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl lg:text-3xl font-bold text-center">
-                Trust matters. Here’s why homeowners feel safe.
-              </h2>
-
-              <div className="mt-10 grid lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    quote: "They told me the truth. No pressure. Just clear options.",
-                    name: "Mark T.",
-                  },
-                  {
-                    quote: "I didn’t know there was damage. Insurance helped — huge savings.",
-                    name: "Lisa R.",
-                  },
-                  {
-                    quote: "Fast, professional, and honest. I felt taken care of.",
-                    name: "Daniel K.",
-                  },
-                ].map((t, i) => (
-                  <div key={i} className="bg-slate-900/40 border border-white/10 rounded-2xl p-6">
-                    <p className="text-slate-200/90">“{t.quote}”</p>
-                    <p className="mt-4 font-semibold text-sky-300">— {t.name}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 grid md:grid-cols-2 gap-6 items-start">
-                <div className="bg-slate-900/40 border border-white/10 rounded-2xl p-6">
-                  <p className="text-white font-semibold text-lg">Anti-scam clarity</p>
-                  <ul className="mt-4 space-y-3 text-gray-200">
-                    {[
-                      "We don’t push replacements.",
-                      "We only recommend filing a claim if it makes sense.",
-                      "If there’s no real damage, we’ll tell you.",
-                      "No obligation. No pressure.",
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-sky-500/10 border border-sky-400/20 rounded-2xl p-6 text-center">
-                  <p className="text-white font-semibold text-lg">
-                    If it’s not worth it, you won’t be pushed into it.
-                  </p>
-                  <p className="text-gray-300 mt-2">
-                    We’re here to help you make the right decision for your home.
-                  </p>
-                  <div className="mt-6">{ctaButton}</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 6) CTA */}
-          <section className="px-6 py-12 bg-slate-800/70 border-t border-white/5">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl lg:text-3xl font-bold">Ready for a real roof check?</h2>
-              <p className="text-gray-300 mt-3">
-                Omaha homeowners: check before waiting costs you options.
+            <div className="reveal mt-8 flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={scrollToForm}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 px-6 py-4 text-base font-bold text-slate-950 transition hover:bg-sky-400"
+              >
+                Check My Roof Now
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <p className="rounded-xl border border-white/10 bg-slate-900/70 px-4 py-4 text-base text-slate-200">
+                No obligation. No high-pressure sales. Just clear answers.
               </p>
-              <div className="mt-6 flex justify-center">{ctaButton}</div>
             </div>
-          </section>
 
-          {/* 7) Form */}
-          <section id="roof-qualification-form-bottom" className="px-6 py-16">
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-white rounded-xl overflow-hidden shadow-2xl">
-                <div className="h-2 bg-gradient-to-r from-sky-500 to-sky-400" />
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-8 h-8 text-sky-500" />
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      Get your free storm damage check
-                    </h2>
-                  </div>
-                  <p className="text-gray-600 mb-6 text-sm">
-                    If there’s no real damage, we’ll tell you. No pressure.
-                  </p>
-                  <LeadForm variant="roof-qualification" />
+            <ul className="reveal mt-8 space-y-3">
+              {painPoints.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-lg text-slate-100">
+                  <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <aside id="roof-form" className="reveal rounded-2xl border border-sky-200/30 bg-white p-1 shadow-2xl shadow-sky-900/30">
+            <div className="rounded-[14px] bg-white p-6">
+              <div className="mb-4 flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-7 w-7 text-sky-600" />
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Get Your Free Roof Check</h2>
+                  <p className="mt-1 text-base text-slate-700">Takes 30 seconds. We will follow up quickly.</p>
                 </div>
               </div>
+              <LeadForm variant="roof-qualification" />
             </div>
-          </section>
-        </main>
+          </aside>
+        </section>
 
-        {/* Footer */}
-        <footer className="bg-[#0f0f0f] border-t border-gray-800 px-6 py-8">
-          <div className="max-w-5xl mx-auto text-center text-gray-500 text-sm space-y-3">
-            <p>© {new Date().getFullYear()} N-Tech Digital Solutions. All rights reserved.</p>
-            <div className="flex items-center justify-center gap-5 text-sm">
-              <Link href="/privacy-policy" className="text-gray-400 hover:text-gray-200 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms-and-conditions" className="text-gray-400 hover:text-gray-200 transition-colors">
-                Terms & Conditions
-              </Link>
-            </div>
+        <section className="border-y border-white/10 bg-slate-900/70">
+          <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-12 md:grid-cols-3">
+            {[
+              "Fast scheduling across Omaha metro",
+              "Insurance guidance when it helps you",
+              "Clear documentation and honest recommendations",
+            ].map((item) => (
+              <div key={item} className="reveal rounded-xl border border-white/10 bg-slate-950/70 p-5">
+                <Check className="h-5 w-5 text-sky-300" />
+                <p className="mt-3 text-lg text-slate-100">{item}</p>
+              </div>
+            ))}
           </div>
-        </footer>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-6 py-16">
+          <h2 className="reveal text-center text-3xl font-bold lg:text-4xl">How it works</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {processSteps.map((step, index) => (
+              <article key={step.title} className="reveal rounded-2xl border border-white/10 bg-slate-900/50 p-6">
+                <p className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-500 font-bold text-slate-950">
+                  {index + 1}
+                </p>
+                <h3 className="mt-4 text-xl font-semibold">{step.title}</h3>
+                <p className="mt-2 text-base text-slate-200">{step.desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-6 pb-24">
+          <div className="reveal rounded-3xl border border-sky-300/20 bg-gradient-to-r from-sky-500/20 to-cyan-500/10 p-8 text-center">
+            <h2 className="text-3xl font-bold">If there is no damage, we will say so.</h2>
+            <p className="mx-auto mt-3 max-w-3xl text-lg leading-relaxed text-slate-100">
+              Homeowners choose us because we focus on what is right for the property, not what creates the biggest invoice.
+            </p>
+            <button
+              onClick={scrollToForm}
+              className="mt-7 inline-flex items-center gap-2 rounded-xl bg-sky-500 px-6 py-4 font-bold text-slate-950 transition hover:bg-sky-400"
+            >
+              Start My Free Inspection
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {faqs.map((faq) => (
+              <article key={faq.q} className="reveal rounded-xl border border-white/10 bg-slate-900/50 p-5">
+                <h3 className="font-semibold">{faq.q}</h3>
+                <p className="mt-2 text-base leading-relaxed text-slate-200">{faq.a}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/10 bg-slate-950 px-6 py-8">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 text-base text-slate-300 md:flex-row">
+          <p>© {new Date().getFullYear()} N-Tech Digital Solutions. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy-policy" className="hover:text-slate-200">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-and-conditions" className="hover:text-slate-200">
+              Terms & Conditions
+            </Link>
+          </div>
+        </div>
+      </footer>
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-slate-950/90 px-4 py-3 backdrop-blur md:hidden">
+        <button
+          onClick={scrollToForm}
+          className="mx-auto flex w-full max-w-xl items-center justify-center gap-2 rounded-xl bg-sky-500 py-3 text-base font-bold text-slate-950"
+        >
+          Get Free Roof Inspection
+          <ArrowRight className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );
