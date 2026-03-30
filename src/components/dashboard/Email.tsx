@@ -16,7 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-const BUSINESS_DOMAIN = "@ntechdigitalsolutions.com";
+const BUSINESS_DOMAIN = "@ntechdigital.solutions";
 
 export type EmailFolder = "inbox" | "sent" | "drafts" | "spam";
 
