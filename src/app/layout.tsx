@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "N-Tech Digital Solutions",
   description:
     "N-Tech Digital Solutions — websites, lead generation, and automation for your business.",
+  icons: {
+    icon: [{ url: "/ntech-official-logo.png", type: "image/png" }],
+    apple: [{ url: "/ntech-official-logo.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
