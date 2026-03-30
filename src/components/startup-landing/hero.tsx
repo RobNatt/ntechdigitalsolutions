@@ -8,8 +8,6 @@ import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
 import { HeroTicker } from "./hero-ticker";
-import { useCalEmbed } from "@/app/hooks/useCalEmbed";
-import { CONSTANTS } from "@/constants/links";
 
 const HEADLINE_WORDS =
   "Turn Clicks Into Paying Customers. On Autopilot.".split(" ");
@@ -17,16 +15,6 @@ const HEADLINE_WORDS =
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
-  const calOptions = useCalEmbed({
-    namespace: CONSTANTS.CALCOM_NAMESPACE,
-    styles: {
-      branding: {
-        brandColor: CONSTANTS.CALCOM_BRAND_COLOR,
-      },
-    },
-    hideEventTypeDetails: CONSTANTS.CALCOM_HIDE_EVENT_TYPE_DETAILS,
-    layout: CONSTANTS.CALCOM_LAYOUT,
-  });
 
   return (
     <div
@@ -122,24 +110,13 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.7 }}
-        className="mb-4 mt-8 flex w-full flex-col items-center justify-center gap-4 px-8 sm:flex-row md:mb-6"
+        className="mb-4 mt-8 flex w-full flex-col items-center justify-center gap-4 px-8 md:mb-6"
       >
-        <Button
-          data-cal-namespace={calOptions.namespace}
-          data-cal-link={CONSTANTS.CALCOM_LINK}
-          data-cal-config={`{"layout":"${calOptions.layout}"}`}
-          as="button"
-          variant="primary"
-          className="btn-primary hidden w-48 text-center md:block"
-        >
-          Get My Free Lead Audit →
-        </Button>
-
         <Button
           as={Link}
           href="/#features"
           variant="dark"
-          className="hidden w-48 text-center md:block"
+          className="w-full max-w-xs text-center sm:w-48"
         >
           See What We Build
         </Button>

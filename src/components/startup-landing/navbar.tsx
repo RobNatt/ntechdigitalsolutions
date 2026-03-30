@@ -12,7 +12,6 @@ import React, { useRef, useState } from "react";
 import { Button } from "./button";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
-import { useCalEmbed } from "@/app/hooks/useCalEmbed";
 import { CONSTANTS } from "@/constants/links";
 
 interface NavbarProps {
@@ -64,17 +63,6 @@ export const Navbar = () => {
 
 const DesktopNav = ({ navItems, visible }: NavbarProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
-
-  const calOptions = useCalEmbed({
-    namespace: CONSTANTS.CALCOM_NAMESPACE,
-    styles: {
-      branding: {
-        brandColor: CONSTANTS.CALCOM_BRAND_COLOR,
-      },
-    },
-    hideEventTypeDetails: CONSTANTS.CALCOM_HIDE_EVENT_TYPE_DETAILS,
-    layout: CONSTANTS.CALCOM_LAYOUT,
-  });
 
   return (
     <motion.div
@@ -158,16 +146,6 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
             </motion.div>
           )}
         </AnimatePresence>
-        <Button
-          data-cal-namespace={calOptions.namespace}
-          data-cal-link={CONSTANTS.CALCOM_LINK}
-          data-cal-config={`{"layout":"${calOptions.layout}"}`}
-          as="button"
-          variant="primary"
-          className="btn-primary hidden md:block "
-        >
-          Book a call
-        </Button>
       </div>
     </motion.div>
   );
@@ -175,17 +153,6 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
 
 const MobileNav = ({ navItems, visible }: NavbarProps) => {
   const [open, setOpen] = useState(false);
-
-  const calOptions = useCalEmbed({
-    namespace: "chat-with-manu-demo",
-    styles: {
-      branding: {
-        brandColor: "#000000",
-      },
-    },
-    hideEventTypeDetails: false,
-    layout: "month_view",
-  });
 
   return (
     <>
@@ -257,17 +224,6 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                 className="block md:hidden w-full"
               >
                 Login
-              </Button>
-              <Button
-                data-cal-namespace={calOptions.namespace}
-                data-cal-link={`manu-arora-vesr9s/chat-with-manu-demo`}
-                data-cal-config={`{"layout":"${calOptions.layout}"}`}
-                as="button"
-                onClick={() => setOpen(false)}
-                variant="primary"
-                className="btn-primary block md:hidden w-full"
-              >
-                Book a call
               </Button>
             </motion.div>
           )}
