@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CEO Lead Dashboard — N-Tech Digital Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!--
+    Internal dashboard — replace GATE_PASSWORD and wire to real API + auth.
+    Access: /dashboard.html
+  -->
+  <style>
+    :root {
+      --bg-deep: #060810;
+      --bg-card: #0c1018;
+      --bg-elevated: #111827;
+      --border: rgba(0, 229, 255, 0.12);
+      --border-strong: rgba(123, 97, 255, 0.35);
+      --cyan: #00e5ff;
+      --cyan-dim: rgba(0, 229, 255, 0.15);
+      --purple: #7b61ff;
+      --purple-dim: rgba(123, 97, 255, 0.18);
+      --text: #e8edf7;
+      --text-muted: #8b95a8;
+      --text-dim: #5c6678;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --info: #38bdf8;
+      --font-heading: "Syne", system-ui, sans-serif;
+      --font-body: "DM Sans", system-ui, sans-serif;
+      --radius: 12px;
+      --shadow-glow: 0 0 40px rgba(0, 229, 255, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* —— Gate —— */
+    #gate-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(123, 97, 255, 0.12), transparent 50%),
+        var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    #gate-overlay.hidden { display: none; }
+    .gate-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-glow);
+    }
+    .gate-card h1 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    .gate-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+    .gate-card label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 0.4rem;
+    }
+    .gate-card input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: var(--font-body);
+      margin-bottom: 1rem;
+    }
+    .gate-card input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+    .gate-error {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      display: none;
+    }
+    .gate-error.visible { display: block; }
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--cyan), #00b8d4);
+      color: #060810;
+      box-shadow: 0 4px 24px rgba(0, 229, 255, 0.25);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 4px 32px rgba(0, 229, 255, 0.35);
+    }
+
+    /* —— Shell —— */
+    .shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 2.5rem;
+    }
+    @media (min-width: 768px) {
+      .shell { padding: 1.5rem 2rem 3rem; }
+    }
+    .page-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--text) 0%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .page-header .sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+    }
+    .badge-live::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* KPI bar */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (min-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    .kpi {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple));
+      opacity: 0.6;
+    }
+    .kpi-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+      margin-bottom: 0.35rem;
+    }
+    .kpi-value {
+      font-family: var(--font-heading);
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .kpi-value.accent-cyan { color: var(--cyan); }
+    .kpi-value.accent-purple { color: #a78bfa; }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+      padding: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      min-width: 120px;
+      flex: 1 1 auto;
+    }
+    .filter-group label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+    .filter-group select,
+    .filter-group input {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-deep);
+      color: var(--text);
+    }
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--purple);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      align-self: flex-end;
+    }
+    .btn-ghost:hover {
+      background: var(--cyan-dim);
+      border-color: rgba(0, 229, 255, 0.4);
+    }
+
+    /* Funnel */
+    .funnel-section {
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+    .funnel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1rem;
+    }
+    .funnel-stage {
+      margin-bottom: 0.65rem;
+    }
+    .funnel-stage:last-child { margin-bottom: 0; }
+    .funnel-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .funnel-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+    .funnel-bar {
+      flex: 1;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+    .funnel-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+      transition: width 0.5s ease;
+      min-width: 4px;
+    }
+    .funnel-count {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--cyan);
+      min-width: 2rem;
+      text-align: right;
+    }
+
+    /* Table */
+    .table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th {
+      font-family: var(--font-heading);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 0.85rem 0.75rem;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: top;
+      color: var(--text-muted);
+      max-width: 220px;
+    }
+    td strong { color: var(--text); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    tr[data-lead-row]:hover { background: rgba(0, 229, 255, 0.03); }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: help;
+      white-space: nowrap;
+    }
+    .pill-qualified { background: rgba(52, 211, 153, 0.15); color: var(--success); border-color: rgba(52, 211, 153, 0.35); }
+    .pill-follow { background: rgba(251, 191, 36, 0.15); color: var(--warning); border-color: rgba(251, 191, 36, 0.35); }
+    .pill-unqualified { background: rgba(248, 113, 113, 0.12); color: var(--danger); border-color: rgba(248, 113, 113, 0.3); }
+    .pill-support { background: rgba(56, 189, 248, 0.12); color: var(--info); border-color: rgba(56, 189, 248, 0.35); }
+    .pill-spam { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border-color: rgba(148, 163, 184, 0.35); }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .btn-sm {
+      font-size: 0.72rem;
+      padding: 0.35rem 0.55rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .btn-call {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    .btn-email {
+      background: var(--purple-dim);
+      color: #c4b5fd;
+      border: 1px solid rgba(123, 97, 255, 0.35);
+    }
+    .btn-archive {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+    .btn-sm:hover { filter: brightness(1.1); }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: 0.72rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      margin-top: 0.35rem;
+    }
+
+    tr.detail-row td {
+      background: var(--bg-deep);
+      padding: 0;
+      border-bottom: 1px solid var(--border);
+      max-width: none;
+    }
+    .detail-inner {
+      padding: 1rem 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-left: 3px solid var(--purple);
+      margin: 0.5rem 0.75rem;
+    }
+    .detail-inner strong { color: var(--cyan); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-dim);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="gate-overlay" class="" aria-hidden="false">
+    <div class="gate-card" role="dialog" aria-labelledby="gate-title">
+      <h1 id="gate-title">CEO Lead Dashboard</h1>
+      <p>Internal access only. Enter the dashboard password to continue.</p>
+      <div id="gate-error" class="gate-error" role="alert">Incorrect password.</div>
+      <label for="gate-password">Password</label>
+      <input type="password" id="gate-password" autocomplete="current-password" placeholder="••••••••" />
+      <button type="button" class="btn btn-primary" id="gate-submit">Unlock dashboard</button>
+    </div>
+  </div>
+
+  <div class="shell" id="dashboard-root" hidden>
+    <header class="page-header">
+      <div>
+        <h1>Lead command center</h1>
+        <p class="sub">N-Tech Digital Solutions — real-time inbound pipeline</p>
+      </div>
+      <span class="badge-live" title="Polling / webhook integration placeholder">Live</span>
+    </header>
+
+    <section class="kpi-grid" aria-label="Key metrics">
+      <article class="kpi">
+        <div class="kpi-label">Total leads (month)</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Qualified</div>
+        <div class="kpi-value accent-cyan" id="kpi-qualified">—</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Follow-up</div>
+        <div class="kpi-value accent-purple" id="kpi-follow">—</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Conversion rate</div>
+        <div class="kpi-value" id="kpi-conv">—</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Avg lead score</div>
+        <div class="kpi-value accent-cyan" id="kpi-score">—</div>
+      </article>
+    </section>
+
+    <section class="funnel-section" aria-labelledby="funnel-heading">
+      <h2 class="section-title" id="funnel-heading">Pipeline by stage</h2>
+      <div class="funnel" id="funnel-chart"></div>
+    </section>
+
+    <section class="filters" aria-label="Filter leads">
+      <div class="filter-group">
+        <label for="f-status">AI status</label>
+        <select id="f-status">
+          <option value="">All statuses</option>
+          <option value="QUALIFIED">Qualified</option>
+          <option value="FOLLOW_UP">Follow-up</option>
+          <option value="UNQUALIFIED">Unqualified</option>
+          <option value="SUPPORT">Support</option>
+          <option value="SPAM">Spam</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="f-from">From</label>
+        <input type="date" id="f-from" />
+      </div>
+      <div class="filter-group">
+        <label for="f-to">To</label>
+        <input type="date" id="f-to" />
+      </div>
+      <div class="filter-group">
+        <label for="f-service">Service</label>
+        <select id="f-service">
+          <option value="">All services</option>
+          <option>New Website</option>
+          <option>Lead Generation</option>
+          <option>AI Automation</option>
+          <option>WordPress</option>
+          <option>SEO</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="filter-group" style="min-width: 100px;">
+        <label for="f-budget-min">Budget min ($)</label>
+        <select id="f-budget-min">
+          <option value="">Any</option>
+          <option value="0">$0+</option>
+          <option value="500">$500+</option>
+          <option value="1500">$1,500+</option>
+          <option value="3000">$3,000+</option>
+        </select>
+      </div>
+      <div class="filter-group" style="min-width: 100px;">
+        <label for="f-budget-max">Budget max ($)</label>
+        <select id="f-budget-max">
+          <option value="">Any</option>
+          <option value="1500">≤ $1,500</option>
+          <option value="3000">≤ $3,000</option>
+          <option value="5000">≤ $5,000</option>
+          <option value="999999">≤ $10k+</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-ghost" id="f-reset">Clear filters</button>
+    </section>
+
+    <h2 class="section-title">Live lead inbox</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Full name</th>
+            <th scope="col">Business</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Service</th>
+            <th scope="col">Budget</th>
+            <th scope="col">Message</th>
+            <th scope="col">AI status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="lead-tbody"></tbody>
+      </table>
+      <div id="empty-leads" class="empty-state" hidden>No leads match your filters.</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      /** CHANGE THIS before production — temporary gate only */
+      var GATE_PASSWORD = "NTECH-CEO-2025";
+      var SESSION_KEY = "ntech_ceo_dashboard_ok";
+
+      var LEADS = [
+        {
+          name: "Mike Rivera",
+          businessName: Summit Flow Plumbing Co.",
+          email: "mike@summitflowplumbing.com",
+          phone: "(402) 555-0142",
+          serviceNeeded: "Lead Generation",
+          budget: "$2,500/mo",
+          budgetMin: 2500,
+          message: "Emergency and residential plumbing—want more booked jobs from Google and a funnel that captures after-hours calls.",
+          qualificationStatus: "QUALIFIED",
+          qualificationReason: "Clear service area, stated budget aligns with Growth tier, urgent growth intent and decision-maker.",
+          leadScore: 91,
+          timestamp: "2026-03-28T14:22:00-05:00",
+        },
+        {
+          name: "Jessica Chen",
+          businessName: "Velvet Strand Salon",
+          email: "jessica@velvetstrandsalon.com",
+          phone: "(531) 555-0288",
+          serviceNeeded: "New Website",
+          budget: "$997 one-time + ~$200/mo",
+          budgetMin: 997,
+          message: "Salon needs new brand-forward site, online booking, and Instagram tie-in; tight timeline before summer weddings.",
+          qualificationStatus: "FOLLOW_UP",
+          qualificationReason: "Strong fit but needs confirmation on ecommerce add-ons and final budget cap for ongoing ads.",
+          leadScore: 76,
+          timestamp: "2026-03-27T10:05:00-05:00",
+        },
+        {
+          name: "David Okonkwo",
+          businessName: "Okonkwo & Reyes Law Group",
+          email: "dokonkwo@orelawgroup.com",
+          phone: "(402) 555-0391",
+          serviceNeeded: "AI Automation",
+          budget: "$4,200/mo",
+          budgetMin: 4200,
+          message: "PI and small business law—want AI triage for intake forms, SMS follow-up, and CRM sync with Clio.",
+          qualificationStatus: "QUALIFIED",
+          qualificationReason: "High ACV, compliance-aware request, explicit tool stack; ideal Pro / AI upsell.",
+          leadScore: 94,
+          timestamp: "2026-03-29T09:18:00-05:00",
+        },
+        {
+          name: "Tom Halvorsen",
+          businessName: "Halvorsen Exteriors LLC",
+          email: "tom@halvorsenexteriors.com",
+          phone: "(712) 555-0167",
+          serviceNeeded: "SEO",
+          budget: "$400/mo",
+          budgetMin: 400,
+          message: "Mostly storm repairs—looking for cheap SEO only, not interested in funnel or site rebuild this quarter.",
+          qualificationStatus: "UNQUALIFIED",
+          qualificationReason: "Budget below minimum engagement; scope limited to SEO only with no appetite for conversion assets.",
+          leadScore: 38,
+          timestamp: "2026-03-26T16:40:00-05:00",
+        },
+        {
+          name: "Ana Morales",
+          businessName: "Casa Norte Taquería",
+          email: "ana@casanorteo.com",
+          phone: "(402) 555-0844",
+          serviceNeeded: "WordPress",
+          budget: "$800 one-time",
+          budgetMin: 800,
+          message: "We're already on WordPress but our menu PDFs broke after a plugin update. Need help fixing media library + contact form before Cinco weekend.",
+          qualificationStatus: "SUPPORT",
+          qualificationReason: "Existing site maintenance / break-fix; route to support or SOW for small fix vs new build.",
+          leadScore: 52,
+          timestamp: "2026-03-25T11:30:00-05:00",
+        },
+      ];
+
+      function pillClass(status) {
+        var map = {
+          QUALIFIED: "pill-qualified",
+          FOLLOW_UP: "pill-follow",
+          UNQUALIFIED: "pill-unqualified",
+          SUPPORT: "pill-support",
+          SPAM: "pill-spam",
+        };
+        return map[status] || "pill-support";
+      }
+
+      function formatTs(iso) {
+        try {
+          var d = new Date(iso);
+          return d.toLocaleString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          });
+        } catch (e) {
+          return iso;
+        }
+      }
+
+      function parseBudgetMin(budgetStr) {
+        var match = (budgetStr || "").replace(/,/g, "").match(/\$?([\d.]+)/);
+        return match ? parseFloat(match[1]) : 0;
+      }
+
+      function initBudgetFields() {
+        LEADS.forEach(function (l) {
+          if (l.budgetMin == null) l.budgetMin = parseBudgetMin(l.budget);
+        });
+      }
+
+      function computeKpis(rows) {
+        var total = rows.length;
+        var qualified = rows.filter(function (r) {
+          return r.qualificationStatus === "QUALIFIED";
+        }).length;
+        var follow = rows.filter(function (r) {
+          return r.qualificationStatus === "FOLLOW_UP";
+        }).length;
+        var conv = total ? Math.round((qualified / total) * 1000) / 10 : 0;
+        var avgScore = total
+          ? Math.round(
+              rows.reduce(function (s, r) {
+                return s + (r.leadScore || 0);
+              }, 0) / total
+            )
+          : 0;
+        document.getElementById("kpi-total").textContent = total;
+        document.getElementById("kpi-qualified").textContent = qualified;
+        document.getElementById("kpi-follow").textContent = follow;
+        document.getElementById("kpi-conv").textContent = conv + "%";
+        document.getElementById("kpi-score").textContent = avgScore;
+      }
+
+      function funnelStages(rows) {
+        var stages = [
+          { label: "Inbound", count: rows.length },
+          {
+            label: "Qualified",
+            count: rows.filter(function (r) {
+              return r.qualificationStatus === "QUALIFIED";
+            }).length,
+          },
+          {
+            label: "Follow-up",
+            count: rows.filter(function (r) {
+              return r.qualificationStatus === "FOLLOW_UP";
+            }).length,
+          },
+          {
+            label: "Needs review",
+            count: rows.filter(function (r) {
+              return (
+                r.qualificationStatus === "UNQUALIFIED" ||
+                r.qualificationStatus === "SUPPORT"
+              );
+            }).length,
+          },
+        ];
+        var max = Math.max.apply(
+          null,
+          stages.map(function (s) {
+            return s.count;
+          })
+        );
+        var wrap = document.getElementById("funnel-chart");
+        wrap.innerHTML = "";
+        stages.forEach(function (s) {
+          var pct = max ? Math.max(8, (s.count / max) * 100) : 0;
+          var row = document.createElement("div");
+          row.className = "funnel-stage";
+          row.innerHTML =
+            '<div class="funnel-row">' +
+            '<span class="funnel-label">' + escapeHtml(s.label) + "</span>" +
+            '<div class="funnel-bar"><div class="funnel-fill" style="width:' +
+            pct +
+            '%"></div></div>' +
+            '<span class="funnel-count">' +
+            s.count +
+            "</span>" +
+            "</div>";
+          wrap.appendChild(row);
+        });
+      }
+
+      function escapeHtml(s) {
+        var d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function getFilters() {
+        return {
+          status: document.getElementById("f-status").value,
+          from: document.getElementById("f-from").value,
+          to: document.getElementById("f-to").value,
+          service: document.getElementById("f-service").value,
+          budgetMin: document.getElementById("f-budget-min").value,
+          budgetMax: document.getElementById("f-budget-max").value,
+        };
+      }
+
+      function filterRows() {
+        var f = getFilters();
+        return LEADS.filter(function (r) {
+          if (f.status && r.qualificationStatus !== f.status) return false;
+          if (f.service && r.serviceNeeded !== f.service) return false;
+          var t = new Date(r.timestamp).getTime();
+          if (f.from) {
+            var fromT = new Date(f.from + "T00:00:00").getTime();
+            if (t < fromT) return false;
+          }
+          if (f.to) {
+            var toT = new Date(f.to + "T23:59:59").getTime();
+            if (t > toT) return false;
+          }
+          if (f.budgetMin !== "" && (r.budgetMin || 0) < Number(f.budgetMin))
+            return false;
+          if (
+            f.budgetMax !== "" &&
+            (r.budgetMin || 0) > Number(f.budgetMax)
+          )
+            return false;
+          return true;
+        });
+      }
+
+      var expanded = {};
+
+      function renderTable() {
+        var filtered = filterRows();
+        var tbody = document.getElementById("lead-tbody");
+        var empty = document.getElementById("empty-leads");
+        tbody.innerHTML = "";
+        computeKpis(filtered);
+        funnelStages(filtered);
+
+        if (filtered.length === 0) {
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+
+        filtered.forEach(function (row) {
+          var id =
+            "lead-" + encodeURIComponent(row.email + "|" + row.timestamp);
+          var tr = document.createElement("tr");
+          tr.setAttribute("data-lead-row", "");
+          var pillTitle = escapeHtml(row.qualificationReason);
+          tr.innerHTML =
+            "<td>" +
+            escapeHtml(formatTs(row.timestamp)) +
+            "</td>" +
+            "<td><strong>" +
+            escapeHtml(row.name) +
+            "</strong></td>" +
+            "<td>" +
+            escapeHtml(row.businessName) +
+            "</td>" +
+            "<td>" +
+            escapeHtml(row.email) +
+            "</td>" +
+            "<td>" +
+            escapeHtml(row.phone) +
+            "</td>" +
+            "<td>" +
+            escapeHtml(row.serviceNeeded) +
+            "</td>" +
+            "<td>" +
+            escapeHtml(row.budget) +
+            "</td>" +
+            "<td>" +
+            escapeHtml(truncate(row.message, 80)) +
+            (row.message.length > 80
+              ? ' <button type="button" class="expand-btn" data-expand="' +
+                id +
+                '">More</button>'
+              : "") +
+            "</td>" +
+            '<td><span class="pill ' +
+            pillClass(row.qualificationStatus) +
+            '" title="' +
+            pillTitle +
+            '">' +
+            escapeHtml(row.qualificationStatus.replace("_", " ")) +
+            "</span></td>" +
+            '<td class="actions">' +
+            '<a class="btn btn-sm btn-call" href="tel:' +
+            encodeURIComponent(row.phone.replace(/[^\d+]/g, "")) +
+            '">Call</a> ' +
+            '<a class="btn btn-sm btn-email" href="mailto:' +
+            encodeURIComponent(row.email) +
+            '">Email</a> ' +
+            '<button type="button" class="btn btn-sm btn-archive" data-archive="' +
+            id +
+            '">Archive</button></td>';
+          tbody.appendChild(tr);
+
+          var detailTr = document.createElement("tr");
+          detailTr.className = "detail-row";
+          detailTr.hidden = !expanded[id];
+          detailTr.innerHTML =
+            '<td colspan="10"><div class="detail-inner"><strong>AI reasoning</strong><p>' +
+            escapeHtml(row.qualificationReason) +
+            '</p><strong>Lead score</strong><p>' +
+            (row.leadScore != null ? row.leadScore : "—") +
+            "</p></div></td>";
+          detailTr.dataset.detailFor = id;
+          tbody.appendChild(detailTr);
+
+          tr.querySelector("[data-expand]") &&
+            tr.querySelector("[data-expand]").addEventListener(
+              "click",
+              function () {
+                expanded[id] = !expanded[id];
+                detailTr.hidden = !expanded[id];
+                this.textContent = expanded[id] ? "Less" : "More";
+              }
+            );
+
+          tr.querySelector("[data-archive]") &&
+            tr.querySelector("[data-archive]").addEventListener(
+              "click",
+              function () {
+                alert("Archive queued (connect to API) — " + row.businessName);
+              }
+            );
+        });
+      }
+
+      function truncate(s, n) {
+        if (!s || s.length <= n) return s;
+        return s.slice(0, n) + "…";
+      }
+
+      function setupGate() {
+        var overlay = document.getElementById("gate-overlay");
+        var root = document.getElementById("dashboard-root");
+        var err = document.getElementById("gate-error");
+        var input = document.getElementById("gate-password");
+        var submit = document.getElementById("gate-submit");
+
+        function unlock() {
+          overlay.classList.add("hidden");
+          overlay.setAttribute("aria-hidden", "true");
+          root.hidden = false;
+          sessionStorage.setItem(SESSION_KEY, "1");
+          initBudgetFields();
+          renderTable();
+        }
+
+        if (sessionStorage.getItem(SESSION_KEY) === "1") {
+          unlock();
+          return;
+        }
+
+        submit.addEventListener("click", function () {
+          err.classList.remove("visible");
+          if (input.value === GATE_PASSWORD) unlock();
+          else {
+            err.classList.add("visible");
+            input.value = "";
+            input.focus();
+          }
+        });
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") submit.click();
+        });
+      }
+
+      ["f-status", "f-from", "f-to", "f-service", "f-budget-min", "f-budget-max"].forEach(
+        function (id) {
+          document.getElementById(id).addEventListener("change", renderTable);
+          document.getElementById(id).addEventListener("input", renderTable);
+        }
+      );
+
+      document.getElementById("f-reset").addEventListener("click", function () {
+        document.getElementById("f-status").value = "";
+        document.getElementById("f-from").value = "";
+        document.getElementById("f-to").value = "";
+        document.getElementById("f-service").value = "";
+        document.getElementById("f-budget-min").value = "";
+        document.getElementById("f-budget-max").value = "";
+        renderTable();
+      });
+
+      setupGate();
+    })();
+  </script>
+</body>
+</html>
