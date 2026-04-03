@@ -4,14 +4,24 @@ import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const CODE_EXPIRY_MINUTES = 10;
+const TWO_FA_COOKIE = "ntech_2fa_verified";
+const TWO_FA_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+function set2faVerifiedCookie(res: NextResponse) {
+  res.cookies.set(TWO_FA_COOKIE, "1", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: TWO_FA_MAX_AGE,
+    path: "/",
+  });
+}
+
 async function sendSms(phone: string, code: string): Promise<boolean> {
-  // Add Twilio integration: https://www.twilio.com/docs/sms
-  // For now, log in dev (never log in production)
   if (process.env.NODE_ENV === "development") {
     console.log(`[2FA] Code for ${phone}: ${code}`);
     return true;
@@ -41,6 +51,51 @@ async function sendSms(phone: string, code: string): Promise<boolean> {
   return res.ok;
 }
 
+async function start2faSms(
+  admin: ReturnType<typeof createAdminClient>,
+  userId: string,
+  phone: string
+): Promise<NextResponse> {
+  const code = generateCode();
+  const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000).toISOString();
+
+  await admin.from("auth_verification_codes").insert({
+    user_id: userId,
+    code,
+    expires_at: expiresAt,
+  });
+
+  const sent = await sendSms(phone, code);
+  if (!sent) {
+    return NextResponse.json(
+      { error: "Could not send verification code. Try again later." },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true, step: "2fa" });
+}
+
+async function getSupabaseServerClient() {
+  const cookieStore = await cookies();
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+}
+
 export async function POST(request: Request) {
   try {
     const { loginId, password } = (await request.json()) as { loginId: string; password: string };
@@ -49,6 +104,56 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
+    const bootstrapLoginId = process.env.AUTH_BOOTSTRAP_LOGIN_ID?.trim();
+    const bootstrapEmail = process.env.AUTH_BOOTSTRAP_EMAIL?.trim();
+
+    if (bootstrapLoginId && bootstrapEmail && loginId.trim() === bootstrapLoginId) {
+      const supabase = await getSupabaseServerClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: bootstrapEmail,
+        password,
+      });
+
+      if (signInError) {
+        return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        return NextResponse.json({ error: "Sign-in failed" }, { status: 401 });
+      }
+
+      if (process.env.AUTH_BOOTSTRAP_SKIP_2FA === "true") {
+        const res = NextResponse.json({ success: true, step: "done" });
+        set2faVerifiedCookie(res);
+        return res;
+      }
+
+      const { data: bootProfile, error: bootProfileError } = await admin
+        .from("profiles")
+        .select("id, phone_number")
+        .eq("id", user.id)
+        .single();
+
+      if (bootProfileError || !bootProfile) {
+        return NextResponse.json(
+          { error: "No profile on file. Contact admin." },
+          { status: 400 }
+        );
+      }
+
+      if (!bootProfile.phone_number) {
+        return NextResponse.json(
+          { error: "No phone number on file. Contact admin." },
+          { status: 400 }
+        );
+      }
+
+      return start2faSms(admin, bootProfile.id, bootProfile.phone_number);
+    }
+
     const { data: profile, error: profileError } = await admin
       .from("profiles")
       .select("id, phone_number")
@@ -64,23 +169,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
     }
 
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
+    const supabase = await getSupabaseServerClient();
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: authUser.user.email,
@@ -98,24 +187,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const code = generateCode();
-    const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000).toISOString();
-
-    await admin.from("auth_verification_codes").insert({
-      user_id: profile.id,
-      code,
-      expires_at: expiresAt,
-    });
-
-    const sent = await sendSms(profile.phone_number, code);
-    if (!sent) {
-      return NextResponse.json(
-        { error: "Could not send verification code. Try again later." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, step: "2fa" });
+    return start2faSms(admin, profile.id, profile.phone_number);
   } catch (err) {
     console.error("Sign-in error:", err);
     return NextResponse.json({ error: "Sign-in failed" }, { status: 500 });

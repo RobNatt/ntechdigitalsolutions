@@ -35,6 +35,10 @@ export default function SignInCard() {
       if (data.step === "2fa") {
         setStep("2fa");
       }
+      if (data.step === "done") {
+        router.push("/dashboard");
+        router.refresh();
+      }
     } catch {
       setError("Sign-in failed");
     } finally {
@@ -95,17 +99,16 @@ export default function SignInCard() {
               htmlFor="loginId"
               className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
             >
-              ID number
+              Login ID
             </label>
             <input
               id="loginId"
               type="text"
-              inputMode="numeric"
               autoComplete="username"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
               required
-              placeholder=""
+              placeholder="rnattrass"
               className="mt-2 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
             />
           </div>

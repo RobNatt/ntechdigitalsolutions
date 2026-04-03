@@ -36,7 +36,7 @@ export default function DashboardPage() {
         })}
       </div>
 
-      <HolographicDashboardTabs />
+      <HolographicDashboardTabs variant="ceo" />
     </main>
   );
 }

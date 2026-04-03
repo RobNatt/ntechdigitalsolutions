@@ -9,14 +9,33 @@ import {
   LineChart,
   BarChart2,
   Sparkles,
+  UserCog,
+  CreditCard,
+  Gauge,
+  LayoutTemplate,
+  Inbox,
+  Cpu,
+  DollarSign,
 } from "lucide-react";
 
-const NAV_TABS = [
+const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "leads", label: "Leads", icon: Users },
   { id: "analytics", label: "Analytics", icon: LineChart },
   { id: "funnels", label: "Funnels", icon: BarChart2 },
   { id: "ai-agents", label: "AI Agents", icon: Sparkles },
+] as const;
+
+/** CEO / executive dashboard — sections to be built out. */
+const CEO_NAV_TABS = [
+  { id: "user-management", label: "User management", icon: UserCog },
+  { id: "plan-management", label: "Plan management", icon: CreditCard },
+  { id: "usage-limits", label: "Usage limits", icon: Gauge },
+  { id: "content-templates", label: "Content templates", icon: LayoutTemplate },
+  { id: "support-inbox", label: "Support inbox", icon: Inbox },
+  { id: "analytics", label: "Analytics", icon: LineChart },
+  { id: "tool-performance", label: "Tool performance", icon: Cpu },
+  { id: "revenue-reports", label: "Revenue reports", icon: DollarSign },
 ] as const;
 
 const KPI_CARDS = [
@@ -88,12 +107,14 @@ function statusStyles(status: (typeof LEAD_ROWS)[number]["status"]) {
   }
 }
 
-function PlaceholderTab({ label }: { label: string }) {
+function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) {
   return (
     <div className="flex h-full min-h-[280px] flex-col items-center justify-center gap-2 px-6 text-center">
       <p className="text-lg font-semibold text-gray-800">{label}</p>
       <p className="max-w-sm text-sm text-gray-600">
-        Content for this section will live here.
+        {variant === "ceo"
+          ? "We'll build this out next — placeholder for now."
+          : "Content for this section will live here."}
       </p>
     </div>
   );
@@ -212,13 +233,22 @@ function DashboardOverview() {
 
 type HolographicDashboardTabsProps = {
   className?: string;
+  /** `ceo` = executive dashboard at `/dashboard`; default keeps marketing hero demo. */
+  variant?: "marketing" | "ceo";
 };
 
 export function HolographicDashboardTabs({
   className,
+  variant = "marketing",
 }: HolographicDashboardTabsProps) {
-  const [activeTab, setActiveTab] =
-    useState<(typeof NAV_TABS)[number]["id"]>("dashboard");
+  const navTabs = variant === "ceo" ? CEO_NAV_TABS : MARKETING_NAV_TABS;
+  const [activeTab, setActiveTab] = useState<string>(
+    variant === "ceo" ? "user-management" : "dashboard"
+  );
+
+  const headerTitle =
+    variant === "ceo" ? "CEO dashboard" : "Lead Intelligence Dashboard";
+  const sidebarWidthClass = variant === "ceo" ? "w-[228px]" : "w-[200px]";
 
   return (
     <motion.div
@@ -268,7 +298,12 @@ export function HolographicDashboardTabs({
             <BrowserChrome />
 
             <div className="flex min-h-0 flex-1">
-              <aside className="flex w-[200px] shrink-0 flex-col border-r border-gray-400/35 bg-gradient-to-b from-gray-200/90 to-gray-300/70 py-4 pl-3 pr-2">
+              <aside
+                className={cn(
+                  "flex shrink-0 flex-col border-r border-gray-400/35 bg-gradient-to-b from-gray-200/90 to-gray-300/70 py-4 pl-3 pr-2",
+                  sidebarWidthClass
+                )}
+              >
                 <div className="mb-6 flex items-center gap-2.5 px-1">
                   <NTechMark />
                   <span className="text-sm font-bold tracking-tight text-gray-800">
@@ -276,7 +311,7 @@ export function HolographicDashboardTabs({
                   </span>
                 </div>
                 <nav className="flex flex-col gap-1" aria-label="Dashboard">
-                  {NAV_TABS.map((tab) => {
+                  {navTabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
                     return (
@@ -314,7 +349,7 @@ export function HolographicDashboardTabs({
               <div className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-neutral-50/90">
                 <header className="relative z-[1] flex shrink-0 items-start justify-between gap-3 border-b border-gray-400/30 bg-neutral-100/80 px-4 py-3 md:px-5 md:py-4">
                   <h1 className="text-base font-bold tracking-tight text-gray-800 md:text-lg">
-                    Lead Intelligence Dashboard
+                    {headerTitle}
                   </h1>
                   <div className="flex items-center gap-2 rounded-full border border-emerald-500/35 bg-emerald-100/80 px-2.5 py-1 shadow-sm">
                     <span className="relative flex h-2 w-2">
@@ -336,16 +371,29 @@ export function HolographicDashboardTabs({
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {activeTab === "dashboard" && <DashboardOverview />}
-                      {activeTab === "leads" && <PlaceholderTab label="Leads" />}
-                      {activeTab === "analytics" && (
+                      {variant === "marketing" && activeTab === "dashboard" && (
+                        <DashboardOverview />
+                      )}
+                      {variant === "marketing" && activeTab === "leads" && (
+                        <PlaceholderTab label="Leads" />
+                      )}
+                      {variant === "marketing" && activeTab === "analytics" && (
                         <PlaceholderTab label="Analytics" />
                       )}
-                      {activeTab === "funnels" && (
+                      {variant === "marketing" && activeTab === "funnels" && (
                         <PlaceholderTab label="Funnels" />
                       )}
-                      {activeTab === "ai-agents" && (
+                      {variant === "marketing" && activeTab === "ai-agents" && (
                         <PlaceholderTab label="AI Agents" />
+                      )}
+                      {variant === "ceo" && (
+                        <PlaceholderTab
+                          variant="ceo"
+                          label={
+                            navTabs.find((t) => t.id === activeTab)?.label ??
+                            "Section"
+                          }
+                        />
                       )}
                     </motion.div>
                   </AnimatePresence>
