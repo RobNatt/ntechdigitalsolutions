@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { CONSTANTS } from "@/constants/links";
@@ -7,26 +6,14 @@ import { Logo } from "./logo";
 
 export function Footer() {
   const pages = [
-    {
-      title: "Home",
-      href: "#",
-    },
-    {
-      title: "Features",
-      href: "#",
-    },
-    {
-      title: "Pricing",
-      href: "#",
-    },
-    {
-      title: "Contact",
-      href: CONSTANTS.LEAD_AGENT_APP_URL,
-    },
-    {
-      title: "Blog",
-      href: "#",
-    },
+    { title: "Home", href: "/" },
+    { title: "Services", href: "/services" },
+    { title: "Tools preview", href: "/tools-preview" },
+    { title: "Pricing", href: "/pricing" },
+    { title: "Case studies", href: "/case-studies" },
+    { title: "Blog", href: "/blog" },
+    { title: "About", href: "/about" },
+    { title: "Contact", href: "/contact" },
   ];
 
   const socials = [
@@ -63,22 +50,24 @@ export function Footer() {
   ];
 
   const signups = [
-    {
-      title: "Sign Up",
-      href: "#",
-    },
-    {
-      title: "Login",
-      href: "/signin",
-    },
+    { title: "Sign up", href: "/signup" },
+    { title: "Login", href: "/login" },
     {
       title: "Book a demo",
-      href: "#",
+      href: CONSTANTS.LEAD_AGENT_APP_URL,
     },
   ];
   return (
     <div className="border-t border-neutral-100 dark:border-white/[0.1] px-8 py-20 bg-white dark:bg-neutral-950 w-full relative overflow-hidden">
-      <div className="max-w-7xl mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start  md:px-8">
+      <div className="relative mx-auto max-w-7xl md:px-8">
+        <p
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 px-2 text-center text-3xl font-bold uppercase leading-tight text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 bg-clip-text sm:text-5xl md:text-7xl lg:text-9xl dark:from-neutral-950 dark:to-neutral-800"
+        >
+          N-Tech Digital Solutions
+        </p>
+
+        <div className="relative z-10 flex flex-col items-start justify-between text-sm text-neutral-500 sm:flex-row">
         <div>
           <div className="mr-0 md:mr-4  md:flex mb-4">
             <Logo />
@@ -89,7 +78,7 @@ export function Footer() {
             reserved.
           </div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 items-start mt-10 sm:mt-0 md:mt-0">
+        <div className="mt-10 grid grid-cols-2 items-start gap-10 sm:mt-0 lg:grid-cols-4 md:mt-0">
           <div className="flex justify-center space-y-4 flex-col w-full">
             <p className="transition-colors hover:text-text-neutral-800 text-neutral-600 dark:text-neutral-300 font-bold">
               Pages
@@ -100,7 +89,7 @@ export function Footer() {
                   <Link
                     className={cn(
                       "transition-colors hover:text-text-neutral-800 ",
-                      page.href === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+                      page.href === "/contact" && "btn-primary"
                     )}
                     href={page.href}
                   >
@@ -164,10 +153,8 @@ export function Footer() {
             </ul>
           </div>
         </div>
+        </div>
       </div>
-      <p className="text-center uppercase mt-20 text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 dark:from-neutral-950 to-neutral-200 dark:to-neutral-800 inset-x-0 leading-tight px-2">
-        N-Tech Digital Solutions
-      </p>
     </div>
   );
 }

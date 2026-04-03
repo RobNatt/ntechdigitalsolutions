@@ -5,7 +5,7 @@ export const CONSTANTS = {
   get LEAD_AGENT_SUBMIT_API_URL() {
     return `${this.LEAD_AGENT_APP_URL}/api/submit`;
   },
-  LOGIN_LINK: "/signin",
+  LOGIN_LINK: "/login",
   CALCOM_NAMESPACE: "chat-with-manu-demo",
   CALCOM_BRAND_COLOR: "#000000",
   CALCOM_HIDE_EVENT_TYPE_DETAILS: false,

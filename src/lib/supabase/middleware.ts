@@ -45,7 +45,13 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (user && twoFaVerified && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/signin")) {
+    if (
+      user &&
+      twoFaVerified &&
+      (request.nextUrl.pathname === "/" ||
+        request.nextUrl.pathname === "/signin" ||
+        request.nextUrl.pathname === "/login")
+    ) {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);

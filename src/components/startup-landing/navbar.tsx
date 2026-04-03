@@ -24,18 +24,13 @@ interface NavbarProps {
 
 export const Navbar = () => {
   const navItems = [
-    {
-      name: "Features",
-      link: "/#features",
-    },
-    {
-      name: "Pricing",
-      link: "/#pricing",
-    },
-    {
-      name: "Contact",
-      link: CONSTANTS.LEAD_AGENT_APP_URL,
-    },
+    { name: "Services", link: "/services" },
+    { name: "Tools", link: "/tools-preview" },
+    { name: "Pricing", link: "/pricing" },
+    { name: "Case studies", link: "/case-studies" },
+    { name: "Blog", link: "/blog" },
+    { name: "About", link: "/about" },
+    { name: "Contact", link: "/contact" },
   ];
 
   const ref = useRef<HTMLDivElement>(null);
@@ -96,8 +91,8 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
           <Link
             onMouseEnter={() => setHovered(idx)}
             className={cn(
-              "text-neutral-600 dark:text-neutral-300 relative px-4 py-2",
-              navItem.link === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+              "text-neutral-600 dark:text-neutral-300 relative px-3 py-2 text-xs lg:px-4 lg:text-sm",
+              navItem.link === "/contact" && "btn-primary"
             )}
             key={`link=${idx}`}
             href={navItem.link}
@@ -112,40 +107,17 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
           </Link>
         ))}
       </motion.div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-3">
         <ModeToggle />
-
-        <AnimatePresence mode="popLayout" initial={false}>
-          {!visible && (
-            <motion.div
-              initial={{
-                x: 100,
-                opacity: 0,
-              }}
-              animate={{
-                x: 0,
-                opacity: [0, 0, 1],
-              }}
-              exit={{
-                x: 100,
-                opacity: [0, 0, 0],
-              }}
-              transition={{
-                duration: 0.5,
-                ease: "easeOut",
-              }}
-            >
-              <Button
-                as={Link}
-                href={CONSTANTS.LOGIN_LINK}
-                variant="secondary"
-                className="hidden md:block "
-              >
-                Login
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <Link
+          href="/signup"
+          className="hidden text-xs font-semibold text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white md:inline lg:text-sm"
+        >
+          Sign up
+        </Link>
+        <Button as={Link} href={CONSTANTS.LOGIN_LINK} variant="secondary" className="hidden md:block">
+          Login
+        </Button>
       </div>
     </motion.div>
   );
@@ -210,7 +182,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
-                    navItem.link === CONSTANTS.LEAD_AGENT_APP_URL && "btn-primary"
+                    navItem.link === "/contact" && "btn-primary"
                   )}
                 >
                   <motion.span className="block">{navItem.name} </motion.span>
@@ -219,9 +191,18 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
               <Button
                 as={Link}
                 onClick={() => setOpen(false)}
+                href="/signup"
+                variant="secondary"
+                className="block w-full md:hidden"
+              >
+                Sign up
+              </Button>
+              <Button
+                as={Link}
+                onClick={() => setOpen(false)}
                 href={CONSTANTS.LOGIN_LINK}
                 variant="primary"
-                className="block md:hidden w-full"
+                className="block w-full md:hidden"
               >
                 Login
               </Button>
