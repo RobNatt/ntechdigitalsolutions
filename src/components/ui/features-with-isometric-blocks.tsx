@@ -8,43 +8,43 @@ import { ShootingStarsBackground } from "@/components/ui/shooting-stars-backgrou
 const FEATURES = [
   {
     id: 1,
-    title: "Lead Generation & Funnels",
+    title: "Starter: The Foundation",
     description:
-      "We create high-converting lead funnels that attract, capture, and qualify your ideal customers — automatically.",
+      "A fast, professional, SEO-optimized site that puts you on the map — WordPress CMS with full training and a 14-day delivery guarantee.",
     bullets: [
-      "Custom landing pages built to convert",
-      "Multi-step lead qualification funnels",
-      "Automated follow-up sequences",
-      "Real-time lead scoring & alerts",
-      "CRM integration & pipeline management",
+      "5-page custom website (Home, About, Services, Contact + 1 custom page)",
+      "Mobile-first responsive design",
+      "On-page SEO setup (meta tags, schema, sitemap, robots.txt)",
+      "Google Search Console + Bing Webmaster submission",
+      "Contact form to your email, Google Analytics, WordPress with full training",
     ],
     variant: "left" as const,
   },
   {
     id: 2,
-    title: "AI Lead Automation Systems",
+    title: "Growth: The Lead Machine",
     description:
-      "Let AI work 24/7 — tracking, nurturing, and converting leads while you sleep. Powered by intelligent agents built for your business.",
+      "Your site plus a complete lead capture and follow-up system — every interested visitor gets tracked, contacted, and nurtured automatically.",
     bullets: [
-      "AI agents that respond to leads instantly",
-      "Automated conversion tracking & reporting",
-      "Behavioral-based nurture workflows",
-      "Smart retargeting integrations",
-      "AI-generated follow-up copy",
+      "Custom lead funnel + dedicated landing page built to convert",
+      "Lead capture forms with automated email follow-up sequences",
+      "CRM setup, pipeline configuration, and lead tracking dashboard",
+      "Google Business Profile optimization + local SEO for your service area",
+      "Monthly performance report (traffic, leads, conversions) + conversion review every 90 days",
     ],
     variant: "right" as const,
   },
   {
     id: 3,
-    title: "Web Design & Development",
+    title: "Pro: The Full Growth System",
     description:
-      "Fast, beautiful, accessible websites built for SEO from day one — including custom WordPress builds that you can manage yourself.",
+      "Website, funnel, automation, SEO content, and ongoing optimization in one system — you close deals; we run what fills the pipeline.",
     bullets: [
-      "SEO-optimized from the ground up",
-      "Mobile-first & fully responsive",
-      "WCAG accessibility compliant",
-      "WordPress builds with full training",
-      "Core Web Vitals & speed optimization",
+      "Multi-page lead funnel with A/B tested variations",
+      "Automated lead qualification and scoring + SMS & email follow-up (multi-touch)",
+      "Monthly SEO content (2 blog posts or location pages for your keywords)",
+      "Ongoing Google + Bing Search Console monitoring + quarterly landing page refresh",
+      "Priority support (48hr response), dedicated account manager, monthly strategy call",
     ],
     variant: "top" as const,
   },
@@ -67,8 +67,9 @@ export default function FeaturesWithIsometricBlocks() {
             Everything you need to dominate your local market.
           </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-neutral-600 md:text-base dark:text-neutral-400">
-            We don&apos;t just build websites. We build growth machines —
-            combining smart design, AI automation, and proven lead systems.
+            Three transparent packages — from a solid web foundation to lead
+            systems and full ongoing growth. Same scope you&apos;ll see in
+            pricing, laid out here in one place.
           </p>
         </div>
 

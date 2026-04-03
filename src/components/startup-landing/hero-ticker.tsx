@@ -1,13 +1,14 @@
 "use client";
 
 const TICKER_ITEMS = [
-  "AI-Powered Lead Generation",
-  "SEO-Optimized Websites",
-  "WordPress Development",
-  "Automated Lead Funnels",
-  "Conversion Tracking",
-  "Small Business Growth",
-  "AI Lead Automation",
+  "5-Page Custom Websites",
+  "On-Page SEO & Local SEO",
+  "WordPress CMS + Training",
+  "Lead Funnels & Landing Pages",
+  "CRM & Lead Tracking Dashboard",
+  "Google Business Profile",
+  "Automated Email & SMS Follow-Up",
+  "Monthly Performance Reports",
 ] as const;
 
 export function HeroTicker() {

@@ -7,11 +7,7 @@ import { Navbar } from "@/components/startup-landing/navbar";
 import { Process } from "@/components/startup-landing/process";
 import { Pricing } from "@/components/startup-landing/pricing";
 import { Testimonials } from "@/components/startup-landing/testimonials";
-import {
-  SITE_BUSINESS_PHONE,
-  SITE_CONTACT_EMAIL,
-  SITE_URL,
-} from "@/constants/site";
+import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
 
 /** Swap to `/og-image.jpg` after adding a 1200×630 image under `public/`. */
 const OG_IMAGE_PATH = "/ntech-official-logo.png";
@@ -36,10 +32,10 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "N-Tech Digital Solutions" }],
   robots: { index: true, follow: true },
-  alternates: { canonical: `${SITE_URL}/` },
+  alternates: { canonical: "https://ntechdigital.solutions" },
   openGraph: {
     type: "website",
-    url: `${SITE_URL}/`,
+    url: "https://ntechdigital.solutions",
     title:
       "N-Tech Digital Solutions | AI-Powered Lead Generation & Web Design",
     description:
@@ -63,7 +59,7 @@ const localBusinessJsonLd = {
   name: "N-Tech Digital Solutions",
   description:
     "AI-powered lead generation systems, website design, and automated lead funnels for small businesses.",
-  url: SITE_URL,
+  url: "https://ntechdigital.solutions",
   telephone: SITE_BUSINESS_PHONE,
   email: SITE_CONTACT_EMAIL,
   address: {

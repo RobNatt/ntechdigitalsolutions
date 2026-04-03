@@ -8,22 +8,22 @@ const STEPS = [
   {
     n: "01",
     title: "We audit your current presence",
-    body: "We analyze your website, local SEO, and existing lead flow to identify the gaps costing you customers right now.",
+    body: "We review your site, on-page and local SEO, Google Business Profile, and how leads are captured today — so we know what's broken.",
   },
   {
     n: "02",
-    title: "We build your growth system",
-    body: "Custom website + lead funnel designed around your business goals, target customer, and local market — built fast.",
+    title: "We build your foundation or full system",
+    body: "From the 5-page Foundation build through Growth (funnel, CRM, dashboard) to Pro (A/B funnels, qualification, SMS + email nurture) — scoped to your package.",
   },
   {
     n: "03",
-    title: "AI agents take over lead tracking",
-    body: "Our AI monitors every lead, scores their intent, automates follow-ups, and flags hot prospects to your team in real time.",
+    title: "Automation runs follow-up and tracking",
+    body: "Lead forms trigger email sequences; your pipeline and dashboard show every inquiry. On Pro, add qualification, scoring, and multi-touch SMS + email.",
   },
   {
     n: "04",
-    title: "You close. We keep optimizing.",
-    body: "We continuously refine your funnel based on real conversion data. The system gets smarter — and more profitable — over time.",
+    title: "You close. We report and refine.",
+    body: "Monthly performance reports, 90-day conversion reviews on Growth, and on Pro — Search Console monitoring, quarterly landing refreshes, and strategy calls.",
   },
 ] as const;
 
