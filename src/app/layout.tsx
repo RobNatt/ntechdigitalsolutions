@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SITE_URL } from "@/constants/site";
-import { CursorReactiveEnvironment } from "@/components/cursor-reactive/CursorReactiveEnvironment";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/providers";
 
@@ -66,7 +65,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CursorReactiveEnvironment />
           <div className="relative min-h-screen">{children}</div>
         </ThemeProvider>
       </body>

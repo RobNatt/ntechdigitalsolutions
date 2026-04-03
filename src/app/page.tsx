@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CursorReactiveEnvironment } from "@/components/cursor-reactive/CursorReactiveEnvironment";
 import { Features } from "@/components/startup-landing/features";
 import { Footer } from "@/components/startup-landing/footer";
 import { Hero } from "@/components/startup-landing/hero";
@@ -82,6 +83,7 @@ const localBusinessJsonLd = {
 export default function HomePage() {
   return (
     <>
+      <CursorReactiveEnvironment />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

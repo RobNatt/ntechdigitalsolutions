@@ -7,7 +7,7 @@ const HALF = GLOW_SIZE / 2;
 
 /**
  * Cursor-follow gradient orb + click ripples (from cinematic-site-components cursor-reactive).
- * Site-wide; disabled for reduced motion and coarse pointers.
+ * Home page only; disabled for reduced motion and coarse pointers.
  */
 export function CursorReactiveEnvironment() {
   const [enabled, setEnabled] = useState(false);
