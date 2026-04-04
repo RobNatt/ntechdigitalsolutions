@@ -28,6 +28,7 @@ Run migrations in order from `supabase/migrations/` on your Supabase project if 
 3. **Bootstrap** — Set **`AUTH_BOOTSTRAP_EMAIL`** to that user’s **exact** Auth email. Set **`AUTH_BOOTSTRAP_SKIP_2FA=true`** until Twilio works. Optionally set **`AUTH_BOOTSTRAP_LOGIN_ID`** if you want a short ID instead of typing email.
 4. **Redeploy** after changing env vars.
 5. **Email confirmation** — If Supabase requires confirmation, either confirm the user in **Authentication → Users** or turn off “Confirm email” for testing; otherwise sign-in fails with a message we surface about confirmation.
+6. **Debug (no secrets)** — Open `https://your-domain.com/api/auth/ping` in the browser. You want `bootstrapEmailConfigured: true` and `serviceRoleConfigured: true` for the usual bootstrap sign-in.
 
 ## Troubleshooting (“it used to work”)
 
