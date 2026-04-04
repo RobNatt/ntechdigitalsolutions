@@ -12,6 +12,26 @@ function skip2faEnabled(): boolean {
   return v === "true" || v === "1" || v === "yes";
 }
 
+/** Trim and strip one pair of surrounding quotes (common .env mistake). */
+function envValue(raw: string | undefined): string | undefined {
+  if (raw == null) return undefined;
+  let t = raw.trim();
+  if (
+    (t.startsWith('"') && t.endsWith('"')) ||
+    (t.startsWith("'") && t.endsWith("'"))
+  ) {
+    t = t.slice(1, -1).trim();
+  }
+  return t || undefined;
+}
+
+function invalidCredsMessage(err: { message?: string } | null): string {
+  if (process.env.NODE_ENV === "development" && err?.message) {
+    return err.message;
+  }
+  return "Invalid ID or password";
+}
+
 function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
@@ -99,8 +119,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const bootstrapLoginId = process.env.AUTH_BOOTSTRAP_LOGIN_ID?.trim();
-    const bootstrapEmail = process.env.AUTH_BOOTSTRAP_EMAIL?.trim();
+    const bootstrapLoginId = envValue(process.env.AUTH_BOOTSTRAP_LOGIN_ID);
+    const bootstrapEmail = envValue(process.env.AUTH_BOOTSTRAP_EMAIL);
 
     if (bootstrapLoginId && bootstrapEmail && loginId.trim() === bootstrapLoginId) {
       const resDone = NextResponse.json({ success: true, step: "done" as const });
@@ -123,7 +143,14 @@ export async function POST(request: Request) {
       });
 
       if (signInError || !signInData.user) {
-        return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
+        return NextResponse.json(
+          {
+            error: invalidCredsMessage(
+              signInError ?? { message: "Sign-in returned no user" }
+            ),
+          },
+          { status: 401 }
+        );
       }
 
       const user = signInData.user;
@@ -177,7 +204,15 @@ export async function POST(request: Request) {
       .single();
 
     if (profileError || !profile) {
-      return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
+      return NextResponse.json(
+        {
+          error: "Invalid ID or password",
+          ...(process.env.NODE_ENV === "development" && {
+            hint: "No profile with this login_id. Set AUTH_BOOTSTRAP_LOGIN_ID + AUTH_BOOTSTRAP_EMAIL to map an ID to a Supabase user, or add/update profiles.login_id in Supabase.",
+          }),
+        },
+        { status: 401 }
+      );
     }
 
     const { data: authUser, error: userError } = await admin.auth.admin.getUserById(profile.id);
@@ -202,7 +237,7 @@ export async function POST(request: Request) {
     });
 
     if (signInError) {
-      return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
+      return NextResponse.json({ error: invalidCredsMessage(signInError) }, { status: 401 });
     }
 
     if (!profile.phone_number) {

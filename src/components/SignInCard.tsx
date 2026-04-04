@@ -22,13 +22,17 @@ export default function SignInCard() {
     try {
       const res = await fetch("/api/auth/signin", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ loginId: loginId.trim(), password }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Sign-in failed");
+        const hint = typeof data.hint === "string" ? data.hint : "";
+        setError(
+          hint ? `${data.error || "Sign-in failed"}\n${hint}` : data.error || "Sign-in failed"
+        );
         return;
       }
 
@@ -54,13 +58,17 @@ export default function SignInCard() {
     try {
       const res = await fetch("/api/auth/verify-2fa", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: code.trim() }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Verification failed");
+        const hint = typeof data.hint === "string" ? data.hint : "";
+        setError(
+          hint ? `${data.error || "Verification failed"}\n${hint}` : data.error || "Verification failed"
+        );
         return;
       }
 
@@ -132,7 +140,7 @@ export default function SignInCard() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p className="whitespace-pre-line text-sm text-red-600 dark:text-red-400">{error}</p>
           )}
 
           <button
@@ -167,7 +175,7 @@ export default function SignInCard() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p className="whitespace-pre-line text-sm text-red-600 dark:text-red-400">{error}</p>
           )}
 
           <button

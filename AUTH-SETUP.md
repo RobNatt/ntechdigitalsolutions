@@ -6,6 +6,16 @@
 - **2FA**: 6-digit code sent via SMS
 - **No sign-up**: Profiles created by admin/developer only
 
+## Troubleshooting (“it used to work”)
+
+1. **Two ways to sign in**
+   - **Bootstrap**: `AUTH_BOOTSTRAP_LOGIN_ID` + `AUTH_BOOTSTRAP_EMAIL` must both be set; the Login ID you type must match exactly. Password is checked against that Supabase user’s email. If `AUTH_BOOTSTRAP_LOGIN_ID` is empty, bootstrap is off.
+   - **Profile**: Otherwise the app looks up `public.profiles.login_id`. If there is no row or `login_id` does not match, you get “Invalid ID or password”.
+2. **Session cookies** — Sign-in runs in `/api/auth/signin`; the response must include `Set-Cookie` for Supabase. If 2FA says “Session expired”, the password step did not persist cookies (try another browser, ensure you are not blocking cookies, restart dev server after `.env` changes).
+3. **Supabase** — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and **`SUPABASE_SERVICE_ROLE_KEY`** must all be set. Wrong project or missing service role breaks lookups and admin calls.
+4. **Email not confirmed** — In development, the API may return Supabase’s error text (e.g. email confirmation). Confirm the user in the Supabase dashboard or disable confirmation for testing.
+5. **`AUTH_BOOTSTRAP_SKIP_2FA`** — Use `true`, `1`, or `yes`. Without it, `profiles.phone_number` must be set and 2FA runs (Twilio in production; in dev the code is logged to the server console).
+
 ## 1. Run Migration
 
 Run `supabase/migrations/002_custom_auth.sql` in Supabase SQL Editor.
