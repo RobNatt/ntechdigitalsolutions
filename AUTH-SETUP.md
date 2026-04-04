@@ -6,6 +6,29 @@
 - **2FA**: 6-digit code sent via SMS
 - **No sign-up**: Profiles created by admin/developer only
 
+## Schema: do you need new tables for login?
+
+**No** — email + password sign-in uses Supabase’s built-in **`auth.users`**. You do not need a custom schema for that.
+
+Our app **adds** (via migrations):
+
+| Piece | Purpose |
+|--------|--------|
+| **`public.profiles`** + `login_id`, `phone_number` | Sign in with a **Login ID** (not email) and optional SMS 2FA |
+| **`public.auth_verification_codes`** | Stores short-lived 2FA codes (service role only) |
+
+If you use **bootstrap** (`AUTH_BOOTSTRAP_EMAIL` + type that email or `AUTH_BOOTSTRAP_LOGIN_ID`) and **`AUTH_BOOTSTRAP_SKIP_2FA=true`**, you can sign in **without** `profiles.login_id` until you add a profile row.
+
+Run migrations in order from `supabase/migrations/` on your Supabase project if you use profiles, leads, Gmail, etc.
+
+## Production (Vercel) checklist
+
+1. **Same Supabase project everywhere** — `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` on Vercel must match the project where you created the user and password (not a different dev project).
+2. **`SUPABASE_SERVICE_ROLE_KEY`** — Set on Vercel (server only). Without it you get a **500** configuration error, not “invalid password”.
+3. **Bootstrap** — Set **`AUTH_BOOTSTRAP_EMAIL`** to that user’s **exact** Auth email. Set **`AUTH_BOOTSTRAP_SKIP_2FA=true`** until Twilio works. Optionally set **`AUTH_BOOTSTRAP_LOGIN_ID`** if you want a short ID instead of typing email.
+4. **Redeploy** after changing env vars.
+5. **Email confirmation** — If Supabase requires confirmation, either confirm the user in **Authentication → Users** or turn off “Confirm email” for testing; otherwise sign-in fails with a message we surface about confirmation.
+
 ## Troubleshooting (“it used to work”)
 
 1. **Two ways to sign in**

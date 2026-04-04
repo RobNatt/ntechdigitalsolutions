@@ -31,10 +31,31 @@ function envValue(raw: string | undefined): string | undefined {
   return t || undefined;
 }
 
+/** User-visible copy for Supabase Auth errors (safe in production; avoids silent generic failures). */
 function invalidCredsMessage(err: { message?: string } | null): string {
-  if (process.env.NODE_ENV === "development" && err?.message) {
-    return err.message;
+  const msg = (err?.message || "").trim();
+  const lower = msg.toLowerCase();
+
+  if (
+    lower.includes("email not confirmed") ||
+    lower.includes("email address not confirmed") ||
+    lower.includes("confirm your email")
+  ) {
+    return "Email not confirmed. In Supabase: Authentication → Users → confirm the user, or disable “Confirm email” for that user / project.";
   }
+
+  if (
+    lower.includes("invalid login credentials") ||
+    lower.includes("invalid_credentials") ||
+    lower.includes("invalid email or password")
+  ) {
+    return "Invalid email or password. If this is production, confirm Vercel env points to the same Supabase project where the user exists, and AUTH_BOOTSTRAP_EMAIL matches that user’s email (or use AUTH_ALLOW_EMAIL_SIGNIN + your email as Login ID).";
+  }
+
+  if (process.env.NODE_ENV === "development" && msg) {
+    return msg;
+  }
+
   return "Invalid ID or password";
 }
 
@@ -196,7 +217,14 @@ export async function POST(request: Request) {
 
     const useBootstrapAuth = matchesBootstrapLoginId || matchesBootstrapEmail;
 
+    if (!bootstrapEmail && process.env.NODE_ENV === "production") {
+      console.warn(
+        "[auth/signin] AUTH_BOOTSTRAP_EMAIL is unset — bootstrap sign-in disabled; only profiles.login_id or AUTH_ALLOW_EMAIL_SIGNIN paths apply."
+      );
+    }
+
     if (useBootstrapAuth && bootstrapEmail) {
+      console.info("[auth/signin] bootstrap sign-in branch");
       const resDone = NextResponse.json({ success: true, step: "done" as const });
       const res2fa = NextResponse.json({ success: true, step: "2fa" as const });
       const responseForSession = skip2faEnabled() ? resDone : res2fa;
@@ -232,6 +260,7 @@ export async function POST(request: Request) {
 
     const allowEmailSignin = envTruthy(process.env.AUTH_ALLOW_EMAIL_SIGNIN);
     if (allowEmailSignin && looksLikeEmail(idNorm)) {
+      console.info("[auth/signin] AUTH_ALLOW_EMAIL_SIGNIN branch");
       const resDone = NextResponse.json({ success: true, step: "done" as const });
       const res2fa = NextResponse.json({ success: true, step: "2fa" as const });
       const responseForSession = skip2faEnabled() ? resDone : res2fa;
