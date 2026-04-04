@@ -26,7 +26,16 @@ export default function SignInCard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ loginId: loginId.trim(), password }),
       });
-      const data = await res.json();
+      const raw = await res.text();
+      let data: { error?: string; hint?: string; step?: string; success?: boolean };
+      try {
+        data = JSON.parse(raw) as typeof data;
+      } catch {
+        setError(
+          "Sign-in returned an invalid response (not JSON). Hard-refresh the page or check the Network tab — a script or proxy may be serving the wrong file."
+        );
+        return;
+      }
 
       if (!res.ok) {
         const hint = typeof data.hint === "string" ? data.hint : "";
@@ -62,7 +71,14 @@ export default function SignInCard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: code.trim() }),
       });
-      const data = await res.json();
+      const raw2 = await res.text();
+      let data: { error?: string; hint?: string };
+      try {
+        data = JSON.parse(raw2) as typeof data;
+      } catch {
+        setError("Verification returned an invalid response. Try signing in again.");
+        return;
+      }
 
       if (!res.ok) {
         const hint = typeof data.hint === "string" ? data.hint : "";
