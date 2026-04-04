@@ -20,7 +20,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # Bootstrap CEO / admin login (optional)
 # Login form: Login ID + password. Password is verified by Supabase for AUTH_BOOTSTRAP_EMAIL.
-AUTH_BOOTSTRAP_LOGIN_ID=rnattrass
+AUTH_BOOTSTRAP_LOGIN_ID=your_login_id
 AUTH_BOOTSTRAP_EMAIL=your-account-email@example.com
 AUTH_BOOTSTRAP_SKIP_2FA=true
 
@@ -35,12 +35,12 @@ GOOGLE_CLIENT_SECRET=
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
 ```
 
-### Bootstrap login (`rnattrass`)
+### Bootstrap login (fixed login ID → email)
 
 1. In Supabase, create (or use) an Auth user whose **email** matches `AUTH_BOOTSTRAP_EMAIL` and set their **password** there to the password you will use at sign-in.
-2. Ensure `public.profiles` has a row with `id` equal to that user’s UUID (the `handle_new_user` trigger usually creates it). Optionally set `login_id = 'rnattrass'` for consistency with other tooling.
-3. Set `AUTH_BOOTSTRAP_LOGIN_ID=rnattrass`, `AUTH_BOOTSTRAP_EMAIL` to that user’s email, and `AUTH_BOOTSTRAP_SKIP_2FA=true` in `.env.local` (and in Vercel/hosting env) if you want to skip SMS for this account.
-4. At **/login**, use **Login ID** `rnattrass` and your Supabase password.
+2. Ensure `public.profiles` has a row with `id` equal to that user’s UUID (the `handle_new_user` trigger usually creates it). Optionally set `login_id` to the same value as `AUTH_BOOTSTRAP_LOGIN_ID` for consistency with other tooling.
+3. Set `AUTH_BOOTSTRAP_LOGIN_ID`, `AUTH_BOOTSTRAP_EMAIL`, and `AUTH_BOOTSTRAP_SKIP_2FA=true` in `.env.local` (and in Vercel/hosting env) if you want to skip SMS for this account.
+4. At **/login**, use **Login ID** matching `AUTH_BOOTSTRAP_LOGIN_ID` and your Supabase password.
 
 If `AUTH_BOOTSTRAP_SKIP_2FA` is not `true`, the profile must include `phone_number` for SMS 2FA.
 

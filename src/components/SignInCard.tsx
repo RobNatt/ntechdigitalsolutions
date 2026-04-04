@@ -108,7 +108,6 @@ export default function SignInCard() {
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
               required
-              placeholder="rnattrass"
               className="mt-2 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
             />
           </div>
