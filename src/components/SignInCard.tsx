@@ -95,7 +95,7 @@ export default function SignInCard() {
         </h1>
         <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
           {step === "credentials"
-            ? "Sign in with your ID and password"
+            ? "Sign in with your login ID (or email if enabled) and password"
             : "Enter the code sent to your phone"}
         </p>
       </div>

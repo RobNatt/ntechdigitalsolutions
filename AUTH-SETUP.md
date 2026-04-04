@@ -45,14 +45,17 @@ GOOGLE_CLIENT_SECRET=
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
 ```
 
-### Bootstrap login (fixed login ID → email)
+### Bootstrap login (`AUTH_BOOTSTRAP_EMAIL` required)
 
 1. In Supabase, create (or use) an Auth user whose **email** matches `AUTH_BOOTSTRAP_EMAIL` and set their **password** there to the password you will use at sign-in.
-2. Ensure `public.profiles` has a row with `id` equal to that user’s UUID (the `handle_new_user` trigger usually creates it). Optionally set `login_id` to the same value as `AUTH_BOOTSTRAP_LOGIN_ID` for consistency with other tooling.
-3. Set `AUTH_BOOTSTRAP_LOGIN_ID`, `AUTH_BOOTSTRAP_EMAIL`, and `AUTH_BOOTSTRAP_SKIP_2FA=true` in `.env.local` (and in Vercel/hosting env) if you want to skip SMS for this account.
-4. At **/login**, use **Login ID** matching `AUTH_BOOTSTRAP_LOGIN_ID` and your Supabase password.
+2. Set **`AUTH_BOOTSTRAP_SKIP_2FA=true`** until Twilio is configured or if you have no `profiles` row yet (otherwise SMS 2FA requires `profiles.phone_number`).
+3. At **/login**, you can type **either**:
+   - the same string as **`AUTH_BOOTSTRAP_LOGIN_ID`** (if set), **or**
+   - your **`AUTH_BOOTSTRAP_EMAIL`** (case-insensitive),  
+   then your Supabase password. You do **not** need `profiles.login_id` for that to work when using the email or matching bootstrap ID.
+4. Optionally set **`AUTH_ALLOW_EMAIL_SIGNIN=true`** to allow **any** user to sign in with their **email** as the Login ID field (still needs `SKIP_2FA` or profile + phone for 2FA).
 
-If `AUTH_BOOTSTRAP_SKIP_2FA` is not `true`, the profile must include `phone_number` for SMS 2FA.
+If `AUTH_BOOTSTRAP_SKIP_2FA` is not `true`, the user must have a `profiles` row with `phone_number` for SMS 2FA.
 
 Get the service role key from **Supabase → Settings → API → service_role** (keep secret).
 

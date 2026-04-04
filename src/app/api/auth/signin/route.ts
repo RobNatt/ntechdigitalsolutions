@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const CODE_EXPIRY_MINUTES = 10;
 const TWO_FA_COOKIE = "ntech_2fa_verified";
@@ -9,6 +10,11 @@ const TWO_FA_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 function skip2faEnabled(): boolean {
   const v = process.env.AUTH_BOOTSTRAP_SKIP_2FA?.trim().toLowerCase();
+  return v === "true" || v === "1" || v === "yes";
+}
+
+function envTruthy(raw: string | undefined): boolean {
+  const v = raw?.trim().toLowerCase();
   return v === "true" || v === "1" || v === "yes";
 }
 
@@ -101,6 +107,64 @@ async function sendSms(phone: string, code: string): Promise<boolean> {
   return res.ok;
 }
 
+/** After Supabase password auth succeeds on `responseForSession` (session cookies on resDone/res2fa). */
+async function finishSignInWithOptional2fa(
+  admin: ReturnType<typeof createAdminClient>,
+  user: SupabaseUser,
+  resDone: NextResponse,
+  res2fa: NextResponse
+): Promise<NextResponse> {
+  if (skip2faEnabled()) {
+    set2faVerifiedCookie(resDone);
+    return resDone;
+  }
+
+  const { data: row, error: profileError } = await admin
+    .from("profiles")
+    .select("id, phone_number")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !row) {
+    return NextResponse.json(
+      {
+        error: "No profile on file. Contact admin.",
+        ...(process.env.NODE_ENV === "development" && {
+          hint: "Turn on AUTH_BOOTSTRAP_SKIP_2FA=true to skip SMS when you have no profile row yet, or add a profiles row for this user.",
+        }),
+      },
+      { status: 400 }
+    );
+  }
+
+  if (!row.phone_number) {
+    return NextResponse.json(
+      { error: "No phone number on file. Contact admin." },
+      { status: 400 }
+    );
+  }
+
+  const code = generateCode();
+  const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000).toISOString();
+  await admin.from("auth_verification_codes").insert({
+    user_id: row.id,
+    code,
+    expires_at: expiresAt,
+  });
+  const sent = await sendSms(row.phone_number, code);
+  if (!sent) {
+    return NextResponse.json(
+      { error: "Could not send verification code. Try again later." },
+      { status: 500 }
+    );
+  }
+  return res2fa;
+}
+
+function looksLikeEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}
+
 export async function POST(request: Request) {
   try {
     const { loginId, password } = (await request.json()) as { loginId: string; password: string };
@@ -119,10 +183,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const idNorm = loginId.trim();
+    const idLower = idNorm.toLowerCase();
+
     const bootstrapLoginId = envValue(process.env.AUTH_BOOTSTRAP_LOGIN_ID);
     const bootstrapEmail = envValue(process.env.AUTH_BOOTSTRAP_EMAIL);
 
-    if (bootstrapLoginId && bootstrapEmail && loginId.trim() === bootstrapLoginId) {
+    const matchesBootstrapLoginId =
+      !!bootstrapLoginId && !!bootstrapEmail && idLower === bootstrapLoginId.toLowerCase();
+    const matchesBootstrapEmail =
+      !!bootstrapEmail && idLower === bootstrapEmail.toLowerCase();
+
+    const useBootstrapAuth = matchesBootstrapLoginId || matchesBootstrapEmail;
+
+    if (useBootstrapAuth && bootstrapEmail) {
       const resDone = NextResponse.json({ success: true, step: "done" as const });
       const res2fa = NextResponse.json({ success: true, step: "2fa" as const });
       const responseForSession = skip2faEnabled() ? resDone : res2fa;
@@ -153,54 +227,44 @@ export async function POST(request: Request) {
         );
       }
 
-      const user = signInData.user;
+      return finishSignInWithOptional2fa(admin, signInData.user, resDone, res2fa);
+    }
 
-      if (skip2faEnabled()) {
-        set2faVerifiedCookie(resDone);
-        return resDone;
-      }
+    const allowEmailSignin = envTruthy(process.env.AUTH_ALLOW_EMAIL_SIGNIN);
+    if (allowEmailSignin && looksLikeEmail(idNorm)) {
+      const resDone = NextResponse.json({ success: true, step: "done" as const });
+      const res2fa = NextResponse.json({ success: true, step: "2fa" as const });
+      const responseForSession = skip2faEnabled() ? resDone : res2fa;
 
-      const { data: bootProfile, error: bootProfileError } = await admin
-        .from("profiles")
-        .select("id, phone_number")
-        .eq("id", user.id)
-        .single();
-
-      if (bootProfileError || !bootProfile) {
+      let supabase;
+      try {
+        supabase = await createSupabaseForSignInResponse(responseForSession);
+      } catch {
         return NextResponse.json(
-          { error: "No profile on file. Contact admin." },
-          { status: 400 }
-        );
-      }
-
-      if (!bootProfile.phone_number) {
-        return NextResponse.json(
-          { error: "No phone number on file. Contact admin." },
-          { status: 400 }
-        );
-      }
-
-      const code = generateCode();
-      const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000).toISOString();
-      await admin.from("auth_verification_codes").insert({
-        user_id: bootProfile.id,
-        code,
-        expires_at: expiresAt,
-      });
-      const sent = await sendSms(bootProfile.phone_number, code);
-      if (!sent) {
-        return NextResponse.json(
-          { error: "Could not send verification code. Try again later." },
+          { error: "Server configuration error. Check Supabase env vars." },
           { status: 500 }
         );
       }
-      return res2fa;
+
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: idNorm,
+        password,
+      });
+
+      if (signInError || !signInData.user) {
+        return NextResponse.json(
+          { error: invalidCredsMessage(signInError ?? { message: "Sign-in returned no user" }) },
+          { status: 401 }
+        );
+      }
+
+      return finishSignInWithOptional2fa(admin, signInData.user, resDone, res2fa);
     }
 
     const { data: profile, error: profileError } = await admin
       .from("profiles")
       .select("id, phone_number")
-      .eq("login_id", loginId.trim())
+      .eq("login_id", idNorm)
       .single();
 
     if (profileError || !profile) {
@@ -208,7 +272,7 @@ export async function POST(request: Request) {
         {
           error: "Invalid ID or password",
           ...(process.env.NODE_ENV === "development" && {
-            hint: "No profile with this login_id. Set AUTH_BOOTSTRAP_LOGIN_ID + AUTH_BOOTSTRAP_EMAIL to map an ID to a Supabase user, or add/update profiles.login_id in Supabase.",
+            hint: "Use your AUTH_BOOTSTRAP_EMAIL as Login ID (same spelling), set AUTH_BOOTSTRAP_LOGIN_ID, enable AUTH_ALLOW_EMAIL_SIGNIN=true to sign in with email, or add profiles.login_id in Supabase.",
           }),
         },
         { status: 401 }
@@ -220,10 +284,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid ID or password" }, { status: 401 });
     }
 
+    const resDone = NextResponse.json({ success: true, step: "done" as const });
     const res2fa = NextResponse.json({ success: true, step: "2fa" as const });
+    const responseForSession = skip2faEnabled() ? resDone : res2fa;
+
     let supabase2;
     try {
-      supabase2 = await createSupabaseForSignInResponse(res2fa);
+      supabase2 = await createSupabaseForSignInResponse(responseForSession);
     } catch {
       return NextResponse.json(
         { error: "Server configuration error. Check Supabase env vars." },
@@ -231,37 +298,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error: signInError } = await supabase2.auth.signInWithPassword({
+    const { data: signInData2, error: signInError } = await supabase2.auth.signInWithPassword({
       email: authUser.user.email,
       password,
     });
 
-    if (signInError) {
+    if (signInError || !signInData2.user) {
       return NextResponse.json({ error: invalidCredsMessage(signInError) }, { status: 401 });
     }
 
-    if (!profile.phone_number) {
-      return NextResponse.json(
-        { error: "No phone number on file. Contact admin." },
-        { status: 400 }
-      );
-    }
-
-    const code = generateCode();
-    const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000).toISOString();
-    await admin.from("auth_verification_codes").insert({
-      user_id: profile.id,
-      code,
-      expires_at: expiresAt,
-    });
-    const sent = await sendSms(profile.phone_number, code);
-    if (!sent) {
-      return NextResponse.json(
-        { error: "Could not send verification code. Try again later." },
-        { status: 500 }
-      );
-    }
-    return res2fa;
+    return finishSignInWithOptional2fa(admin, signInData2.user, resDone, res2fa);
   } catch (err) {
     console.error("Sign-in error:", err);
     return NextResponse.json({ error: "Sign-in failed" }, { status: 500 });
