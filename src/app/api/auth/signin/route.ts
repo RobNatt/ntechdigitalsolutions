@@ -32,9 +32,14 @@ function envValue(raw: string | undefined): string | undefined {
 }
 
 /** User-visible copy for Supabase Auth errors (safe in production; avoids silent generic failures). */
-function invalidCredsMessage(err: { message?: string } | null): string {
+function invalidCredsMessage(err: { message?: string; code?: string } | null): string {
+  const code = (err?.code || "").toLowerCase();
   const msg = (err?.message || "").trim();
   const lower = msg.toLowerCase();
+
+  if (code === "email_not_confirmed") {
+    return "Email not confirmed. In Supabase: Authentication → Users → confirm the user, or disable “Confirm email” for that user / project.";
+  }
 
   if (
     lower.includes("email not confirmed") ||
@@ -45,11 +50,15 @@ function invalidCredsMessage(err: { message?: string } | null): string {
   }
 
   if (
+    code === "invalid_credentials" ||
+    code === "invalid_grant" ||
     lower.includes("invalid login credentials") ||
     lower.includes("invalid_credentials") ||
-    lower.includes("invalid email or password")
+    lower.includes("invalid email or password") ||
+    lower.includes("wrong password") ||
+    lower.includes("incorrect password")
   ) {
-    return "Invalid email or password. If this is production, confirm Vercel env points to the same Supabase project where the user exists, and AUTH_BOOTSTRAP_EMAIL matches that user’s email (or use AUTH_ALLOW_EMAIL_SIGNIN + your email as Login ID).";
+    return "Wrong password, or this site is using a different Supabase project than where you created the user. Check Vercel env (NEXT_PUBLIC_SUPABASE_*) and that AUTH_BOOTSTRAP_EMAIL is the exact Auth email.";
   }
 
   if (process.env.NODE_ENV === "development" && msg) {
@@ -245,11 +254,15 @@ export async function POST(request: Request) {
       });
 
       if (signInError || !signInData.user) {
+        if (signInError) {
+          console.warn("[auth/signin] bootstrap Supabase error:", signInError.code, signInError.message);
+        }
         return NextResponse.json(
           {
             error: invalidCredsMessage(
               signInError ?? { message: "Sign-in returned no user" }
             ),
+            reason: "bootstrap_supabase_rejected",
           },
           { status: 401 }
         );
@@ -300,9 +313,10 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: "Invalid ID or password",
-          ...(process.env.NODE_ENV === "development" && {
-            hint: "Use your AUTH_BOOTSTRAP_EMAIL as Login ID (same spelling), set AUTH_BOOTSTRAP_LOGIN_ID, enable AUTH_ALLOW_EMAIL_SIGNIN=true to sign in with email, or add profiles.login_id in Supabase.",
-          }),
+          hint: !bootstrapEmail
+            ? "Vercel/production: set AUTH_BOOTSTRAP_EMAIL to your Supabase user’s email, AUTH_BOOTSTRAP_SKIP_2FA=true, redeploy, then sign in using that email as Login ID. Or add profiles.login_id in Supabase for ID-based login."
+            : "No profile row matches this login_id. Sign in with the same email as AUTH_BOOTSTRAP_EMAIL, set AUTH_ALLOW_EMAIL_SIGNIN=true, or add profiles.login_id in Supabase.",
+          reason: "no_profile_for_login_id",
         },
         { status: 401 }
       );
