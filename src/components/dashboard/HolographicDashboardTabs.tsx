@@ -17,7 +17,9 @@ import {
   Cpu,
   DollarSign,
   Building2,
+  CalendarDays,
 } from "lucide-react";
+import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
 import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
 import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
 
@@ -31,6 +33,7 @@ const MARKETING_NAV_TABS = [
 
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
+  { id: "calendar", label: "Calendar", icon: CalendarDays },
   { id: "user-management", label: "User management", icon: UserCog },
   { id: "clients", label: "Clients", icon: Building2 },
   { id: "leads", label: "Leads", icon: Users },
@@ -248,7 +251,7 @@ export function HolographicDashboardTabs({
 }: HolographicDashboardTabsProps) {
   const navTabs = variant === "ceo" ? CEO_NAV_TABS : MARKETING_NAV_TABS;
   const [activeTab, setActiveTab] = useState<string>(
-    variant === "ceo" ? "user-management" : "dashboard"
+    variant === "ceo" ? "calendar" : "dashboard"
   );
 
   const headerTitle =
@@ -391,11 +394,15 @@ export function HolographicDashboardTabs({
                       {variant === "marketing" && activeTab === "ai-agents" && (
                         <PlaceholderTab label="AI Agents" />
                       )}
+                      {variant === "ceo" && activeTab === "calendar" && (
+                        <CeoCalendarSection />
+                      )}
                       {variant === "ceo" && activeTab === "clients" && (
                         <CeoClientsSection />
                       )}
                       {variant === "ceo" && activeTab === "leads" && <CeoLeadsSection />}
                       {variant === "ceo" &&
+                        activeTab !== "calendar" &&
                         activeTab !== "clients" &&
                         activeTab !== "leads" && (
                           <PlaceholderTab
