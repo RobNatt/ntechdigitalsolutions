@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isCalendarEventType } from "@/lib/calendar/eventTypes";
+import { isCalendarEventType, isRecurrenceType } from "@/lib/calendar/eventTypes";
+import {
+  computeRemindAtIso,
+  expandCalendarEventsForRange,
+  type CalendarEventRow,
+} from "@/lib/calendar/recurrence";
 
 function parseHm(s: string): { hour: number; minutes: number } | null {
   const m = /^(\d{1,2}):(\d{2})$/.exec(s.trim());
@@ -30,24 +35,38 @@ export async function GET(request: Request) {
     const from = searchParams.get("from");
     const to = searchParams.get("to");
 
-    let query = supabase.from("calendar_events").select("*").order("date", { ascending: true });
+    if (!from || !to || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+      return NextResponse.json(
+        { error: "Query params from and to are required (YYYY-MM-DD)." },
+        { status: 400 }
+      );
+    }
 
-    if (from) query = query.gte("date", from);
-    if (to) query = query.lte("date", to);
+    const { data: nonRecurring, error: errNon } = await supabase
+      .from("calendar_events")
+      .select("*")
+      .gte("date", from)
+      .lte("date", to)
+      .or("recurrence.is.null,recurrence.eq.none");
 
-    const { data, error } = await query;
+    const { data: recurring, error: errRec } = await supabase
+      .from("calendar_events")
+      .select("*")
+      .in("recurrence", ["daily", "weekly", "monthly", "yearly"])
+      .lte("date", to)
+      .or(`recurrence_until.is.null,recurrence_until.gte.${from}`);
 
-    if (error) {
-      console.error("Calendar list error:", error);
+    if (errNon || errRec) {
+      console.error("Calendar list error:", errNon || errRec);
       return NextResponse.json({ error: "Failed to load events." }, { status: 500 });
     }
 
-    const events = [...(data || [])].sort((a, b) => {
-      if (a.date !== b.date) return String(a.date).localeCompare(String(b.date));
-      const ah = (a.hour ?? 0) * 60 + (a.start_minutes ?? 0);
-      const bh = (b.hour ?? 0) * 60 + (b.start_minutes ?? 0);
-      return ah - bh;
-    });
+    const byId = new Map<string, CalendarEventRow>();
+    for (const r of [...(nonRecurring || []), ...(recurring || [])]) {
+      byId.set(String((r as { id: string }).id), r as CalendarEventRow);
+    }
+
+    const events = expandCalendarEventsForRange([...byId.values()], from, to);
 
     return NextResponse.json({ events });
   } catch (err) {
@@ -128,13 +147,51 @@ export async function POST(request: Request) {
     const clientId =
       typeof body.client_id === "string" && body.client_id.trim() ? body.client_id.trim() : null;
 
+    const recurrenceRaw = String(body.recurrence ?? "none").trim();
+    const recurrence = isRecurrenceType(recurrenceRaw) ? recurrenceRaw : "none";
+
+    let recurrenceUntil: string | null = null;
+    if (recurrence !== "none") {
+      const u =
+        body.recurrence_until === undefined || body.recurrence_until === null
+          ? ""
+          : String(body.recurrence_until).trim();
+      if (u) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(u)) {
+          return NextResponse.json({ error: "Invalid recurrence_until (YYYY-MM-DD)." }, { status: 400 });
+        }
+        recurrenceUntil = u;
+      }
+    }
+
+    const alertMinutes =
+      typeof body.reminder_minutes_before === "number" && Number.isFinite(body.reminder_minutes_before)
+        ? body.reminder_minutes_before
+        : typeof body.alert_minutes === "number" && Number.isFinite(body.alert_minutes)
+          ? body.alert_minutes
+          : null;
+
+    let reminderMinutesBefore: number | null = null;
+    if (alertMinutes !== null && alertMinutes >= 0) {
+      reminderMinutesBefore = Math.floor(alertMinutes);
+    }
+
     let remindAt: string | null = null;
-    if (body.remind_at === null) {
-      remindAt = null;
-    } else if (typeof body.remind_at === "string" && body.remind_at.trim()) {
-      const d = new Date(body.remind_at);
-      if (!Number.isNaN(d.getTime())) {
-        remindAt = d.toISOString();
+    if (recurrence === "none") {
+      if (body.remind_at === null) {
+        remindAt = null;
+      } else if (typeof body.remind_at === "string" && body.remind_at.trim()) {
+        const d = new Date(body.remind_at);
+        if (!Number.isNaN(d.getTime())) {
+          remindAt = d.toISOString();
+        }
+      }
+      if (
+        !remindAt &&
+        reminderMinutesBefore !== null &&
+        reminderMinutesBefore >= 0
+      ) {
+        remindAt = computeRemindAtIso(date, st.hour, st.minutes, reminderMinutesBefore);
       }
     }
 
@@ -153,7 +210,10 @@ export async function POST(request: Request) {
       event_type: eventType,
       lead_id: leadId,
       client_id: clientId,
-      remind_at: remindAt,
+      recurrence,
+      recurrence_until: recurrence === "none" ? null : recurrenceUntil,
+      reminder_minutes_before: reminderMinutesBefore,
+      remind_at: recurrence === "none" ? remindAt : null,
       notification_sent_at: null,
       updated_at: nowIso,
     };

@@ -18,6 +18,22 @@ export const EVENT_TYPE_LABELS: Record<CalendarEventType, string> = {
   other: "Other",
 };
 
+export const RECURRENCE_TYPES = ["none", "daily", "weekly", "monthly", "yearly"] as const;
+
+export type RecurrenceType = (typeof RECURRENCE_TYPES)[number];
+
+export function isRecurrenceType(s: string): s is RecurrenceType {
+  return (RECURRENCE_TYPES as readonly string[]).includes(s);
+}
+
+export const RECURRENCE_LABELS: Record<RecurrenceType, string> = {
+  none: "Does not repeat",
+  daily: "Daily",
+  weekly: "Weekly",
+  monthly: "Monthly",
+  yearly: "Yearly",
+};
+
 export const ALERT_MINUTES_OPTIONS = [
   { value: -1, label: "No alert" },
   { value: 0, label: "At start time" },

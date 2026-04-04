@@ -13,8 +13,13 @@ import {
   ALERT_MINUTES_OPTIONS,
   CALENDAR_EVENT_TYPES,
   EVENT_TYPE_LABELS,
+  RECURRENCE_LABELS,
+  RECURRENCE_TYPES,
+  isRecurrenceType,
   type CalendarEventType,
+  type RecurrenceType,
 } from "@/lib/calendar/eventTypes";
+import { computeRemindAtIso } from "@/lib/calendar/recurrence";
 
 type ApiCalendarEvent = {
   id: string;
@@ -31,6 +36,12 @@ type ApiCalendarEvent = {
   client_id: string | null;
   remind_at: string | null;
   notification_sent_at: string | null;
+  recurrence?: string | null;
+  recurrence_until?: string | null;
+  reminder_minutes_before?: number | null;
+  instance_id?: string;
+  series_start_date?: string;
+  occurrence_date?: string;
 };
 
 type PickerOption = { id: string; label: string };
@@ -80,18 +91,6 @@ function formatRemindLocal(iso: string): string {
   }
 }
 
-function computeRemindAtIso(
-  dateStr: string,
-  startTime: string,
-  alertMinutes: number
-): string | null {
-  const [hh, mm] = startTime.split(":").map((x) => parseInt(x, 10));
-  if (Number.isNaN(hh) || Number.isNaN(mm)) return null;
-  const start = new Date(`${dateStr}T${pad2(hh)}:${pad2(mm)}:00`);
-  if (Number.isNaN(start.getTime())) return null;
-  return new Date(start.getTime() - alertMinutes * 60_000).toISOString();
-}
-
 function useCalendarReminders(
   events: ApiCalendarEvent[],
   onAcknowledged: () => void
@@ -108,30 +107,34 @@ function useCalendarReminders(
         if (!ev.remind_at || ev.notification_sent_at) continue;
         const when = new Date(ev.remind_at).getTime();
         if (when > now) continue;
-        if (firedRef.current.has(ev.id)) continue;
-        firedRef.current.add(ev.id);
+        const key = ev.instance_id ?? `${ev.id}::${String(ev.date).slice(0, 10)}`;
+        if (firedRef.current.has(key)) continue;
+        firedRef.current.add(key);
 
         if (Notification.permission === "granted") {
           try {
             new Notification(ev.title, {
               body: `${EVENT_TYPE_LABELS[(ev.event_type as CalendarEventType) || "other"]} · ${ev.date} ${eventTimeLabel(ev)}`,
-              tag: `ntech-cal-${ev.id}`,
+              tag: `ntech-cal-${key}`,
             });
           } catch {
             /* ignore */
           }
         }
 
-        try {
-          await fetch(`/api/calendar/events/${ev.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ notification_sent_at: true }),
-          });
-        } catch {
-          firedRef.current.delete(ev.id);
+        const isRecurring = ev.recurrence && ev.recurrence !== "none";
+        if (!isRecurring) {
+          try {
+            await fetch(`/api/calendar/events/${ev.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ notification_sent_at: true }),
+            });
+          } catch {
+            firedRef.current.delete(key);
+          }
+          onAcknowledged();
         }
-        onAcknowledged();
       }
     };
 
@@ -168,6 +171,9 @@ export function CeoCalendarSection() {
   const [leadId, setLeadId] = useState("");
   const [clientId, setClientId] = useState("");
   const [alertMinutes, setAlertMinutes] = useState<number>(15);
+  const [eventAnchorDate, setEventAnchorDate] = useState(() => toYMD(today));
+  const [recurrence, setRecurrence] = useState<RecurrenceType>("none");
+  const [recurrenceUntil, setRecurrenceUntil] = useState("");
 
   const range = useMemo(
     () => visibleMonthGridRange(cursor.y, cursor.m),
@@ -291,6 +297,7 @@ export function CeoCalendarSection() {
 
   function openNewForDay(ymd: string) {
     setSelectedDay(ymd);
+    setEventAnchorDate(ymd);
     setEditingId(null);
     setTitle("");
     setEventType("lead_call");
@@ -300,12 +307,16 @@ export function CeoCalendarSection() {
     setLeadId("");
     setClientId("");
     setAlertMinutes(15);
+    setRecurrence("none");
+    setRecurrenceUntil("");
     setFormOpen(true);
   }
 
   function openEdit(ev: ApiCalendarEvent) {
     const day = String(ev.date).slice(0, 10);
+    const anchor = (ev.series_start_date ?? day).slice(0, 10);
     setSelectedDay(day);
+    setEventAnchorDate(anchor);
     setEditingId(ev.id);
     setTitle(ev.title);
     setEventType((ev.event_type as CalendarEventType) || "other");
@@ -315,7 +326,17 @@ export function CeoCalendarSection() {
     setNotes(ev.notes ?? "");
     setLeadId(ev.lead_id ?? "");
     setClientId(ev.client_id ?? "");
-    if (!ev.remind_at) {
+    setRecurrence(
+      typeof ev.recurrence === "string" && isRecurrenceType(ev.recurrence)
+        ? ev.recurrence
+        : "none"
+    );
+    setRecurrenceUntil(
+      ev.recurrence_until ? String(ev.recurrence_until).slice(0, 10) : ""
+    );
+    if (typeof ev.reminder_minutes_before === "number" && ev.reminder_minutes_before >= 0) {
+      setAlertMinutes(ev.reminder_minutes_before);
+    } else if (!ev.remind_at) {
       setAlertMinutes(-1);
     } else {
       const startMs = new Date(
@@ -334,20 +355,29 @@ export function CeoCalendarSection() {
     setSaving(true);
     setError(null);
     try {
+      const isRecurring = recurrence !== "none";
+      const [sh, sm] = startTime.split(":").map((x) => parseInt(x, 10));
       const remindAt =
-        alertMinutes < 0
+        alertMinutes < 0 || isRecurring || Number.isNaN(sh) || Number.isNaN(sm)
           ? null
-          : computeRemindAtIso(selectedDay, startTime, alertMinutes);
+          : computeRemindAtIso(eventAnchorDate, sh, sm, alertMinutes);
 
       const payload = {
         title,
-        date: selectedDay,
+        date: eventAnchorDate,
         start_time: startTime,
         end_time: endTime,
         event_type: eventType,
         notes: notes || null,
         lead_id: leadId || null,
         client_id: clientId || null,
+        recurrence,
+        recurrence_until:
+          isRecurring && recurrenceUntil.trim()
+            ? recurrenceUntil.trim().slice(0, 10)
+            : null,
+        reminder_minutes_before:
+          alertMinutes < 0 ? null : Math.floor(alertMinutes),
         remind_at: remindAt,
       };
 
@@ -374,7 +404,15 @@ export function CeoCalendarSection() {
   }
 
   async function deleteEvent(id: string) {
-    if (!confirm("Delete this event?")) return;
+    if (
+      !confirm(
+        recurrence !== "none"
+          ? "Delete the entire repeating series? All occurrences will be removed."
+          : "Delete this event?"
+      )
+    ) {
+      return;
+    }
     setError(null);
     try {
       const res = await fetch(`/api/calendar/events/${id}`, { method: "DELETE" });
@@ -522,7 +560,7 @@ export function CeoCalendarSection() {
                   <div className="flex flex-wrap gap-0.5">
                     {dayEvents.slice(0, 3).map((ev) => (
                       <span
-                        key={ev.id}
+                        key={ev.instance_id ?? `${ev.id}-${ev.date}`}
                         title={ev.title}
                         className="block max-w-full truncate rounded px-0.5 text-[9px] font-medium text-white"
                         style={{ backgroundColor: ev.color || "#64748b" }}
@@ -554,7 +592,7 @@ export function CeoCalendarSection() {
             ) : (
               <ul className="mt-2 space-y-2 text-xs">
                 {upcomingAlerts.map((e) => (
-                  <li key={e.id}>
+                  <li key={e.instance_id ?? `${e.id}-${e.date}`}>
                     <button
                       type="button"
                       onClick={() => openEdit(e)}
@@ -590,7 +628,7 @@ export function CeoCalendarSection() {
             <ul className="mt-2 max-h-[200px] space-y-1.5 overflow-y-auto">
               {(selectedDay && eventsByDate.get(selectedDay))?.length ? (
                 eventsByDate.get(selectedDay)!.map((ev) => (
-                  <li key={ev.id}>
+                  <li key={ev.instance_id ?? `${ev.id}-${ev.date}`}>
                     <button
                       type="button"
                       onClick={() => openEdit(ev)}
@@ -600,6 +638,14 @@ export function CeoCalendarSection() {
                       <span className="block text-[10px] text-gray-600">
                         {eventTimeLabel(ev)} ·{" "}
                         {EVENT_TYPE_LABELS[(ev.event_type as CalendarEventType) || "other"]}
+                        {typeof ev.recurrence === "string" &&
+                        isRecurrenceType(ev.recurrence) &&
+                        ev.recurrence !== "none" ? (
+                          <span className="text-sky-700">
+                            {" "}
+                            · {RECURRENCE_LABELS[ev.recurrence]}
+                          </span>
+                        ) : null}
                       </span>
                     </button>
                   </li>
@@ -626,9 +672,22 @@ export function CeoCalendarSection() {
             <h2 id="cal-form-title" className="text-base font-bold text-gray-900">
               {editingId ? "Edit event" : "New event"}
             </h2>
-            <p className="text-xs text-gray-600">{selectedDay}</p>
+            <p className="text-xs text-gray-600">
+              {editingId && recurrence !== "none" && selectedDay !== eventAnchorDate
+                ? `This instance: ${selectedDay} · Series start: ${eventAnchorDate}`
+                : selectedDay}
+            </p>
 
             <div className="mt-3 space-y-3">
+              <label className="block text-xs font-semibold text-gray-700">
+                Date (series start)
+                <input
+                  type="date"
+                  className={inputClass}
+                  value={eventAnchorDate}
+                  onChange={(e) => setEventAnchorDate(e.target.value)}
+                />
+              </label>
               <label className="block text-xs font-semibold text-gray-700">
                 Title
                 <input className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -667,6 +726,34 @@ export function CeoCalendarSection() {
                   />
                 </label>
               </div>
+              <label className="block text-xs font-semibold text-gray-700">
+                Repeat
+                <select
+                  className={cn(inputClass, "cursor-pointer")}
+                  value={recurrence}
+                  onChange={(e) => setRecurrence(e.target.value as RecurrenceType)}
+                >
+                  {RECURRENCE_TYPES.map((r) => (
+                    <option key={r} value={r}>
+                      {RECURRENCE_LABELS[r]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {recurrence !== "none" ? (
+                <label className="block text-xs font-semibold text-gray-700">
+                  Repeat until (optional)
+                  <input
+                    type="date"
+                    className={inputClass}
+                    value={recurrenceUntil}
+                    onChange={(e) => setRecurrenceUntil(e.target.value)}
+                  />
+                  <span className="mt-0.5 block text-[10px] font-normal text-gray-500">
+                    Leave empty to repeat far into the future (capped when loading the calendar).
+                  </span>
+                </label>
+              ) : null}
               <label className="block text-xs font-semibold text-gray-700">
                 Link lead (optional)
                 <select

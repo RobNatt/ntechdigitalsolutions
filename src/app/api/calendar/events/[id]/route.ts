@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isCalendarEventType } from "@/lib/calendar/eventTypes";
+import { isCalendarEventType, isRecurrenceType } from "@/lib/calendar/eventTypes";
 
 function parseHm(s: string): { hour: number; minutes: number } | null {
   const m = /^(\d{1,2}):(\d{2})$/.exec(s.trim());
@@ -55,6 +55,16 @@ export async function PATCH(
       updated_at: new Date().toISOString(),
     };
 
+    const { data: curRow, error: rowErr } = await supabase
+      .from("calendar_events")
+      .select("hour, start_minutes, date, recurrence")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (rowErr || !curRow) {
+      return NextResponse.json({ error: "Event not found." }, { status: 404 });
+    }
+
     if (body.title !== undefined) {
       const title = String(body.title ?? "").trim();
       if (!title) {
@@ -72,20 +82,10 @@ export async function PATCH(
     }
 
     if (body.start_time !== undefined || body.end_time !== undefined) {
-      const { data: existing, error: fetchErr } = await supabase
-        .from("calendar_events")
-        .select("hour, start_minutes, date")
-        .eq("id", id)
-        .maybeSingle();
-
-      if (fetchErr || !existing) {
-        return NextResponse.json({ error: "Event not found." }, { status: 404 });
-      }
-
       const startStr =
         body.start_time !== undefined
           ? String(body.start_time).trim()
-          : `${String(existing.hour).padStart(2, "0")}:${String(existing.start_minutes ?? 0).padStart(2, "0")}`;
+          : `${String(curRow.hour).padStart(2, "0")}:${String(curRow.start_minutes ?? 0).padStart(2, "0")}`;
 
       const st = parseHm(startStr);
       if (!st) {
@@ -138,7 +138,66 @@ export async function PATCH(
         typeof body.client_id === "string" && body.client_id.trim() ? body.client_id.trim() : null;
     }
 
-    if (body.remind_at !== undefined) {
+    if (body.notification_sent_at !== undefined) {
+      if (body.notification_sent_at === null) {
+        updates.notification_sent_at = null;
+      } else {
+        updates.notification_sent_at = new Date().toISOString();
+      }
+    }
+
+    if (body.recurrence !== undefined) {
+      const r = String(body.recurrence ?? "none").trim();
+      updates.recurrence = isRecurrenceType(r) ? r : "none";
+    }
+
+    if (body.recurrence_until !== undefined) {
+      if (body.recurrence_until === null || body.recurrence_until === "") {
+        updates.recurrence_until = null;
+      } else {
+        const u = String(body.recurrence_until).trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(u)) {
+          return NextResponse.json({ error: "Invalid recurrence_until." }, { status: 400 });
+        }
+        updates.recurrence_until = u;
+      }
+    }
+
+    if (body.recurrence !== undefined && updates.recurrence === "none") {
+      updates.recurrence_until = null;
+    }
+
+    if (body.reminder_minutes_before !== undefined) {
+      if (body.reminder_minutes_before === null) {
+        updates.reminder_minutes_before = null;
+      } else {
+        const n = Number(body.reminder_minutes_before);
+        updates.reminder_minutes_before =
+          Number.isFinite(n) && n >= 0 ? Math.floor(n) : null;
+      }
+    }
+
+    if (body.alert_minutes !== undefined && body.reminder_minutes_before === undefined) {
+      const n = Number(body.alert_minutes);
+      if (Number.isFinite(n) && n >= 0) {
+        updates.reminder_minutes_before = Math.floor(n);
+      }
+    }
+
+    const mergedRecurrence =
+      typeof updates.recurrence === "string"
+        ? updates.recurrence
+        : typeof curRow.recurrence === "string"
+          ? curRow.recurrence
+          : "none";
+    const recNorm = isRecurrenceType(mergedRecurrence) ? mergedRecurrence : "none";
+
+    if (updates.recurrence !== undefined && updates.recurrence !== "none") {
+      updates.remind_at = null;
+      updates.notification_sent_at = null;
+    }
+
+    if (body.remind_at !== undefined && recNorm === "none") {
       if (body.remind_at === null) {
         updates.remind_at = null;
         updates.notification_sent_at = null;
@@ -149,14 +208,6 @@ export async function PATCH(
         }
         updates.remind_at = d.toISOString();
         updates.notification_sent_at = null;
-      }
-    }
-
-    if (body.notification_sent_at !== undefined) {
-      if (body.notification_sent_at === null) {
-        updates.notification_sent_at = null;
-      } else {
-        updates.notification_sent_at = new Date().toISOString();
       }
     }
 
