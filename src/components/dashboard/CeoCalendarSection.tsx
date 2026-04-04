@@ -7,7 +7,17 @@ import {
   useRef,
   useState,
 } from "react";
-import { Bell, CalendarDays, ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
+import {
+  Bell,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Columns2,
+  LayoutGrid,
+  Plus,
+  Square,
+  Trash2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ALERT_MINUTES_OPTIONS,
@@ -68,6 +78,22 @@ function visibleMonthGridRange(year: number, month: number): { from: string; to:
   end.setDate(last.getDate() + (6 - last.getDay()));
   return { from: toYMD(start), to: toYMD(end) };
 }
+
+function weekRangeContaining(d: Date): { from: string; to: string } {
+  const start = new Date(d);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - start.getDay());
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  return { from: toYMD(start), to: toYMD(end) };
+}
+
+function dayRange(d: Date): { from: string; to: string } {
+  const ymd = toYMD(d);
+  return { from: ymd, to: ymd };
+}
+
+type CalendarViewMode = "month" | "week" | "day";
 
 function eventTimeLabel(ev: ApiCalendarEvent): string {
   const sh = ev.hour ?? 0;
@@ -145,11 +171,14 @@ function useCalendarReminders(
 }
 
 export function CeoCalendarSection() {
-  const today = useMemo(() => new Date(), []);
-  const [cursor, setCursor] = useState(() => ({
-    y: today.getFullYear(),
-    m: today.getMonth(),
-  }));
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const [viewDate, setViewDate] = useState(() => new Date(today));
+  const [viewMode, setViewMode] = useState<CalendarViewMode>("month");
 
   const [events, setEvents] = useState<ApiCalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -175,10 +204,20 @@ export function CeoCalendarSection() {
   const [recurrence, setRecurrence] = useState<RecurrenceType>("none");
   const [recurrenceUntil, setRecurrenceUntil] = useState("");
 
-  const range = useMemo(
-    () => visibleMonthGridRange(cursor.y, cursor.m),
-    [cursor.y, cursor.m]
-  );
+  const range = useMemo(() => {
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+    switch (viewMode) {
+      case "month":
+        return visibleMonthGridRange(y, m);
+      case "week":
+        return weekRangeContaining(viewDate);
+      case "day":
+        return dayRange(viewDate);
+      default:
+        return visibleMonthGridRange(y, m);
+    }
+  }, [viewDate, viewMode]);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -204,6 +243,12 @@ export function CeoCalendarSection() {
   useEffect(() => {
     void loadEvents();
   }, [loadEvents]);
+
+  useEffect(() => {
+    if (viewMode === "day") {
+      setSelectedDay(toYMD(viewDate));
+    }
+  }, [viewMode, viewDate]);
 
   const loadPickers = useCallback(async () => {
     try {
@@ -277,13 +322,39 @@ export function CeoCalendarSection() {
       .slice(0, 8);
   }, [events]);
 
-  const monthLabel = new Intl.DateTimeFormat(undefined, {
-    month: "long",
-    year: "numeric",
-  }).format(new Date(cursor.y, cursor.m, 1));
+  const periodLabel = useMemo(() => {
+    if (viewMode === "month") {
+      return new Intl.DateTimeFormat(undefined, {
+        month: "long",
+        year: "numeric",
+      }).format(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1));
+    }
+    if (viewMode === "week") {
+      const ws = new Date(viewDate);
+      ws.setHours(0, 0, 0, 0);
+      ws.setDate(ws.getDate() - ws.getDay());
+      const we = new Date(ws);
+      we.setDate(ws.getDate() + 6);
+      const short: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+      const endOpts: Intl.DateTimeFormatOptions = {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      };
+      return `${ws.toLocaleDateString(undefined, short)} – ${we.toLocaleDateString(undefined, endOpts)}`;
+    }
+    return viewDate.toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }, [viewDate, viewMode]);
 
-  const gridDays = useMemo(() => {
-    const first = new Date(cursor.y, cursor.m, 1);
+  const monthGridDays = useMemo(() => {
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+    const first = new Date(y, m, 1);
     const start = new Date(first);
     start.setDate(first.getDate() - first.getDay());
     const days: Date[] = [];
@@ -293,7 +364,45 @@ export function CeoCalendarSection() {
       days.push(d);
     }
     return days;
-  }, [cursor.y, cursor.m]);
+  }, [viewDate]);
+
+  const weekDays = useMemo(() => {
+    const ws = new Date(viewDate);
+    ws.setHours(0, 0, 0, 0);
+    ws.setDate(ws.getDate() - ws.getDay());
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(ws);
+      d.setDate(ws.getDate() + i);
+      return d;
+    });
+  }, [viewDate]);
+
+  function navigatePeriod(dir: -1 | 1) {
+    setViewDate((d) => {
+      const n = new Date(d);
+      n.setHours(0, 0, 0, 0);
+      if (viewMode === "month") {
+        n.setMonth(n.getMonth() + dir);
+      } else if (viewMode === "week") {
+        n.setDate(n.getDate() + dir * 7);
+      } else {
+        n.setDate(n.getDate() + dir);
+      }
+      return n;
+    });
+  }
+
+  function goToday() {
+    setViewDate(new Date(today));
+    setSelectedDay(toYMD(today));
+  }
+
+  function changeViewMode(mode: CalendarViewMode) {
+    setViewMode(mode);
+    if (mode === "day" && selectedDay) {
+      setViewDate(parseYMD(selectedDay));
+    }
+  }
 
   function openNewForDay(ymd: string) {
     setSelectedDay(ymd);
@@ -480,104 +589,282 @@ export function CeoCalendarSection() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
         <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-          <div className="flex items-center justify-between border-b border-gray-400/30 px-3 py-2.5">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-gray-700" />
-              <span className="text-sm font-bold text-gray-900">{monthLabel}</span>
+          <div className="flex flex-col gap-2 border-b border-gray-400/30 px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-2">
+              <CalendarDays className="h-4 w-4 shrink-0 text-gray-700" />
+              <span className="truncate text-sm font-bold text-gray-900">{periodLabel}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <div
+                className="flex rounded-lg border border-gray-400/45 bg-gray-200/40 p-0.5"
+                role="tablist"
+                aria-label="Calendar view"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={viewMode === "month"}
+                  onClick={() => changeViewMode("month")}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
+                    viewMode === "month"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  )}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  Month
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={viewMode === "week"}
+                  onClick={() => changeViewMode("week")}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
+                    viewMode === "week"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  )}
+                >
+                  <Columns2 className="h-3.5 w-3.5" />
+                  Week
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={viewMode === "day"}
+                  onClick={() => changeViewMode("day")}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
+                    viewMode === "day"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  )}
+                >
+                  <Square className="h-3.5 w-3.5" />
+                  Day
+                </button>
+              </div>
               <button
                 type="button"
-                aria-label="Previous month"
+                onClick={() => goToday()}
+                className="rounded-md border border-sky-500/35 bg-sky-50/90 px-2 py-1 text-[11px] font-semibold text-sky-900 hover:bg-sky-100/90"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                aria-label={viewMode === "month" ? "Previous month" : viewMode === "week" ? "Previous week" : "Previous day"}
                 className="rounded-md border border-gray-400/50 p-1 text-gray-700 hover:bg-gray-400/20"
-                onClick={() =>
-                  setCursor((c) =>
-                    c.m === 0 ? { y: c.y - 1, m: 11 } : { y: c.y, m: c.m - 1 }
-                  )
-                }
+                onClick={() => navigatePeriod(-1)}
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
               <button
                 type="button"
-                aria-label="Next month"
+                aria-label={viewMode === "month" ? "Next month" : viewMode === "week" ? "Next week" : "Next day"}
                 className="rounded-md border border-gray-400/50 p-1 text-gray-700 hover:bg-gray-400/20"
-                onClick={() =>
-                  setCursor((c) =>
-                    c.m === 11 ? { y: c.y + 1, m: 0 } : { y: c.y, m: c.m + 1 }
-                  )
-                }
+                onClick={() => navigatePeriod(1)}
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600">
-            {weekdayLabels.map((w) => (
-              <div key={w} className="py-2">
-                {w}
-              </div>
-            ))}
-          </div>
-
-          <div className="relative grid grid-cols-7 gap-px bg-gray-400/25 p-px">
-            {loading ? (
-              <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600">
-                Loading…
-              </div>
-            ) : null}
-            {gridDays.map((d) => {
-              const ymd = toYMD(d);
-              const inMonth = d.getMonth() === cursor.m;
-              const isToday = ymd === toYMD(new Date());
-              const sel = selectedDay === ymd;
-              const dayEvents = eventsByDate.get(ymd) ?? [];
-              return (
-                <button
-                  key={ymd}
-                  type="button"
-                  onClick={() => {
-                    setSelectedDay(ymd);
-                    setFormOpen(false);
-                  }}
-                  onDoubleClick={() => openNewForDay(ymd)}
-                  className={cn(
-                    "flex min-h-[72px] flex-col gap-0.5 bg-neutral-50/95 p-1 text-left transition-colors hover:bg-sky-50/60",
-                    !inMonth && "opacity-40",
-                    isToday && "ring-1 ring-sky-500/50 ring-inset",
-                    sel && "bg-sky-100/50"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "text-[11px] font-semibold tabular-nums",
-                      isToday ? "text-sky-800" : "text-gray-800"
-                    )}
-                  >
-                    {d.getDate()}
-                  </span>
-                  <div className="flex flex-wrap gap-0.5">
-                    {dayEvents.slice(0, 3).map((ev) => (
-                      <span
-                        key={ev.instance_id ?? `${ev.id}-${ev.date}`}
-                        title={ev.title}
-                        className="block max-w-full truncate rounded px-0.5 text-[9px] font-medium text-white"
-                        style={{ backgroundColor: ev.color || "#64748b" }}
-                      >
-                        {pad2(ev.hour)}:{pad2(ev.start_minutes ?? 0)}
-                      </span>
-                    ))}
-                    {dayEvents.length > 3 ? (
-                      <span className="text-[9px] text-gray-500">+{dayEvents.length - 3}</span>
-                    ) : null}
+          {viewMode === "month" ? (
+            <>
+              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600">
+                {weekdayLabels.map((w) => (
+                  <div key={w} className="py-2">
+                    {w}
                   </div>
-                </button>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+
+              <div className="relative grid grid-cols-7 gap-px bg-gray-400/25 p-px">
+                {loading ? (
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600">
+                    Loading…
+                  </div>
+                ) : null}
+                {monthGridDays.map((d) => {
+                  const ymd = toYMD(d);
+                  const inMonth =
+                    d.getMonth() === viewDate.getMonth() &&
+                    d.getFullYear() === viewDate.getFullYear();
+                  const isToday = ymd === toYMD(today);
+                  const sel = selectedDay === ymd;
+                  const dayEvents = eventsByDate.get(ymd) ?? [];
+                  return (
+                    <button
+                      key={ymd}
+                      type="button"
+                      onClick={() => {
+                        setSelectedDay(ymd);
+                        setFormOpen(false);
+                      }}
+                      onDoubleClick={() => openNewForDay(ymd)}
+                      className={cn(
+                        "flex min-h-[72px] flex-col gap-0.5 bg-neutral-50/95 p-1 text-left transition-colors hover:bg-sky-50/60",
+                        !inMonth && "opacity-40",
+                        isToday && "ring-1 ring-sky-500/50 ring-inset",
+                        sel && "bg-sky-100/50"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "text-[11px] font-semibold tabular-nums",
+                          isToday ? "text-sky-800" : "text-gray-800"
+                        )}
+                      >
+                        {d.getDate()}
+                      </span>
+                      <div className="flex flex-wrap gap-0.5">
+                        {dayEvents.slice(0, 3).map((ev) => (
+                          <span
+                            key={ev.instance_id ?? `${ev.id}-${ev.date}`}
+                            title={ev.title}
+                            className="block max-w-full truncate rounded px-0.5 text-[9px] font-medium text-white"
+                            style={{ backgroundColor: ev.color || "#64748b" }}
+                          >
+                            {pad2(ev.hour)}:{pad2(ev.start_minutes ?? 0)}
+                          </span>
+                        ))}
+                        {dayEvents.length > 3 ? (
+                          <span className="text-[9px] text-gray-500">+{dayEvents.length - 3}</span>
+                        ) : null}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
+
+          {viewMode === "week" ? (
+            <>
+              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600">
+                {weekDays.map((d) => (
+                  <div key={toYMD(d)} className="py-2">
+                    <span className="block">{weekdayLabels[d.getDay()]}</span>
+                    <span className="mt-0.5 block text-[11px] font-semibold tabular-nums text-gray-800">
+                      {d.getMonth() + 1}/{d.getDate()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="relative grid grid-cols-7 gap-px bg-gray-400/25 p-px">
+                {loading ? (
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600">
+                    Loading…
+                  </div>
+                ) : null}
+                {weekDays.map((d) => {
+                  const ymd = toYMD(d);
+                  const isToday = ymd === toYMD(today);
+                  const sel = selectedDay === ymd;
+                  const dayEvents = eventsByDate.get(ymd) ?? [];
+                  return (
+                    <button
+                      key={ymd}
+                      type="button"
+                      onClick={() => {
+                        setSelectedDay(ymd);
+                        setFormOpen(false);
+                      }}
+                      onDoubleClick={() => openNewForDay(ymd)}
+                      className={cn(
+                        "flex min-h-[140px] flex-col gap-1 bg-neutral-50/95 p-1.5 text-left transition-colors hover:bg-sky-50/60",
+                        isToday && "ring-1 ring-sky-500/50 ring-inset",
+                        sel && "bg-sky-100/50"
+                      )}
+                    >
+                      <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
+                        {dayEvents.map((ev) => (
+                          <li key={ev.instance_id ?? `${ev.id}-${ev.date}`}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEdit(ev);
+                              }}
+                              className="w-full rounded border border-gray-400/30 bg-white/90 px-1 py-0.5 text-left text-[10px] font-medium text-gray-900 hover:bg-gray-50"
+                              style={{ borderLeftWidth: 3, borderLeftColor: ev.color || "#64748b" }}
+                            >
+                              <span className="block truncate text-gray-600 tabular-nums">
+                                {pad2(ev.hour)}:{pad2(ev.start_minutes ?? 0)}
+                              </span>
+                              <span className="block truncate">{ev.title}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
+
+          {viewMode === "day" ? (
+            <div className="relative min-h-[min(52vh,420px)] p-3">
+              {loading ? (
+                <div className="flex items-center justify-center py-16 text-sm text-gray-600">
+                  Loading…
+                </div>
+              ) : (
+                <ul className="mx-auto max-w-lg space-y-2">
+                  {(eventsByDate.get(toYMD(viewDate)) ?? []).length ? (
+                    (eventsByDate.get(toYMD(viewDate)) ?? []).map((ev) => (
+                      <li key={ev.instance_id ?? `${ev.id}-${ev.date}`}>
+                        <button
+                          type="button"
+                          onClick={() => openEdit(ev)}
+                          className="flex w-full gap-3 rounded-xl border border-gray-400/35 bg-white/90 px-3 py-2.5 text-left shadow-sm hover:bg-gray-50"
+                        >
+                          <span
+                            className="w-1 shrink-0 self-stretch rounded-full"
+                            style={{ backgroundColor: ev.color || "#64748b" }}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-gray-900">{ev.title}</p>
+                            <p className="mt-0.5 text-xs text-gray-600">
+                              {eventTimeLabel(ev)} ·{" "}
+                              {EVENT_TYPE_LABELS[(ev.event_type as CalendarEventType) || "other"]}
+                              {typeof ev.recurrence === "string" &&
+                              isRecurrenceType(ev.recurrence) &&
+                              ev.recurrence !== "none" ? (
+                                <span className="text-sky-700">
+                                  {" "}
+                                  · {RECURRENCE_LABELS[ev.recurrence]}
+                                </span>
+                              ) : null}
+                            </p>
+                            {ev.notes ? (
+                              <p className="mt-1 line-clamp-2 text-xs text-gray-500">{ev.notes}</p>
+                            ) : null}
+                          </div>
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="py-12 text-center text-sm text-gray-500">
+                      No events scheduled this day. Use Add or double-click a day in month/week view.
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
+          ) : null}
+
           <p className="border-t border-gray-400/25 px-3 py-2 text-[10px] text-gray-500">
-            Double-click a day to add an event. Single click selects the day for the list and form.
+            {viewMode === "month"
+              ? "Double-click a day to add an event. Single click selects the day for the list and form."
+              : viewMode === "week"
+                ? "Click a day to select it; double-click to add. Event chips open the editor."
+                : "Use arrows to change days. Add from the sidebar or switch to month/week to pick another day."}
           </p>
         </div>
 
