@@ -16,7 +16,10 @@ import {
   Inbox,
   Cpu,
   DollarSign,
+  Building2,
 } from "lucide-react";
+import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
+import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -29,6 +32,8 @@ const MARKETING_NAV_TABS = [
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
   { id: "user-management", label: "User management", icon: UserCog },
+  { id: "clients", label: "Clients", icon: Building2 },
+  { id: "leads", label: "Leads", icon: Users },
   { id: "plan-management", label: "Plan management", icon: CreditCard },
   { id: "usage-limits", label: "Usage limits", icon: Gauge },
   { id: "content-templates", label: "Content templates", icon: LayoutTemplate },
@@ -386,15 +391,21 @@ export function HolographicDashboardTabs({
                       {variant === "marketing" && activeTab === "ai-agents" && (
                         <PlaceholderTab label="AI Agents" />
                       )}
-                      {variant === "ceo" && (
-                        <PlaceholderTab
-                          variant="ceo"
-                          label={
-                            navTabs.find((t) => t.id === activeTab)?.label ??
-                            "Section"
-                          }
-                        />
+                      {variant === "ceo" && activeTab === "clients" && (
+                        <CeoClientsSection />
                       )}
+                      {variant === "ceo" && activeTab === "leads" && <CeoLeadsSection />}
+                      {variant === "ceo" &&
+                        activeTab !== "clients" &&
+                        activeTab !== "leads" && (
+                          <PlaceholderTab
+                            variant="ceo"
+                            label={
+                              navTabs.find((t) => t.id === activeTab)?.label ??
+                              "Section"
+                            }
+                          />
+                        )}
                     </motion.div>
                   </AnimatePresence>
                 </div>
