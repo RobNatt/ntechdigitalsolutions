@@ -25,7 +25,6 @@ import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "leads", label: "Leads", icon: Users },
   { id: "analytics", label: "Analytics", icon: LineChart },
   { id: "funnels", label: "Funnels", icon: BarChart2 },
   { id: "ai-agents", label: "AI Agents", icon: Sparkles },
@@ -48,12 +47,6 @@ const CEO_NAV_TABS = [
 
 const KPI_CARDS = [
   {
-    title: "Leads this month",
-    value: "284",
-    delta: "↑ 42% vs last month",
-    deltaPositive: true,
-  },
-  {
     title: "Conversion rate",
     value: "18.3%",
     delta: "↑ 6.1% vs last month",
@@ -66,54 +59,6 @@ const KPI_CARDS = [
     deltaPositive: true,
   },
 ] as const;
-
-const LEAD_ROWS = [
-  {
-    business: "Riverside Plumbing Co.",
-    source: "SEO Funnel",
-    score: 94,
-    status: "HOT" as const,
-  },
-  {
-    business: "Martinez Law Firm",
-    source: "Landing Page",
-    score: 87,
-    status: "CONVERTED" as const,
-  },
-  {
-    business: "Bloom Salon Studio",
-    source: "AI Agent",
-    score: 72,
-    status: "WARM" as const,
-  },
-  {
-    business: "Summit Roofing LLC",
-    source: "Google Ads",
-    score: 61,
-    status: "NURTURING" as const,
-  },
-] as const;
-
-function scoreTone(score: number) {
-  if (score >= 85) return "text-emerald-700";
-  if (score >= 70) return "text-sky-700";
-  return "text-amber-700";
-}
-
-function statusStyles(status: (typeof LEAD_ROWS)[number]["status"]) {
-  switch (status) {
-    case "HOT":
-      return "border-red-400/60 bg-red-50 text-red-800";
-    case "CONVERTED":
-      return "border-emerald-400/60 bg-emerald-50 text-emerald-900";
-    case "WARM":
-      return "border-amber-400/60 bg-amber-50 text-amber-900";
-    case "NURTURING":
-      return "border-teal-400/60 bg-teal-50 text-teal-900";
-    default:
-      return "border-gray-400/50 bg-gray-100 text-gray-800";
-  }
-}
 
 function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) {
   return (
@@ -161,7 +106,7 @@ function NTechMark({ className }: { className?: string }) {
 function DashboardOverview() {
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {KPI_CARDS.map((card) => (
           <div
             key={card.title}
@@ -184,57 +129,6 @@ function DashboardOverview() {
           </div>
         ))}
       </div>
-
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
-            Recent pipeline
-          </h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-400/25 bg-gray-400/10 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700">
-                <th className="px-4 py-2.5">Lead / Business</th>
-                <th className="px-4 py-2.5">Source</th>
-                <th className="px-4 py-2.5">Score</th>
-                <th className="px-4 py-2.5">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {LEAD_ROWS.map((row, i) => (
-                <tr
-                  key={`${row.business}-${i}`}
-                  className="border-b border-gray-400/20 last:border-0 hover:bg-gray-400/10"
-                >
-                  <td className="px-4 py-2.5 font-medium text-gray-900">
-                    {row.business}
-                  </td>
-                  <td className="px-4 py-2.5 text-gray-700">{row.source}</td>
-                  <td
-                    className={cn(
-                      "px-4 py-2.5 text-sm font-semibold tabular-nums",
-                      scoreTone(row.score)
-                    )}
-                  >
-                    {row.score}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <span
-                      className={cn(
-                        "inline-flex rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
-                        statusStyles(row.status)
-                      )}
-                    >
-                      {row.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }
@@ -254,8 +148,7 @@ export function HolographicDashboardTabs({
     variant === "ceo" ? "calendar" : "dashboard"
   );
 
-  const headerTitle =
-    variant === "ceo" ? "CEO dashboard" : "Lead Intelligence Dashboard";
+  const headerTitle = variant === "ceo" ? "CEO dashboard" : "Operations dashboard";
   const sidebarWidthClass = variant === "ceo" ? "w-[228px]" : "w-[200px]";
 
   return (
@@ -381,9 +274,6 @@ export function HolographicDashboardTabs({
                     >
                       {variant === "marketing" && activeTab === "dashboard" && (
                         <DashboardOverview />
-                      )}
-                      {variant === "marketing" && activeTab === "leads" && (
-                        <PlaceholderTab label="Leads" />
                       )}
                       {variant === "marketing" && activeTab === "analytics" && (
                         <PlaceholderTab label="Analytics" />
