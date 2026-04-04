@@ -53,18 +53,14 @@ export async function PATCH(
     const updates: Record<string, unknown> = { updated_at: now };
 
     if (body.name !== undefined) {
-      const name = String(body.name ?? "").trim() || null;
-      updates.name = name;
-      updates.full_name = name;
+      updates.name = String(body.name ?? "").trim() || null;
     }
     if (body.email !== undefined) {
       const email = String(body.email ?? "").trim() || null;
       updates.email = email;
     }
     if (body.phone !== undefined) {
-      const phone = String(body.phone ?? "").trim() || null;
-      updates.phone = phone;
-      updates.phone_number = phone;
+      updates.phone = String(body.phone ?? "").trim() || null;
     }
     if (body.address !== undefined) {
       updates.address = String(body.address ?? "").trim() || null;
@@ -103,12 +99,75 @@ export async function PATCH(
 
     if (error) {
       console.error("Lead update error:", error);
-      return NextResponse.json({ error: "Failed to update lead." }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to update lead.", hint: error.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Lead PATCH error:", err);
     return NextResponse.json({ error: "Failed to update lead." }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/leads/[id] — remove lead (authenticated, admin client)
+ */
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    let admin;
+    try {
+      admin = createAdminClient();
+    } catch (e) {
+      console.error("Admin client:", e);
+      return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    }
+
+    const { error: unlinkErr } = await admin
+      .from("clients")
+      .update({ source_lead_id: null })
+      .eq("source_lead_id", id);
+    if (unlinkErr) {
+      console.warn("Unlink clients from deleted lead (column may be missing):", unlinkErr.message);
+    }
+
+    const { data: deleted, error } = await admin
+      .from("leads")
+      .delete()
+      .eq("id", id)
+      .select("id");
+
+    if (error) {
+      console.error("Lead delete error:", error);
+      return NextResponse.json(
+        { error: "Failed to delete lead.", hint: error.message },
+        { status: 500 }
+      );
+    }
+
+    if (!deleted?.length) {
+      return NextResponse.json({ error: "Lead not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Lead DELETE error:", err);
+    return NextResponse.json({ error: "Failed to delete lead." }, { status: 500 });
   }
 }

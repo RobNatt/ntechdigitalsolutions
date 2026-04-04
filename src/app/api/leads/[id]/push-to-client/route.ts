@@ -35,7 +35,7 @@ export async function POST(
     const { id: leadId } = await params;
     let body: { retriggerOnboarding?: boolean } = {};
     try {
-      const text = await request.text();
+      const text = (await request.text()).trim();
       if (text) body = JSON.parse(text) as { retriggerOnboarding?: boolean };
     } catch {
       return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
@@ -73,7 +73,9 @@ export async function POST(
     }
 
     const existingClientId =
-      typeof lead.client_id === "string" ? lead.client_id : null;
+      lead.client_id != null && String(lead.client_id).trim() !== ""
+        ? String(lead.client_id)
+        : null;
 
     if (existingClientId) {
       if (!body.retriggerOnboarding) {
@@ -106,6 +108,7 @@ export async function POST(
     const leadDetails = asDetails(lead.details);
 
     const clientInsert: Record<string, unknown> = {
+      user_id: user.id,
       ...(companyId ? { company_id: companyId } : {}),
       name: typeof lead.name === "string" && lead.name.trim() ? lead.name.trim() : name,
       email: typeof lead.email === "string" ? lead.email.trim() || null : null,
@@ -128,7 +131,14 @@ export async function POST(
 
     if (insertError || !created?.id) {
       console.error("Client insert from lead:", insertError);
-      return NextResponse.json({ error: "Failed to create client." }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: "Failed to create client. Run migration 014_clients_crm_legacy_align.sql in Supabase if this is an older database.",
+          hint: insertError?.message ?? null,
+          code: insertError?.code ?? null,
+        },
+        { status: 500 }
+      );
     }
 
     const clientId = created.id as string;
@@ -146,7 +156,13 @@ export async function POST(
     if (leadUpdateError) {
       console.error("Lead link after client create:", leadUpdateError);
       return NextResponse.json(
-        { error: "Client created but failed to link lead.", clientId },
+        {
+          error:
+            "Client created but failed to link lead. Run migration 012_leads_client_link.sql (adds leads.client_id).",
+          clientId,
+          hint: leadUpdateError.message,
+          code: leadUpdateError.code,
+        },
         { status: 500 }
       );
     }

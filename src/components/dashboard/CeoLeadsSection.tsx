@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Upload, UserPlus, Save } from "lucide-react";
+import { Upload, UserPlus, Save, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PIPELINE_STAGES, stageLabel } from "@/lib/leads/stages";
 
@@ -51,6 +51,12 @@ function leadToDraft(lead: LeadRow): Draft {
   };
 }
 
+function apiErrorMessage(data: Record<string, unknown>, fallback: string): string {
+  const err = typeof data.error === "string" ? data.error : fallback;
+  const hint = typeof data.hint === "string" && data.hint.trim() ? data.hint.trim() : "";
+  return hint ? `${err} — ${hint}` : err;
+}
+
 function draftsEqual(a: Draft, b: Draft): boolean {
   return (
     a.name === b.name &&
@@ -75,6 +81,7 @@ export function CeoLeadsSection() {
   const [importing, setImporting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pushing, setPushing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
@@ -148,7 +155,7 @@ export function CeoLeadsSection() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(typeof data.error === "string" ? data.error : "Save failed.");
+        setError(apiErrorMessage(data as Record<string, unknown>, "Save failed."));
         return;
       }
       setBaseline(draft);
@@ -189,7 +196,7 @@ export function CeoLeadsSection() {
         return;
       }
       if (!res.ok && res.status !== 207) {
-        setError(typeof data.error === "string" ? data.error : "Push to clients failed.");
+        setError(apiErrorMessage(data as Record<string, unknown>, "Push to clients failed."));
         return;
       }
       if (data.onboardingRetriggered) {
@@ -207,6 +214,35 @@ export function CeoLeadsSection() {
       setError("Push to clients failed.");
     } finally {
       setPushing(false);
+    }
+  }
+
+  async function deleteLead() {
+    if (!selectedId) return;
+    if (
+      !confirm(
+        "Permanently delete this lead? Linked client records stay in Clients; only the lead row is removed."
+      )
+    ) {
+      return;
+    }
+    setDeleting(true);
+    setError(null);
+    setActionMessage(null);
+    try {
+      const res = await fetch(`/api/leads/${selectedId}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(apiErrorMessage(data as Record<string, unknown>, "Delete failed."));
+        return;
+      }
+      setSelectedId(null);
+      setActionMessage("Lead deleted.");
+      await load();
+    } catch {
+      setError("Delete failed.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -541,6 +577,16 @@ export function CeoLeadsSection() {
                   <code className="rounded bg-gray-400/25 px-1">lib/onboarding</code> — your next step
                   is to wire real emails or tasks there.
                 </p>
+
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={() => void deleteLead()}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-400/55 bg-red-50/90 px-3 py-2 text-xs font-semibold text-red-900 shadow-sm hover:bg-red-100/90 disabled:opacity-45"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {deleting ? "Deleting…" : "Delete lead"}
+                </button>
               </div>
             </div>
           )}
