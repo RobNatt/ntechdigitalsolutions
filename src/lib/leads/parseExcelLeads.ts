@@ -38,6 +38,58 @@ function pick(m: Record<string, string>, aliases: string[]): string | null {
   return null;
 }
 
+/** Cells that usually appear in row 1 of a lead export header */
+const HEADER_HINTS = new Set([
+  "name",
+  "full_name",
+  "fullname",
+  "firstname",
+  "lastname",
+  "first_name",
+  "last_name",
+  "email",
+  "e_mail",
+  "phone",
+  "mobile",
+  "phone_number",
+  "cell",
+  "telephone",
+  "address",
+  "street",
+  "stage",
+  "status",
+  "source",
+  "lead_type",
+  "type",
+  "notes",
+  "company",
+  "company_name",
+]);
+
+function headerRowScore(row: unknown[]): number {
+  let s = 0;
+  for (const c of row) {
+    const n = normalizeHeader(String(c ?? ""));
+    if (n && HEADER_HINTS.has(n)) s += 1;
+  }
+  return s;
+}
+
+function rowsFromAoA(aoa: unknown[][], headerRowIdx: number): Record<string, unknown>[] {
+  const headerCells = (aoa[headerRowIdx] ?? []).map((c) => String(c ?? "").trim());
+  const keys = headerCells.map((h, i) => (h ? h : `__EMPTY_${i}`));
+  const out: Record<string, unknown>[] = [];
+  for (let r = headerRowIdx + 1; r < aoa.length; r++) {
+    const row = aoa[r] ?? [];
+    const obj: Record<string, unknown> = {};
+    for (let c = 0; c < keys.length; c++) {
+      obj[keys[c]] = row[c] ?? "";
+    }
+    out.push(obj);
+  }
+  return out;
+}
+
 export type ParsedLeadRow = {
   source: string;
   lead_type: string;
@@ -72,10 +124,35 @@ export function workbookBufferToLeadRows(buffer: ArrayBuffer): {
     return { rows: [], skippedEmpty: 0, parseWarnings };
   }
   const sheet = wb.Sheets[firstName];
-  const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
+  const aoa = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
+    header: 1,
     defval: "",
     raw: false,
-  });
+  }) as unknown[][];
+
+  if (!aoa.length) {
+    parseWarnings.push("The first sheet has no rows.");
+    return { rows: [], skippedEmpty: 0, parseWarnings };
+  }
+
+  let headerIdx = 0;
+  let bestScore = headerRowScore(aoa[0] ?? []);
+  const scanLimit = Math.min(25, aoa.length);
+  for (let i = 1; i < scanLimit; i++) {
+    const sc = headerRowScore(aoa[i] ?? []);
+    if (sc > bestScore) {
+      bestScore = sc;
+      headerIdx = i;
+    }
+  }
+
+  if (bestScore === 0) {
+    parseWarnings.push(
+      "No recognizable header row (expected columns like Name, Email, or Phone in the first rows)."
+    );
+  }
+
+  const rawRows = rowsFromAoA(aoa, headerIdx);
 
   const reservedAliases = new Set([
     "name",
@@ -109,7 +186,7 @@ export function workbookBufferToLeadRows(buffer: ArrayBuffer): {
 
   for (let i = 0; i < rawRows.length; i++) {
     const m = rowToNormalizedMap(rawRows[i]);
-    const name =
+    let name =
       pick(m, [
         "name",
         "full_name",
@@ -118,6 +195,12 @@ export function workbookBufferToLeadRows(buffer: ArrayBuffer): {
         "lead_name",
         "customer_name",
       ]) || null;
+    if (!name) {
+      const fn = pick(m, ["first_name", "firstname", "first", "given_name"]);
+      const ln = pick(m, ["last_name", "lastname", "last", "surname", "family_name"]);
+      const combined = [fn, ln].filter(Boolean).join(" ").trim();
+      if (combined) name = combined;
+    }
     const email = pick(m, ["email", "e_mail", "e-mail"]) || null;
     const phone = pick(m, ["phone", "mobile", "phone_number", "cell", "telephone"]) || null;
     const address = pick(m, ["address", "street", "location"]) || null;

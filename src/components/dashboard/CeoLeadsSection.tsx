@@ -265,7 +265,7 @@ export function CeoLeadsSection() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(typeof data.error === "string" ? data.error : "Import failed.");
+        setError(apiErrorMessage(data as Record<string, unknown>, "Import failed."));
         return;
       }
       const n = typeof data.imported === "number" ? data.imported : 0;
@@ -273,7 +273,20 @@ export function CeoLeadsSection() {
         typeof data.skippedEmpty === "number" && data.skippedEmpty > 0
           ? ` (${data.skippedEmpty} empty rows skipped)`
           : "";
-      setImportMessage(`Imported ${n} lead${n === 1 ? "" : "s"}${skipped}.`);
+      const warnList = Array.isArray(data.warnings)
+        ? (data.warnings as unknown[]).filter((w) => typeof w === "string").join(" ")
+        : "";
+      if (n === 0) {
+        const msg =
+          typeof data.message === "string" && data.message.trim()
+            ? data.message.trim()
+            : "No rows were imported.";
+        setImportMessage([msg, warnList].filter(Boolean).join(" "));
+      } else {
+        setImportMessage(
+          [`Imported ${n} lead${n === 1 ? "" : "s"}${skipped}.`, warnList].filter(Boolean).join(" ")
+        );
+      }
       await load();
     } catch {
       setError("Import failed.");
@@ -491,7 +504,6 @@ export function CeoLeadsSection() {
                   className={inputClass}
                   value={draft.source}
                   onChange={(e) => updateDraft("source", e.target.value)}
-                  placeholder="e.g. excel_import, SEO"
                   autoComplete="off"
                 />
               </label>
@@ -501,7 +513,6 @@ export function CeoLeadsSection() {
                   className={inputClass}
                   value={draft.lead_type}
                   onChange={(e) => updateDraft("lead_type", e.target.value)}
-                  placeholder="homeowner, commercial…"
                   autoComplete="off"
                 />
               </label>
@@ -525,7 +536,6 @@ export function CeoLeadsSection() {
                   className={cn(inputClass, "min-h-[88px] resize-y")}
                   value={draft.notes}
                   onChange={(e) => updateDraft("notes", e.target.value)}
-                  placeholder="Internal notes…"
                   rows={4}
                 />
               </label>

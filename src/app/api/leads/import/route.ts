@@ -21,15 +21,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const ct = request.headers.get("content-type") || "";
-    if (!ct.includes("multipart/form-data")) {
+    let form: FormData;
+    try {
+      form = await request.formData();
+    } catch {
       return NextResponse.json(
-        { error: "Expected multipart/form-data with a file field named file." },
+        {
+          error: "Could not read upload.",
+          hint: "Send a POST with multipart body and a field named file (.xlsx or .xls).",
+        },
         { status: 400 }
       );
     }
-
-    const form = await request.formData();
     const file = form.get("file");
     if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: "Missing file." }, { status: 400 });
