@@ -150,7 +150,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: "100%",
+        width: visible ? "40%" : "100%",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -158,8 +158,9 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         stiffness: 200,
         damping: 50,
       }}
+      style={{ minWidth: visible ? 0 : 800 }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between gap-3 self-start rounded-full bg-transparent px-4 py-2 dark:bg-transparent lg:flex",
+        "relative z-[60] mx-auto hidden max-w-7xl flex-row items-center justify-between gap-3 self-start rounded-full bg-transparent px-4 py-2 dark:bg-transparent lg:flex",
         visible && "bg-white/80 dark:bg-neutral-950/80"
       )}
     >
@@ -227,7 +228,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
           boxShadow: visible
             ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
             : "none",
-          width: "100%",
+          width: visible ? "90%" : "100%",
           y: visible ? 20 : 0,
           borderRadius: open ? "4px" : "2rem",
           paddingRight: visible ? "12px" : "0px",
