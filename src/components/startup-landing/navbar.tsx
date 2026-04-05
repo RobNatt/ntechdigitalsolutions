@@ -33,23 +33,20 @@ export const Navbar = () => {
     { name: "Contact", link: "/contact" },
   ];
 
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+  /** Page scroll — do not pass `target: navbarRef`: a fixed header’s target scroll offset barely moves, so shrink never triggered. */
+  const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
 
+  useEffect(() => {
+    setVisible(window.scrollY > 100);
+  }, []);
+
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
+    setVisible(latest > 100);
   });
 
   return (
-    <motion.div ref={ref} className="w-full fixed top-0 inset-x-0 z-50">
+    <motion.div className="w-full fixed top-0 inset-x-0 z-50">
       <DesktopNav visible={visible} navItems={navItems} />
       <MobileNav visible={visible} navItems={navItems} />
     </motion.div>
