@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
-import { CONSTANTS } from "@/constants/links";
+import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
 import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
 
 export const metadata: Metadata = {
@@ -10,25 +9,29 @@ export const metadata: Metadata = {
     "Reach N-Tech Digital Solutions for project inquiries, partnerships, and support — Omaha and remote-friendly.",
 };
 
-export default function ContactPage() {
+type ContactPageProps = {
+  searchParams: Promise<{ plan?: string }>;
+};
+
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const sp = await searchParams;
+  const planInterest =
+    typeof sp.plan === "string" && sp.plan.trim() ? sp.plan.trim() : undefined;
+
   return (
     <MarketingPageShell
       title="Contact"
       subtitle="Tell us what you&apos;re trying to fix — traffic, leads, follow-up, or all of the above. We&apos;ll respond with next steps."
     >
       <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Start with the lead form</h2>
-        <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-          The fastest path is our structured intake — it helps us scope without endless back-and-forth.
+        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Send a message</h2>
+        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+          Same details we used to collect on our intake form: your name, email, company (optional),
+          phone (optional), and what you need. We email our team immediately and reply to you by email.
         </p>
-        <Link
-          href={CONSTANTS.LEAD_AGENT_APP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex rounded-md bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-        >
-          Open lead form
-        </Link>
+        <div className="mt-6">
+          <MarketingInquiryForm planInterest={planInterest} />
+        </div>
       </div>
       <div className="space-y-3 pt-4">
         <p>

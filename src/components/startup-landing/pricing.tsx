@@ -6,7 +6,6 @@ import { IconCheck } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { ShootingStarsBackground } from "@/components/ui/shooting-stars-background";
-import { CONSTANTS } from "@/constants/links";
 
 const TIERS = [
   {
@@ -174,7 +173,7 @@ export function Pricing() {
               <div className="mt-5">
                 {tier.cta.style === "primary" ? (
                   <Link
-                    href={`${CONSTANTS.LEAD_AGENT_APP_URL}?plan=${tier.id}`}
+                    href={`/contact?plan=${tier.id}`}
                     className={cn(
                       "btn-primary flex w-full cursor-pointer items-center justify-center rounded-md px-3 py-2 text-sm font-bold transition",
                       "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
@@ -187,7 +186,7 @@ export function Pricing() {
                 ) : (
                   <Button
                     as={Link}
-                    href={`${CONSTANTS.LEAD_AGENT_APP_URL}?plan=${tier.id}`}
+                    href={`/contact?plan=${tier.id}`}
                     variant="secondary"
                     className={cn(
                       "btn-primary w-full border border-neutral-300 bg-transparent font-bold",

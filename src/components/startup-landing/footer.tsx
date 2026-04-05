@@ -54,7 +54,7 @@ export function Footer() {
     { title: "Login", href: "/login" },
     {
       title: "Book a demo",
-      href: CONSTANTS.LEAD_AGENT_APP_URL,
+      href: CONSTANTS.CONTACT_PATH,
     },
   ];
   return (

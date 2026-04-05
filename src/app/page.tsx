@@ -3,7 +3,6 @@ import { CursorReactiveEnvironment } from "@/components/cursor-reactive/CursorRe
 import { Features } from "@/components/startup-landing/features";
 import { Footer } from "@/components/startup-landing/footer";
 import { Hero } from "@/components/startup-landing/hero";
-import { LeadAgentCtaPing } from "@/components/startup-landing/lead-agent-cta-ping";
 import { Navbar } from "@/components/startup-landing/navbar";
 import { Process } from "@/components/startup-landing/process";
 import { Pricing } from "@/components/startup-landing/pricing";
@@ -90,7 +89,6 @@ export default function HomePage() {
           __html: JSON.stringify(localBusinessJsonLd),
         }}
       />
-      <LeadAgentCtaPing />
       <Navbar />
       <main>
         <Hero />
