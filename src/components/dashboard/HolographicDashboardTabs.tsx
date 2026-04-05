@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
@@ -18,6 +19,7 @@ import {
   DollarSign,
   Building2,
   CalendarDays,
+  LogOut,
 } from "lucide-react";
 import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
 import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
@@ -143,12 +145,27 @@ export function HolographicDashboardTabs({
   className,
   variant = "marketing",
 }: HolographicDashboardTabsProps) {
+  const router = useRouter();
   const navTabs = variant === "ceo" ? CEO_NAV_TABS : MARKETING_NAV_TABS;
   const [activeTab, setActiveTab] = useState<string>(
     variant === "ceo" ? "calendar" : "dashboard"
   );
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const headerTitle = variant === "ceo" ? "CEO dashboard" : "Operations dashboard";
+  const headerTitle = variant === "ceo" ? "CEO Dashboard" : "Operations dashboard";
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+    } catch {
+      /* still leave session client-side best-effort */
+    } finally {
+      router.push("/login");
+      router.refresh();
+      setLoggingOut(false);
+    }
+  }
   const sidebarWidthClass = variant === "ceo" ? "w-[228px]" : "w-[200px]";
 
   return (
@@ -248,18 +265,31 @@ export function HolographicDashboardTabs({
               </aside>
 
               <div className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-neutral-50/90">
-                <header className="relative z-[1] flex shrink-0 items-start justify-between gap-3 border-b border-gray-400/30 bg-neutral-100/80 px-4 py-3 md:px-5 md:py-4">
+                <header className="relative z-[1] flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-gray-400/30 bg-neutral-100/80 px-4 py-3 md:px-5 md:py-4">
                   <h1 className="text-base font-bold tracking-tight text-gray-800 md:text-lg">
                     {headerTitle}
                   </h1>
-                  <div className="flex items-center gap-2 rounded-full border border-emerald-500/35 bg-emerald-100/80 px-2.5 py-1 shadow-sm">
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-35" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
-                    </span>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">
-                      Live
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {variant === "ceo" ? (
+                      <button
+                        type="button"
+                        disabled={loggingOut}
+                        onClick={() => void handleLogout()}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-400/55 bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-gray-800 shadow-sm hover:bg-gray-100/90 disabled:opacity-50"
+                      >
+                        <LogOut className="h-3.5 w-3.5" aria-hidden />
+                        {loggingOut ? "Signing out…" : "Log out"}
+                      </button>
+                    ) : null}
+                    <div className="flex items-center gap-2 rounded-full border border-emerald-500/35 bg-emerald-100/80 px-2.5 py-1 shadow-sm">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-35" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+                      </span>
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">
+                        Live
+                      </span>
+                    </div>
                   </div>
                 </header>
 
