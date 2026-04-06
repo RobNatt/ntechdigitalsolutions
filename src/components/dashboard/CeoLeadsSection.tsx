@@ -118,6 +118,7 @@ export function CeoLeadsSection() {
   const [saving, setSaving] = useState(false);
   const [pushing, setPushing] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
@@ -319,6 +320,47 @@ export function CeoLeadsSection() {
       setError("Delete failed.");
     } finally {
       setDeleting(false);
+    }
+  }
+
+  async function clearAllLeads() {
+    if (
+      !window.confirm(
+        "Delete every lead in the CRM? Client rows stay; only lead records are removed. This cannot be undone."
+      )
+    ) {
+      return;
+    }
+    const typed = window.prompt('Type exactly: DELETE ALL LEADS');
+    if (typed !== "DELETE ALL LEADS") {
+      if (typed !== null) setError("Confirmation did not match. Nothing was deleted.");
+      return;
+    }
+    setClearing(true);
+    setError(null);
+    setActionMessage(null);
+    try {
+      const res = await fetch("/api/leads/clear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "DELETE ALL LEADS" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(apiErrorMessage(data as Record<string, unknown>, "Clear failed."));
+        return;
+      }
+      const n = typeof data.deleted === "number" ? data.deleted : null;
+      setSelectedId(null);
+      setEditingView(false);
+      setDraft(null);
+      setBaseline(null);
+      setActionMessage(n != null ? `Removed ${n} lead${n === 1 ? "" : "s"}.` : "All leads removed.");
+      await load();
+    } catch {
+      setError("Clear failed.");
+    } finally {
+      setClearing(false);
     }
   }
 
@@ -602,6 +644,14 @@ export function CeoLeadsSection() {
             className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-2 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
           >
             Refresh
+          </button>
+          <button
+            type="button"
+            disabled={clearing || sortedLeads.length === 0}
+            onClick={() => void clearAllLeads()}
+            className="rounded-lg border border-red-400/55 bg-red-50/90 px-3 py-2 text-xs font-semibold text-red-900 shadow-sm hover:bg-red-100/90 disabled:opacity-45"
+          >
+            {clearing ? "Clearing…" : "Clear all leads"}
           </button>
         </div>
       </div>
