@@ -1,7 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
 import { cn } from "@/lib/utils";
+
+function readAnalyticsIds(): { sessionId?: string; visitorId?: string } {
+  if (typeof window === "undefined") return {};
+  try {
+    const visitorId = localStorage.getItem(ANALYTICS_STORAGE_KEYS.visitorId) ?? undefined;
+    const sessionId = sessionStorage.getItem(ANALYTICS_STORAGE_KEYS.sessionId) ?? undefined;
+    return {
+      ...(visitorId && visitorId.length > 4 ? { visitorId } : {}),
+      ...(sessionId && sessionId.length > 4 ? { sessionId } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400";
@@ -29,6 +44,7 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
     try {
       const sourcePage =
         typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : "";
+      const analyticsIds = readAnalyticsIds();
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,6 +56,7 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
           message,
           ...(planInterest ? { plan: planInterest } : {}),
           sourcePage,
+          ...analyticsIds,
         }),
       });
       const data = (await res.json()) as { error?: string; hint?: string };

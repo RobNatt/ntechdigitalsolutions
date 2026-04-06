@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendInquiryNotification } from "@/lib/email";
+import { recordInquirySubmit } from "@/lib/analytics/record-inquiry";
 
 const inquiryIps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -48,6 +49,14 @@ export async function POST(request: Request) {
     const sourcePage =
       typeof body.sourcePage === "string" && body.sourcePage.trim()
         ? body.sourcePage.trim().slice(0, 500)
+        : null;
+    const sessionId =
+      typeof body.sessionId === "string" && body.sessionId.trim()
+        ? body.sessionId.trim().slice(0, 128)
+        : null;
+    const visitorId =
+      typeof body.visitorId === "string" && body.visitorId.trim()
+        ? body.visitorId.trim().slice(0, 128)
         : null;
 
     if (!name || name.length > 200) {
@@ -134,6 +143,17 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    void recordInquirySubmit({
+      companyId,
+      path: sourcePage || "/contact",
+      sessionId,
+      visitorId,
+      metadata: {
+        lead_id: leadId ?? null,
+        plan_interest: planInterest,
+      },
+    });
 
     return NextResponse.json({ success: true, leadId: leadId ?? null });
   } catch (err) {

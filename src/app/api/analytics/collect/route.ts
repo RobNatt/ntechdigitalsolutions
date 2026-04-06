@@ -82,6 +82,13 @@ export async function POST(request: Request) {
       ? body.eventType.slice(0, 64)
       : "pageview";
 
+  if (eventType.toLowerCase() === "inquiry_submit") {
+    return NextResponse.json(
+      { ok: false, error: "Use POST /api/inquiries for inquiry events" },
+      { status: 400, headers }
+    );
+  }
+
   try {
     const admin = createAdminClient();
     const { data: keyRow, error: keyError } = await admin

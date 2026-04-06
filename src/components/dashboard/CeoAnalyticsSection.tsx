@@ -20,6 +20,7 @@ type DayRow = { day?: string; count?: number };
 
 type SummaryPayload = {
   totalPageviews?: number;
+  inquirySubmissions?: number;
   uniqueSessions?: number;
   uniqueVisitors?: number;
   sessionsWithMultiplePageviews?: number;
@@ -110,6 +111,7 @@ export function CeoAnalyticsSection() {
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
   const [siteKeys, setSiteKeys] = useState<SiteKeyRow[]>([]);
   const [since, setSince] = useState<string | null>(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   const [newKeyLabel, setNewKeyLabel] = useState("");
   const [creatingKey, setCreatingKey] = useState(false);
@@ -173,6 +175,14 @@ export function CeoAnalyticsSection() {
   useEffect(() => {
     void loadSummary();
   }, [loadSummary]);
+
+  useEffect(() => {
+    if (!autoRefresh || !activeCompanyId) return;
+    const id = setInterval(() => {
+      void loadSummary();
+    }, 45_000);
+    return () => clearInterval(id);
+  }, [autoRefresh, activeCompanyId, loadSummary]);
 
   const clientsWithCompany = useMemo(
     () => clients.filter((c) => c.company_id),
@@ -266,11 +276,31 @@ export function CeoAnalyticsSection() {
             First-party analytics
           </p>
           <p className="mt-1 max-w-xl text-sm text-gray-600">
-            Traffic sources, depth (multi-page sessions), and contact reach — scoped by company so
-            you can reuse the same pipeline for clients.
+            Traffic sources, depth (multi-page sessions), contact reach, and inquiry form
+            submissions — scoped by company so you can reuse the same pipeline for clients.
+          </p>
+          <p className="mt-2 max-w-xl text-xs text-gray-500">
+            Events are written as they happen (near real-time). This tab refetches every 45s while
+            open, or use Refresh — there is no live WebSocket feed.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void loadSummary()}
+            className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+          >
+            Refresh
+          </button>
+          <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-700">
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onChange={(e) => setAutoRefresh(e.target.checked)}
+              className="rounded border-gray-400"
+            />
+            Auto (45s)
+          </label>
           {([7, 30, 90] as const).map((d) => (
             <button
               key={d}
@@ -371,17 +401,22 @@ export function CeoAnalyticsSection() {
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <StatCard label="Pageviews" value={summary?.totalPageviews ?? 0} />
+            <StatCard
+              label="Contact / inquiry submissions"
+              value={summary?.inquirySubmissions ?? 0}
+              hint="Successful sends from /api/inquiries"
+            />
             <StatCard label="Unique sessions" value={summary?.uniqueSessions ?? 0} />
             <StatCard label="Unique visitors" value={summary?.uniqueVisitors ?? 0} />
             <StatCard
               label="Sessions with 2+ pages"
               value={summary?.sessionsWithMultiplePageviews ?? 0}
-              hint="How far people browse"
+              hint="How far people browse (pageviews only)"
             />
             <StatCard
-              label="Sessions touching /contact"
+              label="Sessions touching contact or inquiry"
               value={summary?.sessionsReachedContact ?? 0}
-              hint="Intent / bottom of funnel"
+              hint="/contact views or form submit"
             />
           </div>
 

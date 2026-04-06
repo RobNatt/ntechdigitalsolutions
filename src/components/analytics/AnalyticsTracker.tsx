@@ -3,8 +3,10 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-const VID = "ntech_vid";
-const SID = "ntech_sid";
+import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
+
+const VID = ANALYTICS_STORAGE_KEYS.visitorId;
+const SID = ANALYTICS_STORAGE_KEYS.sessionId;
 const PV_DEDUPE = "ntech_pv_ts";
 
 function randomId(): string {
