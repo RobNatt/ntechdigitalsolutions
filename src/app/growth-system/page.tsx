@@ -5,14 +5,14 @@ import { SITE_URL } from "@/constants/site";
 const canonical = `${SITE_URL}/growth-system`;
 
 export const metadata: Metadata = {
-  title: "Lead System: Clicks to Qualified Conversations | N-Tech Digital Solutions",
+  title: "Growth System — Stop Losing Leads | N-Tech Digital Solutions",
   description:
-    "Full front-end system from first click to booked calls — funnel, CRM, SMS + email automation, local SEO, and ongoing optimization. $4,997 setup + $499/mo.",
+    "If you're paying for ads or getting traffic but not seeing consistent booked jobs, the missing piece is often the system after the click — funnel, CRM, follow-up, and local SEO. $4,997 setup + $499/mo.",
   alternates: { canonical },
   openGraph: {
-    title: "Stop Paying for Clicks That Never Turn Into Real Leads | N-Tech",
+    title: "Stop Losing Good Leads Because There's No System to Catch Them | N-Tech",
     description:
-      "We build the full system: capture, qualify, follow up, and pipeline visibility — plus local SEO so you’re not only dependent on ads.",
+      "Ads and traffic without a system to catch and follow up leads means revenue slipping through. We build the full front end so you respond to people who are ready to talk.",
     url: canonical,
     type: "website",
   },

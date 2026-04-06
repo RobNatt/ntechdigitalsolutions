@@ -117,11 +117,11 @@ export function GrowthSystemLanding() {
               className="text-3xl leading-[1.15] sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]"
               style={{ color: COLORS.trust }}
             >
-              Stop Paying for Clicks That Never Turn Into Real Leads
+              Stop Losing Good Leads Because There&apos;s No System to Catch Them
             </Headline>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#374151]">
-              We build the full front-end system — from first click to booked conversation — so
-              you&apos;re not chasing cold form fills anymore.
+              If you&apos;re already paying for ads or getting traffic but not seeing consistent booked
+              jobs… this is likely the missing piece.
             </p>
             <ul className="mt-8 space-y-3">
               <Bullet>Capture + qualify leads automatically</Bullet>
@@ -132,7 +132,7 @@ export function GrowthSystemLanding() {
               <PrimaryCta href={CONTACT_PRO}>Book Your Strategy Call</PrimaryCta>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
-              No pressure. No long-term commitment required to get started.
+              Takes 15 minutes. No pressure. No obligation.
             </p>
           </div>
           <div className="relative aspect-[4/5] w-full max-w-md justify-self-center overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 lg:max-w-none lg:justify-self-end">
@@ -162,6 +162,14 @@ export function GrowthSystemLanding() {
             <li>You can&apos;t tell which leads are serious</li>
             <li>Your website just… sits there</li>
           </ul>
+          <div className="mt-8 space-y-2 text-left text-lg font-medium leading-relaxed text-[#374151]">
+            <p>Every missed follow-up…</p>
+            <p>every lead that goes cold…</p>
+            <p>every &quot;I&apos;ll get back to them later&quot;…</p>
+          </div>
+          <p className="mt-6 text-left text-lg font-semibold" style={{ color: COLORS.trust }}>
+            That&apos;s real revenue slipping through.
+          </p>
           <p className="mt-8 text-left text-lg font-medium" style={{ color: COLORS.trust }}>
             So you end up paying for attention — not actual opportunities.
           </p>
@@ -187,6 +195,9 @@ export function GrowthSystemLanding() {
             <p className="mt-4 text-base leading-relaxed text-[#374151]">
               This isn&apos;t another redesign. It&apos;s the system that turns traffic into qualified
               conversations.
+            </p>
+            <p className="mt-6 text-lg font-semibold leading-relaxed" style={{ color: COLORS.trust }}>
+              Instead of chasing leads… you&apos;re responding to people who are already ready to talk.
             </p>
             <p className="mt-6 font-semibold" style={{ color: COLORS.trust }}>
               What You Get:
@@ -239,35 +250,23 @@ export function GrowthSystemLanding() {
       <section className="border-t px-4 py-16 sm:px-6 sm:py-20" style={{ borderColor: COLORS.border, backgroundColor: "#fff" }}>
         <div className="mx-auto max-w-3xl">
           <Headline as="h2" className="text-2xl sm:text-3xl" style={{ color: COLORS.trust }}>
-            Let&apos;s Just Look at the Numbers
+            You&apos;re Probably Not Losing Leads — You&apos;re Leaking Them
           </Headline>
           <p className="mt-6 text-base leading-relaxed text-[#374151]">
-            If you&apos;re already paying for traffic or leads…
+            If you&apos;re paying for traffic already…
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-[#4B5563]">
-            <li>Some percentage never respond</li>
-            <li>Some aren&apos;t qualified</li>
-            <li>Some slip through the cracks</li>
+          <ul className="mt-4 list-none space-y-2 text-[#4B5563]">
+            <li>Some leads never respond</li>
+            <li>Some weren&apos;t serious</li>
+            <li>Some just never got followed up</li>
           </ul>
-          <p className="mt-6 font-semibold" style={{ color: COLORS.trust }}>
-            That&apos;s not a traffic issue. That&apos;s a system leak.
+          <p className="mt-8 text-lg font-semibold text-[#374151]">That&apos;s not a marketing problem.</p>
+          <p className="mt-2 text-lg font-semibold" style={{ color: COLORS.trust }}>
+            That&apos;s a system failure.
           </p>
-          <div
-            className="mt-8 rounded-xl border p-6 sm:p-8"
-            style={{ borderColor: COLORS.border, backgroundColor: COLORS.bg }}
-          >
-            <p className="font-semibold" style={{ color: COLORS.trust }}>
-              Your System Fix:
-            </p>
-            <ul className="mt-4 space-y-2 text-[#374151]">
-              <li>Better conversion from the same traffic</li>
-              <li>Automated follow-up = fewer lost opportunities</li>
-              <li>Clear pipeline = no guessing</li>
-            </ul>
-            <p className="mt-6 text-base font-medium text-[#374151]">
-              You&apos;re not spending more. You&apos;re making what you already spend actually work.
-            </p>
-          </div>
+          <p className="mt-8 text-base leading-relaxed text-[#374151]">
+            Which means you&apos;re already spending the money… you&apos;re just not capturing the return.
+          </p>
         </div>
       </section>
 
@@ -342,6 +341,10 @@ export function GrowthSystemLanding() {
             <li>Websites that look good but don&apos;t convert</li>
             <li>Tools you have to figure out yourself</li>
           </ul>
+          <p className="mx-auto mt-8 max-w-xl text-center text-lg font-medium leading-relaxed text-[#374151]">
+            If you&apos;ve tried agencies before and nothing stuck — it&apos;s usually because they focused
+            on getting more leads… not fixing what happens after.
+          </p>
           <p className="mt-8 text-center text-lg font-semibold" style={{ color: COLORS.trust }}>
             This is different.
           </p>
@@ -363,7 +366,11 @@ export function GrowthSystemLanding() {
             className="mt-10 rounded-2xl border-2 p-8 sm:p-10"
             style={{ borderColor: COLORS.trust, backgroundColor: COLORS.bg }}
           >
-            <p className="text-lg">
+            <p className="text-left text-base leading-relaxed text-[#374151]">
+              Most businesses don&apos;t realize how much revenue they&apos;re already losing from missed
+              follow-up and unqualified leads.
+            </p>
+            <p className="mt-8 text-lg">
               <span className="font-semibold text-[#374151]">Setup:</span>{" "}
               <span className="text-2xl font-bold tabular-nums" style={{ color: COLORS.trust }}>
                 $4,997
@@ -407,11 +414,11 @@ export function GrowthSystemLanding() {
       >
         <div className="mx-auto max-w-2xl text-center">
           <Headline as="h2" className="text-2xl text-white sm:text-3xl">
-            See If This Makes Sense for Your Business
+            Let&apos;s See Where Your Leads Are Slipping Through
           </Headline>
           <p className="mt-6 text-base leading-relaxed text-sky-100/95">
-            We&apos;ll walk through your current setup, where leads are leaking, and whether this system
-            fits.
+            We&apos;ll walk through your current setup and show you exactly where opportunities are
+            being lost.
           </p>
           <div className="mt-10">
             <Link
@@ -419,11 +426,13 @@ export function GrowthSystemLanding() {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-base font-semibold shadow-md transition hover:bg-sky-50"
               style={{ color: COLORS.trust }}
             >
+              <span aria-hidden className="select-none">
+                👉
+              </span>
               <Phone className="h-4 w-4" aria-hidden />
               Book Your Strategy Call
             </Link>
           </div>
-          <p className="mt-4 text-sm text-sky-200/90">No pressure. Just clarity on your next step.</p>
         </div>
       </section>
     </div>
