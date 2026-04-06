@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SITE_URL } from "@/constants/site";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/providers";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 
 const GA_MEASUREMENT_ID = "G-9BWR9R2696";
 
@@ -65,6 +67,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
           <div className="relative min-h-screen">{children}</div>
         </ThemeProvider>
       </body>
