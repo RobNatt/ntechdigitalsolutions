@@ -95,6 +95,7 @@ export async function POST(request: Request) {
         stage: "submitted",
         stage_updated_at: nowIso,
         updated_at: nowIso,
+        lead_temperature: "hot",
       };
 
       const { data: inserted, error } = await supabase

@@ -95,6 +95,7 @@ export async function POST(request: Request) {
         stage: r.stage,
         stage_updated_at: nowIso,
         updated_at: nowIso,
+        lead_temperature: "warm",
         details: r.details,
       };
     });

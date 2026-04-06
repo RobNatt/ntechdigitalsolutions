@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isPipelineStage } from "@/lib/leads/stages";
+import { isLeadTemperature } from "@/lib/leads/temperature";
 
 type LeadDetails = Record<string, unknown>;
 
@@ -79,6 +80,13 @@ export async function PATCH(
       }
       updates.stage = stage;
       updates.stage_updated_at = now;
+    }
+    if (body.temperature !== undefined) {
+      const t = String(body.temperature ?? "").trim().toLowerCase();
+      if (!isLeadTemperature(t)) {
+        return NextResponse.json({ error: "Invalid temperature. Use hot, warm, or cold." }, { status: 400 });
+      }
+      updates.lead_temperature = t;
     }
     if (body.notes !== undefined) {
       const details = asDetails(lead.details);
