@@ -20,10 +20,12 @@ import {
   Building2,
   CalendarDays,
   LogOut,
+  Database,
 } from "lucide-react";
 import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
 import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
 import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
+import { CeoSupabaseSection } from "@/components/dashboard/CeoSupabaseSection";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -35,6 +37,7 @@ const MARKETING_NAV_TABS = [
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
   { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "supabase", label: "Supabase", icon: Database },
   { id: "user-management", label: "User management", icon: UserCog },
   { id: "clients", label: "Clients", icon: Building2 },
   { id: "leads", label: "Leads", icon: Users },
@@ -317,12 +320,14 @@ export function HolographicDashboardTabs({
                       {variant === "ceo" && activeTab === "calendar" && (
                         <CeoCalendarSection />
                       )}
+                      {variant === "ceo" && activeTab === "supabase" && <CeoSupabaseSection />}
                       {variant === "ceo" && activeTab === "clients" && (
                         <CeoClientsSection />
                       )}
                       {variant === "ceo" && activeTab === "leads" && <CeoLeadsSection />}
                       {variant === "ceo" &&
                         activeTab !== "calendar" &&
+                        activeTab !== "supabase" &&
                         activeTab !== "clients" &&
                         activeTab !== "leads" && (
                           <PlaceholderTab
