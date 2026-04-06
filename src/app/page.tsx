@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { CursorReactiveEnvironment } from "@/components/cursor-reactive/CursorReactiveEnvironment";
 import { Features } from "@/components/startup-landing/features";
 import { Footer } from "@/components/startup-landing/footer";
@@ -98,6 +99,7 @@ export default function HomePage() {
         <Testimonials />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }

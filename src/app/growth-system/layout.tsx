@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Inter, Poppins } from "next/font/google";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { Footer } from "@/components/startup-landing/footer";
 import { Navbar } from "@/components/startup-landing/navbar";
 
@@ -26,6 +27,7 @@ export default function GrowthSystemLayout({
       <Navbar />
       <div className="min-h-[calc(100vh-12rem)] pt-20 lg:pt-24">{children}</div>
       <Footer />
+      <ChatWidget />
     </div>
   );
 }
