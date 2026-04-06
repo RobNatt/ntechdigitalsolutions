@@ -3,7 +3,7 @@
 -- Run in Supabase SQL Editor
 -- ============================================
 -- Creates companies table if missing, inserts nTech as default.
--- Leads from /lead_roofing and /client_roofing use this company_id.
+-- Default company for public lead flows using DEFAULT_COMPANY_ID.
 -- If companies already exists with different structure, run only the INSERT
 -- (adjust columns as needed) or add the row manually with id = b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11.
 

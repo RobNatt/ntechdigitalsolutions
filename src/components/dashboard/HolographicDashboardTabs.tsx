@@ -27,6 +27,8 @@ import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
 import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
 import { CeoSupabaseSection } from "@/components/dashboard/CeoSupabaseSection";
 import { CeoAnalyticsSection } from "@/components/dashboard/CeoAnalyticsSection";
+import { CeoSupportInboxSection } from "@/components/dashboard/CeoSupportInboxSection";
+import { CeoRevenueReportsSection } from "@/components/dashboard/CeoRevenueReportsSection";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -329,12 +331,20 @@ export function HolographicDashboardTabs({
                       {variant === "ceo" && activeTab === "analytics" && (
                         <CeoAnalyticsSection />
                       )}
+                      {variant === "ceo" && activeTab === "support-inbox" && (
+                        <CeoSupportInboxSection />
+                      )}
+                      {variant === "ceo" && activeTab === "revenue-reports" && (
+                        <CeoRevenueReportsSection />
+                      )}
                       {variant === "ceo" &&
                         activeTab !== "calendar" &&
                         activeTab !== "supabase" &&
                         activeTab !== "clients" &&
                         activeTab !== "leads" &&
-                        activeTab !== "analytics" && (
+                        activeTab !== "analytics" &&
+                        activeTab !== "support-inbox" &&
+                        activeTab !== "revenue-reports" && (
                           <PlaceholderTab
                             variant="ceo"
                             label={

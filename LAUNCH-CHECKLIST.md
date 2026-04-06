@@ -46,7 +46,7 @@ See **`CLIENT-ONBOARDING-CHECKLIST.md`** for documentation needed to close clien
 
 ## 6. Test before launch
 
-1. Submit a test lead from `/lead_roofing` and `/client_roofing`
+1. Submit a test lead from whichever public lead form you use (or `/api/leads/submit` smoke test)
 2. Confirm entries in Supabase → Table Editor → `leads`
 3. Confirm leads appear in Dashboard → Leads tab (with pipeline summary)
 4. Update a lead's stage and verify it persists

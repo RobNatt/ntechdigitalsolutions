@@ -69,8 +69,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Valid phone number required." }, { status: 400 });
     }
 
-    const source = String(body.source || "unknown").trim();
-    const validSource = ["lead_roofing", "client_roofing"].includes(source) ? source : "unknown";
+    const rawSource = String(body.source || "unknown").trim().slice(0, 64);
+    const validSource = rawSource.length > 0 ? rawSource : "unknown";
 
     const details: Record<string, unknown> = {};
     const skipKeys = ["name", "phone", "address", "leadType", "source", "verificationCode", "email"];

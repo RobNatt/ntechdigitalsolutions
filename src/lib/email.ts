@@ -124,3 +124,62 @@ export async function sendInquiryNotification(payload: InquiryNotificationPayloa
 
   console.log("Inquiry notification email sent", { to: toEmail, name: payload.name });
 }
+
+export type SupportInboxNotificationPayload = {
+  id: string;
+  fromEmail: string;
+  fromName?: string | null;
+  subject: string;
+  preview: string;
+};
+
+/** Notify internal inbox when a support message is stored (webhook). Uses SUPPORT_NOTIFICATION_EMAIL or LEAD_NOTIFICATION_EMAIL. */
+export async function sendSupportInboxNotification(
+  payload: SupportInboxNotificationPayload
+): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail =
+    process.env.SUPPORT_NOTIFICATION_EMAIL?.trim() ||
+    process.env.LEAD_NOTIFICATION_EMAIL?.trim();
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
+
+  if (!apiKey || !toEmail) {
+    console.warn("Support inbox notification skipped: missing RESEND or notification email", {
+      hasResendApiKey: !!apiKey,
+      hasTo: !!toEmail,
+    });
+    return;
+  }
+
+  const lines = [
+    "New message for support inbox (hello@ntechdigital.solutions pipeline)",
+    "",
+    `From: ${payload.fromName ? `${payload.fromName} <${payload.fromEmail}>` : payload.fromEmail}`,
+    `Subject: ${payload.subject}`,
+    payload.id ? `Record ID: ${payload.id}` : null,
+    "",
+    "Preview:",
+    payload.preview || "(empty body)",
+  ].filter((l): l is string => l != null);
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: toEmail,
+      subject: `Support: ${payload.subject}`.slice(0, 998),
+      text: lines.join("\n"),
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend API error: ${err}`);
+  }
+
+  console.log("Support inbox notification sent", { to: toEmail, id: payload.id });
+}

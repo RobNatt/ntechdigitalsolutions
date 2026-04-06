@@ -23,7 +23,7 @@ Use this checklist when closing a new roofing client and assigning pages. Comple
 |------|-------|
 | **Page slug** | e.g. `client_acme_roofing` — used in URL and `source` |
 | **Base URL** | `https://ntechdigital.solutions/[slug]` |
-| **Lead type** | Homeowner / Roofer (client_roofing flow) |
+| **Lead type** | As defined for that client’s funnel |
 | **Company ID** | UUID from `companies` table — assigned after migration |
 
 **Steps:**

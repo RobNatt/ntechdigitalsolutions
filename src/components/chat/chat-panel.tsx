@@ -1,5 +1,6 @@
 "use client";
 
+import { ChatContactForm } from "@/components/chat/chat-contact-form";
 import { IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -106,7 +107,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
         {messages.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            Ask about services, timelines, or how we work.
+            We&apos;ll ask a bit about your business and website, then we can
+            help you explore options. Use{" "}
+            <span className="font-medium text-foreground">
+              Share contact info
+            </span>{" "}
+            below when you&apos;re ready for the team to follow up.
           </p>
         )}
         {messages.map((m, i) => (
@@ -129,6 +135,8 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         )}
         <div ref={bottomRef} />
       </div>
+
+      <ChatContactForm messages={messages} />
 
       {error && (
         <div className="border-t border-destructive/30 bg-destructive/10 px-4 py-2 text-xs text-destructive">
