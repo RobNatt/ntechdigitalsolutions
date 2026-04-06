@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Phone, ArrowRight } from "lucide-react";
@@ -19,10 +19,12 @@ const CONTACT_PRO = "/contact?plan=pro";
 function Headline({
   as: Tag = "h2",
   className,
+  style,
   children,
 }: {
   as?: "h1" | "h2" | "h3";
   className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }) {
   return (
@@ -31,6 +33,7 @@ function Headline({
         "font-semibold tracking-tight [font-family:var(--font-gsl-head),ui-sans-serif,system-ui,sans-serif]",
         className
       )}
+      style={style}
     >
       {children}
     </Tag>

@@ -8,7 +8,7 @@ export function Footer() {
   const pages = [
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },
-    { title: "Lead system", href: "/growth-system" },
+    { title: "Growth System", href: "/growth-system" },
     { title: "Blog", href: "/blog" },
     { title: "About", href: "/about" },
     { title: "Contact", href: "/contact" },
@@ -48,6 +48,7 @@ export function Footer() {
   ];
 
   const signups = [
+    { title: "Growth System", href: "/growth-system" },
     { title: "Sign up", href: "/signup" },
     { title: "Login", href: "/login" },
     {
@@ -141,7 +142,10 @@ export function Footer() {
               {signups.map((auth, idx) => (
                 <li key={"auth" + idx} className="list-none">
                   <Link
-                    className="transition-colors hover:text-text-neutral-800 "
+                    className={cn(
+                      "transition-colors hover:text-text-neutral-800",
+                      auth.href === "/growth-system" && "btn-primary inline-flex w-fit"
+                    )}
                     href={auth.href}
                   >
                     {auth.title}

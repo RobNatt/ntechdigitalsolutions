@@ -25,6 +25,7 @@ interface NavbarProps {
 export const Navbar = () => {
   const navItems = [
     { name: "Services", link: "/services" },
+    { name: "Growth System", link: "/growth-system" },
     { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
     { name: "Contact", link: "/contact" },
@@ -113,7 +114,8 @@ function DesktopNavDropdown({
                 onClick={() => onOpenChange(false)}
                 className={cn(
                   "block px-4 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800",
-                  navItem.link === "/contact" && "text-sky-700 dark:text-sky-400"
+                  (navItem.link === "/contact" || navItem.link === "/growth-system") &&
+                    "text-sky-700 dark:text-sky-400"
                 )}
               >
                 {navItem.name}
@@ -173,7 +175,8 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
                 onMouseEnter={() => setHovered(idx)}
                 className={cn(
                   "relative px-3 py-2 text-xs text-neutral-600 dark:text-neutral-300 lg:px-4 lg:text-sm",
-                  navItem.link === "/contact" && "btn-primary"
+                  (navItem.link === "/contact" || navItem.link === "/growth-system") &&
+                    "btn-primary"
                 )}
                 key={`link=${idx}`}
                 href={navItem.link}
@@ -270,7 +273,8 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
-                    navItem.link === "/contact" && "btn-primary"
+                    (navItem.link === "/contact" || navItem.link === "/growth-system") &&
+                      "btn-primary"
                   )}
                 >
                   <motion.span className="block">{navItem.name} </motion.span>
