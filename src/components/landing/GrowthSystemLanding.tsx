@@ -23,7 +23,7 @@ const CONTACT_COMPLETE_SYSTEM = "/contact?plan=complete-system";
 const FUNNEL_VARIANTS = {
   a: {
     badge: "Full lead system · Local + SEO",
-    headline: "Stop Losing Good Leads Because There&apos;s No System to Catch Them",
+    headline: "Stop Losing Good Leads Because There's No System to Catch Them",
     subhead:
       "If you're already paying for ads or getting traffic but not seeing consistent booked jobs, this is likely the missing piece.",
   },
