@@ -4,6 +4,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
+import {
+  getInternalAnalyticsMetadata,
+  isAnalyticsOptedOut,
+  setAnalyticsOptOut,
+} from "@/lib/analytics/internal-traffic";
 
 const VID = ANALYTICS_STORAGE_KEYS.visitorId;
 const SID = ANALYTICS_STORAGE_KEYS.sessionId;
@@ -63,7 +68,14 @@ export function AnalyticsTracker() {
   const writeKey = process.env.NEXT_PUBLIC_ANALYTICS_WRITE_KEY?.trim();
 
   useEffect(() => {
+    const q = searchParams?.get("no_track");
+    if (q === "1" || q === "true") setAnalyticsOptOut(true);
+    if (searchParams?.get("track") === "1") setAnalyticsOptOut(false);
+  }, [searchParams]);
+
+  useEffect(() => {
     if (!writeKey) return;
+    if (isAnalyticsOptedOut()) return;
 
     const path =
       pathname +
@@ -96,12 +108,16 @@ export function AnalyticsTracker() {
       utmMedium: utm.utmMedium,
       utmCampaign: utm.utmCampaign,
       eventType: "pageview",
+      metadata: getInternalAnalyticsMetadata(),
     };
 
     const body = JSON.stringify(payload);
     void fetch("/api/analytics/collect", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(isAnalyticsOptedOut() ? { "x-ntech-internal": "1" } : {}),
+      },
       body,
       keepalive: true,
     }).catch(() => {

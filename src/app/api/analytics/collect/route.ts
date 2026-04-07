@@ -82,6 +82,14 @@ export async function POST(request: Request) {
       ? body.eventType.slice(0, 64)
       : "pageview";
 
+  const isInternalTraffic =
+    request.headers.get("x-ntech-internal") === "1" ||
+    body.metadata?.internal_traffic === true;
+
+  if (isInternalTraffic) {
+    return NextResponse.json({ ok: true, ignored: "internal_traffic" }, { headers });
+  }
+
   if (eventType.toLowerCase() === "inquiry_submit") {
     return NextResponse.json(
       { ok: false, error: "Use POST /api/inquiries for inquiry events" },

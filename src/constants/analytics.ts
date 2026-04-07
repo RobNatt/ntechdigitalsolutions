@@ -5,4 +5,5 @@ export const NTECH_COMPANY_ID = "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11";
 export const ANALYTICS_STORAGE_KEYS = {
   visitorId: "ntech_vid",
   sessionId: "ntech_sid",
+  internalOptOut: "ntech_analytics_optout",
 } as const;

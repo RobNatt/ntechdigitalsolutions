@@ -1,6 +1,10 @@
 "use client";
 
 import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
+import {
+  getInternalAnalyticsMetadata,
+  isAnalyticsOptedOut,
+} from "@/lib/analytics/internal-traffic";
 
 const MAX_METADATA_JSON = 1800;
 const MAX_KEYS = 12;
@@ -56,6 +60,7 @@ export function trackClientAnalyticsEvent(
 
   const writeKey = process.env.NEXT_PUBLIC_ANALYTICS_WRITE_KEY?.trim();
   if (!writeKey) return;
+  if (isAnalyticsOptedOut()) return;
 
   let visitorId = "";
   let sessionId = "";
@@ -69,7 +74,11 @@ export function trackClientAnalyticsEvent(
 
   const path = `${window.location.pathname}${window.location.search || ""}`;
   const utm = parseUtmFromSearch(window.location.search);
-  const merged = sanitizeMetadata({ ...utm, ...metadata });
+  const merged = sanitizeMetadata({
+    ...utm,
+    ...getInternalAnalyticsMetadata(),
+    ...metadata,
+  });
   let metadataPayload: Record<string, string | number | boolean> = merged;
   try {
     const s = JSON.stringify(metadataPayload);
