@@ -6,6 +6,8 @@ export const ANALYTICS_CUSTOM_EVENTS = {
   CTA_CLICK: "cta_click",
   PRICING_PLAN_CLICK: "pricing_plan_click",
   FORM_START: "form_start",
+  CALL_CLICK: "call_click",
+  CALENDAR_BOOKING_CLICK: "calendar_booking_click",
   CHAT_OPEN: "chat_open",
   CHAT_WELCOME_ACCEPT: "chat_welcome_accept",
   CHAT_WELCOME_DISMISS: "chat_welcome_dismiss",

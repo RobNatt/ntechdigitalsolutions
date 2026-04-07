@@ -300,6 +300,18 @@ export default async function ServicesPage() {
             >
               Growth System overview
             </Link>
+            <Link
+              href="/growth-system?v=b"
+              className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              Funnel variant B
+            </Link>
+            <Link
+              href="/growth-system?v=c"
+              className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              Funnel variant C
+            </Link>
           </div>
         </section>
       </div>

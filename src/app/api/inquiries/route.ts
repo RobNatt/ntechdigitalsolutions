@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendInquiryNotification } from "@/lib/email";
+import {
+  sendInquiryAutoReply,
+  sendInquiryNotification,
+  sendInquirySmsFollowUp,
+} from "@/lib/email";
 import { recordInquirySubmit } from "@/lib/analytics/record-inquiry";
+import { scoreInquiryLead } from "@/lib/inquiries/lead-qualifier";
 
 const inquiryIps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -80,11 +85,20 @@ export async function POST(request: Request) {
 
     const companyId = process.env.DEFAULT_COMPANY_ID;
     const nowIso = new Date().toISOString();
+    const leadScore = scoreInquiryLead({
+      phone,
+      company,
+      planInterest,
+      message,
+      sourcePage,
+    });
     const details: Record<string, unknown> = {
       message,
       ...(company ? { company } : {}),
       ...(planInterest ? { plan_interest: planInterest } : {}),
       ...(sourcePage ? { source_page: sourcePage } : {}),
+      lead_score: leadScore.score,
+      lead_temperature: leadScore.temperature,
     };
 
     let leadId: string | undefined;
@@ -104,7 +118,7 @@ export async function POST(request: Request) {
         stage: "submitted",
         stage_updated_at: nowIso,
         updated_at: nowIso,
-        lead_temperature: "hot",
+        lead_temperature: leadScore.temperature,
       };
 
       const { data: inserted, error } = await supabase
@@ -133,6 +147,15 @@ export async function POST(request: Request) {
         planInterest,
         sourcePage,
       });
+      await sendInquiryAutoReply({
+        name,
+        email,
+        sourcePage,
+        planInterest,
+      });
+      if (phone) {
+        await sendInquirySmsFollowUp({ name, phone });
+      }
     } catch (e) {
       console.error("Inquiry email error:", e);
       return NextResponse.json(
@@ -152,6 +175,8 @@ export async function POST(request: Request) {
       metadata: {
         lead_id: leadId ?? null,
         plan_interest: planInterest,
+        lead_score: leadScore.score,
+        lead_temperature: leadScore.temperature,
       },
     });
 

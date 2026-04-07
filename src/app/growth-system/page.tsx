@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GrowthSystemPage() {
-  return <GrowthSystemLanding />;
+type GrowthSystemPageProps = {
+  searchParams: Promise<{ v?: string }>;
+};
+
+export default async function GrowthSystemPage({ searchParams }: GrowthSystemPageProps) {
+  const sp = await searchParams;
+  const variant = sp.v === "b" || sp.v === "c" ? sp.v : "a";
+  return <GrowthSystemLanding variant={variant} />;
 }

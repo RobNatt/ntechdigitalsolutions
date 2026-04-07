@@ -127,6 +127,84 @@ export async function sendInquiryNotification(payload: InquiryNotificationPayloa
   console.log("Inquiry notification email sent", { to: toEmail, name: payload.name });
 }
 
+export async function sendInquiryAutoReply(payload: {
+  name: string;
+  email: string;
+  sourcePage?: string | null;
+  planInterest?: string | null;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
+  if (!apiKey) return;
+
+  const firstName = payload.name.split(" ")[0] || payload.name;
+  const lines = [
+    `Hi ${firstName},`,
+    "",
+    "Thanks for reaching out to N-Tech Digital Solutions.",
+    "We received your inquiry and will follow up shortly with next steps.",
+    payload.planInterest ? `Package interest noted: ${payload.planInterest}` : null,
+    payload.sourcePage ? `Submitted from: ${payload.sourcePage}` : null,
+    "",
+    "If this is urgent, reply directly to this email with your priority and timeline.",
+    "",
+    "— N-Tech Digital Solutions",
+  ].filter((l): l is string => l != null);
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: payload.email,
+      subject: "We got your inquiry — N-Tech Digital Solutions",
+      text: lines.join("\n"),
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Inquiry auto-reply failed:", err);
+  }
+}
+
+export async function sendInquirySmsFollowUp(payload: {
+  name: string;
+  phone: string;
+}): Promise<void> {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const from = process.env.TWILIO_PHONE_NUMBER;
+  if (!sid || !token || !from) return;
+
+  const rawDigits = payload.phone.replace(/\D/g, "");
+  if (rawDigits.length < 10) return;
+  const to = rawDigits.length === 10 ? `+1${rawDigits}` : `+${rawDigits}`;
+  const firstName = payload.name.split(" ")[0] || payload.name;
+  const body = `Hi ${firstName}, thanks for reaching out to N-Tech. We got your inquiry and will follow up shortly with next steps.`;
+
+  const form = new URLSearchParams({
+    To: to,
+    From: from,
+    Body: body,
+  });
+  const auth = Buffer.from(`${sid}:${token}`).toString("base64");
+  const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Inquiry SMS follow-up failed:", err);
+  }
+}
+
 export type SupportInboxNotificationPayload = {
   id: string;
   fromEmail: string;

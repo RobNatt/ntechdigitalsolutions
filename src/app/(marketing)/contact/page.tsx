@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
+import { TrackedPhoneLink } from "@/components/marketing/TrackedPhoneLink";
 import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
 
 export const metadata: Metadata = {
@@ -47,12 +48,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         {SITE_BUSINESS_PHONE ? (
           <p>
             <span className="font-semibold text-neutral-900 dark:text-white">Phone: </span>
-            <a
-              href={`tel:${SITE_BUSINESS_PHONE.replace(/\s/g, "")}`}
+            <TrackedPhoneLink
+              phone={SITE_BUSINESS_PHONE}
               className="text-neutral-700 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-neutral-300 dark:hover:decoration-white"
-            >
-              {SITE_BUSINESS_PHONE}
-            </a>
+            />
           </p>
         ) : null}
         <p className="text-neutral-600 dark:text-neutral-400">

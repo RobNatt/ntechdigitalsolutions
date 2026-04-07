@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, Phone, ArrowRight } from "lucide-react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,26 @@ const COLORS = {
 } as const;
 
 const CONTACT_COMPLETE_SYSTEM = "/contact?plan=complete-system";
+const FUNNEL_VARIANTS = {
+  a: {
+    badge: "Full lead system · Local + SEO",
+    headline: "Stop Losing Good Leads Because There&apos;s No System to Catch Them",
+    subhead:
+      "If you're already paying for ads or getting traffic but not seeing consistent booked jobs, this is likely the missing piece.",
+  },
+  b: {
+    badge: "Traffic to pipeline system",
+    headline: "Turn Website Traffic Into Qualified Calls, Not Missed Opportunities",
+    subhead:
+      "We build the pages, follow-up, and qualification flow so your team talks to higher-intent leads.",
+  },
+  c: {
+    badge: "Growth system for owners",
+    headline: "Build a Lead Engine That Works Even When You're Busy",
+    subhead:
+      "From first click to booked conversation, we design the handoff so leads stop going cold.",
+  },
+} as const;
 
 function Headline({
   as: Tag = "h2",
@@ -116,7 +137,8 @@ function Bullet({ children }: { children: ReactNode }) {
   );
 }
 
-export function GrowthSystemLanding() {
+export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "c" }) {
+  const v = FUNNEL_VARIANTS[variant];
   return (
     <div style={{ backgroundColor: COLORS.bg }}>
       {/* 1. HERO */}
@@ -130,18 +152,17 @@ export function GrowthSystemLanding() {
               className="mb-3 text-xs font-bold uppercase tracking-[0.14em]"
               style={{ color: COLORS.trust }}
             >
-              Full lead system · Local + SEO
+              {v.badge}
             </p>
             <Headline
               as="h1"
               className="text-3xl leading-[1.15] sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]"
               style={{ color: COLORS.trust }}
             >
-              Stop Losing Good Leads Because There&apos;s No System to Catch Them
+              {v.headline}
             </Headline>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#374151]">
-              If you&apos;re already paying for ads or getting traffic but not seeing consistent booked
-              jobs… this is likely the missing piece.
+              {v.subhead}
             </p>
             <ul className="mt-8 space-y-3">
               <Bullet>Capture + qualify leads automatically</Bullet>
@@ -149,9 +170,23 @@ export function GrowthSystemLanding() {
               <Bullet>See every lead in your pipeline clearly</Bullet>
             </ul>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="hero_book_strategy">
+              <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta={`hero_book_strategy_${variant}`}>
                 Book Your Strategy Call
               </PrimaryCta>
+              <a
+                href={`https://cal.com/${CONSTANTS.CALCOM_LINK}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() =>
+                  trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CALENDAR_BOOKING_CLICK, {
+                    placement: "growth_system",
+                    variant,
+                  })
+                }
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-6 py-3.5 text-base font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
+              >
+                Book calendar slot
+              </a>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
               Takes 15 minutes. No pressure. No obligation.
