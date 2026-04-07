@@ -19,7 +19,7 @@ const COLORS = {
   border: "#E5E7EB",
 } as const;
 
-const CONTACT_COMPLETE_SYSTEM = "/contact?plan=complete-system";
+const CONTACT_COMPLETE_SYSTEM = `${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`;
 const FUNNEL_VARIANTS = {
   a: {
     badge: "Full lead system · Local + SEO",
@@ -173,10 +173,8 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
               <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta={`hero_book_strategy_${variant}`}>
                 Book Your Strategy Call
               </PrimaryCta>
-              <a
-                href={`https://cal.com/${CONSTANTS.CALCOM_LINK}`}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                href={`${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`}
                 onClick={() =>
                   trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CALENDAR_BOOKING_CLICK, {
                     placement: "growth_system",
@@ -186,7 +184,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
                 className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-6 py-3.5 text-base font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
               >
                 Book calendar slot
-              </a>
+              </Link>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
               Takes 15 minutes. No pressure. No obligation.

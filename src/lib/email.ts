@@ -205,6 +205,45 @@ export async function sendInquirySmsFollowUp(payload: {
   }
 }
 
+export async function sendGroqVerificationReminderEmail(payload: {
+  leadId: string;
+  bookingDate: string;
+  bookingTime: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail =
+    process.env.SUPPORT_NOTIFICATION_EMAIL?.trim() ||
+    process.env.LEAD_NOTIFICATION_EMAIL?.trim();
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
+  if (!apiKey || !toEmail) return;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: toEmail,
+      subject: "Groq reminder: verify new booked call in dashboard",
+      text: [
+        "Groq assistant reminder:",
+        "",
+        `Please verify this booking in the CEO dashboard assistant flow.`,
+        `Lead ID: ${payload.leadId}`,
+        `Scheduled: ${payload.bookingDate} ${payload.bookingTime}`,
+        "",
+        "Open Dashboard > Assistant to confirm the invite workflow.",
+      ].join("\n"),
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Groq verification reminder email failed:", err);
+  }
+}
+
 export type SupportInboxNotificationPayload = {
   id: string;
   fromEmail: string;

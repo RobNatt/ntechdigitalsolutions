@@ -12,6 +12,8 @@ type LeadLite = {
   created_at: string | null;
   updated_at: string | null;
   stage_updated_at: string | null;
+  source: string | null;
+  details: Record<string, unknown> | null;
 };
 
 function hoursSince(iso: string | null | undefined): number {
@@ -87,7 +89,7 @@ export async function GET() {
         admin
           .from("leads")
           .select(
-            "id,name,stage,lead_temperature,created_at,updated_at,stage_updated_at"
+            "id,name,stage,lead_temperature,created_at,updated_at,stage_updated_at,source,details"
           )
           .order("created_at", { ascending: false })
           .limit(300),
@@ -147,6 +149,18 @@ export async function GET() {
       ["lead_follow_up", "client_follow_up"].includes(String((e as { event_type?: string }).event_type ?? ""))
     ).length;
 
+    const unverifiedBookings = openLeads
+      .filter((l) => l.source === "website_booking" && (l.stage ?? "submitted") === "submitted")
+      .slice(0, 5)
+      .map((l) => ({
+        id: l.id,
+        name: l.name ?? "Unknown",
+        bookingDate:
+          typeof l.details?.booking_date === "string" ? l.details.booking_date : null,
+        bookingTime:
+          typeof l.details?.booking_time === "string" ? l.details.booking_time : null,
+      }));
+
     const { data: analyticsSummary, error: analyticsError } = await admin.rpc(
       "analytics_get_summary",
       {
@@ -182,6 +196,8 @@ export async function GET() {
       },
       calendar: {
         followUpsNext48h: upcomingFollowUps,
+        bookingVerificationsPending: unverifiedBookings.length,
+        unverifiedBookings,
       },
       traffic,
     };

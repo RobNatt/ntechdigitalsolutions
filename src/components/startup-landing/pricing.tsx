@@ -115,6 +115,7 @@ type Tier = (typeof TIERS)[number];
 
 function tierContactHref(tier: Tier): string {
   const cta = tier.cta as { label: string; style: "primary" | "outline"; href?: string };
+  if (tier.id === "lead-machine") return `/book-call?plan=${tier.id}`;
   return cta.href ?? `/contact?plan=${tier.id}`;
 }
 
