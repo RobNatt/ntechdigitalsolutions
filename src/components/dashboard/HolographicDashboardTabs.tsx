@@ -18,6 +18,8 @@ import {
   LogOut,
   Database,
   Bot,
+  FileText,
+  NotebookPen,
 } from "lucide-react";
 import { DashboardAssistantPanel } from "@/components/dashboard/DashboardAssistantPanel";
 import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
@@ -27,6 +29,8 @@ import { CeoSupabaseSection } from "@/components/dashboard/CeoSupabaseSection";
 import { CeoAnalyticsSection } from "@/components/dashboard/CeoAnalyticsSection";
 import { CeoSupportInboxSection } from "@/components/dashboard/CeoSupportInboxSection";
 import { CeoRevenueReportsSection } from "@/components/dashboard/CeoRevenueReportsSection";
+import { CeoBlogPostsSection } from "@/components/dashboard/CeoBlogPostsSection";
+import { CeoBusinessNotesSection } from "@/components/dashboard/CeoBusinessNotesSection";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -45,6 +49,8 @@ const CEO_NAV_TABS = [
   { id: "leads", label: "Leads", icon: Users },
   { id: "support-inbox", label: "Support inbox", icon: Inbox },
   { id: "analytics", label: "Analytics", icon: LineChart },
+  { id: "blog-posts", label: "Blog posts", icon: FileText },
+  { id: "business-notes", label: "Business notes", icon: NotebookPen },
   { id: "revenue-reports", label: "Revenue reports", icon: DollarSign },
 ] as const;
 
@@ -149,7 +155,7 @@ export function HolographicDashboardTabs({
   const router = useRouter();
   const navTabs = variant === "ceo" ? CEO_NAV_TABS : MARKETING_NAV_TABS;
   const [activeTab, setActiveTab] = useState<string>(
-    variant === "ceo" ? "calendar" : "dashboard"
+    variant === "ceo" ? "assistant" : "dashboard"
   );
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -335,6 +341,12 @@ export function HolographicDashboardTabs({
                       {variant === "ceo" && activeTab === "revenue-reports" && (
                         <CeoRevenueReportsSection />
                       )}
+                      {variant === "ceo" && activeTab === "blog-posts" && (
+                        <CeoBlogPostsSection />
+                      )}
+                      {variant === "ceo" && activeTab === "business-notes" && (
+                        <CeoBusinessNotesSection />
+                      )}
                       {variant === "ceo" &&
                         activeTab !== "calendar" &&
                         activeTab !== "assistant" &&
@@ -343,7 +355,9 @@ export function HolographicDashboardTabs({
                         activeTab !== "leads" &&
                         activeTab !== "analytics" &&
                         activeTab !== "support-inbox" &&
-                        activeTab !== "revenue-reports" && (
+                        activeTab !== "revenue-reports" &&
+                        activeTab !== "blog-posts" &&
+                        activeTab !== "business-notes" && (
                           <PlaceholderTab
                             variant="ceo"
                             label={
