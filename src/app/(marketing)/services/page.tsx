@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -79,33 +77,10 @@ const PHASES = [
   },
 ] as const;
 
-const PROOF_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"] as const;
-
-async function findProofImages(): Promise<{ before: string | null; after: string | null }> {
-  try {
-    const publicDir = path.join(process.cwd(), "public");
-    const files = await readdir(publicDir);
-    const lower = files.map((f) => f.toLowerCase());
-
-    const beforeIdx = lower.findIndex(
-      (f) =>
-        PROOF_IMAGE_EXTENSIONS.some((ext) => f.endsWith(ext)) &&
-        (f.includes("pre") || f.includes("before"))
-    );
-    const afterIdx = lower.findIndex(
-      (f) =>
-        PROOF_IMAGE_EXTENSIONS.some((ext) => f.endsWith(ext)) &&
-        (f.includes("after") || f.includes("result"))
-    );
-
-    return {
-      before: beforeIdx >= 0 ? `/${files[beforeIdx]}` : null,
-      after: afterIdx >= 0 ? `/${files[afterIdx]}` : null,
-    };
-  } catch {
-    return { before: null, after: null };
-  }
-}
+const PROOF_IMAGES = {
+  before: "/pre/before.png",
+  after: "/after/result.png",
+} as const;
 
 function CapabilityCard({
   icon: Icon,
@@ -133,7 +108,7 @@ function CapabilityCard({
 }
 
 export default async function ServicesPage() {
-  const proofImages = await findProofImages();
+  const proofImages = PROOF_IMAGES;
 
   return (
     <MarketingPageShell
