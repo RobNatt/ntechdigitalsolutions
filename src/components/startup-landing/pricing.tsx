@@ -61,7 +61,7 @@ const TIERS = [
   {
     id: "complete-system",
     packageLabel: "Package 3",
-    nameLine: "Complete System",
+    nameLine: "Growth System",
     price: "$12,000",
     subline: "One-time build + $4,000/mo",
     description:
