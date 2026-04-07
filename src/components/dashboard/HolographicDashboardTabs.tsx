@@ -17,7 +17,9 @@ import {
   CalendarDays,
   LogOut,
   Database,
+  Bot,
 } from "lucide-react";
+import { DashboardAssistantPanel } from "@/components/dashboard/DashboardAssistantPanel";
 import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
 import { CeoClientsSection } from "@/components/dashboard/CeoClientsSection";
 import { CeoLeadsSection } from "@/components/dashboard/CeoLeadsSection";
@@ -36,6 +38,7 @@ const MARKETING_NAV_TABS = [
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
   { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "assistant", label: "Assistant", icon: Bot },
   { id: "supabase", label: "Supabase", icon: Database },
   { id: "user-management", label: "User management", icon: UserCog },
   { id: "clients", label: "Clients", icon: Building2 },
@@ -315,6 +318,9 @@ export function HolographicDashboardTabs({
                       {variant === "ceo" && activeTab === "calendar" && (
                         <CeoCalendarSection />
                       )}
+                      {variant === "ceo" && activeTab === "assistant" && (
+                        <DashboardAssistantPanel />
+                      )}
                       {variant === "ceo" && activeTab === "supabase" && <CeoSupabaseSection />}
                       {variant === "ceo" && activeTab === "clients" && (
                         <CeoClientsSection />
@@ -331,6 +337,7 @@ export function HolographicDashboardTabs({
                       )}
                       {variant === "ceo" &&
                         activeTab !== "calendar" &&
+                        activeTab !== "assistant" &&
                         activeTab !== "supabase" &&
                         activeTab !== "clients" &&
                         activeTab !== "leads" &&

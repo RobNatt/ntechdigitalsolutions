@@ -7,6 +7,7 @@ import { SITE_URL } from "@/constants/site";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/providers";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
+import { Analytics } from "@vercel/analytics/next"
 
 const GA_MEASUREMENT_ID = "G-9BWR9R2696";
 
@@ -73,6 +74,7 @@ export default function RootLayout({
           <div className="relative min-h-screen">{children}</div>
         </ThemeProvider>
       </body>
+      <Analytics />
     </html>
   );
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Building2, ChevronDown, Copy, LineChart, Plus } from "lucide-react";
 import { NTECH_COMPANY_ID } from "@/constants/analytics";
 import { SITE_URL } from "@/constants/site";
+import { isAnalyticsOptedOut } from "@/lib/analytics/internal-traffic";
 import { cn } from "@/lib/utils";
 
 type ClientRow = {
@@ -114,6 +115,7 @@ export function CeoAnalyticsSection() {
   const [siteKeys, setSiteKeys] = useState<SiteKeyRow[]>([]);
   const [since, setSince] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [internalOptOut, setInternalOptOut] = useState(false);
 
   const [newKeyLabel, setNewKeyLabel] = useState("");
   const [creatingKey, setCreatingKey] = useState(false);
@@ -185,6 +187,10 @@ export function CeoAnalyticsSection() {
     }, 45_000);
     return () => clearInterval(id);
   }, [autoRefresh, activeCompanyId, loadSummary]);
+
+  useEffect(() => {
+    setInternalOptOut(isAnalyticsOptedOut());
+  }, []);
 
   const clientsWithCompany = useMemo(
     () => clients.filter((c) => c.company_id),
@@ -296,6 +302,11 @@ export function CeoAnalyticsSection() {
             Events are written as they happen (near real-time). This tab refetches every 45s while
             open, or use Refresh — there is no live WebSocket feed.
           </p>
+          {internalOptOut ? (
+            <p className="mt-2 inline-flex w-fit items-center rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-amber-900">
+              Internal traffic excluded on this browser
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
