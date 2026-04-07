@@ -1,0 +1,52 @@
+N-Tech Digital Solutions
+Website: https://ntechdigital.solutions
+Audience: Business owners and teams who want websites that convert traffic into qualified sales leads.
+
+Core offerings
+- Website design and development (Webflow, WordPress, Shopify, custom React/JS builds)
+- SEO (traditional search optimization)
+- GEO (Generative Engine Optimization for AI visibility)
+- Automation and lead operations (CRM routing, follow-up flows, reporting)
+
+Service notes
+- Services can be engaged individually or combined for compounding effect.
+- Websites are built mobile-first and optimized for speed/Core Web Vitals.
+- Typical website timeline: 4-8 weeks, with complex builds often 10-16 weeks.
+- SEO timelines commonly show measurable movement in 3-6 months, compounding over 6-12 months.
+- No guarantees on exact rankings due to third-party algorithm control.
+
+Commercial guidance
+- Typical website builds: $2,500-$15,000+
+- Typical SEO/GEO retainers: $750-$2,500/month
+- Typical automation setups: $500-$3,000+
+- SEO/GEO usually starts with a short initial minimum period, then month-to-month.
+
+Ownership and operations
+- Clients own site, content, domain, and data.
+- Clients can update content after launch; training is provided.
+- Support paths include retainer-priority and post-launch packages.
+
+FAQ summary
+Q: What's the difference between SEO and GEO?
+A: SEO improves traditional search visibility and clicks; GEO improves citation/visibility in AI-generated responses.
+
+Q: Do I need all services together?
+A: No. Start with one, then layer services as needed.
+
+Q: Will the site be mobile-friendly and fast?
+A: Yes. Builds are responsive and performance-optimized.
+
+Q: What automations are provided?
+A: Examples include lead-to-CRM routing, booking flows, review requests, lead alerts, reporting, and follow-up automations.
+
+Q: Can you guarantee first-page rankings?
+A: No. Strategy and execution are controlled; rankings are not.
+
+Q: How do you measure GEO performance?
+A: AI-answer presence, citation signals, branded search movement, and direct traffic/lead trends.
+
+Q: Will I own my website and content?
+A: Yes. Ownership and access transfer to client-controlled accounts.
+
+Q: Local or national?
+A: Both. Strategy is adapted to local/regional or national targeting.
