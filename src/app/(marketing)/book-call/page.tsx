@@ -5,7 +5,7 @@ import { BookCallForm } from "@/components/marketing/BookCallForm";
 export const metadata: Metadata = {
   title: "Book a Call | N-Tech Digital Solutions",
   description:
-    "Book a phone call with Robert Nattrass at N-Tech. Available starting next day with focused business-hour windows.",
+    "Book a strategy call with N-Tech. Available starting next day with focused business-hour windows.",
 };
 
 type BookCallPageProps = {
@@ -18,8 +18,8 @@ export default async function BookCallPage({ searchParams }: BookCallPageProps) 
 
   return (
     <MarketingPageShell
-      title="Book a phone call with Robert Nattrass"
-      subtitle="This is a phone call (not video). Availability starts next day: Mon-Fri 8am-6pm, Sat/Sun 2pm-4pm."
+      title="Book a strategy call"
+      subtitle="Pick a time that works for you. We start availability next day: Mon-Fri 8am-6pm, Sat/Sun 2pm-4pm."
       cta="compact"
     >
       <BookCallForm initialPlan={plan} />

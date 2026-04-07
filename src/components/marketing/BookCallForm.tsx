@@ -87,7 +87,7 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
   if (done) {
     return (
       <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-6 text-sm text-emerald-900">
-        Booking confirmed for a phone call with Robert Nattrass. We sent your details and follow-up instructions.
+        Booking confirmed. We sent your invite details and follow-up instructions.
       </div>
     );
   }
@@ -144,9 +144,6 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
         Notes
         <textarea className={cn(inputClass, "min-h-[100px]")} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
-      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        Call type: phone call only (no video meeting link).
-      </p>
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       <button
         type="submit"

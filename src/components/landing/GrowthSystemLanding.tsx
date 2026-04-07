@@ -183,7 +183,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
                 }
                 className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-6 py-3.5 text-base font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
               >
-                Book phone call
+                Book calendar slot
               </Link>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
