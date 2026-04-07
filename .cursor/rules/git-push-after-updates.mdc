@@ -1,0 +1,14 @@
+---
+description: Commit and push to GitHub after completing code updates the user asked for
+alwaysApply: true
+---
+
+# Git: push after updates
+
+When you finish a task that changes the codebase (and the user did not ask to skip version control):
+
+1. Run `git status` and ensure `.env` and other secrets stay untracked (respect `.gitignore`).
+2. `git add` the relevant files, `git commit` with a clear, accurate message.
+3. `git push` to `origin` on the current branch (usually `master` or `main`).
+
+If there is nothing to commit, do not push. If push fails (auth, conflicts), fix or report and do not claim the work is on GitHub until it succeeds.
