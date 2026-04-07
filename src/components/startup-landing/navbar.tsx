@@ -12,7 +12,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "./button";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 
 interface NavbarProps {
   navItems: {
@@ -20,6 +22,15 @@ interface NavbarProps {
     link: string;
   }[];
   visible: boolean;
+}
+
+function trackNavCta(href: string) {
+  if (href === "/contact" || href === "/growth-system") {
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+      placement: "nav",
+      href,
+    });
+  }
 }
 
 export const Navbar = () => {
@@ -111,7 +122,10 @@ function DesktopNavDropdown({
                 role="menuitem"
                 key={`dd-${idx}`}
                 href={navItem.link}
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  trackNavCta(navItem.link);
+                  onOpenChange(false);
+                }}
                 className={cn(
                   "block px-4 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800",
                   (navItem.link === "/contact" || navItem.link === "/growth-system") &&
@@ -173,6 +187,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
             {navItems.map((navItem, idx: number) => (
               <Link
                 onMouseEnter={() => setHovered(idx)}
+                onClick={() => trackNavCta(navItem.link)}
                 className={cn(
                   "relative px-3 py-2 text-xs text-neutral-600 dark:text-neutral-300 lg:px-4 lg:text-sm",
                   (navItem.link === "/contact" || navItem.link === "/growth-system") &&
@@ -270,7 +285,10 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                 <Link
                   key={`link=${idx}`}
                   href={navItem.link}
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    trackNavCta(navItem.link);
+                    setOpen(false);
+                  }}
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
                     (navItem.link === "/contact" || navItem.link === "/growth-system") &&

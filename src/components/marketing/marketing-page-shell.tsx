@@ -1,12 +1,20 @@
 import type { ReactNode } from "react";
+import { MarketingCtaCluster } from "@/components/marketing/MarketingCtaCluster";
 
 type MarketingPageShellProps = {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  /** Default: show CTA rail after content. Use compact on /contact to avoid duplicate “form” button. */
+  cta?: "full" | "compact" | "none";
 };
 
-export function MarketingPageShell({ title, subtitle, children }: MarketingPageShellProps) {
+export function MarketingPageShell({
+  title,
+  subtitle,
+  children,
+  cta = "full",
+}: MarketingPageShellProps) {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <header className="mb-10 border-b border-neutral-200 pb-8 dark:border-neutral-800">
@@ -22,6 +30,12 @@ export function MarketingPageShell({ title, subtitle, children }: MarketingPageS
       <div className="space-y-5 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
         {children}
       </div>
+      {cta !== "none" ? (
+        <MarketingCtaCluster
+          className="mt-10"
+          compactContact={cta === "compact"}
+        />
+      ) : null}
     </main>
   );
 }

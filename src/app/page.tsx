@@ -8,7 +8,11 @@ import { Navbar } from "@/components/startup-landing/navbar";
 import { Process } from "@/components/startup-landing/process";
 import { Pricing } from "@/components/startup-landing/pricing";
 import { Testimonials } from "@/components/startup-landing/testimonials";
-import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
+import {
+  SITE_BUSINESS_PHONE,
+  SITE_CONTACT_EMAIL,
+  SITE_SERVICE_AREAS,
+} from "@/constants/site";
 
 /** Swap to `/og-image.jpg` after adding a 1200×630 image under `public/`. */
 const OG_IMAGE_PATH = "/ntech-official-logo.png";
@@ -61,7 +65,7 @@ const localBusinessJsonLd = {
   description:
     "AI-powered lead generation systems, website design, and automated lead funnels for small businesses.",
   url: "https://ntechdigital.solutions",
-  telephone: SITE_BUSINESS_PHONE,
+  ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
   email: SITE_CONTACT_EMAIL,
   address: {
     "@type": "PostalAddress",
@@ -69,7 +73,7 @@ const localBusinessJsonLd = {
     addressRegion: "NE",
     addressCountry: "US",
   },
-  areaServed: "Omaha, Nebraska",
+  areaServed: SITE_SERVICE_AREAS,
   serviceType: [
     "Lead Generation",
     "Web Design",

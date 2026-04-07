@@ -22,6 +22,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     <MarketingPageShell
       title="Contact"
       subtitle="Tell us what you&apos;re trying to fix — traffic, leads, follow-up, or all of the above. We&apos;ll respond with next steps."
+      cta="compact"
     >
       <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Send a message</h2>
@@ -43,15 +44,17 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             {SITE_CONTACT_EMAIL}
           </a>
         </p>
-        <p>
-          <span className="font-semibold text-neutral-900 dark:text-white">Phone: </span>
-          <a
-            href={`tel:${SITE_BUSINESS_PHONE.replace(/\s/g, "")}`}
-            className="text-neutral-700 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-neutral-300 dark:hover:decoration-white"
-          >
-            {SITE_BUSINESS_PHONE}
-          </a>
-        </p>
+        {SITE_BUSINESS_PHONE ? (
+          <p>
+            <span className="font-semibold text-neutral-900 dark:text-white">Phone: </span>
+            <a
+              href={`tel:${SITE_BUSINESS_PHONE.replace(/\s/g, "")}`}
+              className="text-neutral-700 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-neutral-300 dark:hover:decoration-white"
+            >
+              {SITE_BUSINESS_PHONE}
+            </a>
+          </p>
+        ) : null}
         <p className="text-neutral-600 dark:text-neutral-400">
           <span className="font-semibold text-neutral-900 dark:text-white">Location: </span>
           Omaha, Nebraska — serving clients locally and remotely.

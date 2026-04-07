@@ -1,6 +1,8 @@
 "use client";
 
 import { ChatPanel } from "@/components/chat/chat-panel";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 import { IconMessageCircle, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -59,10 +61,13 @@ export function ChatWidget() {
 
   const onAcceptHelp = () => {
     dismissWelcome(true);
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CHAT_WELCOME_ACCEPT, {});
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CHAT_OPEN, { source: "welcome_prompt" });
     setOpen(true);
   };
 
   const onDeclineHelp = () => {
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CHAT_WELCOME_DISMISS, { action: "not_now" });
     dismissWelcome(true);
   };
 
@@ -84,7 +89,12 @@ export function ChatWidget() {
             <div className="relative rounded-2xl border border-border bg-card p-4 text-card-foreground shadow-lg">
               <button
                 type="button"
-                onClick={() => dismissWelcome(true)}
+                onClick={() => {
+                  trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CHAT_WELCOME_DISMISS, {
+                    action: "close",
+                  });
+                  dismissWelcome(true);
+                }}
                 className="absolute right-2 top-2 rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 aria-label="Dismiss"
               >
@@ -139,7 +149,14 @@ export function ChatWidget() {
       </AnimatePresence>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() =>
+          setOpen((o) => {
+            if (!o) {
+              trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CHAT_OPEN, { source: "fab" });
+            }
+            return !o;
+          })
+        }
         className={cn(
           "pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition",
           "bg-primary text-primary-foreground hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

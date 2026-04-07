@@ -4,6 +4,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { HolographicDashboardTabs } from "@/components/dashboard/HolographicDashboardTabs";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { CONSTANTS } from "@/constants/links";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
@@ -111,15 +114,49 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.7 }}
-        className="mb-4 mt-8 flex w-full flex-col items-center justify-center gap-4 px-8 md:mb-6"
+        className="mb-4 mt-8 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-6"
       >
         <Button
           as={Link}
-          href="/#features"
+          href={CONSTANTS.CONTACT_PATH}
           variant="dark"
-          className="w-full max-w-xs text-center sm:w-48"
+          className="w-full text-center sm:w-auto sm:min-w-[11rem]"
+          onClick={() =>
+            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+              placement: "hero",
+              cta: "get_in_touch",
+            })
+          }
         >
-          See What We Build
+          Get in touch
+        </Button>
+        <Button
+          as={Link}
+          href="/growth-system"
+          variant="secondary"
+          className="w-full border border-neutral-300 bg-white/90 text-center font-semibold text-neutral-900 hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:w-auto sm:min-w-[11rem]"
+          onClick={() =>
+            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+              placement: "hero",
+              cta: "growth_system",
+            })
+          }
+        >
+          Growth System
+        </Button>
+        <Button
+          as={Link}
+          href="/#features"
+          variant="secondary"
+          className="w-full text-center sm:w-auto sm:min-w-[11rem]"
+          onClick={() =>
+            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+              placement: "hero",
+              cta: "see_features",
+            })
+          }
+        >
+          See what we build
         </Button>
       </motion.div>
 

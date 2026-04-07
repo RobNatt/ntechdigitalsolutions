@@ -1,3 +1,5 @@
+import type { InvoiceLineItemStored } from "@/lib/invoices/line-items";
+
 interface LeadNotificationPayload {
   id?: string;
   name: string;
@@ -182,4 +184,122 @@ export async function sendSupportInboxNotification(
   }
 
   console.log("Support inbox notification sent", { to: toEmail, id: payload.id });
+}
+
+export type SendInvoiceToClientParams = {
+  toEmail: string;
+  clientName: string | null;
+  invoiceNumber: string;
+  currency: string;
+  lineItems: InvoiceLineItemStored[];
+  subtotalCents: number;
+  taxCents: number;
+  totalCents: number;
+  notes: string | null;
+};
+
+function formatMoney(cents: number, currency: string): string {
+  const code = currency?.trim() || "USD";
+  try {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: code }).format(cents / 100);
+  } catch {
+    return `$${(cents / 100).toFixed(2)}`;
+  }
+}
+
+/** Email invoice PDF-style summary to the client (Resend). */
+export async function sendInvoiceToClient(params: SendInvoiceToClientParams): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from =
+    process.env.INVOICE_NOTIFICATION_FROM?.trim() ||
+    process.env.LEAD_NOTIFICATION_FROM?.trim() ||
+    "nTech Digital <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    throw new Error("Missing RESEND_API_KEY — cannot send invoice email.");
+  }
+
+  const greeting = params.clientName?.trim() ? `Hi ${params.clientName.trim()},` : "Hi,";
+
+  const rows = params.lineItems.map((row) => {
+    const line = row.quantity * row.unit_price_cents;
+    return `${row.description} — ${row.quantity} × ${formatMoney(row.unit_price_cents, params.currency)} = ${formatMoney(line, params.currency)}`;
+  });
+
+  const text = [
+    greeting,
+    "",
+    `Invoice ${params.invoiceNumber}`,
+    "",
+    ...rows,
+    "",
+    `Subtotal: ${formatMoney(params.subtotalCents, params.currency)}`,
+    params.taxCents > 0 ? `Tax: ${formatMoney(params.taxCents, params.currency)}` : null,
+    `Total due: ${formatMoney(params.totalCents, params.currency)}`,
+    params.notes?.trim() ? ["", "Notes:", params.notes.trim()] : null,
+    "",
+    "Thank you for your business.",
+    "— nTech Digital Solutions",
+  ]
+    .flat()
+    .filter((l): l is string => l != null);
+
+  const tableRows = params.lineItems
+    .map(
+      (row) =>
+        `<tr><td style="padding:8px;border-bottom:1px solid #eee">${escapeHtml(row.description)}</td>` +
+          `<td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${row.quantity}</td>` +
+          `<td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${formatMoney(row.unit_price_cents, params.currency)}</td>` +
+          `<td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${formatMoney(row.quantity * row.unit_price_cents, params.currency)}</td></tr>`
+    )
+    .join("");
+
+  const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;line-height:1.5;color:#111">
+<p>${escapeHtml(greeting)}</p>
+<p><strong>Invoice ${escapeHtml(params.invoiceNumber)}</strong></p>
+<table style="width:100%;max-width:560px;border-collapse:collapse;font-size:14px">
+<thead><tr>
+<th align="left" style="padding:8px;border-bottom:2px solid #ccc">Description</th>
+<th align="right" style="padding:8px;border-bottom:2px solid #ccc">Qty</th>
+<th align="right" style="padding:8px;border-bottom:2px solid #ccc">Unit</th>
+<th align="right" style="padding:8px;border-bottom:2px solid #ccc">Line</th>
+</tr></thead>
+<tbody>${tableRows}</tbody>
+</table>
+<p style="margin-top:16px">Subtotal: <strong>${formatMoney(params.subtotalCents, params.currency)}</strong><br/>
+${params.taxCents > 0 ? `Tax: ${formatMoney(params.taxCents, params.currency)}<br/>` : ""}
+Total due: <strong>${formatMoney(params.totalCents, params.currency)}</strong></p>
+${params.notes?.trim() ? `<p style="margin-top:16px"><strong>Notes</strong><br/>${escapeHtml(params.notes.trim()).replace(/\n/g, "<br/>")}</p>` : ""}
+<p style="margin-top:24px;color:#444">Thank you for your business.<br/>— nTech Digital Solutions</p>
+</body></html>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: params.toEmail,
+      subject: `Invoice ${params.invoiceNumber}`,
+      text: text.join("\n"),
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend API error: ${err}`);
+  }
+
+  console.log("Invoice email sent", { to: params.toEmail, invoiceNumber: params.invoiceNumber });
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

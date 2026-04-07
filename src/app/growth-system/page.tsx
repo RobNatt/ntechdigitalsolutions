@@ -7,7 +7,7 @@ const canonical = `${SITE_URL}/growth-system`;
 export const metadata: Metadata = {
   title: "Growth System — Stop Losing Leads | N-Tech Digital Solutions",
   description:
-    "If you're paying for ads or getting traffic but not seeing consistent booked jobs, the missing piece is often the system after the click — funnel, CRM, follow-up, and local SEO. $4,997 setup + $499/mo.",
+    "If you're paying for ads or getting traffic but not seeing consistent booked jobs, the missing piece is often the system after the click — funnel, CRM, follow-up, and local SEO. $12,000 setup + $4,000/month.",
   alternates: { canonical },
   openGraph: {
     title: "Stop Losing Good Leads Because There's No System to Catch Them | N-Tech",

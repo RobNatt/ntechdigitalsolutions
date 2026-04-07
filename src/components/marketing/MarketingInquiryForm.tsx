@@ -1,22 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
+import { useRef, useState } from "react";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { readAnalyticsClientIds } from "@/lib/analytics/read-client-ids";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
-
-function readAnalyticsIds(): { sessionId?: string; visitorId?: string } {
-  if (typeof window === "undefined") return {};
-  try {
-    const visitorId = localStorage.getItem(ANALYTICS_STORAGE_KEYS.visitorId) ?? undefined;
-    const sessionId = sessionStorage.getItem(ANALYTICS_STORAGE_KEYS.sessionId) ?? undefined;
-    return {
-      ...(visitorId && visitorId.length > 4 ? { visitorId } : {}),
-      ...(sessionId && sessionId.length > 4 ? { sessionId } : {}),
-    };
-  } catch {
-    return {};
-  }
-}
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400";
@@ -28,6 +16,7 @@ type MarketingInquiryFormProps = {
 };
 
 export function MarketingInquiryForm({ planInterest, className }: MarketingInquiryFormProps) {
+  const formStartedRef = useRef(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -44,7 +33,7 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
     try {
       const sourcePage =
         typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : "";
-      const analyticsIds = readAnalyticsIds();
+      const analyticsIds = readAnalyticsClientIds();
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,7 +77,7 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
       >
         <p className="text-lg font-semibold text-emerald-950 dark:text-emerald-100">Thanks — we got it.</p>
         <p className="mt-2 text-sm text-emerald-900/90 dark:text-emerald-200/90">
-          We&apos;ll follow up by email shortly. If it&apos;s urgent, call the number below.
+          We&apos;ll follow up by email shortly.
         </p>
         <button
           type="button"
@@ -101,8 +90,18 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
     );
   }
 
+  function onFormFocusCapture() {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_START, {
+      surface: "contact",
+      ...(planInterest ? { plan: planInterest } : {}),
+    });
+  }
+
   return (
     <form
+      onFocusCapture={onFormFocusCapture}
       onSubmit={(e) => void onSubmit(e)}
       className={cn("space-y-4", className)}
       noValidate

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { readAnalyticsClientIds } from "@/lib/analytics/read-client-ids";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -87,6 +88,8 @@ export function ChatContactForm({ messages }: ChatContactFormProps) {
             ? `${window.location.pathname}${window.location.search || ""}`
             : "/";
 
+        const analyticsIds = readAnalyticsClientIds();
+
         const res = await fetch("/api/inquiries", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -97,6 +100,7 @@ export function ChatContactForm({ messages }: ChatContactFormProps) {
             phone: phone.trim() || undefined,
             message,
             sourcePage,
+            ...analyticsIds,
           }),
         });
 

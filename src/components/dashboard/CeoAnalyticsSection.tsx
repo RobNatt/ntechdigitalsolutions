@@ -17,6 +17,7 @@ type PathRow = { path?: string; count?: number };
 type RefRow = { referrer?: string; count?: number };
 type UtmRow = { source?: string; count?: number };
 type DayRow = { day?: string; count?: number };
+type CustomEventRow = { eventType?: string; count?: number };
 
 type SummaryPayload = {
   totalPageviews?: number;
@@ -25,6 +26,7 @@ type SummaryPayload = {
   uniqueVisitors?: number;
   sessionsWithMultiplePageviews?: number;
   sessionsReachedContact?: number;
+  customEventCounts?: CustomEventRow[];
   topPaths?: PathRow[];
   topReferrers?: RefRow[];
   topUtmSources?: UtmRow[];
@@ -259,6 +261,17 @@ export function CeoAnalyticsSection() {
     }));
   }, [summary]);
 
+  const customEventRows = useMemo(() => {
+    const raw = summary?.customEventCounts;
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .map((r) => ({
+        left: String(r.eventType ?? ""),
+        count: Number(r.count ?? 0),
+      }))
+      .filter((r) => r.left.length > 0);
+  }, [summary]);
+
   const maxDaily = useMemo(
     () => (daily.length ? Math.max(...daily.map((d) => d.count), 1) : 1),
     [daily]
@@ -454,6 +467,8 @@ export function CeoAnalyticsSection() {
             <RowList title="Top referrers" rows={topRefs} leftKey="r" />
             <RowList title="UTM sources" rows={topUtm} leftKey="u" />
           </div>
+
+          <RowList title="Custom events (by type)" rows={customEventRows} leftKey="ce" />
 
           <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner">
             <div className="flex flex-wrap items-center justify-between gap-2">

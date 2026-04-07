@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -88,24 +88,6 @@ export function SouthOContactSection() {
             </p>
 
             <ul className="mt-10 space-y-6">
-              <li>
-                <Link
-                  href="tel:+14025551234"
-                  className="group flex gap-4 rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10"
-                >
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-[#b45309]/90 text-white">
-                    <Phone className="size-5" aria-hidden />
-                  </span>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-white/60">
-                      Call Us
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-white group-hover:text-[#fdba73]">
-                      (402) 555-1234
-                    </p>
-                  </div>
-                </Link>
-              </li>
               <li>
                 <Link
                   href="mailto:hello@southoroofing.com"

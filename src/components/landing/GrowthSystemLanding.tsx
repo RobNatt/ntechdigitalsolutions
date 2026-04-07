@@ -1,10 +1,14 @@
+"use client";
+
 import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Phone, ArrowRight } from "lucide-react";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 
-/** Conversion LP — Pro offer: $4,997 + $499/mo. CTAs → /contact?plan=pro */
+/** Conversion LP — Complete System tier. CTAs → /contact?plan=complete-system */
 const COLORS = {
   trust: "#1E3A5F",
   action: "#2563EB",
@@ -14,7 +18,7 @@ const COLORS = {
   border: "#E5E7EB",
 } as const;
 
-const CONTACT_PRO = "/contact?plan=pro";
+const CONTACT_COMPLETE_SYSTEM = "/contact?plan=complete-system";
 
 function Headline({
   as: Tag = "h2",
@@ -44,14 +48,22 @@ function PrimaryCta({
   href,
   children,
   className,
+  trackCta,
 }: {
   href: string;
   children: ReactNode;
   className?: string;
+  trackCta: string;
 }) {
   return (
     <Link
       href={href}
+      onClick={() =>
+        trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+          placement: "growth_system",
+          cta: trackCta,
+        })
+      }
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:brightness-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-offset-2",
         className
@@ -67,13 +79,21 @@ function PrimaryCta({
 function SecondaryCta({
   href,
   children,
+  trackCta,
 }: {
   href: string;
   children: ReactNode;
+  trackCta: string;
 }) {
   return (
     <Link
       href={href}
+      onClick={() =>
+        trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+          placement: "growth_system",
+          cta: trackCta,
+        })
+      }
       className="inline-flex items-center justify-center rounded-lg border-2 px-6 py-3.5 text-base font-semibold transition hover:bg-white/80"
       style={{ borderColor: COLORS.action, color: COLORS.action }}
     >
@@ -129,7 +149,9 @@ export function GrowthSystemLanding() {
               <Bullet>See every lead in your pipeline clearly</Bullet>
             </ul>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <PrimaryCta href={CONTACT_PRO}>Book Your Strategy Call</PrimaryCta>
+              <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="hero_book_strategy">
+                Book Your Strategy Call
+              </PrimaryCta>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
               Takes 15 minutes. No pressure. No obligation.
@@ -210,7 +232,9 @@ export function GrowthSystemLanding() {
               <Bullet>Dashboard so you always know what&apos;s working</Bullet>
             </ul>
             <div className="mt-8">
-              <SecondaryCta href={CONTACT_PRO}>See If You Qualify</SecondaryCta>
+              <SecondaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="solution_see_qualify">
+                See If You Qualify
+              </SecondaryCta>
             </div>
           </div>
         </div>
@@ -373,13 +397,13 @@ export function GrowthSystemLanding() {
             <p className="mt-8 text-lg">
               <span className="font-semibold text-[#374151]">Setup:</span>{" "}
               <span className="text-2xl font-bold tabular-nums" style={{ color: COLORS.trust }}>
-                $4,997
+                $12,000
               </span>
             </p>
             <p className="mt-2 text-lg">
               <span className="font-semibold text-[#374151]">Ongoing:</span>{" "}
               <span className="text-2xl font-bold tabular-nums" style={{ color: COLORS.trust }}>
-                $499/month
+                $4,000/month
               </span>
             </p>
             <p className="mt-8 font-semibold" style={{ color: COLORS.trust }}>
@@ -402,7 +426,9 @@ export function GrowthSystemLanding() {
             </p>
           </div>
           <div className="mt-10">
-            <PrimaryCta href={CONTACT_PRO}>Book Your Strategy Call</PrimaryCta>
+            <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="offer_book_strategy">
+              Book Your Strategy Call
+            </PrimaryCta>
           </div>
         </div>
       </section>
@@ -422,7 +448,13 @@ export function GrowthSystemLanding() {
           </p>
           <div className="mt-10">
             <Link
-              href={CONTACT_PRO}
+              href={CONTACT_COMPLETE_SYSTEM}
+              onClick={() =>
+                trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+                  placement: "growth_system",
+                  cta: "footer_book_strategy",
+                })
+              }
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-base font-semibold shadow-md transition hover:bg-sky-50"
               style={{ color: COLORS.trust }}
             >

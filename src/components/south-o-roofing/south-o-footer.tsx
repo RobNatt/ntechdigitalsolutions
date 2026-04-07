@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Twitter } from "lucide-react";
 
 const QUICK_LINKS = [
   { label: "Home", href: "#top" },
@@ -136,24 +136,6 @@ export function SouthOFooter() {
               Connect
             </h2>
             <ul className="mt-4 space-y-4 text-sm">
-              <li>
-                <a
-                  href="tel:+14025551234"
-                  className="group flex gap-3 text-neutral-400 transition hover:text-white"
-                >
-                  <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-white/5 text-[#fdba73] ring-1 ring-white/10">
-                    <Phone className="size-4" aria-hidden />
-                  </span>
-                  <span>
-                    <span className="block text-xs font-medium uppercase tracking-wider text-neutral-500 group-hover:text-neutral-400">
-                      Phone
-                    </span>
-                    <span className="font-medium text-neutral-200 group-hover:text-white">
-                      (402) 555-1234
-                    </span>
-                  </span>
-                </a>
-              </li>
               <li>
                 <a
                   href="mailto:hello@southoroofing.com"
