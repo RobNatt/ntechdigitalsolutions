@@ -56,7 +56,14 @@ export async function POST(req: Request) {
   const basePrompt =
     process.env.DASHBOARD_ASSISTANT_SYSTEM_PROMPT?.trim() ||
     DASHBOARD_ASSISTANT_DEFAULT_PROMPT;
-  const systemPrompt = `${basePrompt}\n\n## Session context\n${dateLine}\nSigned-in user id (reference only): ${user.id}`;
+  const rawContext = (body as { context?: unknown }).context;
+  const contextBlock =
+    rawContext && typeof rawContext === "object"
+      ? `\n\n## Live dashboard context (authoritative)\n${JSON.stringify(
+          rawContext
+        ).slice(0, 12000)}`
+      : "";
+  const systemPrompt = `${basePrompt}\n\n## Session context\n${dateLine}\nSigned-in user id (reference only): ${user.id}${contextBlock}`;
 
   const model = process.env.GROQ_MODEL?.trim() || DEFAULT_GROQ_MODEL;
 
