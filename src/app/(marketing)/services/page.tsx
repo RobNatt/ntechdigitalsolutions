@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
+import Image from "next/image";
 import Link from "next/link";
 import {
   BarChart3,
@@ -76,6 +79,34 @@ const PHASES = [
   },
 ] as const;
 
+const PROOF_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"] as const;
+
+async function findProofImages(): Promise<{ before: string | null; after: string | null }> {
+  try {
+    const publicDir = path.join(process.cwd(), "public");
+    const files = await readdir(publicDir);
+    const lower = files.map((f) => f.toLowerCase());
+
+    const beforeIdx = lower.findIndex(
+      (f) =>
+        PROOF_IMAGE_EXTENSIONS.some((ext) => f.endsWith(ext)) &&
+        (f.includes("pre") || f.includes("before"))
+    );
+    const afterIdx = lower.findIndex(
+      (f) =>
+        PROOF_IMAGE_EXTENSIONS.some((ext) => f.endsWith(ext)) &&
+        (f.includes("after") || f.includes("result"))
+    );
+
+    return {
+      before: beforeIdx >= 0 ? `/${files[beforeIdx]}` : null,
+      after: afterIdx >= 0 ? `/${files[afterIdx]}` : null,
+    };
+  } catch {
+    return { before: null, after: null };
+  }
+}
+
 function CapabilityCard({
   icon: Icon,
   title,
@@ -101,7 +132,9 @@ function CapabilityCard({
   );
 }
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const proofImages = await findProofImages();
+
   return (
     <MarketingPageShell
       title="What we do"
@@ -119,6 +152,54 @@ export default function ServicesPage() {
           <p>
             Some clients need a full growth system end to end. Others need a strong site plus a few automations. We scope to what moves the needle for you, then document and hand off so your team isn’t dependent on mystery workflows.
           </p>
+        </section>
+
+        <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+            Proof layer
+          </p>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+            From no meaningful traffic to ~200 visitors per week
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            One recent client had almost no useful traffic before optimization. After we improved
+            structure, technical SEO, and conversion flow, they started averaging around 200 weekly
+            visitors with stronger lead intent.
+          </p>
+          {proofImages.before && proofImages.after ? (
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <figure className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900/40">
+                <Image
+                  src={proofImages.before}
+                  alt="Pre-launch analytics snapshot"
+                  width={1200}
+                  height={700}
+                  className="h-auto w-full object-cover"
+                />
+                <figcaption className="border-t border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
+                  Pre-launch: minimal traffic and weak discovery
+                </figcaption>
+              </figure>
+              <figure className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900/40">
+                <Image
+                  src={proofImages.after}
+                  alt="Post-launch results snapshot"
+                  width={1200}
+                  height={700}
+                  className="h-auto w-full object-cover"
+                />
+                <figcaption className="border-t border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
+                  Post-launch: consistent weekly traffic and stronger lead flow
+                </figcaption>
+              </figure>
+            </div>
+          ) : (
+            <p className="mt-4 rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              Add the screenshots in <code>public/</code> with names containing{" "}
+              <code>pre</code>/<code>before</code> and <code>after</code>/<code>result</code> to
+              auto-display the case proof.
+            </p>
+          )}
         </section>
 
         <section>
@@ -180,15 +261,56 @@ export default function ServicesPage() {
             <div>
               <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Who we work best with</h2>
               <p className="mt-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
-                Service businesses and teams that sell on trust — contractors, professional services, and local/regional brands that are ready to invest in a system, not a one-page brochure. If you’re already spending on ads or referrals and feel the leak is “after the click,” we should talk.
+                Business owners and teams who want a website that drives traffic into sales leads — not
+                just a digital brochure. If your business depends on trust and follow-up (contractors,
+                local services, professional firms), we build the front end and back end together.
               </p>
             </div>
           </div>
         </section>
 
+        <section>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+            Common questions
+          </p>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+            Objections we handle early
+          </h2>
+          <div className="mt-6 space-y-4">
+            {[
+              {
+                q: "How long does this take to start producing results?",
+                a: "Most builds launch in weeks, not quarters. Traffic and lead quality improvements typically compound over the first 60-120 days as content, SEO, and follow-up systems settle in.",
+              },
+              {
+                q: "What if we already have a website?",
+                a: "We can rebuild, iterate, or layer conversion and automation onto what you have. We choose the lowest-friction path that actually improves pipeline.",
+              },
+              {
+                q: "Will this work for my industry?",
+                a: "If your buyers search, compare, and then contact you, the model applies. We tailor messaging, pages, and qualification flow to your exact service and market.",
+              },
+              {
+                q: "Do I need to manage all the tech after launch?",
+                a: "No. We document the system and can stay involved with optimization, reporting, and support based on your package.",
+              },
+            ].map((item) => (
+              <div
+                key={item.q}
+                className="rounded-xl border border-neutral-200/90 bg-neutral-50/70 p-4 dark:border-neutral-800 dark:bg-neutral-900/40"
+              >
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">{item.q}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                  {item.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="flex flex-col gap-3 border-t border-neutral-200 pt-10 dark:border-neutral-800 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Ready to map your funnel? Tell us what you&apos;re trying to fix — we&apos;ll suggest a practical starting point.
+            Ready to turn site traffic into qualified leads? Tell us what you&apos;re trying to fix — we&apos;ll suggest the practical starting point.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
