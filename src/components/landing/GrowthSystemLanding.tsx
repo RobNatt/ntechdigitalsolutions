@@ -19,7 +19,7 @@ const COLORS = {
   border: "#E5E7EB",
 } as const;
 
-const CONTACT_COMPLETE_SYSTEM = CONSTANTS.BOOK_CALL_PATH;
+const CONTACT_COMPLETE_SYSTEM = `${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`;
 const FUNNEL_VARIANTS = {
   a: {
     badge: "Full lead system · Local + SEO",
@@ -174,9 +174,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
                 Book Your Strategy Call
               </PrimaryCta>
               <Link
-                href={CONSTANTS.BOOK_CALL_PATH}
-                target="_blank"
-                rel="noreferrer"
+                href={`${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`}
                 onClick={() =>
                   trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CALENDAR_BOOKING_CLICK, {
                     placement: "growth_system",
