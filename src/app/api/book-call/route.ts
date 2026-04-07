@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       phone,
       company,
       planInterest: plan,
-      message: notes || "Booked strategy call",
+      message: notes || "Booked phone call with Robert Nattrass",
       sourcePage: "/book-call",
     });
 
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
 
     const { error: calErr } = await admin.from("calendar_events").insert({
       user_id: owner.id,
-      title: `Booked call: ${name}`,
+      title: `Phone call: ${name} with Robert Nattrass`,
       date,
       hour: h,
       duration: 1,
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
       company,
       phone,
       message:
-        `Booked strategy call for ${date} ${time}.\n${notes ?? ""}`.trim(),
+        `Booked phone call with Robert Nattrass for ${date} ${time} (no video).\n${notes ?? ""}`.trim(),
       planInterest: plan,
       sourcePage: "/book-call",
     });
