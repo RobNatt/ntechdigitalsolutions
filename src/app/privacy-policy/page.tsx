@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { Navbar } from "@/components/startup-landing/navbar";
 
 export const metadata = {
   title: "Privacy Policy | nTech Digital Solutions",
@@ -10,8 +11,10 @@ export default async function PrivacyPolicyPage() {
   const content = await readFile(filePath, "utf8");
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <section className="max-w-4xl mx-auto px-6 py-12">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-slate-50 pt-20 lg:pt-24">
+        <section className="mx-auto max-w-4xl px-6 py-12">
         <div className="bg-white border border-slate-200 rounded-2xl p-6 md:p-10 shadow-sm">
           <pre className="whitespace-pre-wrap break-words text-slate-800 text-sm md:text-base leading-7 font-sans">
             {content}
@@ -19,6 +22,7 @@ export default async function PrivacyPolicyPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
 
