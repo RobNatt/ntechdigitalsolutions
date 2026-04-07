@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { IconCheck } from "@tabler/icons-react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
@@ -115,7 +116,7 @@ type Tier = (typeof TIERS)[number];
 
 function tierContactHref(tier: Tier): string {
   const cta = tier.cta as { label: string; style: "primary" | "outline"; href?: string };
-  if (tier.id === "lead-machine") return `/book-call?plan=${tier.id}`;
+  if (tier.id === "lead-machine") return CONSTANTS.BOOK_CALL_PATH;
   return cta.href ?? `/contact?plan=${tier.id}`;
 }
 
