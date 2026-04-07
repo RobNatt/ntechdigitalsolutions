@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { MarketingCtaCluster } from "@/components/marketing/MarketingCtaCluster";
+import { cn } from "@/lib/utils";
 
 type MarketingPageShellProps = {
   title: string;
@@ -7,6 +8,8 @@ type MarketingPageShellProps = {
   children: ReactNode;
   /** Default: show CTA rail after content. Use compact on /contact to avoid duplicate “form” button. */
   cta?: "full" | "compact" | "none";
+  /** Wider main column for long-form pages (e.g. services). */
+  maxWidthClass?: string;
 };
 
 export function MarketingPageShell({
@@ -14,9 +17,10 @@ export function MarketingPageShell({
   subtitle,
   children,
   cta = "full",
+  maxWidthClass = "max-w-3xl",
 }: MarketingPageShellProps) {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <main className={cn("mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-16", maxWidthClass)}>
       <header className="mb-10 border-b border-neutral-200 pb-8 dark:border-neutral-800">
         <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white sm:text-4xl">
           {title}
