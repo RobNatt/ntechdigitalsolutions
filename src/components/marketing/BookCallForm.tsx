@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,13 @@ function slotLabelsForDate(ymd: string): string[] {
   return slots;
 }
 
+const PLAN_OPTIONS = [
+  { id: "foundation", label: "Package 1 · Foundation" },
+  { id: "lead-machine", label: "Package 2 · Lead Machine" },
+  { id: "complete-system", label: "Package 3 · Growth System" },
+  { id: "premium-growth-partner", label: "Package 4 · Premium Growth Partner" },
+] as const;
+
 export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,10 +50,42 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slots, setSlots] = useState<string[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
-  const slots = useMemo(() => slotLabelsForDate(date), [date]);
+  const fallbackSlots = useMemo(() => slotLabelsForDate(date), [date]);
   const inputClass =
     "mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100";
+
+  useEffect(() => {
+    let mounted = true;
+    void (async () => {
+      setSlotsLoading(true);
+      try {
+        const q = new URLSearchParams({ date });
+        const res = await fetch(`/api/book-call/availability?${q.toString()}`);
+        const data = await res.json();
+        if (!mounted) return;
+        if (!res.ok || !Array.isArray(data.available)) {
+          setSlots(fallbackSlots);
+          return;
+        }
+        setSlots(data.available);
+      } catch {
+        if (mounted) setSlots(fallbackSlots);
+      } finally {
+        if (mounted) setSlotsLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [date, fallbackSlots]);
+
+  useEffect(() => {
+    if (slots.length === 0) return;
+    if (!slots.includes(time)) setTime(slots[0]);
+  }, [slots, time]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -122,7 +161,18 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Plan
-          <input className={inputClass} value={plan} onChange={(e) => setPlan(e.target.value)} />
+          <select
+            className={cn(inputClass, "cursor-pointer")}
+            value={plan}
+            onChange={(e) => setPlan(e.target.value)}
+          >
+            <option value="">Select package</option>
+            {PLAN_OPTIONS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Date
@@ -130,8 +180,13 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
         </label>
         <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Time
-          <select className={cn(inputClass, "cursor-pointer")} value={time} onChange={(e) => setTime(e.target.value)}>
-            {slots.map((s) => (
+          <select
+            className={cn(inputClass, "cursor-pointer")}
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            disabled={slotsLoading || slots.length === 0}
+          >
+            {(slots.length ? slots : fallbackSlots).map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
@@ -139,6 +194,13 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
           </select>
         </label>
       </div>
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        {slotsLoading
+          ? "Checking calendar availability..."
+          : slots.length === 0
+            ? "No available call slots on this date (calendar conflict). Pick another date."
+            : "Available times are filtered against Robert's calendar."}
+      </p>
 
       <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
         Notes
