@@ -95,5 +95,5 @@ We may update this Privacy Policy from time to time. Updated versions will be po
 If you have questions about this Privacy Policy or our data practices, contact:
 
 - nTech Digital Solutions
-- Email: [Insert contact email]
+- Email: hello@ntechdigital.solutions
 

@@ -89,5 +89,5 @@ These Terms are governed by applicable laws of the relevant jurisdiction, withou
 Questions about these Terms may be sent to:
 
 - nTech Digital Solutions
-- Email: [Insert contact email]
+- Email: hello@ntechdigital.solutions
 
