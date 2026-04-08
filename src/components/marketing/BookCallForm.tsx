@@ -194,13 +194,13 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
           </select>
         </label>
       </div>
-      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        {slotsLoading
-          ? "Checking calendar availability..."
-          : slots.length === 0
-            ? "No available call slots on this date (calendar conflict). Pick another date."
-            : "Available times are filtered against Robert's calendar."}
-      </p>
+      {slotsLoading || slots.length === 0 ? (
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          {slotsLoading
+            ? "Checking calendar availability..."
+            : "No available call slots on this date. Pick another date."}
+        </p>
+      ) : null}
 
       <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
         Notes

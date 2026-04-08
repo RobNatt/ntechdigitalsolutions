@@ -3,6 +3,9 @@ import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+/** Blog reads Supabase at request time; static prerender would cache an empty list. */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog | N-Tech Digital Solutions",
   description:
@@ -22,13 +25,19 @@ export default async function BlogPage() {
   let posts: BlogPost[] = [];
   try {
     const admin = createAdminClient();
-    const { data } = await admin
+    const { data, error } = await admin
       .from("dashboard_blog_posts")
       .select("id, title, slug, excerpt, content, published_at")
       .eq("status", "published")
-      .order("published_at", { ascending: false });
-    posts = (data as BlogPost[] | null) ?? [];
-  } catch {
+      .order("published_at", { ascending: false, nullsFirst: false });
+    if (error) {
+      console.error("blog page dashboard_blog_posts:", error.message);
+      posts = [];
+    } else {
+      posts = (data as BlogPost[] | null) ?? [];
+    }
+  } catch (e) {
+    console.error("blog page:", e);
     posts = [];
   }
 

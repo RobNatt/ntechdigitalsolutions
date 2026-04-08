@@ -4,12 +4,7 @@ import Link from "next/link";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
-import {
-  SITE_BUSINESS_PHONE,
-  SITE_CONTACT_EMAIL,
-  SITE_SERVICE_AREAS,
-  siteTelHref,
-} from "@/constants/site";
+import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL, siteTelHref } from "@/constants/site";
 import { cn } from "@/lib/utils";
 
 type MarketingCtaClusterProps = {
@@ -31,12 +26,7 @@ export function MarketingCtaCluster({
         className
       )}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
-        Service area
-      </p>
-      <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">{SITE_SERVICE_AREAS}</p>
-
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {!compactContact ? (
           <Link
             href={CONSTANTS.CONTACT_PATH}
