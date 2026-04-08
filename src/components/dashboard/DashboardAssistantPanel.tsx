@@ -1,30 +1,77 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Bot } from "lucide-react";
+import {
+  getNtechAccountabilityPack,
+  weekdaySlotLabel,
+} from "@/lib/dashboard/pa-assignments-defaults";
+import {
+  DEFAULT_PA_TIMEZONE,
+  evaluatePaAssignments,
+  loadPaAssignments,
+  mergeAssistantContext,
+  mergeDefaultPack,
+  type PaAssignment,
+  type PaAssignmentFrequency,
+  savePaAssignments,
+} from "@/lib/dashboard/pa-assignments";
 
 type Role = "user" | "assistant";
 type Msg = { role: Role; content: string };
 type AssistantContext = {
   hash: string;
   snapshot: Record<string, unknown>;
+  timeZone: string;
 };
 
 const AUTO_BRIEF_DELAY_MS = 3000;
 const CONTEXT_POLL_MS = 45_000;
+
+function statusBadgeClass(s: "ok" | "due" | "overdue") {
+  if (s === "ok")
+    return "border border-emerald-400/40 bg-emerald-100 text-emerald-900";
+  if (s === "due")
+    return "border border-amber-400/40 bg-amber-100 text-amber-900";
+  return "border border-red-400/40 bg-red-100 text-red-900";
+}
+
+function assignmentCadenceLabel(a: PaAssignment): string {
+  if (a.frequency === "daily") return "Daily";
+  if (a.frequency === "weekly") return "Weekly (7-day)";
+  return `Weekday · ${weekdaySlotLabel(a.weekdaySlot ?? 0)}`;
+}
 
 export function DashboardAssistantPanel() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [contextMeta, setContextMeta] = useState<{ hash: string; updatedAt: string | null } | null>(
-    null
+  const [contextMeta, setContextMeta] = useState<{
+    hash: string;
+    updatedAt: string | null;
+  } | null>(null);
+
+  const [assignments, setAssignments] = useState<PaAssignment[]>([]);
+  const [assignmentsHydrated, setAssignmentsHydrated] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newFrequency, setNewFrequency] =
+    useState<PaAssignmentFrequency>("daily");
+  const [newWeekdaySlot, setNewWeekdaySlot] = useState(0);
+  const [assignmentsOpen, setAssignmentsOpen] = useState(true);
+  const [assistantTimeZone, setAssistantTimeZone] = useState(DEFAULT_PA_TIMEZONE);
+
+  const evaluatedAssignments = useMemo(
+    () => evaluatePaAssignments(assignments, assistantTimeZone),
+    [assignments, assistantTimeZone]
   );
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Msg[]>([]);
   const loadingRef = useRef(false);
   const contextRef = useRef<AssistantContext | null>(null);
+  const assignmentsRef = useRef<PaAssignment[]>([]);
   const initialBriefSentRef = useRef(false);
   const autoBriefTimerRef = useRef<number | null>(null);
 
@@ -36,91 +83,159 @@ export function DashboardAssistantPanel() {
     messagesRef.current = messages;
   }, [messages]);
 
+  useEffect(() => {
+    assignmentsRef.current = assignments;
+  }, [assignments]);
+
+  useEffect(() => {
+    const loaded = loadPaAssignments();
+    setAssignments(
+      loaded.length > 0 ? loaded : getNtechAccountabilityPack()
+    );
+    setAssignmentsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!assignmentsHydrated) return;
+    savePaAssignments(assignments);
+  }, [assignments, assignmentsHydrated]);
+
   const fetchContext = useCallback(async (): Promise<AssistantContext | null> => {
     try {
-      const res = await fetch("/api/dashboard-assistant/context", { cache: "no-store" });
+      const res = await fetch("/api/dashboard-assistant/context", {
+        cache: "no-store",
+      });
       if (!res.ok) return null;
       const data = (await res.json()) as {
         hash?: string;
         snapshot?: Record<string, unknown>;
+        timeZone?: string;
       };
       if (!data.hash || !data.snapshot) return null;
-      return { hash: data.hash, snapshot: data.snapshot };
+      const timeZone =
+        typeof data.timeZone === "string" && data.timeZone.trim()
+          ? data.timeZone.trim()
+          : DEFAULT_PA_TIMEZONE;
+      return { hash: data.hash, snapshot: data.snapshot, timeZone };
     } catch {
       return null;
     }
   }, []);
 
-  const runAssistant = useCallback(
-    async (text: string, showUserBubble: boolean) => {
-      if (!text.trim() || loadingRef.current) return;
-      setError(null);
-      const base = messagesRef.current;
-      const history: Msg[] = showUserBubble
-        ? [...base, { role: "user", content: text }]
-        : base;
-      const requestMessages: Msg[] = showUserBubble
-        ? history
-        : [...history, { role: "user", content: text }];
-      if (showUserBubble) {
-        setInput("");
-        setMessages(history);
+  const buildContextPayload = useCallback(() => {
+    const tz = contextRef.current?.timeZone ?? DEFAULT_PA_TIMEZONE;
+    return mergeAssistantContext(
+      contextRef.current?.snapshot ?? null,
+      assignmentsRef.current,
+      tz
+    );
+  }, []);
+
+  const runAssistant = useCallback(async (text: string, showUserBubble: boolean) => {
+    if (!text.trim() || loadingRef.current) return;
+    setError(null);
+    const base = messagesRef.current;
+    const history: Msg[] = showUserBubble
+      ? [...base, { role: "user", content: text }]
+      : base;
+    const requestMessages: Msg[] = showUserBubble
+      ? history
+      : [...history, { role: "user", content: text }];
+    if (showUserBubble) {
+      setInput("");
+      setMessages(history);
+    }
+
+    loadingRef.current = true;
+    setLoading(true);
+    let assistantContent = "";
+
+    try {
+      const res = await fetch("/api/dashboard-assistant/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: requestMessages,
+          context: buildContextPayload(),
+        }),
+      });
+
+      if (res.status === 401) {
+        throw new Error("Session expired — refresh or sign in again.");
       }
 
-      loadingRef.current = true;
-      setLoading(true);
-      let assistantContent = "";
-
-      try {
-        const res = await fetch("/api/dashboard-assistant/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: requestMessages,
-            context: contextRef.current?.snapshot ?? null,
-          }),
-        });
-
-        if (res.status === 401) {
-          throw new Error("Session expired — refresh or sign in again.");
-        }
-
-        if (!res.ok) {
-          const data = (await res.json().catch(() => null)) as {
-            error?: string;
-          } | null;
-          throw new Error(data?.error || `Request failed (${res.status})`);
-        }
-
-        if (!res.body) throw new Error("No response body");
-
-        setMessages([...history, { role: "assistant", content: "" }]);
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          assistantContent += decoder.decode(value, { stream: true });
-          setMessages([...history, { role: "assistant", content: assistantContent }]);
-        }
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Something went wrong");
-        setMessages(history);
-      } finally {
-        loadingRef.current = false;
-        setLoading(false);
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(data?.error || `Request failed (${res.status})`);
       }
-    },
-    []
-  );
+
+      if (!res.body) throw new Error("No response body");
+
+      setMessages([...history, { role: "assistant", content: "" }]);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        assistantContent += decoder.decode(value, { stream: true });
+        setMessages([...history, { role: "assistant", content: assistantContent }]);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setMessages(history);
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
+    }
+  }, [buildContextPayload]);
 
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || loadingRef.current) return;
     await runAssistant(text, true);
   }, [input, runAssistant]);
+
+  function addAssignment() {
+    const title = newTitle.trim();
+    if (!title) return;
+    if (newFrequency === "weekday" && (newWeekdaySlot < 0 || newWeekdaySlot > 6)) {
+      return;
+    }
+    const id = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    const desc = newDescription.trim();
+    const row: PaAssignment = {
+      id,
+      title,
+      frequency: newFrequency,
+      lastCompletedAt: null,
+      createdAt,
+      ...(desc ? { description: desc } : {}),
+      ...(newFrequency === "weekday" ? { weekdaySlot: newWeekdaySlot } : {}),
+    };
+    setAssignments((prev) => [...prev, row]);
+    setNewTitle("");
+    setNewDescription("");
+  }
+
+  function addNtechDefaultPack() {
+    setAssignments((prev) => mergeDefaultPack(prev, getNtechAccountabilityPack()));
+  }
+
+  function markAssignmentDone(id: string) {
+    const now = new Date().toISOString();
+    setAssignments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, lastCompletedAt: now } : a))
+    );
+  }
+
+  function removeAssignment(id: string) {
+    setAssignments((prev) => prev.filter((a) => a.id !== id));
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -129,9 +244,12 @@ export function DashboardAssistantPanel() {
       if (!mounted) return;
       if (ctx) {
         contextRef.current = ctx;
+        setAssistantTimeZone(ctx.timeZone);
         setContextMeta({
           hash: ctx.hash,
-          updatedAt: String((ctx.snapshot.generatedAt as string | undefined) ?? ""),
+          updatedAt: String(
+            (ctx.snapshot.generatedAt as string | undefined) ?? ""
+          ),
         });
       }
       if (autoBriefTimerRef.current) window.clearTimeout(autoBriefTimerRef.current);
@@ -139,7 +257,7 @@ export function DashboardAssistantPanel() {
         if (initialBriefSentRef.current || loadingRef.current) return;
         initialBriefSentRef.current = true;
         void runAssistant(
-          "Give me my executive briefing now: summarize yesterday, today ahead, missed lead follow-ups, and traffic milestones using the live dashboard context. Keep it concise and action-first.",
+          "Give me my executive briefing now: summarize yesterday, today ahead, missed lead follow-ups, traffic milestones, AND my PA assignment checklist (due/overdue items by title). Keep it concise and action-first.",
           false
         );
       }, AUTO_BRIEF_DELAY_MS);
@@ -158,14 +276,17 @@ export function DashboardAssistantPanel() {
         if (!latest) return;
         const prevHash = contextRef.current?.hash;
         contextRef.current = latest;
+        setAssistantTimeZone(latest.timeZone);
         setContextMeta({
           hash: latest.hash,
-          updatedAt: String((latest.snapshot.generatedAt as string | undefined) ?? ""),
+          updatedAt: String(
+            (latest.snapshot.generatedAt as string | undefined) ?? ""
+          ),
         });
         if (!prevHash || prevHash === latest.hash) return;
         if (!initialBriefSentRef.current || loadingRef.current) return;
         void runAssistant(
-          "New updates just landed in my dashboard context. Give me a short delta report, what changed, and my top 3 next actions.",
+          "New updates just landed in my dashboard context. Give me a short delta report, what changed, my top 3 next actions, and re-check my PA assignment checklist.",
           false
         );
       })();
@@ -181,34 +302,198 @@ export function DashboardAssistantPanel() {
   };
 
   return (
-    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-gray-400/45 dark:border-neutral-600/50 bg-white/95 shadow-inner dark:bg-neutral-950/95">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-400/35 dark:border-neutral-600/40 bg-gradient-to-r from-sky-50/90 to-gray-100/80 px-4 py-3 dark:from-sky-950/50 dark:to-neutral-900/85">
+    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-gray-400/45 bg-white/95 shadow-inner">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-400/35 bg-gradient-to-r from-sky-50/90 to-gray-100/80 px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/40 bg-white shadow-sm dark:border-sky-500/35 dark:bg-neutral-900">
-            <Bot className="h-5 w-5 text-sky-700 dark:text-sky-400" aria-hidden />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/40 bg-white shadow-sm">
+            <Bot className="h-5 w-5 text-sky-700" aria-hidden />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-900 dark:text-neutral-50">Executive assistant</p>
-            <p className="text-[11px] text-gray-600 dark:text-neutral-400">
+            <p className="text-sm font-bold text-gray-900">Executive assistant</p>
+            <p className="text-[11px] text-gray-600">
               Planning, accountability &amp; business rhythm — Groq (private)
             </p>
           </div>
         </div>
         {contextMeta?.hash ? (
-          <div className="text-right text-[10px] text-gray-500 dark:text-neutral-500">
+          <div className="text-right text-[10px] text-gray-500">
             <p>Live context: {contextMeta.hash}</p>
-            <p>{contextMeta.updatedAt ? new Date(contextMeta.updatedAt).toLocaleTimeString() : ""}</p>
+            <p>
+              {contextMeta.updatedAt
+                ? new Date(contextMeta.updatedAt).toLocaleTimeString()
+                : ""}
+            </p>
           </div>
         ) : null}
       </div>
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3">
+        <div className="rounded-xl border border-gray-400/35 bg-white/90 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setAssignmentsOpen((o) => !o)}
+            className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-gray-900"
+          >
+            <span>PA assignment checklist</span>
+            <span className="text-xs font-normal text-gray-500">
+              {assignmentsOpen ? "Hide" : "Show"} · {assignments.length} item
+              {assignments.length === 1 ? "" : "s"}
+            </span>
+          </button>
+          {assignmentsOpen ? (
+            <div className="space-y-3 border-t border-gray-400/25 px-3 py-3">
+              <p className="text-xs text-gray-600">
+                Daily = each calendar day ({assistantTimeZone}). Weekly = rolling 7
+                days after last mark-done. Weekday = due on that day each week
+                (Mon–Sun). Stored on this browser only. First visit loads the N-Tech
+                accountability pack; use the button below to merge in any missing
+                defaults.
+              </p>
+              <button
+                type="button"
+                onClick={addNtechDefaultPack}
+                className="w-full rounded-lg border border-sky-400/50 bg-sky-50 px-3 py-2 text-left text-xs font-semibold text-sky-950 sm:w-auto"
+              >
+                Add N-Tech default pack (merge missing items)
+              </button>
+              <div className="space-y-2">
+                <label className="block text-xs text-gray-600">
+                  New assignment title
+                  <input
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    placeholder="e.g. Review stale leads in CRM"
+                    className="mt-1 w-full rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900"
+                  />
+                </label>
+                <label className="block text-xs text-gray-600">
+                  Notes for the PA (optional)
+                  <textarea
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    placeholder="Checklist bullets, links, or scope…"
+                    rows={2}
+                    className="mt-1 w-full resize-y rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900"
+                  />
+                </label>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                  <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+                    <label className="text-xs text-gray-600">
+                      Cadence
+                      <select
+                        value={newFrequency}
+                        onChange={(e) =>
+                          setNewFrequency(e.target.value as PaAssignmentFrequency)
+                        }
+                        className="mt-1 block w-full min-w-[8rem] rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900 sm:w-auto"
+                      >
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="weekday">Weekday</option>
+                      </select>
+                    </label>
+                    {newFrequency === "weekday" ? (
+                      <label className="text-xs text-gray-600">
+                        Day
+                        <select
+                          value={newWeekdaySlot}
+                          onChange={(e) =>
+                            setNewWeekdaySlot(Number(e.target.value))
+                          }
+                          className="mt-1 block w-full min-w-[9rem] rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900 sm:w-auto"
+                        >
+                          {[0, 1, 2, 3, 4, 5, 6].map((slot) => (
+                            <option key={slot} value={slot}>
+                              {weekdaySlotLabel(slot)}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addAssignment}
+                    disabled={!newTitle.trim()}
+                    className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+              {assignments.length === 0 ? (
+                <p className="text-xs text-gray-500">No assignments yet.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {evaluatedAssignments.map((a) => (
+                    <li
+                      key={a.id}
+                      className="flex flex-col gap-2 rounded-lg border border-gray-400/30 bg-gray-50/90 p-2 sm:flex-row sm:items-start sm:justify-between"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${statusBadgeClass(a.status)}`}
+                          >
+                            {a.status}
+                          </span>
+                          <p className="text-sm font-medium text-gray-900">
+                            {a.title}
+                          </p>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-gray-600">
+                          {assignmentCadenceLabel(a)} · {a.reason}
+                        </p>
+                        {a.lastCompletedAt ? (
+                          <p className="mt-0.5 text-[10px] text-gray-500">
+                            Last marked done{" "}
+                            {new Date(a.lastCompletedAt).toLocaleString(undefined, {
+                              timeZone: assistantTimeZone,
+                            })}
+                          </p>
+                        ) : null}
+                        {a.description ? (
+                          <details className="mt-1.5 text-[11px] text-gray-700">
+                            <summary className="cursor-pointer font-medium text-gray-800">
+                              Details
+                            </summary>
+                            <pre className="mt-1 max-h-40 overflow-y-auto whitespace-pre-wrap rounded border border-gray-400/25 bg-white/80 p-2 font-sans text-[11px] leading-snug">
+                              {a.description}
+                            </pre>
+                          </details>
+                        ) : null}
+                      </div>
+                      <div className="flex shrink-0 gap-2 sm:flex-col sm:items-stretch">
+                        <button
+                          type="button"
+                          onClick={() => markAssignmentDone(a.id)}
+                          className="rounded-lg border border-emerald-500/50 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-900"
+                        >
+                          Mark done
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeAssignment(a.id)}
+                          className="rounded-lg border border-gray-400/45 px-2 py-1 text-[11px] text-gray-700"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
+        </div>
+
         {messages.length === 0 && (
-          <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-gray-100/60 p-4 text-sm text-gray-700 dark:bg-neutral-800/50 dark:text-neutral-300">
-            <p className="font-semibold text-gray-900 dark:text-neutral-50">Getting your briefing ready…</p>
-            <p className="mt-2 text-gray-600 dark:text-neutral-400">
-              3 seconds after login, I will summarize yesterday, today ahead, missed
-              follow-ups, and traffic milestones. I also watch for new updates throughout the day.
+          <div className="rounded-xl border border-gray-400/30 bg-gray-100/60 p-4 text-sm text-gray-700">
+            <p className="font-semibold text-gray-900">Getting your briefing ready…</p>
+            <p className="mt-2 text-gray-600">
+              In ~3 seconds I will summarize yesterday, today ahead, missed follow-ups,
+              traffic milestones, and your PA assignment checklist. Add commitments
+              above so I can hold you accountable.
             </p>
           </div>
         )}
@@ -217,8 +502,8 @@ export function DashboardAssistantPanel() {
             key={i}
             className={
               m.role === "user"
-                ? "ml-6 rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-gray-800 px-3 py-2 text-sm text-white"
-                : "mr-6 rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-gray-100/90 px-3 py-2 text-sm text-gray-900 dark:bg-neutral-800/90 dark:text-neutral-100"
+                ? "ml-6 rounded-xl border border-gray-400/35 bg-gray-800 px-3 py-2 text-sm text-white"
+                : "mr-6 rounded-xl border border-gray-400/30 bg-gray-100/90 px-3 py-2 text-sm text-gray-900"
             }
           >
             <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide opacity-70">
@@ -228,18 +513,18 @@ export function DashboardAssistantPanel() {
           </div>
         ))}
         {loading && messages[messages.length - 1]?.role !== "assistant" && (
-          <p className="text-xs text-gray-500 dark:text-neutral-500">Thinking…</p>
+          <p className="text-xs text-gray-500">Thinking…</p>
         )}
         <div ref={bottomRef} />
       </div>
 
       {error && (
-        <div className="shrink-0 border-t border-red-300/60 bg-red-50 px-4 py-2 text-xs text-red-900 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-200">
+        <div className="shrink-0 border-t border-red-300/60 bg-red-50 px-4 py-2 text-xs text-red-900">
           {error}
         </div>
       )}
 
-      <div className="shrink-0 border-t border-gray-400/35 dark:border-neutral-600/40 bg-gray-50/90 p-3 dark:bg-neutral-900/90">
+      <div className="shrink-0 border-t border-gray-400/35 bg-gray-50/90 p-3">
         <div className="flex gap-2">
           <textarea
             value={input}
@@ -248,18 +533,18 @@ export function DashboardAssistantPanel() {
             placeholder="Ask for priorities, follow-up list, or today's schedule…"
             rows={2}
             disabled={loading}
-            className="min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-400/45 dark:border-neutral-600/50 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-sky-500/30 placeholder:text-gray-400 focus:ring-2 dark:bg-neutral-900 dark:text-neutral-50 dark:placeholder:text-neutral-500"
+            className="min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-400/45 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-sky-500/30 placeholder:text-gray-400 focus:ring-2"
           />
           <button
             type="button"
             onClick={() => void send()}
             disabled={loading || !input.trim()}
-            className="self-end rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-40 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+            className="self-end rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-40"
           >
             Send
           </button>
         </div>
-        <p className="mt-2 text-[10px] text-gray-500 dark:text-neutral-500">
+        <p className="mt-2 text-[10px] text-gray-500">
           Enter to send · Shift+Enter for newline
         </p>
       </div>
