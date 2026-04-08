@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
+  Gauge,
   Users,
   LineChart,
   BarChart2,
@@ -32,9 +32,15 @@ import { CeoRevenueReportsSection } from "@/components/dashboard/CeoRevenueRepor
 import { CeoBlogPostsSection } from "@/components/dashboard/CeoBlogPostsSection";
 import { CeoBusinessNotesSection } from "@/components/dashboard/CeoBusinessNotesSection";
 import { ModeToggle } from "@/components/startup-landing/mode-toggle";
+import {
+  MarketingAiAgentsDemoPanel,
+  MarketingAnalyticsDemoPanel,
+  MarketingFunnelsDemoPanel,
+  MarketingLighthousePanel,
+} from "@/components/dashboard/marketing-dashboard-demo";
 
 const MARKETING_NAV_TABS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "lighthouse", label: "Lighthouse", icon: Gauge },
   { id: "analytics", label: "Analytics", icon: LineChart },
   { id: "funnels", label: "Funnels", icon: BarChart2 },
   { id: "ai-agents", label: "AI Agents", icon: Sparkles },
@@ -53,21 +59,6 @@ const CEO_NAV_TABS = [
   { id: "blog-posts", label: "Blog posts", icon: FileText },
   { id: "business-notes", label: "Business notes", icon: NotebookPen },
   { id: "revenue-reports", label: "Revenue reports", icon: DollarSign },
-] as const;
-
-const KPI_CARDS = [
-  {
-    title: "Conversion rate",
-    value: "18.3%",
-    delta: "↑ 6.1% vs last month",
-    deltaPositive: true,
-  },
-  {
-    title: "Revenue tracked",
-    value: "$24,810",
-    delta: "↑ 31% vs last month",
-    deltaPositive: true,
-  },
 ] as const;
 
 function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) {
@@ -113,38 +104,6 @@ function NTechMark({ className }: { className?: string }) {
   );
 }
 
-function DashboardOverview() {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {KPI_CARDS.map((card) => (
-          <div
-            key={card.title}
-            className="rounded-2xl border border-gray-400/40 bg-gray-300/25 p-4 shadow-inner backdrop-blur-sm dark:border-neutral-600/50 dark:bg-neutral-800/40"
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
-              {card.title}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-3xl dark:text-neutral-50">
-              {card.value}
-            </p>
-            <p
-              className={cn(
-                "mt-1.5 text-xs font-medium",
-                card.deltaPositive
-                  ? "text-emerald-700 dark:text-emerald-400"
-                  : "text-red-700 dark:text-red-400"
-              )}
-            >
-              {card.delta}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 type HolographicDashboardTabsProps = {
   className?: string;
   /** `ceo` = executive dashboard at `/dashboard`; default keeps marketing hero demo. */
@@ -158,7 +117,7 @@ export function HolographicDashboardTabs({
   const router = useRouter();
   const navTabs = variant === "ceo" ? CEO_NAV_TABS : MARKETING_NAV_TABS;
   const [activeTab, setActiveTab] = useState<string>(
-    variant === "ceo" ? "assistant" : "dashboard"
+    variant === "ceo" ? "assistant" : "lighthouse"
   );
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -315,17 +274,17 @@ export function HolographicDashboardTabs({
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {variant === "marketing" && activeTab === "dashboard" && (
-                        <DashboardOverview />
+                      {variant === "marketing" && activeTab === "lighthouse" && (
+                        <MarketingLighthousePanel />
                       )}
                       {variant === "marketing" && activeTab === "analytics" && (
-                        <PlaceholderTab label="Analytics" />
+                        <MarketingAnalyticsDemoPanel />
                       )}
                       {variant === "marketing" && activeTab === "funnels" && (
-                        <PlaceholderTab label="Funnels" />
+                        <MarketingFunnelsDemoPanel />
                       )}
                       {variant === "marketing" && activeTab === "ai-agents" && (
-                        <PlaceholderTab label="AI Agents" />
+                        <MarketingAiAgentsDemoPanel />
                       )}
                       {variant === "ceo" && activeTab === "calendar" && (
                         <CeoCalendarSection />
