@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BlogPostsReader } from "@/components/marketing/BlogPostsReader";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -34,7 +35,7 @@ export default async function BlogPage() {
       console.error("blog page dashboard_blog_posts:", error.message);
       posts = [];
     } else {
-      posts = (data as BlogPost[] | null) ?? [];
+      posts = (data as typeof posts | null) ?? [];
     }
   } catch (e) {
     console.error("blog page:", e);
@@ -59,32 +60,7 @@ export default async function BlogPage() {
       <h2 className="pt-6 text-sm font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-500">
         Latest posts
       </h2>
-      {posts.length === 0 ? (
-        <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
-          No published posts yet. Create and publish from Dashboard → Blog posts.
-        </p>
-      ) : (
-        <ul className="mt-4 list-none space-y-4 p-0">
-          {posts.map((post) => (
-            <li
-              key={post.id}
-              className="border-b border-neutral-200 pb-4 dark:border-neutral-800"
-            >
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                <span className="font-medium text-neutral-900 dark:text-white">{post.title}</span>
-                <span className="text-sm text-neutral-500">
-                  {post.published_at
-                    ? new Date(post.published_at).toLocaleDateString()
-                    : "Published"}
-                </span>
-              </div>
-              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                {post.excerpt || `${post.content.slice(0, 200)}...`}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <BlogPostsReader posts={posts} />
     </MarketingPageShell>
   );
 }
