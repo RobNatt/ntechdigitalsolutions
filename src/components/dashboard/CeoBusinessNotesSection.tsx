@@ -86,38 +86,38 @@ export function CeoBusinessNotesSection() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-neutral-200">
             <NotebookPen className="h-4 w-4 text-sky-700" aria-hidden />
             Business notes
           </p>
-          <p className="mt-1 max-w-xl text-sm text-gray-600">
+          <p className="mt-1 max-w-xl text-sm text-gray-600 dark:text-neutral-400">
             Capture ideas, meeting notes, and strategy thoughts in one place inside the dashboard.
           </p>
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+          className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
         >
           Refresh
         </button>
       </div>
 
-      <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">New note</p>
+      <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">New note</p>
         <div className="mt-3 grid gap-3">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Short title"
-            className="rounded-lg border border-gray-400/50 bg-white/90 px-3 py-2 text-sm"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Idea, reminder, meeting summary..."
             rows={5}
-            className="rounded-lg border border-gray-400/50 bg-white/90 px-3 py-2 text-sm"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
           <div className="flex gap-2">
             <button
@@ -133,21 +133,21 @@ export function CeoBusinessNotesSection() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">Notes</h3>
+      <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner">
+        <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">Notes</h3>
         </div>
         {loading ? (
-          <p className="px-4 py-8 text-sm text-gray-600">Loading…</p>
+          <p className="px-4 py-8 text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
         ) : notes.length === 0 ? (
-          <p className="px-4 py-8 text-sm text-gray-600">No notes yet.</p>
+          <p className="px-4 py-8 text-sm text-gray-600 dark:text-neutral-400">No notes yet.</p>
         ) : (
           <ul className="divide-y divide-gray-400/20">
             {notes.map((n) => (
               <li key={n.id} className="px-4 py-3 text-sm">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-neutral-50">
                       {n.title}
                       {n.pinned ? (
                         <span className="ml-2 rounded bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold uppercase text-amber-900">
@@ -155,13 +155,13 @@ export function CeoBusinessNotesSection() {
                         </span>
                       ) : null}
                       {n.archived ? (
-                        <span className="ml-2 rounded bg-gray-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-gray-700">
+                        <span className="ml-2 rounded bg-gray-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-gray-700 dark:text-neutral-300">
                           Archived
                         </span>
                       ) : null}
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-gray-700">{n.note}</p>
-                    <p className="mt-1 text-[10px] text-gray-500">
+                    <p className="mt-1 whitespace-pre-wrap text-gray-700 dark:text-neutral-300">{n.note}</p>
+                    <p className="mt-1 text-[10px] text-gray-500 dark:text-neutral-500">
                       {new Date(n.created_at).toLocaleString()}
                     </p>
                   </div>

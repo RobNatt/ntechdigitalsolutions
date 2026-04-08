@@ -181,21 +181,21 @@ export function DashboardAssistantPanel() {
   };
 
   return (
-    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-gray-400/45 bg-white/95 shadow-inner">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-400/35 bg-gradient-to-r from-sky-50/90 to-gray-100/80 px-4 py-3">
+    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-gray-400/45 dark:border-neutral-600/50 bg-white/95 shadow-inner dark:bg-neutral-950/95">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-400/35 dark:border-neutral-600/40 bg-gradient-to-r from-sky-50/90 to-gray-100/80 px-4 py-3 dark:from-sky-950/50 dark:to-neutral-900/85">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/40 bg-white shadow-sm">
-            <Bot className="h-5 w-5 text-sky-700" aria-hidden />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/40 bg-white shadow-sm dark:border-sky-500/35 dark:bg-neutral-900">
+            <Bot className="h-5 w-5 text-sky-700 dark:text-sky-400" aria-hidden />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-900">Executive assistant</p>
-            <p className="text-[11px] text-gray-600">
+            <p className="text-sm font-bold text-gray-900 dark:text-neutral-50">Executive assistant</p>
+            <p className="text-[11px] text-gray-600 dark:text-neutral-400">
               Planning, accountability &amp; business rhythm — Groq (private)
             </p>
           </div>
         </div>
         {contextMeta?.hash ? (
-          <div className="text-right text-[10px] text-gray-500">
+          <div className="text-right text-[10px] text-gray-500 dark:text-neutral-500">
             <p>Live context: {contextMeta.hash}</p>
             <p>{contextMeta.updatedAt ? new Date(contextMeta.updatedAt).toLocaleTimeString() : ""}</p>
           </div>
@@ -204,9 +204,9 @@ export function DashboardAssistantPanel() {
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3">
         {messages.length === 0 && (
-          <div className="rounded-xl border border-gray-400/30 bg-gray-100/60 p-4 text-sm text-gray-700">
-            <p className="font-semibold text-gray-900">Getting your briefing ready…</p>
-            <p className="mt-2 text-gray-600">
+          <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-gray-100/60 p-4 text-sm text-gray-700 dark:bg-neutral-800/50 dark:text-neutral-300">
+            <p className="font-semibold text-gray-900 dark:text-neutral-50">Getting your briefing ready…</p>
+            <p className="mt-2 text-gray-600 dark:text-neutral-400">
               3 seconds after login, I will summarize yesterday, today ahead, missed
               follow-ups, and traffic milestones. I also watch for new updates throughout the day.
             </p>
@@ -217,8 +217,8 @@ export function DashboardAssistantPanel() {
             key={i}
             className={
               m.role === "user"
-                ? "ml-6 rounded-xl border border-gray-400/35 bg-gray-800 px-3 py-2 text-sm text-white"
-                : "mr-6 rounded-xl border border-gray-400/30 bg-gray-100/90 px-3 py-2 text-sm text-gray-900"
+                ? "ml-6 rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-gray-800 px-3 py-2 text-sm text-white"
+                : "mr-6 rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-gray-100/90 px-3 py-2 text-sm text-gray-900 dark:bg-neutral-800/90 dark:text-neutral-100"
             }
           >
             <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide opacity-70">
@@ -228,18 +228,18 @@ export function DashboardAssistantPanel() {
           </div>
         ))}
         {loading && messages[messages.length - 1]?.role !== "assistant" && (
-          <p className="text-xs text-gray-500">Thinking…</p>
+          <p className="text-xs text-gray-500 dark:text-neutral-500">Thinking…</p>
         )}
         <div ref={bottomRef} />
       </div>
 
       {error && (
-        <div className="shrink-0 border-t border-red-300/60 bg-red-50 px-4 py-2 text-xs text-red-900">
+        <div className="shrink-0 border-t border-red-300/60 bg-red-50 px-4 py-2 text-xs text-red-900 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-200">
           {error}
         </div>
       )}
 
-      <div className="shrink-0 border-t border-gray-400/35 bg-gray-50/90 p-3">
+      <div className="shrink-0 border-t border-gray-400/35 dark:border-neutral-600/40 bg-gray-50/90 p-3 dark:bg-neutral-900/90">
         <div className="flex gap-2">
           <textarea
             value={input}
@@ -248,18 +248,18 @@ export function DashboardAssistantPanel() {
             placeholder="Ask for priorities, follow-up list, or today's schedule…"
             rows={2}
             disabled={loading}
-            className="min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-400/45 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-sky-500/30 placeholder:text-gray-400 focus:ring-2"
+            className="min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-400/45 dark:border-neutral-600/50 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-sky-500/30 placeholder:text-gray-400 focus:ring-2 dark:bg-neutral-900 dark:text-neutral-50 dark:placeholder:text-neutral-500"
           />
           <button
             type="button"
             onClick={() => void send()}
             disabled={loading || !input.trim()}
-            className="self-end rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-40"
+            className="self-end rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-40 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
           >
             Send
           </button>
         </div>
-        <p className="mt-2 text-[10px] text-gray-500">
+        <p className="mt-2 text-[10px] text-gray-500 dark:text-neutral-500">
           Enter to send · Shift+Enter for newline
         </p>
       </div>

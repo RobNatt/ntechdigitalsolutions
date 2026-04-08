@@ -94,11 +94,11 @@ export function CeoSupportInboxSection() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-neutral-200">
             <Inbox className="h-4 w-4 text-sky-700" aria-hidden />
             Support inbox
           </p>
-          <p className="mt-1 max-w-xl text-sm text-gray-600">
+          <p className="mt-1 max-w-xl text-sm text-gray-600 dark:text-neutral-400">
             Messages ingested via{" "}
             <code className="rounded bg-gray-400/20 px-1 text-xs">POST /api/support/inbound</code>{" "}
             (email routing / automation). Filter by client when{" "}
@@ -110,19 +110,19 @@ export function CeoSupportInboxSection() {
           <button
             type="button"
             onClick={() => void loadMessages()}
-            className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
           >
             Refresh
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 bg-gray-300/15 p-2">
-        <span className="px-2 text-xs font-semibold text-gray-800">Client:</span>
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/15 dark:bg-neutral-800/25 p-2">
+        <span className="px-2 text-xs font-semibold text-gray-800 dark:text-neutral-200">Client:</span>
         <select
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
-          className="min-w-[200px] rounded-xl border border-gray-400/50 bg-white/90 py-2 pl-3 pr-8 text-sm font-medium text-gray-900 shadow-sm"
+          className="min-w-[200px] rounded-xl border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 py-2 pl-3 pr-8 text-sm font-medium text-gray-900 dark:text-neutral-50 shadow-sm"
         >
           <option value="">All clients</option>
           {clients.map((c) => (
@@ -139,16 +139,16 @@ export function CeoSupportInboxSection() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+      <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
+        <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
             Inbound
           </h3>
         </div>
         {loading ? (
-          <p className="px-4 py-10 text-center text-sm text-gray-600">Loading…</p>
+          <p className="px-4 py-10 text-center text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
         ) : messages.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-gray-600">
+          <p className="px-4 py-10 text-center text-sm text-gray-600 dark:text-neutral-400">
             No messages yet. Configure email routing to{" "}
             <code className="rounded bg-gray-400/20 px-1">POST /api/support/inbound</code> — see{" "}
             <code className="rounded bg-gray-400/20 px-1">SUPPORT-EMAIL-SETUP.md</code>.
@@ -159,9 +159,9 @@ export function CeoSupportInboxSection() {
               <li key={m.id} className="px-4 py-4 text-sm">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="flex min-w-0 flex-1 gap-2">
-                    <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gray-600" aria-hidden />
+                    <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gray-600 dark:text-neutral-400" aria-hidden />
                     <div className="min-w-0">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-gray-900 dark:text-neutral-50">
                         {m.subject || "(no subject)"}
                         {!m.read_at ? (
                           <span className="ml-2 rounded bg-sky-200/80 px-1.5 py-0.5 text-[10px] font-bold uppercase text-sky-900">
@@ -169,20 +169,20 @@ export function CeoSupportInboxSection() {
                           </span>
                         ) : null}
                       </p>
-                      <p className="font-mono text-xs text-gray-600">
+                      <p className="font-mono text-xs text-gray-600 dark:text-neutral-400">
                         From {m.from_name ? `${m.from_name} ` : ""}
                         &lt;{m.from_email}&gt;
                       </p>
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-1 text-xs text-gray-500 dark:text-neutral-500">
                         To: {m.to_email || "—"} · Client: {clientLabel(m.client_id)}
                       </p>
                       {m.body_text ? (
-                        <p className="mt-2 whitespace-pre-wrap text-gray-800">{m.body_text}</p>
+                        <p className="mt-2 whitespace-pre-wrap text-gray-800 dark:text-neutral-200">{m.body_text}</p>
                       ) : null}
                     </div>
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
-                    <span className="text-nowrap text-[10px] text-gray-500">
+                    <span className="text-nowrap text-[10px] text-gray-500 dark:text-neutral-500">
                       {m.created_at
                         ? new Date(m.created_at).toLocaleString()
                         : undefined}

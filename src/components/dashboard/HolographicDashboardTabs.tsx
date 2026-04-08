@@ -31,6 +31,7 @@ import { CeoSupportInboxSection } from "@/components/dashboard/CeoSupportInboxSe
 import { CeoRevenueReportsSection } from "@/components/dashboard/CeoRevenueReportsSection";
 import { CeoBlogPostsSection } from "@/components/dashboard/CeoBlogPostsSection";
 import { CeoBusinessNotesSection } from "@/components/dashboard/CeoBusinessNotesSection";
+import { ModeToggle } from "@/components/startup-landing/mode-toggle";
 
 const MARKETING_NAV_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -72,8 +73,8 @@ const KPI_CARDS = [
 function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) {
   return (
     <div className="flex h-full min-h-[280px] flex-col items-center justify-center gap-2 px-6 text-center">
-      <p className="text-lg font-semibold text-gray-800">{label}</p>
-      <p className="max-w-sm text-sm text-gray-600">
+      <p className="text-lg font-semibold text-gray-800 dark:text-neutral-200">{label}</p>
+      <p className="max-w-sm text-sm text-gray-600 dark:text-neutral-400">
         {variant === "ceo"
           ? "We'll build this out next — placeholder for now."
           : "Content for this section will live here."}
@@ -84,13 +85,13 @@ function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) 
 
 function BrowserChrome() {
   return (
-    <div className="flex h-10 shrink-0 items-center gap-2 border-b border-gray-400/35 bg-gradient-to-b from-gray-200/95 to-gray-300/80 px-3">
+    <div className="flex h-10 shrink-0 items-center gap-2 border-b border-gray-400/35 bg-gradient-to-b from-gray-200/95 to-gray-300/80 px-3 dark:border-neutral-700 dark:from-neutral-800/95 dark:to-neutral-900/85">
       <div className="flex gap-1.5 pl-1">
         <span className="h-2.5 w-2.5 rounded-full bg-[#ff8a7a]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#e8c76a]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#7dd87d]" />
       </div>
-      <div className="ml-1 flex min-w-0 flex-1 items-center rounded-md border border-gray-400/40 bg-white/85 px-3 py-1 font-mono text-[11px] text-gray-600 shadow-sm">
+      <div className="ml-1 flex min-w-0 flex-1 items-center rounded-md border border-gray-400/40 bg-white/85 px-3 py-1 font-mono text-[11px] text-gray-600 shadow-sm dark:border-neutral-600 dark:bg-neutral-950/80 dark:text-neutral-400">
         <span className="truncate">app.ntech.io/dashboard</span>
       </div>
     </div>
@@ -101,7 +102,7 @@ function NTechMark({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/40 bg-gradient-to-br from-sky-100/90 to-slate-200/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]",
+        "flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/40 bg-gradient-to-br from-sky-100/90 to-slate-200/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-sky-500/30 dark:from-sky-950/50 dark:to-neutral-900/80 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
         className
       )}
     >
@@ -119,18 +120,20 @@ function DashboardOverview() {
         {KPI_CARDS.map((card) => (
           <div
             key={card.title}
-            className="rounded-2xl border border-gray-400/40 bg-gray-300/25 p-4 shadow-inner backdrop-blur-sm"
+            className="rounded-2xl border border-gray-400/40 bg-gray-300/25 p-4 shadow-inner backdrop-blur-sm dark:border-neutral-600/50 dark:bg-neutral-800/40"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
               {card.title}
             </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-3xl">
+            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-3xl dark:text-neutral-50">
               {card.value}
             </p>
             <p
               className={cn(
                 "mt-1.5 text-xs font-medium",
-                card.deltaPositive ? "text-emerald-700" : "text-red-700"
+                card.deltaPositive
+                  ? "text-emerald-700 dark:text-emerald-400"
+                  : "text-red-700 dark:text-red-400"
               )}
             >
               {card.delta}
@@ -185,19 +188,19 @@ export function HolographicDashboardTabs({
       )}
     >
       {/* Holographic shell — match HolographicDashboard.tsx */}
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl border-2 border-gray-400/50 bg-gradient-to-br from-gray-300/60 via-gray-200/60 to-gray-300/60 shadow-[0_0_60px_rgba(150,150,150,0.4)] backdrop-blur-xl">
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl border-2 border-gray-400/50 bg-gradient-to-br from-gray-300/60 via-gray-200/60 to-gray-300/60 shadow-[0_0_60px_rgba(150,150,150,0.4)] backdrop-blur-xl dark:border-neutral-600/55 dark:from-neutral-800/90 dark:via-neutral-900/85 dark:to-neutral-800/90 dark:shadow-[0_0_50px_rgba(0,0,0,0.45)]">
         <div className="pointer-events-none absolute inset-0">
           <motion.div
-            className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-400/5 to-transparent"
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-400/5 to-transparent dark:via-neutral-500/8"
             animate={{ y: ["-100%", "200%"] }}
             transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
           />
         </div>
 
-        <div className="pointer-events-none absolute left-0 top-0 h-20 w-20 border-l-2 border-t-2 border-gray-500" />
-        <div className="pointer-events-none absolute right-0 top-0 h-20 w-20 border-r-2 border-t-2 border-gray-500" />
-        <div className="pointer-events-none absolute bottom-0 left-0 h-20 w-20 border-b-2 border-l-2 border-gray-500" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-20 w-20 border-b-2 border-r-2 border-gray-500" />
+        <div className="pointer-events-none absolute left-0 top-0 h-20 w-20 border-l-2 border-t-2 border-gray-500 dark:border-neutral-600" />
+        <div className="pointer-events-none absolute right-0 top-0 h-20 w-20 border-r-2 border-t-2 border-gray-500 dark:border-neutral-600" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-20 w-20 border-b-2 border-l-2 border-gray-500 dark:border-neutral-600" />
+        <div className="pointer-events-none absolute bottom-0 right-0 h-20 w-20 border-b-2 border-r-2 border-gray-500 dark:border-neutral-600" />
 
         {[
           [4, 4],
@@ -207,7 +210,7 @@ export function HolographicDashboardTabs({
         ].map(([x, y], i) => (
           <motion.div
             key={i}
-            className="pointer-events-none absolute h-3 w-3 rounded-full bg-gray-600"
+            className="pointer-events-none absolute h-3 w-3 rounded-full bg-gray-600 dark:bg-neutral-500"
             style={{
               [x > 0 ? "left" : "right"]: Math.abs(x),
               [y > 0 ? "top" : "bottom"]: Math.abs(y),
@@ -219,19 +222,19 @@ export function HolographicDashboardTabs({
 
         <div className="relative z-10 flex min-h-0 flex-1 flex-col p-1.5 sm:p-2">
           {/* Light app surface inside holographic frame */}
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-gray-400/45 bg-neutral-100/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-gray-400/45 bg-neutral-100/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] dark:border-neutral-700 dark:bg-neutral-900/92 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             <BrowserChrome />
 
             <div className="flex min-h-0 flex-1">
               <aside
                 className={cn(
-                  "flex shrink-0 flex-col border-r border-gray-400/35 bg-gradient-to-b from-gray-200/90 to-gray-300/70 py-4 pl-3 pr-2",
+                  "flex shrink-0 flex-col border-r border-gray-400/35 bg-gradient-to-b from-gray-200/90 to-gray-300/70 py-4 pl-3 pr-2 dark:border-neutral-700 dark:from-neutral-900/90 dark:to-neutral-950/85",
                   sidebarWidthClass
                 )}
               >
                 <div className="mb-6 flex items-center gap-2.5 px-1">
                   <NTechMark />
-                  <span className="text-sm font-bold tracking-tight text-gray-800">
+                  <span className="text-sm font-bold tracking-tight text-gray-800 dark:text-neutral-100">
                     N-Tech
                   </span>
                 </div>
@@ -247,15 +250,15 @@ export function HolographicDashboardTabs({
                         className={cn(
                           "relative flex w-full items-center gap-2.5 overflow-hidden rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors",
                           isActive
-                            ? "border border-gray-500 bg-gray-400/25 text-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
-                            : "border border-transparent text-gray-600 hover:bg-gray-400/15 hover:text-gray-800"
+                            ? "border border-gray-500 bg-gray-400/25 text-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] dark:border-neutral-600 dark:bg-neutral-700/35 dark:text-neutral-100 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                            : "border border-transparent text-gray-600 hover:bg-gray-400/15 hover:text-gray-800 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-100"
                         )}
                         whileTap={{ scale: 0.98 }}
                       >
                         {isActive && (
                           <motion.div
                             layoutId="holoDashSidebarActive"
-                            className="absolute inset-0 bg-gradient-to-r from-gray-400/30 to-gray-500/20"
+                            className="absolute inset-0 bg-gradient-to-r from-gray-400/30 to-gray-500/20 dark:from-neutral-700/40 dark:to-neutral-600/25"
                             transition={{
                               type: "spring",
                               bounce: 0.2,
@@ -263,7 +266,7 @@ export function HolographicDashboardTabs({
                             }}
                           />
                         )}
-                        <Icon className="relative z-10 h-4 w-4 shrink-0 text-gray-700" />
+                        <Icon className="relative z-10 h-4 w-4 shrink-0 text-gray-700 dark:text-neutral-300" />
                         <span className="relative z-10">{tab.label}</span>
                       </motion.button>
                     );
@@ -271,29 +274,32 @@ export function HolographicDashboardTabs({
                 </nav>
               </aside>
 
-              <div className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-neutral-50/90">
-                <header className="relative z-[1] flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-gray-400/30 bg-neutral-100/80 px-4 py-3 md:px-5 md:py-4">
-                  <h1 className="text-base font-bold tracking-tight text-gray-800 md:text-lg">
+              <div className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-neutral-50/90 dark:bg-neutral-950/95">
+                <header className="relative z-[1] flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-gray-400/30 bg-neutral-100/80 px-4 py-3 md:px-5 md:py-4 dark:border-neutral-700 dark:bg-neutral-900/90">
+                  <h1 className="text-base font-bold tracking-tight text-gray-800 md:text-lg dark:text-neutral-100">
                     {headerTitle}
                   </h1>
                   <div className="flex flex-wrap items-center gap-2">
+                    <div className="rounded-lg border border-gray-400/40 bg-white/80 p-0.5 shadow-sm dark:border-neutral-600 dark:bg-neutral-800/80">
+                      <ModeToggle />
+                    </div>
                     {variant === "ceo" ? (
                       <button
                         type="button"
                         disabled={loggingOut}
                         onClick={() => void handleLogout()}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-400/55 bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-gray-800 shadow-sm hover:bg-gray-100/90 disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-400/55 bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-gray-800 shadow-sm hover:bg-gray-100/90 disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-800/90 dark:text-neutral-100 dark:hover:bg-neutral-800"
                       >
                         <LogOut className="h-3.5 w-3.5" aria-hidden />
                         {loggingOut ? "Signing out…" : "Log out"}
                       </button>
                     ) : null}
-                    <div className="flex items-center gap-2 rounded-full border border-emerald-500/35 bg-emerald-100/80 px-2.5 py-1 shadow-sm">
+                    <div className="flex items-center gap-2 rounded-full border border-emerald-500/35 bg-emerald-100/80 px-2.5 py-1 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-950/50">
                       <span className="relative flex h-2 w-2">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-35" />
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                       </span>
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
                         Live
                       </span>
                     </div>
@@ -375,7 +381,7 @@ export function HolographicDashboardTabs({
         </div>
       </div>
 
-      <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-gray-400/20 via-gray-500/20 to-gray-400/20 blur-3xl" />
+      <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-gray-400/20 via-gray-500/20 to-gray-400/20 blur-3xl dark:from-neutral-700/20 dark:via-neutral-800/20 dark:to-neutral-700/20" />
     </motion.div>
   );
 }

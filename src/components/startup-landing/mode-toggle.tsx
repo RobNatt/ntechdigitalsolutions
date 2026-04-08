@@ -21,8 +21,8 @@ export function ModeToggle() {
   }, []);
 
   const SWITCH = () => {
-    console.log(theme);
-    switch (theme) {
+    const t = theme ?? "system";
+    switch (t) {
       case "light":
         setTheme("dark");
         break;
@@ -33,6 +33,7 @@ export function ModeToggle() {
         setTheme(systemTheme === "light" ? "dark" : "light");
         break;
       default:
+        setTheme("dark");
         break;
     }
   };

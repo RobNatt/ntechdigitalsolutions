@@ -195,24 +195,24 @@ export function CeoRevenueReportsSection() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+        <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-neutral-200">
           <DollarSign className="h-4 w-4 text-emerald-700" aria-hidden />
           Revenue reports
         </p>
-        <p className="mt-1 max-w-2xl text-sm text-gray-600">
+        <p className="mt-1 max-w-2xl text-sm text-gray-600 dark:text-neutral-400">
           Create invoices for services rendered and email them to the client. Requires{" "}
           <code className="rounded bg-gray-400/20 px-1 text-xs">RESEND_API_KEY</code> and a client email
           in the CRM.
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 bg-gray-300/15 p-2">
-        <span className="px-2 text-xs font-semibold text-gray-800">Client:</span>
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/15 dark:bg-neutral-800/25 p-2">
+        <span className="px-2 text-xs font-semibold text-gray-800 dark:text-neutral-200">Client:</span>
         <select
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
           disabled={loadingClients}
-          className="min-w-[220px] rounded-xl border border-gray-400/50 bg-white/90 py-2 pl-3 pr-8 text-sm font-medium text-gray-900 shadow-sm disabled:opacity-60"
+          className="min-w-[220px] rounded-xl border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 py-2 pl-3 pr-8 text-sm font-medium text-gray-900 dark:text-neutral-50 shadow-sm disabled:opacity-60"
         >
           <option value="">{loadingClients ? "Loading…" : "Select a client…"}</option>
           {clients.map((c) => (
@@ -240,9 +240,9 @@ export function CeoRevenueReportsSection() {
       )}
 
       {clientId && (
-        <div className="rounded-2xl border border-gray-400/40 bg-white/50 p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-900">Create invoice</h3>
-          <p className="mt-1 text-xs text-gray-600">Line totals use quantity × unit price (USD).</p>
+        <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-white/50 p-4 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-50">Create invoice</h3>
+          <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">Line totals use quantity × unit price (USD).</p>
 
           <div className="mt-3 space-y-2">
             {lines.map((line) => (
@@ -254,34 +254,34 @@ export function CeoRevenueReportsSection() {
                     placeholder="Service / description"
                     value={line.description}
                     onChange={(e) => updateLine(line.key, { description: e.target.value })}
-                    className="w-full rounded-lg border border-gray-400/50 bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-3 py-2 text-sm"
                   />
                 </label>
                 <label className="w-20">
-                  <span className="mb-1 block text-[10px] font-semibold uppercase text-gray-500">Qty</span>
+                  <span className="mb-1 block text-[10px] font-semibold uppercase text-gray-500 dark:text-neutral-500">Qty</span>
                   <input
                     type="number"
                     min={1}
                     value={line.quantity}
                     onChange={(e) => updateLine(line.key, { quantity: e.target.value })}
-                    className="w-full rounded-lg border border-gray-400/50 bg-white px-2 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-2 py-2 text-sm"
                   />
                 </label>
                 <label className="w-28">
-                  <span className="mb-1 block text-[10px] font-semibold uppercase text-gray-500">Unit $</span>
+                  <span className="mb-1 block text-[10px] font-semibold uppercase text-gray-500 dark:text-neutral-500">Unit $</span>
                   <input
                     type="text"
                     inputMode="decimal"
                     placeholder="0.00"
                     value={line.unitDollars}
                     onChange={(e) => updateLine(line.key, { unitDollars: e.target.value })}
-                    className="w-full rounded-lg border border-gray-400/50 bg-white px-2 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-2 py-2 text-sm"
                   />
                 </label>
                 <button
                   type="button"
                   onClick={() => removeLine(line.key)}
-                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-200/60 hover:text-red-700"
+                  className="rounded-lg p-2 text-gray-500 dark:text-neutral-500 hover:bg-gray-200/60 hover:text-red-700"
                   aria-label="Remove line"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -293,7 +293,7 @@ export function CeoRevenueReportsSection() {
           <button
             type="button"
             onClick={addLine}
-            className="mt-2 inline-flex items-center gap-1 rounded-lg border border-dashed border-gray-400/60 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100/80"
+            className="mt-2 inline-flex items-center gap-1 rounded-lg border border-dashed border-gray-400/60 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-100/80"
           >
             <Plus className="h-3.5 w-3.5" />
             Add line
@@ -301,24 +301,24 @@ export function CeoRevenueReportsSection() {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <label>
-              <span className="mb-1 block text-xs font-semibold text-gray-700">Tax (USD, optional)</span>
+              <span className="mb-1 block text-xs font-semibold text-gray-700 dark:text-neutral-300">Tax (USD, optional)</span>
               <input
                 type="text"
                 inputMode="decimal"
                 value={taxDollars}
                 onChange={(e) => setTaxDollars(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-lg border border-gray-400/50 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-3 py-2 text-sm"
               />
             </label>
             <label className="sm:col-span-2">
-              <span className="mb-1 block text-xs font-semibold text-gray-700">Notes (optional)</span>
+              <span className="mb-1 block text-xs font-semibold text-gray-700 dark:text-neutral-300">Notes (optional)</span>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 placeholder="Payment terms, PO number, etc."
-                className="w-full rounded-lg border border-gray-400/50 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-3 py-2 text-sm"
               />
             </label>
           </div>
@@ -336,25 +336,25 @@ export function CeoRevenueReportsSection() {
       )}
 
       {clientId && (
-        <div className="rounded-2xl border border-gray-400/40 bg-gray-300/10 p-4">
-          <h3 className="text-sm font-semibold text-gray-900">Invoices for this client</h3>
+        <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/10 dark:bg-neutral-800/25 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-50">Invoices for this client</h3>
           {loadingInvoices ? (
-            <p className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+            <p className="mt-3 flex items-center gap-2 text-sm text-gray-600 dark:text-neutral-400">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading…
             </p>
           ) : invoices.length === 0 ? (
-            <p className="mt-3 text-sm text-gray-600">No invoices yet.</p>
+            <p className="mt-3 text-sm text-gray-600 dark:text-neutral-400">No invoices yet.</p>
           ) : (
             <ul className="mt-3 divide-y divide-gray-400/30">
               {invoices.map((inv) => (
                 <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-neutral-50">
                       {inv.invoice_number}{" "}
-                      <span className="font-normal text-gray-600">· {formatUsd(inv.total_cents)}</span>
+                      <span className="font-normal text-gray-600 dark:text-neutral-400">· {formatUsd(inv.total_cents)}</span>
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-600 dark:text-neutral-400">
                       Status: {inv.status}
                       {inv.sent_at ? ` · sent ${new Date(inv.sent_at).toLocaleString()}` : ""}
                     </p>
@@ -385,8 +385,8 @@ export function CeoRevenueReportsSection() {
       )}
 
       {!clientId && (
-        <div className="rounded-2xl border border-dashed border-gray-400/50 bg-gray-300/10 px-6 py-8 text-center">
-          <p className="text-sm text-gray-700">Choose a client to create and view invoices.</p>
+        <div className="rounded-2xl border border-dashed border-gray-400/50 dark:border-neutral-600/55 bg-gray-300/10 dark:bg-neutral-800/25 px-6 py-8 text-center">
+          <p className="text-sm text-gray-700 dark:text-neutral-300">Choose a client to create and view invoices.</p>
         </div>
       )}
     </div>

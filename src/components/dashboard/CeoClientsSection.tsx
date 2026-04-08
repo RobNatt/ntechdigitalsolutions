@@ -43,13 +43,13 @@ export function CeoClientsSection() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-neutral-400">
           Clients synced from your CRM database. Add or edit records via the API or Supabase for now.
         </p>
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+          className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
         >
           Refresh
         </button>
@@ -61,17 +61,17 @@ export function CeoClientsSection() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+      <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
+        <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
             All clients
           </h3>
         </div>
         <div className="overflow-x-auto">
           {loading ? (
-            <p className="px-4 py-8 text-center text-sm text-gray-600">Loading…</p>
+            <p className="px-4 py-8 text-center text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
           ) : clients.length === 0 ? (
-            <p className="px-4 py-10 text-center text-sm text-gray-600">
+            <p className="px-4 py-10 text-center text-sm text-gray-600 dark:text-neutral-400">
               No clients yet. Create rows in the{" "}
               <code className="rounded bg-gray-400/20 px-1">clients</code> table or extend this
               screen with a form when you are ready.
@@ -79,7 +79,7 @@ export function CeoClientsSection() {
           ) : (
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-400/25 bg-gray-400/10 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700">
+                <tr className="border-b border-gray-400/25 bg-gray-400/10 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700 dark:text-neutral-300">
                   <th className="px-4 py-2.5">Name</th>
                   <th className="px-4 py-2.5">Email</th>
                   <th className="px-4 py-2.5">Phone</th>
@@ -91,15 +91,15 @@ export function CeoClientsSection() {
                 {clients.map((c) => (
                   <tr
                     key={c.id}
-                    className="border-b border-gray-400/20 last:border-0 hover:bg-gray-400/10"
+                    className="border-b border-gray-400/20 dark:border-neutral-600/25 last:border-0 hover:bg-gray-400/10"
                   >
-                    <td className="px-4 py-2.5 font-medium text-gray-900">
+                    <td className="px-4 py-2.5 font-medium text-gray-900 dark:text-neutral-50">
                       {c.name || "—"}
                     </td>
-                    <td className="px-4 py-2.5 text-gray-700">{c.email || "—"}</td>
-                    <td className="px-4 py-2.5 text-gray-700 tabular-nums">{c.phone || "—"}</td>
-                    <td className="px-4 py-2.5 text-gray-700">{c.address || "—"}</td>
-                    <td className="px-4 py-2.5 text-xs text-gray-600 tabular-nums">
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-neutral-300">{c.email || "—"}</td>
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-neutral-300 tabular-nums">{c.phone || "—"}</td>
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-neutral-300">{c.address || "—"}</td>
+                    <td className="px-4 py-2.5 text-xs text-gray-600 dark:text-neutral-400 tabular-nums">
                       {c.created_at
                         ? new Date(c.created_at).toLocaleDateString(undefined, {
                             month: "short",

@@ -98,11 +98,11 @@ export function CeoBlogPostsSection() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-neutral-200">
             <FileText className="h-4 w-4 text-sky-700" aria-hidden />
             Company blog posts
           </p>
-          <p className="mt-1 max-w-xl text-sm text-gray-600">
+          <p className="mt-1 max-w-xl text-sm text-gray-600 dark:text-neutral-400">
             Draft and publish articles from here. Published posts appear on the public{" "}
             <code className="rounded bg-gray-400/20 px-1 text-xs">/blog</code> page.
           </p>
@@ -110,55 +110,55 @@ export function CeoBlogPostsSection() {
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+          className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
         >
           Refresh
         </button>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-gray-400/30 bg-white/40 p-3 text-sm">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">Total posts</p>
-          <p className="mt-1 text-xl font-bold text-gray-900">{posts.length}</p>
+        <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-3 text-sm">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">Total posts</p>
+          <p className="mt-1 text-xl font-bold text-gray-900 dark:text-neutral-50">{posts.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-400/30 bg-white/40 p-3 text-sm">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">Published</p>
-          <p className="mt-1 text-xl font-bold text-gray-900">{publishedCount}</p>
+        <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-3 text-sm">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">Published</p>
+          <p className="mt-1 text-xl font-bold text-gray-900 dark:text-neutral-50">{publishedCount}</p>
         </div>
-        <div className="rounded-xl border border-gray-400/30 bg-white/40 p-3 text-sm">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">Drafts</p>
-          <p className="mt-1 text-xl font-bold text-gray-900">{posts.length - publishedCount}</p>
+        <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-3 text-sm">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">Drafts</p>
+          <p className="mt-1 text-xl font-bold text-gray-900 dark:text-neutral-50">{posts.length - publishedCount}</p>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">New post</p>
+      <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">New post</p>
         <div className="mt-3 grid gap-3">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title"
-            className="rounded-lg border border-gray-400/50 bg-white/90 px-3 py-2 text-sm"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
           <input
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
             placeholder="Short excerpt (optional)"
-            className="rounded-lg border border-gray-400/50 bg-white/90 px-3 py-2 text-sm"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Write your article..."
             rows={10}
-            className="rounded-lg border border-gray-400/50 bg-white/90 px-3 py-2 text-sm"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               disabled={saving}
               onClick={() => void createPost(false)}
-              className="rounded-lg border border-gray-400/50 bg-white px-3 py-1.5 text-xs font-semibold text-gray-800 disabled:opacity-50"
+              className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 disabled:opacity-50"
             >
               Save draft
             </button>
@@ -176,29 +176,29 @@ export function CeoBlogPostsSection() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+      <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner">
+        <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
             Existing posts
           </h3>
         </div>
         {loading ? (
-          <p className="px-4 py-8 text-sm text-gray-600">Loading…</p>
+          <p className="px-4 py-8 text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
         ) : posts.length === 0 ? (
-          <p className="px-4 py-8 text-sm text-gray-600">No posts yet.</p>
+          <p className="px-4 py-8 text-sm text-gray-600 dark:text-neutral-400">No posts yet.</p>
         ) : (
           <ul className="divide-y divide-gray-400/20">
             {posts.map((p) => (
               <li key={p.id} className="px-4 py-3 text-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate font-semibold text-gray-900">{p.title}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="truncate font-semibold text-gray-900 dark:text-neutral-50">{p.title}</p>
+                    <p className="text-xs text-gray-500 dark:text-neutral-500">
                       /blog#{p.slug} · {new Date(p.updated_at).toLocaleString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-700">
+                    <span className="rounded bg-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-700 dark:text-neutral-300">
                       {p.status}
                     </span>
                     {p.status === "draft" ? (

@@ -21,8 +21,8 @@ type StatusPayload = {
 
 function CheckRow({ label, ok }: { label: string; ok: boolean }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-gray-400/20 py-2 text-sm last:border-0">
-      <span className="text-gray-700">{label}</span>
+    <div className="flex items-center justify-between gap-3 border-b border-gray-400/20 dark:border-neutral-600/25 py-2 text-sm last:border-0">
+      <span className="text-gray-700 dark:text-neutral-300">{label}</span>
       <span
         className={cn(
           "rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide",
@@ -68,14 +68,14 @@ export function CeoSupabaseSection() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div>
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-neutral-50">
             <Server className="h-4 w-4 text-sky-700" />
             Supabase &amp; data backend
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-gray-600">
+          <p className="mt-1 max-w-2xl text-sm text-gray-600 dark:text-neutral-400">
             This dashboard talks to your database through the app&apos;s server (service role). Use
             this panel to confirm env vars and connectivity. Schema changes still run in the{" "}
-            <span className="font-medium text-gray-800">Supabase SQL Editor</span> or CLI from{" "}
+            <span className="font-medium text-gray-800 dark:text-neutral-200">Supabase SQL Editor</span> or CLI from{" "}
             <code className="rounded bg-gray-400/25 px-1 text-xs">supabase/migrations</code>.
           </p>
         </div>
@@ -83,7 +83,7 @@ export function CeoSupabaseSection() {
           type="button"
           disabled={loading}
           onClick={() => void load()}
-          className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-400/50 bg-gray-200/50 px-3 py-2 text-xs font-semibold text-gray-900 shadow-sm hover:bg-gray-300/60 disabled:opacity-50"
+          className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/50 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/60 disabled:opacity-50"
         >
           <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
           Refresh status
@@ -97,11 +97,11 @@ export function CeoSupabaseSection() {
       ) : null}
 
       {loading && !data ? (
-        <p className="text-sm text-gray-600">Checking Supabase…</p>
+        <p className="text-sm text-gray-600 dark:text-neutral-400">Checking Supabase…</p>
       ) : data ? (
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner backdrop-blur-sm">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+          <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner backdrop-blur-sm">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
               Configuration
             </h3>
             <div className="mt-2">
@@ -111,7 +111,7 @@ export function CeoSupabaseSection() {
               <CheckRow label="Database reachable (leads table)" ok={data.databaseReachable} />
             </div>
             {data.projectHost ? (
-              <p className="mt-3 break-all font-mono text-[11px] text-gray-600">
+              <p className="mt-3 break-all font-mono text-[11px] text-gray-600 dark:text-neutral-400">
                 Host: {data.projectHost}
               </p>
             ) : null}
@@ -126,38 +126,38 @@ export function CeoSupabaseSection() {
                 <ExternalLink className="h-3 w-3" />
               </a>
             ) : (
-              <p className="mt-3 text-xs text-gray-500">
+              <p className="mt-3 text-xs text-gray-500 dark:text-neutral-500">
                 Dashboard link appears when the public URL uses{" "}
                 <code className="rounded bg-gray-400/20 px-1">*.supabase.co</code>.
               </p>
             )}
           </div>
 
-          <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner backdrop-blur-sm">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+          <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner backdrop-blur-sm">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
               Live counts (service role)
             </h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li className="flex justify-between gap-2 border-b border-gray-400/15 pb-2">
-                <span className="text-gray-700">Leads</span>
-                <span className="tabular-nums font-semibold text-gray-900">
+                <span className="text-gray-700 dark:text-neutral-300">Leads</span>
+                <span className="tabular-nums font-semibold text-gray-900 dark:text-neutral-50">
                   {data.counts.leads ?? "—"}
                 </span>
               </li>
               <li className="flex justify-between gap-2 border-b border-gray-400/15 pb-2">
-                <span className="text-gray-700">Clients</span>
-                <span className="tabular-nums font-semibold text-gray-900">
+                <span className="text-gray-700 dark:text-neutral-300">Clients</span>
+                <span className="tabular-nums font-semibold text-gray-900 dark:text-neutral-50">
                   {data.counts.clients ?? "—"}
                 </span>
               </li>
               <li className="flex justify-between gap-2">
-                <span className="text-gray-700">Calendar events</span>
-                <span className="tabular-nums font-semibold text-gray-900">
+                <span className="text-gray-700 dark:text-neutral-300">Calendar events</span>
+                <span className="tabular-nums font-semibold text-gray-900 dark:text-neutral-50">
                   {data.counts.calendar_events ?? "—"}
                 </span>
               </li>
             </ul>
-            <p className="mt-4 text-[11px] leading-relaxed text-gray-600">
+            <p className="mt-4 text-[11px] leading-relaxed text-gray-600 dark:text-neutral-400">
               CRM actions (leads, clients, calendar) in other tabs use these same server routes. If
               counts stay empty while the app errors, run pending files under{" "}
               <code className="rounded bg-gray-400/25 px-1">supabase/migrations</code>.

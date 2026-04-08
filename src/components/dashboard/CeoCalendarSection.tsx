@@ -543,7 +543,7 @@ export function CeoCalendarSection() {
   }
 
   const inputClass =
-    "mt-1 w-full rounded-md border border-gray-400/45 bg-white/90 px-2.5 py-1.5 text-sm text-gray-900 shadow-sm focus:border-sky-500/60 focus:outline-none focus:ring-1 focus:ring-sky-500/40";
+    "mt-1 w-full rounded-md border border-gray-400/45 dark:border-neutral-600/50 bg-white/90 px-2.5 py-1.5 text-sm text-gray-900 dark:text-neutral-50 shadow-sm focus:border-sky-500/60 focus:outline-none focus:ring-1 focus:ring-sky-500/40";
 
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -551,10 +551,10 @@ export function CeoCalendarSection() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <p className="max-w-xl text-sm text-gray-600">
-            Schedule <span className="font-medium text-gray-800">lead calls</span>,{" "}
-            <span className="font-medium text-gray-800">onboarding</span>, and{" "}
-            <span className="font-medium text-gray-800">follow-ups</span>. Enable browser
+          <p className="max-w-xl text-sm text-gray-600 dark:text-neutral-400">
+            Schedule <span className="font-medium text-gray-800 dark:text-neutral-200">lead calls</span>,{" "}
+            <span className="font-medium text-gray-800 dark:text-neutral-200">onboarding</span>, and{" "}
+            <span className="font-medium text-gray-800 dark:text-neutral-200">follow-ups</span>. Enable browser
             notifications for reminders; we also show upcoming alerts below.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -573,7 +573,7 @@ export function CeoCalendarSection() {
             <button
               type="button"
               onClick={() => void loadEvents()}
-              className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-2.5 py-1.5 text-[11px] font-semibold text-gray-800 hover:bg-gray-300/50"
+              className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-2.5 py-1.5 text-[11px] font-semibold text-gray-800 dark:text-neutral-200 hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
             >
               Refresh
             </button>
@@ -588,15 +588,15 @@ export function CeoCalendarSection() {
       )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-          <div className="flex flex-col gap-2 border-b border-gray-400/30 px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
+          <div className="flex flex-col gap-2 border-b border-gray-400/30 dark:border-neutral-600/35 px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-2">
-              <CalendarDays className="h-4 w-4 shrink-0 text-gray-700" />
-              <span className="truncate text-sm font-bold text-gray-900">{periodLabel}</span>
+              <CalendarDays className="h-4 w-4 shrink-0 text-gray-700 dark:text-neutral-300" />
+              <span className="truncate text-sm font-bold text-gray-900 dark:text-neutral-50">{periodLabel}</span>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <div
-                className="flex rounded-lg border border-gray-400/45 bg-gray-200/40 p-0.5"
+                className="flex rounded-lg border border-gray-400/45 dark:border-neutral-600/50 bg-gray-200/40 p-0.5"
                 role="tablist"
                 aria-label="Calendar view"
               >
@@ -608,8 +608,8 @@ export function CeoCalendarSection() {
                   className={cn(
                     "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
                     viewMode === "month"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-white text-gray-900 dark:text-neutral-50 shadow-sm"
+                      : "text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:text-neutral-50"
                   )}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -623,8 +623,8 @@ export function CeoCalendarSection() {
                   className={cn(
                     "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
                     viewMode === "week"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-white text-gray-900 dark:text-neutral-50 shadow-sm"
+                      : "text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:text-neutral-50"
                   )}
                 >
                   <Columns2 className="h-3.5 w-3.5" />
@@ -638,8 +638,8 @@ export function CeoCalendarSection() {
                   className={cn(
                     "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
                     viewMode === "day"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-white text-gray-900 dark:text-neutral-50 shadow-sm"
+                      : "text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:text-neutral-50"
                   )}
                 >
                   <Square className="h-3.5 w-3.5" />
@@ -656,7 +656,7 @@ export function CeoCalendarSection() {
               <button
                 type="button"
                 aria-label={viewMode === "month" ? "Previous month" : viewMode === "week" ? "Previous week" : "Previous day"}
-                className="rounded-md border border-gray-400/50 p-1 text-gray-700 hover:bg-gray-400/20"
+                className="rounded-md border border-gray-400/50 dark:border-neutral-600/55 p-1 text-gray-700 dark:text-neutral-300 hover:bg-gray-400/20"
                 onClick={() => navigatePeriod(-1)}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -664,7 +664,7 @@ export function CeoCalendarSection() {
               <button
                 type="button"
                 aria-label={viewMode === "month" ? "Next month" : viewMode === "week" ? "Next week" : "Next day"}
-                className="rounded-md border border-gray-400/50 p-1 text-gray-700 hover:bg-gray-400/20"
+                className="rounded-md border border-gray-400/50 dark:border-neutral-600/55 p-1 text-gray-700 dark:text-neutral-300 hover:bg-gray-400/20"
                 onClick={() => navigatePeriod(1)}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -674,7 +674,7 @@ export function CeoCalendarSection() {
 
           {viewMode === "month" ? (
             <>
-              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600">
+              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600 dark:text-neutral-400">
                 {weekdayLabels.map((w) => (
                   <div key={w} className="py-2">
                     {w}
@@ -684,7 +684,7 @@ export function CeoCalendarSection() {
 
               <div className="relative grid grid-cols-7 gap-px bg-gray-400/25 p-px">
                 {loading ? (
-                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600">
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600 dark:text-neutral-400">
                     Loading…
                   </div>
                 ) : null}
@@ -715,7 +715,7 @@ export function CeoCalendarSection() {
                       <span
                         className={cn(
                           "text-[11px] font-semibold tabular-nums",
-                          isToday ? "text-sky-800" : "text-gray-800"
+                          isToday ? "text-sky-800" : "text-gray-800 dark:text-neutral-200"
                         )}
                       >
                         {d.getDate()}
@@ -732,7 +732,7 @@ export function CeoCalendarSection() {
                           </span>
                         ))}
                         {dayEvents.length > 3 ? (
-                          <span className="text-[9px] text-gray-500">+{dayEvents.length - 3}</span>
+                          <span className="text-[9px] text-gray-500 dark:text-neutral-500">+{dayEvents.length - 3}</span>
                         ) : null}
                       </div>
                     </button>
@@ -744,11 +744,11 @@ export function CeoCalendarSection() {
 
           {viewMode === "week" ? (
             <>
-              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600">
+              <div className="grid grid-cols-7 border-b border-gray-400/25 bg-gray-400/15 text-center text-[10px] font-bold uppercase tracking-wide text-gray-600 dark:text-neutral-400">
                 {weekDays.map((d) => (
                   <div key={toYMD(d)} className="py-2">
                     <span className="block">{weekdayLabels[d.getDay()]}</span>
-                    <span className="mt-0.5 block text-[11px] font-semibold tabular-nums text-gray-800">
+                    <span className="mt-0.5 block text-[11px] font-semibold tabular-nums text-gray-800 dark:text-neutral-200">
                       {d.getMonth() + 1}/{d.getDate()}
                     </span>
                   </div>
@@ -757,7 +757,7 @@ export function CeoCalendarSection() {
 
               <div className="relative grid grid-cols-7 gap-px bg-gray-400/25 p-px">
                 {loading ? (
-                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600">
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center bg-neutral-50/70 text-sm text-gray-600 dark:text-neutral-400">
                     Loading…
                   </div>
                 ) : null}
@@ -790,10 +790,10 @@ export function CeoCalendarSection() {
                                 e.stopPropagation();
                                 openEdit(ev);
                               }}
-                              className="w-full rounded border border-gray-400/30 bg-white/90 px-1 py-0.5 text-left text-[10px] font-medium text-gray-900 hover:bg-gray-50"
+                              className="w-full rounded border border-gray-400/30 dark:border-neutral-600/35 bg-white/90 px-1 py-0.5 text-left text-[10px] font-medium text-gray-900 dark:text-neutral-50 hover:bg-gray-50"
                               style={{ borderLeftWidth: 3, borderLeftColor: ev.color || "#64748b" }}
                             >
-                              <span className="block truncate text-gray-600 tabular-nums">
+                              <span className="block truncate text-gray-600 dark:text-neutral-400 tabular-nums">
                                 {pad2(ev.hour)}:{pad2(ev.start_minutes ?? 0)}
                               </span>
                               <span className="block truncate">{ev.title}</span>
@@ -811,7 +811,7 @@ export function CeoCalendarSection() {
           {viewMode === "day" ? (
             <div className="relative min-h-[min(52vh,420px)] p-3">
               {loading ? (
-                <div className="flex items-center justify-center py-16 text-sm text-gray-600">
+                <div className="flex items-center justify-center py-16 text-sm text-gray-600 dark:text-neutral-400">
                   Loading…
                 </div>
               ) : (
@@ -822,15 +822,15 @@ export function CeoCalendarSection() {
                         <button
                           type="button"
                           onClick={() => openEdit(ev)}
-                          className="flex w-full gap-3 rounded-xl border border-gray-400/35 bg-white/90 px-3 py-2.5 text-left shadow-sm hover:bg-gray-50"
+                          className="flex w-full gap-3 rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/90 px-3 py-2.5 text-left shadow-sm hover:bg-gray-50"
                         >
                           <span
                             className="w-1 shrink-0 self-stretch rounded-full"
                             style={{ backgroundColor: ev.color || "#64748b" }}
                           />
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-gray-900">{ev.title}</p>
-                            <p className="mt-0.5 text-xs text-gray-600">
+                            <p className="text-sm font-semibold text-gray-900 dark:text-neutral-50">{ev.title}</p>
+                            <p className="mt-0.5 text-xs text-gray-600 dark:text-neutral-400">
                               {eventTimeLabel(ev)} ·{" "}
                               {EVENT_TYPE_LABELS[(ev.event_type as CalendarEventType) || "other"]}
                               {typeof ev.recurrence === "string" &&
@@ -843,14 +843,14 @@ export function CeoCalendarSection() {
                               ) : null}
                             </p>
                             {ev.notes ? (
-                              <p className="mt-1 line-clamp-2 text-xs text-gray-500">{ev.notes}</p>
+                              <p className="mt-1 line-clamp-2 text-xs text-gray-500 dark:text-neutral-500">{ev.notes}</p>
                             ) : null}
                           </div>
                         </button>
                       </li>
                     ))
                   ) : (
-                    <li className="py-12 text-center text-sm text-gray-500">
+                    <li className="py-12 text-center text-sm text-gray-500 dark:text-neutral-500">
                       No events scheduled this day. Use Add or double-click a day in month/week view.
                     </li>
                   )}
@@ -859,7 +859,7 @@ export function CeoCalendarSection() {
             </div>
           ) : null}
 
-          <p className="border-t border-gray-400/25 px-3 py-2 text-[10px] text-gray-500">
+          <p className="border-t border-gray-400/25 px-3 py-2 text-[10px] text-gray-500 dark:text-neutral-500">
             {viewMode === "month"
               ? "Double-click a day to add an event. Single click selects the day for the list and form."
               : viewMode === "week"
@@ -869,13 +869,13 @@ export function CeoCalendarSection() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="rounded-2xl border border-gray-400/40 bg-amber-50/40 p-3 shadow-inner">
+          <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-amber-50/40 p-3 shadow-inner">
             <h3 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-900">
               <Bell className="h-3.5 w-3.5" />
               Upcoming alerts
             </h3>
             {upcomingAlerts.length === 0 ? (
-              <p className="mt-2 text-xs text-gray-600">No scheduled reminders ahead.</p>
+              <p className="mt-2 text-xs text-gray-600 dark:text-neutral-400">No scheduled reminders ahead.</p>
             ) : (
               <ul className="mt-2 space-y-2 text-xs">
                 {upcomingAlerts.map((e) => (
@@ -885,8 +885,8 @@ export function CeoCalendarSection() {
                       onClick={() => openEdit(e)}
                       className="w-full rounded-md border border-amber-200/60 bg-white/80 px-2 py-1.5 text-left hover:bg-amber-100/50"
                     >
-                      <span className="font-semibold text-gray-900">{e.title}</span>
-                      <span className="mt-0.5 block text-[10px] text-gray-600">
+                      <span className="font-semibold text-gray-900 dark:text-neutral-50">{e.title}</span>
+                      <span className="mt-0.5 block text-[10px] text-gray-600 dark:text-neutral-400">
                         {formatRemindLocal(e.remind_at!)} ·{" "}
                         {EVENT_TYPE_LABELS[(e.event_type as CalendarEventType) || "other"]}
                       </span>
@@ -897,9 +897,9 @@ export function CeoCalendarSection() {
             )}
           </div>
 
-          <div className="min-h-0 flex-1 rounded-2xl border border-gray-400/40 bg-gray-300/20 p-3 shadow-inner">
+          <div className="min-h-0 flex-1 rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-3 shadow-inner">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-600">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
                 {selectedDay ? parseYMD(selectedDay).toLocaleDateString() : "Pick a day"}
               </h3>
               <button
@@ -919,10 +919,10 @@ export function CeoCalendarSection() {
                     <button
                       type="button"
                       onClick={() => openEdit(ev)}
-                      className="w-full rounded-lg border border-gray-400/35 bg-white/85 px-2 py-1.5 text-left text-xs hover:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 px-2 py-1.5 text-left text-xs hover:bg-gray-50"
                     >
-                      <span className="font-semibold text-gray-900">{ev.title}</span>
-                      <span className="block text-[10px] text-gray-600">
+                      <span className="font-semibold text-gray-900 dark:text-neutral-50">{ev.title}</span>
+                      <span className="block text-[10px] text-gray-600 dark:text-neutral-400">
                         {eventTimeLabel(ev)} ·{" "}
                         {EVENT_TYPE_LABELS[(ev.event_type as CalendarEventType) || "other"]}
                         {typeof ev.recurrence === "string" &&
@@ -938,7 +938,7 @@ export function CeoCalendarSection() {
                   </li>
                 ))
               ) : (
-                <li className="text-xs text-gray-500">No events this day.</li>
+                <li className="text-xs text-gray-500 dark:text-neutral-500">No events this day.</li>
               )}
             </ul>
           </div>
@@ -955,18 +955,18 @@ export function CeoCalendarSection() {
             if (e.target === e.currentTarget) setFormOpen(false);
           }}
         >
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-gray-400/50 bg-neutral-100 p-4 shadow-xl">
-            <h2 id="cal-form-title" className="text-base font-bold text-gray-900">
+          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-gray-400/50 dark:border-neutral-600/55 bg-neutral-100 p-4 shadow-xl">
+            <h2 id="cal-form-title" className="text-base font-bold text-gray-900 dark:text-neutral-50">
               {editingId ? "Edit event" : "New event"}
             </h2>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-gray-600 dark:text-neutral-400">
               {editingId && recurrence !== "none" && selectedDay !== eventAnchorDate
                 ? `This instance: ${selectedDay} · Series start: ${eventAnchorDate}`
                 : selectedDay}
             </p>
 
             <div className="mt-3 space-y-3">
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Date (series start)
                 <input
                   type="date"
@@ -975,11 +975,11 @@ export function CeoCalendarSection() {
                   onChange={(e) => setEventAnchorDate(e.target.value)}
                 />
               </label>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Title
                 <input className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
               </label>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Type
                 <select
                   className={cn(inputClass, "cursor-pointer")}
@@ -994,7 +994,7 @@ export function CeoCalendarSection() {
                 </select>
               </label>
               <div className="grid grid-cols-2 gap-2">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                   Start
                   <input
                     type="time"
@@ -1003,7 +1003,7 @@ export function CeoCalendarSection() {
                     onChange={(e) => setStartTime(e.target.value)}
                   />
                 </label>
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                   End
                   <input
                     type="time"
@@ -1013,7 +1013,7 @@ export function CeoCalendarSection() {
                   />
                 </label>
               </div>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Repeat
                 <select
                   className={cn(inputClass, "cursor-pointer")}
@@ -1028,7 +1028,7 @@ export function CeoCalendarSection() {
                 </select>
               </label>
               {recurrence !== "none" ? (
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                   Repeat until (optional)
                   <input
                     type="date"
@@ -1036,12 +1036,12 @@ export function CeoCalendarSection() {
                     value={recurrenceUntil}
                     onChange={(e) => setRecurrenceUntil(e.target.value)}
                   />
-                  <span className="mt-0.5 block text-[10px] font-normal text-gray-500">
+                  <span className="mt-0.5 block text-[10px] font-normal text-gray-500 dark:text-neutral-500">
                     Leave empty to repeat far into the future (capped when loading the calendar).
                   </span>
                 </label>
               ) : null}
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Link lead (optional)
                 <select
                   className={cn(inputClass, "cursor-pointer")}
@@ -1056,7 +1056,7 @@ export function CeoCalendarSection() {
                   ))}
                 </select>
               </label>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Link client (optional)
                 <select
                   className={cn(inputClass, "cursor-pointer")}
@@ -1071,7 +1071,7 @@ export function CeoCalendarSection() {
                   ))}
                 </select>
               </label>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Alert
                 <select
                   className={cn(inputClass, "cursor-pointer")}
@@ -1085,7 +1085,7 @@ export function CeoCalendarSection() {
                   ))}
                 </select>
               </label>
-              <label className="block text-xs font-semibold text-gray-700">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
                 Notes
                 <textarea
                   className={cn(inputClass, "min-h-[72px] resize-y")}
@@ -1096,19 +1096,19 @@ export function CeoCalendarSection() {
               </label>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-400/30 pt-3">
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-400/30 dark:border-neutral-600/35 pt-3">
               <button
                 type="button"
                 disabled={saving || !title.trim()}
                 onClick={() => void saveEvent()}
-                className="rounded-lg border border-gray-500/40 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 disabled:opacity-40"
+                className="rounded-lg border border-gray-500/40 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 disabled:opacity-40"
               >
                 {saving ? "Saving…" : "Save"}
               </button>
               <button
                 type="button"
                 onClick={() => setFormOpen(false)}
-                className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-200/60"
+                className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-200/60"
               >
                 Cancel
               </button>

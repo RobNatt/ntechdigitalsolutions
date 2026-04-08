@@ -42,8 +42,8 @@ export function ViewUsersList() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <Loader2 className="w-12 h-12 text-gray-500 animate-spin mb-4" />
-        <p className="text-gray-600">Loading users...</p>
+        <Loader2 className="w-12 h-12 text-gray-500 dark:text-neutral-500 animate-spin mb-4" />
+        <p className="text-gray-600 dark:text-neutral-400">Loading users...</p>
       </div>
     );
   }
@@ -63,15 +63,15 @@ export function ViewUsersList() {
       className="space-y-4"
     >
       <div className="flex items-center gap-3 mb-6">
-        <Users className="w-8 h-8 text-gray-600" />
+        <Users className="w-8 h-8 text-gray-600 dark:text-neutral-400" />
         <div>
-          <h3 className="text-xl font-bold text-gray-700">Current Users</h3>
-          <p className="text-sm text-gray-600">{users.length} user{users.length !== 1 ? "s" : ""} in system</p>
+          <h3 className="text-xl font-bold text-gray-700 dark:text-neutral-300">Current Users</h3>
+          <p className="text-sm text-gray-600 dark:text-neutral-400">{users.length} user{users.length !== 1 ? "s" : ""} in system</p>
         </div>
       </div>
 
       {users.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+        <div className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-neutral-500">
           <Users className="w-16 h-16 mb-4 opacity-50" />
           <p>No users found.</p>
         </div>
@@ -82,25 +82,25 @@ export function ViewUsersList() {
               key={u.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-between p-4 rounded-xl border-2 border-gray-400/40 bg-white/60 hover:bg-white/80 transition-colors"
+              className="flex items-center justify-between p-4 rounded-xl border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/60 hover:bg-white/80 transition-colors"
             >
               <div>
-                <div className="font-medium text-gray-700">
+                <div className="font-medium text-gray-700 dark:text-neutral-300">
                   {u.full_name || u.email || "—"}
                 </div>
-                <div className="text-sm text-gray-600">{u.email || "—"}</div>
+                <div className="text-sm text-gray-600 dark:text-neutral-400">{u.email || "—"}</div>
                 <div className="flex gap-2 mt-1">
-                  <span className="text-xs px-2 py-0.5 rounded bg-gray-400/30 text-gray-600">
+                  <span className="text-xs px-2 py-0.5 rounded bg-gray-400/30 text-gray-600 dark:text-neutral-400">
                     {u.role || "member"}
                   </span>
                   {u.login_id && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-gray-400/30 text-gray-600">
+                    <span className="text-xs px-2 py-0.5 rounded bg-gray-400/30 text-gray-600 dark:text-neutral-400">
                       ID: {u.login_id}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-neutral-500">
                 {u.created_at
                   ? new Date(u.created_at).toLocaleDateString()
                   : "—"}

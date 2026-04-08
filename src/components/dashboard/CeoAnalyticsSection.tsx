@@ -51,14 +51,14 @@ function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner backdrop-blur-sm">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+    <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner backdrop-blur-sm">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-3xl">
+      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 dark:text-neutral-50 sm:text-3xl">
         {value}
       </p>
-      {hint ? <p className="mt-1 text-xs text-gray-600">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">{hint}</p> : null}
     </div>
   );
 }
@@ -74,17 +74,17 @@ function RowList({
 }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-400/30 bg-white/40 p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+      <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
           {title}
         </p>
-        <p className="mt-2 text-sm text-gray-600">No data in this range yet.</p>
+        <p className="mt-2 text-sm text-gray-600 dark:text-neutral-400">No data in this range yet.</p>
       </div>
     );
   }
   return (
-    <div className="rounded-xl border border-gray-400/30 bg-white/40 p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+    <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
         {title}
       </p>
       <ul className="mt-3 space-y-2 text-sm">
@@ -93,10 +93,10 @@ function RowList({
             key={`${leftKey}-${i}`}
             className="flex items-center justify-between gap-2 border-b border-gray-400/15 pb-2 last:border-0 last:pb-0"
           >
-            <span className="min-w-0 truncate font-medium text-gray-800" title={r.left}>
+            <span className="min-w-0 truncate font-medium text-gray-800 dark:text-neutral-200" title={r.left}>
               {r.left}
             </span>
-            <span className="shrink-0 tabular-nums text-gray-700">{r.count}</span>
+            <span className="shrink-0 tabular-nums text-gray-700 dark:text-neutral-300">{r.count}</span>
           </li>
         ))}
       </ul>
@@ -290,15 +290,15 @@ export function CeoAnalyticsSection() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-neutral-200">
             <LineChart className="h-4 w-4 text-sky-700" aria-hidden />
             First-party analytics
           </p>
-          <p className="mt-1 max-w-xl text-sm text-gray-600">
+          <p className="mt-1 max-w-xl text-sm text-gray-600 dark:text-neutral-400">
             Traffic sources, depth (multi-page sessions), contact reach, and inquiry form
             submissions — scoped by company so you can reuse the same pipeline for clients.
           </p>
-          <p className="mt-2 max-w-xl text-xs text-gray-500">
+          <p className="mt-2 max-w-xl text-xs text-gray-500 dark:text-neutral-500">
             Events are written as they happen (near real-time). This tab refetches every 45s while
             open, or use Refresh — there is no live WebSocket feed.
           </p>
@@ -312,11 +312,11 @@ export function CeoAnalyticsSection() {
           <button
             type="button"
             onClick={() => void loadSummary()}
-            className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
           >
             Refresh
           </button>
-          <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-700">
+          <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-700 dark:text-neutral-300">
             <input
               type="checkbox"
               checked={autoRefresh}
@@ -334,7 +334,7 @@ export function CeoAnalyticsSection() {
                 "rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm",
                 days === d
                   ? "border-sky-600 bg-sky-100/90 text-sky-900"
-                  : "border-gray-400/50 bg-gray-200/40 text-gray-800 hover:bg-gray-300/50"
+                  : "border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 text-gray-800 dark:text-neutral-200 hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
               )}
             >
               Last {d}d
@@ -343,7 +343,7 @@ export function CeoAnalyticsSection() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 bg-gray-300/15 p-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/15 dark:bg-neutral-800/25 p-2">
         <button
           type="button"
           onClick={() => {
@@ -353,8 +353,8 @@ export function CeoAnalyticsSection() {
           className={cn(
             "inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
             mode === "ntech"
-              ? "bg-white shadow-sm text-gray-900"
-              : "text-gray-600 hover:bg-white/50"
+              ? "bg-white shadow-sm text-gray-900 dark:text-neutral-50"
+              : "text-gray-600 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-800/50"
           )}
         >
           N-Tech (us)
@@ -365,8 +365,8 @@ export function CeoAnalyticsSection() {
           className={cn(
             "inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
             mode === "client"
-              ? "bg-white shadow-sm text-gray-900"
-              : "text-gray-600 hover:bg-white/50"
+              ? "bg-white shadow-sm text-gray-900 dark:text-neutral-50"
+              : "text-gray-600 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-800/50"
           )}
         >
           <Building2 className="h-4 w-4" aria-hidden />
@@ -377,7 +377,7 @@ export function CeoAnalyticsSection() {
             <select
               value={clientId}
               onChange={(e) => setClientId(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-gray-400/50 bg-white/90 py-2.5 pl-3 pr-10 text-sm font-medium text-gray-900 shadow-sm"
+              className="w-full appearance-none rounded-xl border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 py-2.5 pl-3 pr-10 text-sm font-medium text-gray-900 dark:text-neutral-50 shadow-sm"
             >
               <option value="">Select a client…</option>
               {clientsWithCompany.map((c) => (
@@ -386,7 +386,7 @@ export function CeoAnalyticsSection() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600 dark:text-neutral-400" />
           </div>
         ) : null}
       </div>
@@ -406,18 +406,18 @@ export function CeoAnalyticsSection() {
       )}
 
       {mode === "client" && !clientId ? (
-        <p className="rounded-lg border border-gray-400/40 bg-gray-200/30 px-4 py-8 text-center text-sm text-gray-600">
+        <p className="rounded-lg border border-gray-400/40 dark:border-neutral-600/45 bg-gray-200/30 px-4 py-8 text-center text-sm text-gray-600 dark:text-neutral-400">
           Select a client to load their analytics (requires{" "}
           <code className="rounded bg-gray-400/25 px-1">company_id</code> on the client).
         </p>
       ) : null}
 
       {loading ? (
-        <p className="py-12 text-center text-sm text-gray-600">Loading analytics…</p>
+        <p className="py-12 text-center text-sm text-gray-600 dark:text-neutral-400">Loading analytics…</p>
       ) : !activeCompanyId ? null : (
         <>
           {since ? (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-neutral-500">
               Range from {new Date(since).toLocaleDateString()} (UTC midnight) · company{" "}
               <code className="rounded bg-gray-400/20 px-1 text-[11px]">{activeCompanyId}</code>
             </p>
@@ -444,12 +444,12 @@ export function CeoAnalyticsSection() {
             />
           </div>
 
-          <div className="rounded-xl border border-gray-400/30 bg-white/40 p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+          <div className="rounded-xl border border-gray-400/30 dark:border-neutral-600/35 bg-white/40 p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
               Pageviews by day (UTC)
             </p>
             {daily.length === 0 ? (
-              <p className="mt-3 text-sm text-gray-600">No pageviews in this window.</p>
+              <p className="mt-3 text-sm text-gray-600 dark:text-neutral-400">No pageviews in this window.</p>
             ) : (
               <div className="mt-4 flex h-36 items-end gap-1">
                 {daily.map((d) => (
@@ -464,7 +464,7 @@ export function CeoAnalyticsSection() {
                         height: `${Math.max(6, (d.count / maxDaily) * 120)}px`,
                       }}
                     />
-                    <span className="max-w-full truncate text-[9px] text-gray-600">
+                    <span className="max-w-full truncate text-[9px] text-gray-600 dark:text-neutral-400">
                       {d.day.length >= 10 ? d.day.slice(5, 10) : d.day}
                     </span>
                   </div>
@@ -481,9 +481,9 @@ export function CeoAnalyticsSection() {
 
           <RowList title="Custom events (by type)" rows={customEventRows} leftKey="ce" />
 
-          <div className="rounded-2xl border border-gray-400/40 bg-gray-300/20 p-4 shadow-inner">
+          <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-4 shadow-inner">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
                 Tracking keys (write_key)
               </p>
               <div className="flex flex-wrap items-center gap-2">
@@ -492,7 +492,7 @@ export function CeoAnalyticsSection() {
                   value={newKeyLabel}
                   onChange={(e) => setNewKeyLabel(e.target.value)}
                   placeholder="Label (e.g. Client landing)"
-                  className="min-w-[160px] rounded-lg border border-gray-400/50 bg-white/90 px-2 py-1.5 text-xs"
+                  className="min-w-[160px] rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-2 py-1.5 text-xs"
                 />
                 <button
                   type="button"
@@ -510,7 +510,7 @@ export function CeoAnalyticsSection() {
             ) : null}
             <ul className="mt-4 space-y-3">
               {siteKeys.length === 0 ? (
-                <li className="text-sm text-gray-600">No keys yet for this company.</li>
+                <li className="text-sm text-gray-600 dark:text-neutral-400">No keys yet for this company.</li>
               ) : (
                 siteKeys.map((k) => (
                   <li
@@ -518,25 +518,25 @@ export function CeoAnalyticsSection() {
                     className="rounded-lg border border-gray-400/25 bg-white/50 p-3 text-sm"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-medium text-gray-900">{k.label}</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="font-medium text-gray-900 dark:text-neutral-50">{k.label}</span>
+                      <span className="text-xs text-gray-500 dark:text-neutral-500">
                         {new Date(k.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <code className="break-all rounded bg-gray-400/15 px-2 py-1 text-xs text-gray-800">
+                      <code className="break-all rounded bg-gray-400/15 px-2 py-1 text-xs text-gray-800 dark:text-neutral-200">
                         {k.write_key}
                       </code>
                       <button
                         type="button"
                         onClick={() => copy(k.write_key)}
-                        className="inline-flex items-center gap-1 rounded border border-gray-400/50 px-2 py-1 text-xs font-semibold text-gray-800"
+                        className="inline-flex items-center gap-1 rounded border border-gray-400/50 dark:border-neutral-600/55 px-2 py-1 text-xs font-semibold text-gray-800 dark:text-neutral-200"
                       >
                         <Copy className="h-3 w-3" aria-hidden />
                         Copy
                       </button>
                     </div>
-                    <pre className="mt-2 max-h-24 overflow-auto rounded bg-gray-900/5 p-2 text-[10px] text-gray-700">
+                    <pre className="mt-2 max-h-24 overflow-auto rounded bg-gray-900/5 p-2 text-[10px] text-gray-700 dark:text-neutral-300">
                       {embedSnippet(k.write_key)}
                     </pre>
                   </li>

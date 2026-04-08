@@ -58,13 +58,13 @@ export function CreateUserSetup() {
         <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6">
           <UserPlus className="w-10 h-10 text-green-600" />
         </div>
-        <h3 className="text-xl font-bold text-gray-700 mb-2">User Created</h3>
-        <p className="text-gray-600 mb-6">The new user has been added successfully.</p>
+        <h3 className="text-xl font-bold text-gray-700 dark:text-neutral-300 mb-2">User Created</h3>
+        <p className="text-gray-600 dark:text-neutral-400 mb-6">The new user has been added successfully.</p>
         <motion.button
           onClick={() => setSuccess(false)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="px-6 py-2 rounded-lg border-2 border-gray-500 text-gray-700 font-medium hover:bg-gray-400/20"
+          className="px-6 py-2 rounded-lg border-2 border-gray-500 text-gray-700 dark:text-neutral-300 font-medium hover:bg-gray-400/20"
         >
           Create Another User
         </motion.button>
@@ -79,10 +79,10 @@ export function CreateUserSetup() {
       className="max-w-xl"
     >
       <div className="flex items-center gap-3 mb-6">
-        <UserPlus className="w-8 h-8 text-gray-600" />
+        <UserPlus className="w-8 h-8 text-gray-600 dark:text-neutral-400" />
         <div>
-          <h3 className="text-xl font-bold text-gray-700">Create New User</h3>
-          <p className="text-sm text-gray-600">Add a new user to the system</p>
+          <h3 className="text-xl font-bold text-gray-700 dark:text-neutral-300">Create New User</h3>
+          <p className="text-sm text-gray-600 dark:text-neutral-400">Add a new user to the system</p>
         </div>
       </div>
 
@@ -93,18 +93,18 @@ export function CreateUserSetup() {
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Email</label>
           <input
             type="email"
             required
             value={formData.email}
             onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
             placeholder="user@example.com"
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Password</label>
           <input
             type="password"
             required
@@ -112,47 +112,47 @@ export function CreateUserSetup() {
             value={formData.password}
             onChange={(e) => setFormData((p) => ({ ...p, password: e.target.value }))}
             placeholder="••••••••"
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Full Name</label>
           <input
             type="text"
             value={formData.full_name}
             onChange={(e) => setFormData((p) => ({ ...p, full_name: e.target.value }))}
             placeholder="Jane Doe"
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Login ID</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Login ID</label>
           <input
             type="text"
             value={formData.login_id}
             onChange={(e) => setFormData((p) => ({ ...p, login_id: e.target.value }))}
             placeholder="EMP001"
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           />
-          <p className="text-xs text-gray-500 mt-1">ID number used for sign-in</p>
+          <p className="text-xs text-gray-500 dark:text-neutral-500 mt-1">ID number used for sign-in</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Phone Number</label>
           <input
             type="tel"
             value={formData.phone_number}
             onChange={(e) => setFormData((p) => ({ ...p, phone_number: e.target.value }))}
             placeholder="+1234567890"
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           />
-          <p className="text-xs text-gray-500 mt-1">For 2FA verification codes</p>
+          <p className="text-xs text-gray-500 dark:text-neutral-500 mt-1">For 2FA verification codes</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Role</label>
           <select
             value={formData.role}
             onChange={(e) => setFormData((p) => ({ ...p, role: e.target.value }))}
-            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 bg-white/80 text-gray-800 focus:border-gray-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 border-gray-400/40 dark:border-neutral-600/45 bg-white/80 text-gray-800 dark:text-neutral-200 focus:border-gray-500 focus:outline-none"
           >
             <option value="member">Member</option>
             <option value="developer">Developer</option>

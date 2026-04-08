@@ -422,21 +422,21 @@ export function CeoLeadsSection() {
     );
 
   const inputClass =
-    "mt-1 w-full rounded-md border border-gray-400/45 bg-white/90 px-2.5 py-1.5 text-sm text-gray-900 shadow-sm focus:border-sky-500/60 focus:outline-none focus:ring-1 focus:ring-sky-500/40";
+    "mt-1 w-full rounded-md border border-gray-400/45 dark:border-neutral-600/50 bg-white/90 px-2.5 py-1.5 text-sm text-gray-900 dark:text-neutral-50 shadow-sm focus:border-sky-500/60 focus:outline-none focus:ring-1 focus:ring-sky-500/40";
 
   if (editingView && selectedLead && draft) {
     return (
       <div className="flex min-h-[min(70vh,560px)] flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-400/30 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-400/30 dark:border-neutral-600/35 pb-3">
           <button
             type="button"
             onClick={() => handleBackFromEdit()}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-400/50 bg-gray-200/50 px-3 py-2 text-xs font-semibold text-gray-900 shadow-sm hover:bg-gray-300/60"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/50 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/60"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back
           </button>
-          <h2 className="text-sm font-bold text-gray-900">Edit lead</h2>
+          <h2 className="text-sm font-bold text-gray-900 dark:text-neutral-50">Edit lead</h2>
           <button
             type="button"
             disabled={saving || !dirty}
@@ -459,9 +459,9 @@ export function CeoLeadsSection() {
           </p>
         )}
 
-        <div className="mx-auto w-full max-w-xl flex-1 rounded-2xl border border-gray-400/40 bg-gray-300/25 p-4 shadow-inner backdrop-blur-sm">
+        <div className="mx-auto w-full max-w-xl flex-1 rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/25 dark:bg-neutral-800/45 p-4 shadow-inner backdrop-blur-sm">
           <div className="flex flex-col gap-3">
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Lead temperature
               <select
                 className={cn(inputClass, "cursor-pointer")}
@@ -477,7 +477,7 @@ export function CeoLeadsSection() {
                 ))}
               </select>
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Name
               <input
                 className={inputClass}
@@ -486,7 +486,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Email
               <input
                 type="email"
@@ -496,7 +496,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Phone
               <input
                 className={inputClass}
@@ -505,7 +505,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Address
               <input
                 className={inputClass}
@@ -514,7 +514,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Source
               <input
                 className={inputClass}
@@ -523,7 +523,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Lead type
               <input
                 className={inputClass}
@@ -532,7 +532,7 @@ export function CeoLeadsSection() {
                 autoComplete="off"
               />
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Pipeline stage
               <select
                 className={cn(inputClass, "cursor-pointer")}
@@ -546,7 +546,7 @@ export function CeoLeadsSection() {
                 ))}
               </select>
             </label>
-            <label className="block text-xs font-semibold text-gray-700">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
               Notes
               <textarea
                 className={cn(inputClass, "min-h-[88px] resize-y")}
@@ -556,7 +556,7 @@ export function CeoLeadsSection() {
               />
             </label>
 
-            <div className="flex flex-col gap-2 border-t border-gray-400/30 pt-3">
+            <div className="flex flex-col gap-2 border-t border-gray-400/30 dark:border-neutral-600/35 pt-3">
               {selectedLead.client_id ? (
                 <div className="rounded-lg border border-emerald-400/40 bg-emerald-50/80 px-3 py-2 text-xs text-emerald-950">
                   <p className="font-semibold">Linked to a client record</p>
@@ -604,10 +604,10 @@ export function CeoLeadsSection() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <p className="max-w-xl text-sm text-gray-600">
-          Website contact submissions are saved as <span className="font-medium text-gray-800">hot</span>{" "}
-          leads. Set <span className="font-medium text-gray-800">warm</span> or{" "}
-          <span className="font-medium text-gray-800">cold</span> in the first column anytime. Excel imports
+        <p className="max-w-xl text-sm text-gray-600 dark:text-neutral-400">
+          Website contact submissions are saved as <span className="font-medium text-gray-800 dark:text-neutral-200">hot</span>{" "}
+          leads. Set <span className="font-medium text-gray-800 dark:text-neutral-200">warm</span> or{" "}
+          <span className="font-medium text-gray-800 dark:text-neutral-200">cold</span> in the first column anytime. Excel imports
           default to warm.
         </p>
         <div className="flex flex-wrap items-center gap-2">
@@ -633,7 +633,7 @@ export function CeoLeadsSection() {
             type="button"
             disabled={!selectedId}
             onClick={() => setEditingView(true)}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-500/45 bg-gray-200/80 px-3 py-2 text-xs font-semibold text-gray-900 shadow-sm hover:bg-gray-300/80 disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-500/45 bg-gray-200/80 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 shadow-sm hover:bg-gray-300/80 dark:hover:bg-neutral-800/80 disabled:opacity-45"
           >
             <Pencil className="h-3.5 w-3.5" />
             Edit lead
@@ -641,7 +641,7 @@ export function CeoLeadsSection() {
           <button
             type="button"
             onClick={() => void load()}
-            className="rounded-lg border border-gray-400/50 bg-gray-200/40 px-3 py-2 text-xs font-semibold text-gray-800 shadow-sm hover:bg-gray-300/50"
+            className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-3 py-2 text-xs font-semibold text-gray-800 dark:text-neutral-200 shadow-sm hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
           >
             Refresh
           </button>
@@ -672,19 +672,19 @@ export function CeoLeadsSection() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-gray-400/40 bg-gray-300/20 shadow-inner backdrop-blur-sm">
-        <div className="border-b border-gray-400/30 px-4 py-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">Leads</h3>
+      <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
+        <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">Leads</h3>
         </div>
         <div className="max-h-[min(60vh,560px)] overflow-auto">
           {loading ? (
-            <p className="px-4 py-8 text-center text-sm text-gray-600">Loading…</p>
+            <p className="px-4 py-8 text-center text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
           ) : sortedLeads.length === 0 ? (
-            <p className="px-4 py-10 text-center text-sm text-gray-600">No leads yet.</p>
+            <p className="px-4 py-10 text-center text-sm text-gray-600 dark:text-neutral-400">No leads yet.</p>
           ) : (
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="sticky top-0 z-[1] bg-gray-300/95 shadow-sm">
-                <tr className="border-b border-gray-400/25 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700">
+              <thead className="sticky top-0 z-[1] bg-gray-300/95 dark:bg-neutral-900/95 shadow-sm">
+                <tr className="border-b border-gray-400/25 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700 dark:text-neutral-300">
                   <th className="px-2 py-2.5 pl-3">Temp</th>
                   <th className="px-3 py-2.5">Name</th>
                   <th className="px-3 py-2.5">Email</th>
@@ -710,7 +710,7 @@ export function CeoLeadsSection() {
                         }
                       }}
                       className={cn(
-                        "cursor-pointer border-b border-gray-400/20 last:border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/50",
+                        "cursor-pointer border-b border-gray-400/20 dark:border-neutral-600/25 last:border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/50",
                         isSel ? "bg-sky-100/50" : "hover:bg-gray-400/10"
                       )}
                     >
@@ -736,21 +736,21 @@ export function CeoLeadsSection() {
                           ))}
                         </select>
                       </td>
-                      <td className="px-3 py-2 font-medium text-gray-900">{lead.name || "—"}</td>
-                      <td className="max-w-[160px] truncate px-3 py-2 text-gray-700">
+                      <td className="px-3 py-2 font-medium text-gray-900 dark:text-neutral-50">{lead.name || "—"}</td>
+                      <td className="max-w-[160px] truncate px-3 py-2 text-gray-700 dark:text-neutral-300">
                         {lead.email || "—"}
                       </td>
-                      <td className="px-3 py-2 text-gray-700 tabular-nums">{lead.phone || "—"}</td>
+                      <td className="px-3 py-2 text-gray-700 dark:text-neutral-300 tabular-nums">{lead.phone || "—"}</td>
                       <td className="px-3 py-2">
                         {lead.client_id ? (
                           <span className="text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
                             Linked
                           </span>
                         ) : (
-                          <span className="text-gray-500">—</span>
+                          <span className="text-gray-500 dark:text-neutral-500">—</span>
                         )}
                       </td>
-                      <td className="px-3 py-2 text-xs text-gray-600 tabular-nums">
+                      <td className="px-3 py-2 text-xs text-gray-600 dark:text-neutral-400 tabular-nums">
                         {lead.created_at
                           ? new Date(lead.created_at).toLocaleDateString(undefined, {
                               month: "short",
