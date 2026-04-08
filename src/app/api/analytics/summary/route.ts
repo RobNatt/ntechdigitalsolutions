@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 
 /**
- * GET /api/analytics/summary?companyId=&days=30
+ * GET /api/analytics/summary?companyId=&from=YYYY-MM-DD&to=YYYY-MM-DD
  * Authenticated dashboard — aggregates for one company (N-Tech or a client tenant).
  */
 export async function GET(request: Request) {
@@ -22,19 +22,27 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get("companyId")?.trim();
-    const days = Math.min(Math.max(parseInt(searchParams.get("days") || "30", 10), 1), 365);
     if (!companyId) {
       return NextResponse.json({ error: "companyId required" }, { status: 400 });
     }
 
-    const since = new Date();
-    since.setUTCDate(since.getUTCDate() - days);
-    since.setUTCHours(0, 0, 0, 0);
+    const today = new Date();
+    const defaultTo = today.toISOString().slice(0, 10);
+    const defaultFrom = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const fromRaw = searchParams.get("from")?.trim() || defaultFrom;
+    const toRaw = searchParams.get("to")?.trim() || defaultTo;
+
+    const fromDate = new Date(`${fromRaw}T00:00:00.000Z`);
+    const toDate = new Date(`${toRaw}T23:59:59.999Z`);
+    if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime()) || fromDate > toDate) {
+      return NextResponse.json({ error: "Invalid date range." }, { status: 400 });
+    }
 
     const admin = createAdminClient();
     const { data, error } = await admin.rpc("analytics_get_summary", {
       p_company_id: companyId,
-      p_since: since.toISOString(),
+      p_since: fromDate.toISOString(),
+      p_until: toDate.toISOString(),
     });
 
     if (error) {
@@ -54,8 +62,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       companyId,
-      days,
-      since: since.toISOString(),
+      since: fromDate.toISOString(),
+      until: toDate.toISOString(),
       summary: data ?? {},
       siteKeys: keys ?? [],
     });

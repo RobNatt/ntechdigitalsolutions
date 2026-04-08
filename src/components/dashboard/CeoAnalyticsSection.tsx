@@ -108,13 +108,18 @@ export function CeoAnalyticsSection() {
   const [mode, setMode] = useState<"ntech" | "client">("ntech");
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [clientId, setClientId] = useState<string>("");
-  const [days, setDays] = useState<number>(30);
-  const [customDaysInput, setCustomDaysInput] = useState<string>("30");
+  const [fromDate, setFromDate] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 29);
+    return d.toISOString().slice(0, 10);
+  });
+  const [toDate, setToDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
   const [siteKeys, setSiteKeys] = useState<SiteKeyRow[]>([]);
   const [since, setSince] = useState<string | null>(null);
+  const [until, setUntil] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [internalOptOut, setInternalOptOut] = useState(false);
 
@@ -146,15 +151,19 @@ export function CeoAnalyticsSection() {
       setSummary(null);
       setSiteKeys([]);
       setSince(null);
+      setUntil(null);
       setLoading(false);
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
-        `/api/analytics/summary?companyId=${encodeURIComponent(companyId)}&days=${days}`
-      );
+      const params = new URLSearchParams({
+        companyId,
+        from: fromDate,
+        to: toDate,
+      });
+      const res = await fetch(`/api/analytics/summary?${params.toString()}`);
       const data = await res.json();
       if (!res.ok) {
         setError(typeof data.error === "string" ? data.error : "Failed to load.");
@@ -165,17 +174,14 @@ export function CeoAnalyticsSection() {
       setSummary((data.summary as SummaryPayload) ?? {});
       setSiteKeys(Array.isArray(data.siteKeys) ? data.siteKeys : []);
       setSince(typeof data.since === "string" ? data.since : null);
+      setUntil(typeof data.until === "string" ? data.until : null);
     } catch {
       setError("Failed to load analytics.");
       setSummary(null);
     } finally {
       setLoading(false);
     }
-  }, [activeCompanyId, days]);
-
-  useEffect(() => {
-    setCustomDaysInput(String(days));
-  }, [days]);
+  }, [activeCompanyId, fromDate, toDate]);
 
   useEffect(() => {
     void loadClients();
@@ -291,14 +297,6 @@ export function CeoAnalyticsSection() {
   const embedSnippet = (writeKey: string) =>
     `// Set in your app env: NEXT_PUBLIC_ANALYTICS_WRITE_KEY=${writeKey}\n// Or POST JSON to ${SITE_URL}/api/analytics/collect`;
 
-  function applyCustomCalendarSize() {
-    const parsed = parseInt(customDaysInput, 10);
-    if (!Number.isFinite(parsed)) return;
-    const clamped = Math.min(Math.max(parsed, 1), 365);
-    setDays(clamped);
-    setCustomDaysInput(String(clamped));
-  }
-
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -338,47 +336,28 @@ export function CeoAnalyticsSection() {
             />
             Auto (45s)
           </label>
-          <label className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-neutral-300">
-            Day selector
-            <select
-              value={String(days)}
-              onChange={(e) => setDays(Math.min(Math.max(parseInt(e.target.value, 10), 1), 365))}
-              className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-2 py-1.5 text-xs font-semibold text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-            >
-              {[7, 14, 30, 60, 90, 180, 365].map((d) => (
-                <option key={d} value={d}>
-                  Last {d}d
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="inline-flex items-center gap-1.5 rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-2 py-1.5">
-            <span className="text-[11px] font-semibold text-gray-700 dark:text-neutral-300">
-              Calendar size
-            </span>
-            <input
-              type="number"
-              min={1}
-              max={365}
-              value={customDaysInput}
-              onChange={(e) => setCustomDaysInput(e.target.value)}
-              onBlur={applyCustomCalendarSize}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  applyCustomCalendarSize();
-                }
-              }}
-              className="w-16 rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-1.5 py-0.5 text-xs text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-              aria-label="Custom calendar size in days"
-            />
-            <button
-              type="button"
-              onClick={applyCustomCalendarSize}
-              className="rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-800 hover:bg-gray-100/90 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
-            >
-              Apply
-            </button>
+          <div className="inline-flex items-center gap-2 rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-2 py-1.5">
+            <span className="text-[11px] font-semibold text-gray-700 dark:text-neutral-300">Period</span>
+            <label className="inline-flex items-center gap-1 text-[11px] text-gray-700 dark:text-neutral-300">
+              From
+              <input
+                type="date"
+                value={fromDate}
+                max={toDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-1.5 py-0.5 text-xs text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+              />
+            </label>
+            <label className="inline-flex items-center gap-1 text-[11px] text-gray-700 dark:text-neutral-300">
+              To
+              <input
+                type="date"
+                value={toDate}
+                min={fromDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-1.5 py-0.5 text-xs text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+              />
+            </label>
           </div>
         </div>
       </div>
@@ -456,9 +435,9 @@ export function CeoAnalyticsSection() {
         <p className="py-12 text-center text-sm text-gray-600 dark:text-neutral-400">Loading analytics…</p>
       ) : !activeCompanyId ? null : (
         <>
-          {since ? (
+          {since && until ? (
             <p className="text-xs text-gray-500 dark:text-neutral-500">
-              Range from {new Date(since).toLocaleDateString()} (UTC midnight) · company{" "}
+              Range {new Date(since).toLocaleDateString()} - {new Date(until).toLocaleDateString()} (UTC) · company{" "}
               <code className="rounded bg-gray-400/20 px-1 text-[11px]">{activeCompanyId}</code>
             </p>
           ) : null}

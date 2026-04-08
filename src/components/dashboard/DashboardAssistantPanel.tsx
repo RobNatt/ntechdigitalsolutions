@@ -19,14 +19,23 @@ import {
 
 type Role = "user" | "assistant";
 type Msg = { role: Role; content: string };
+type ShortTermMemoryTurn = {
+  role: Role;
+  content: string;
+  createdAt: string;
+};
 type AssistantContext = {
   hash: string;
   snapshot: Record<string, unknown>;
   timeZone: string;
+  longTermMemory?: Array<Record<string, unknown>>;
 };
 
 const AUTO_BRIEF_DELAY_MS = 3000;
 const CONTEXT_POLL_MS = 45_000;
+const SHORT_TERM_MEMORY_KEY = "ntech_dashboard_assistant_short_memory_v1";
+const SHORT_TERM_MEMORY_LIMIT = 60;
+const SHORT_TERM_MEMORY_RETENTION_DAYS = 7;
 
 function statusBadgeClass(s: "ok" | "due" | "overdue") {
   if (s === "ok")
@@ -40,6 +49,34 @@ function assignmentCadenceLabel(a: PaAssignment): string {
   if (a.frequency === "daily") return "Daily";
   if (a.frequency === "weekly") return "Weekly (7-day)";
   return `Weekday · ${weekdaySlotLabel(a.weekdaySlot ?? 0)}`;
+}
+
+function loadShortMemory(): ShortTermMemoryTurn[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SHORT_TERM_MEMORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    const cutoff = Date.now() - SHORT_TERM_MEMORY_RETENTION_DAYS * 86_400_000;
+    return parsed
+      .filter((r): r is ShortTermMemoryTurn => {
+        if (!r || typeof r !== "object") return false;
+        const o = r as Record<string, unknown>;
+        return (
+          (o.role === "user" || o.role === "assistant") &&
+          typeof o.content === "string" &&
+          typeof o.createdAt === "string"
+        );
+      })
+      .filter((r) => {
+        const t = new Date(r.createdAt).getTime();
+        return Number.isFinite(t) && t >= cutoff;
+      })
+      .slice(-SHORT_TERM_MEMORY_LIMIT);
+  } catch {
+    return [];
+  }
 }
 
 export function DashboardAssistantPanel() {
@@ -61,6 +98,7 @@ export function DashboardAssistantPanel() {
   const [newWeekdaySlot, setNewWeekdaySlot] = useState(0);
   const [assignmentsOpen, setAssignmentsOpen] = useState(true);
   const [assistantTimeZone, setAssistantTimeZone] = useState(DEFAULT_PA_TIMEZONE);
+  const [shortTermMemory, setShortTermMemory] = useState<ShortTermMemoryTurn[]>([]);
 
   const evaluatedAssignments = useMemo(
     () => evaluatePaAssignments(assignments, assistantTimeZone),
@@ -72,6 +110,7 @@ export function DashboardAssistantPanel() {
   const loadingRef = useRef(false);
   const contextRef = useRef<AssistantContext | null>(null);
   const assignmentsRef = useRef<PaAssignment[]>([]);
+  const shortMemoryRef = useRef<ShortTermMemoryTurn[]>([]);
   const initialBriefSentRef = useRef(false);
   const autoBriefTimerRef = useRef<number | null>(null);
 
@@ -88,10 +127,15 @@ export function DashboardAssistantPanel() {
   }, [assignments]);
 
   useEffect(() => {
+    shortMemoryRef.current = shortTermMemory;
+  }, [shortTermMemory]);
+
+  useEffect(() => {
     const loaded = loadPaAssignments();
     setAssignments(
       loaded.length > 0 ? loaded : getNtechAccountabilityPack()
     );
+    setShortTermMemory(loadShortMemory());
     setAssignmentsHydrated(true);
   }, []);
 
@@ -99,6 +143,14 @@ export function DashboardAssistantPanel() {
     if (!assignmentsHydrated) return;
     savePaAssignments(assignments);
   }, [assignments, assignmentsHydrated]);
+
+  useEffect(() => {
+    if (!assignmentsHydrated || typeof window === "undefined") return;
+    window.localStorage.setItem(
+      SHORT_TERM_MEMORY_KEY,
+      JSON.stringify(shortTermMemory.slice(-SHORT_TERM_MEMORY_LIMIT))
+    );
+  }, [shortTermMemory, assignmentsHydrated]);
 
   const fetchContext = useCallback(async (): Promise<AssistantContext | null> => {
     try {
@@ -110,13 +162,21 @@ export function DashboardAssistantPanel() {
         hash?: string;
         snapshot?: Record<string, unknown>;
         timeZone?: string;
+        longTermMemory?: Array<Record<string, unknown>>;
       };
       if (!data.hash || !data.snapshot) return null;
       const timeZone =
         typeof data.timeZone === "string" && data.timeZone.trim()
           ? data.timeZone.trim()
           : DEFAULT_PA_TIMEZONE;
-      return { hash: data.hash, snapshot: data.snapshot, timeZone };
+      return {
+        hash: data.hash,
+        snapshot: data.snapshot,
+        timeZone,
+        longTermMemory: Array.isArray(data.longTermMemory)
+          ? data.longTermMemory
+          : [],
+      };
     } catch {
       return null;
     }
@@ -124,11 +184,16 @@ export function DashboardAssistantPanel() {
 
   const buildContextPayload = useCallback(() => {
     const tz = contextRef.current?.timeZone ?? DEFAULT_PA_TIMEZONE;
-    return mergeAssistantContext(
+    const base = mergeAssistantContext(
       contextRef.current?.snapshot ?? null,
       assignmentsRef.current,
       tz
     );
+    return {
+      ...base,
+      longTermMemory: contextRef.current?.longTermMemory ?? [],
+      shortTermConversationMemory: shortMemoryRef.current.slice(-14),
+    };
   }, []);
 
   const runAssistant = useCallback(async (text: string, showUserBubble: boolean) => {
@@ -144,6 +209,16 @@ export function DashboardAssistantPanel() {
     if (showUserBubble) {
       setInput("");
       setMessages(history);
+      setShortTermMemory((prev) =>
+        [
+          ...prev,
+          {
+            role: "user" as const,
+            content: text,
+            createdAt: new Date().toISOString(),
+          },
+        ].slice(-SHORT_TERM_MEMORY_LIMIT)
+      );
     }
 
     loadingRef.current = true;
@@ -183,6 +258,18 @@ export function DashboardAssistantPanel() {
         if (done) break;
         assistantContent += decoder.decode(value, { stream: true });
         setMessages([...history, { role: "assistant", content: assistantContent }]);
+      }
+      if (assistantContent.trim()) {
+        setShortTermMemory((prev) =>
+          [
+            ...prev,
+            {
+              role: "assistant" as const,
+              content: assistantContent,
+              createdAt: new Date().toISOString(),
+            },
+          ].slice(-SHORT_TERM_MEMORY_LIMIT)
+        );
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");

@@ -1,6 +1,11 @@
 import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import { NTECH_COMPANY_ID } from "@/constants/analytics";
+import {
+  getScheduledReviewsForDate,
+  type ReviewKind,
+  ymdToIsoStart,
+} from "@/lib/dashboard-assistant-memory";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,6 +17,18 @@ type LeadLite = {
   created_at: string | null;
   updated_at: string | null;
   stage_updated_at: string | null;
+};
+
+type MemoryReviewRow = {
+  id: string;
+  review_kind: ReviewKind;
+  period_start: string;
+  period_end: string;
+  comparison_start: string | null;
+  comparison_end: string | null;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 };
 
 function hoursSince(iso: string | null | undefined): number {
@@ -59,6 +76,111 @@ function buildTrafficMilestones(summary: Record<string, unknown>) {
       visitors: nextVisitors,
     },
   };
+}
+
+function percentDelta(base: number, compareTo: number): number | null {
+  if (!Number.isFinite(base) || !Number.isFinite(compareTo)) return null;
+  if (compareTo === 0) return base === 0 ? 0 : null;
+  return Number((((base - compareTo) / compareTo) * 100).toFixed(2));
+}
+
+async function getRangeSummary(
+  admin: ReturnType<typeof createAdminClient>,
+  sinceYmd: string,
+  untilYmd: string
+): Promise<Record<string, number>> {
+  const { data, error } = await admin.rpc("analytics_get_summary_range", {
+    p_company_id: NTECH_COMPANY_ID,
+    p_since: ymdToIsoStart(sinceYmd),
+    p_until: ymdToIsoStart(untilYmd),
+  });
+  if (error) {
+    throw new Error(`Failed analytics_get_summary_range: ${error.message}`);
+  }
+  const summary = (data as Record<string, unknown> | null) ?? {};
+  return {
+    totalPageviews: Number(summary.totalPageviews ?? 0),
+    inquirySubmissions: Number(summary.inquirySubmissions ?? 0),
+    uniqueSessions: Number(summary.uniqueSessions ?? 0),
+    uniqueVisitors: Number(summary.uniqueVisitors ?? 0),
+  };
+}
+
+async function ensureScheduledReviews(
+  admin: ReturnType<typeof createAdminClient>,
+  userId: string,
+  timeZone: string,
+  now: Date
+): Promise<void> {
+  const windows = getScheduledReviewsForDate(now, timeZone);
+  if (windows.length === 0) return;
+
+  for (const w of windows) {
+    const { data: existing } = await admin
+      .from("dashboard_assistant_memory_reviews")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("review_kind", w.reviewKind)
+      .eq("period_start", w.periodStart)
+      .eq("period_end", w.periodEnd)
+      .maybeSingle();
+    if (existing?.id) continue;
+
+    const periodMetrics = await getRangeSummary(admin, w.periodStart, w.periodEnd);
+    let comparisonMetrics: Record<string, number> | null = null;
+    if (w.comparisonStart && w.comparisonEnd) {
+      comparisonMetrics = await getRangeSummary(admin, w.comparisonStart, w.comparisonEnd);
+    }
+
+    const payload = {
+      label: w.label,
+      generatedAt: now.toISOString(),
+      timeZone,
+      period: {
+        start: w.periodStart,
+        end: w.periodEnd,
+      },
+      comparison:
+        w.comparisonStart && w.comparisonEnd
+          ? {
+              start: w.comparisonStart,
+              end: w.comparisonEnd,
+            }
+          : null,
+      metrics: periodMetrics,
+      comparisonMetrics,
+      deltas: comparisonMetrics
+        ? {
+            totalPageviewsPct: percentDelta(
+              periodMetrics.totalPageviews,
+              comparisonMetrics.totalPageviews
+            ),
+            inquirySubmissionsPct: percentDelta(
+              periodMetrics.inquirySubmissions,
+              comparisonMetrics.inquirySubmissions
+            ),
+            uniqueSessionsPct: percentDelta(
+              periodMetrics.uniqueSessions,
+              comparisonMetrics.uniqueSessions
+            ),
+            uniqueVisitorsPct: percentDelta(
+              periodMetrics.uniqueVisitors,
+              comparisonMetrics.uniqueVisitors
+            ),
+          }
+        : null,
+    };
+
+    await admin.from("dashboard_assistant_memory_reviews").insert({
+      user_id: userId,
+      review_kind: w.reviewKind,
+      period_start: w.periodStart,
+      period_end: w.periodEnd,
+      comparison_start: w.comparisonStart ?? null,
+      comparison_end: w.comparisonEnd ?? null,
+      payload,
+    });
+  }
 }
 
 export async function GET() {
@@ -197,7 +319,30 @@ export async function GET() {
     const timeZone =
       process.env.DASHBOARD_ASSISTANT_TIMEZONE?.trim() || "America/Chicago";
 
-    return NextResponse.json({ hash, snapshot, timeZone });
+    await ensureScheduledReviews(admin, user.id, timeZone, now);
+
+    const { data: memoryRows } = await admin
+      .from("dashboard_assistant_memory_reviews")
+      .select(
+        "id,review_kind,period_start,period_end,comparison_start,comparison_end,payload,created_at,updated_at"
+      )
+      .eq("user_id", user.id)
+      .order("period_start", { ascending: false })
+      .limit(24);
+
+    const longTermMemory = ((memoryRows ?? []) as MemoryReviewRow[]).map((m) => ({
+      id: m.id,
+      reviewKind: m.review_kind,
+      periodStart: m.period_start,
+      periodEnd: m.period_end,
+      comparisonStart: m.comparison_start,
+      comparisonEnd: m.comparison_end,
+      payload: m.payload ?? {},
+      createdAt: m.created_at,
+      updatedAt: m.updated_at,
+    }));
+
+    return NextResponse.json({ hash, snapshot, timeZone, longTermMemory });
   } catch (err) {
     console.error("dashboard assistant context:", err);
     return NextResponse.json({ error: "Failed to load assistant context." }, { status: 500 });
