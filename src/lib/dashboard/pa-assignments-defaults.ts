@@ -46,6 +46,14 @@ export const NTech_ACCOUNTABILITY_PACK_IDS = new Set(
     "ntech-w-onboarding-portal",
     "ntech-w-launch-welcome-perf",
     "ntech-w-sales-train",
+    "ntech-w-phase3-closeout",
+    "ntech-w-phase3-sitemap-refresh",
+    "ntech-w-phase4-gbp-baseline",
+    "ntech-w-phase4-reviews-engine",
+    "ntech-w-phase5-content-roi",
+    "ntech-w-monthly-priority-qa",
+    "ntech-w-quarterly-geo-audit",
+    "ntech-d-sun-build-followup",
   ] as const
 );
 
@@ -162,6 +170,19 @@ Queue all content for the week.
 Add a few things to follow up with me on completing.`,
       6
     ),
+    w(
+      "ntech-d-sun-build-followup",
+      "Sunday: Build phase follow-up",
+      "weekday",
+      `Close open build-phase items before next week starts.
+Confirm status for:
+- new client onboarding portal (CEO auth flow)
+- launch + welcome + ongoing performance checklists
+- sales materials + sales training materials
+- Phase 3 closeout tasks still partial
+Capture blockers and set the next concrete owner/date.`,
+      6
+    ),
 
     w(
       "ntech-w-onboarding-portal",
@@ -180,6 +201,48 @@ Add a few things to follow up with me on completing.`,
       "Follow-up: sales materials & sales training materials",
       "weekly",
       "Sales materials and sales training materials — maintain weekly progress (draft, review, or ship one piece)."
+    ),
+    w(
+      "ntech-w-phase3-closeout",
+      "Build phase: Phase 3 closeout validation",
+      "weekly",
+      "Run final validation pass for indexability, page quality signals, and conversion tracking (Phase 3 partial item) until fully green."
+    ),
+    w(
+      "ntech-w-phase3-sitemap-refresh",
+      "Build phase: sitemap refresh trigger check",
+      "weekly",
+      "Confirm sitemap-pages submission remains current in GSC/Bing when URLs/routes changed (new, removed, redirected)."
+    ),
+    w(
+      "ntech-w-phase4-gbp-baseline",
+      "Build phase: GBP baseline completion",
+      "weekly",
+      "Until baseline is complete, verify GBP primary/secondary categories, services, areas, hours, links, description, and messaging staffing."
+    ),
+    w(
+      "ntech-w-phase4-reviews-engine",
+      "Build phase: review-generation workflow",
+      "weekly",
+      "Build and maintain review-generation flow: weekly asks and monthly pattern check from recent client wins."
+    ),
+    w(
+      "ntech-w-phase5-content-roi",
+      "Content ops: topic performance + ROI review",
+      "weekly",
+      "Track content performance trends and flag pages/topics with high impressions and low CTR for improvement work."
+    ),
+    w(
+      "ntech-w-monthly-priority-qa",
+      "Monthly QA progress: priority page metadata/canonical/internal links",
+      "weekly",
+      "Progress through monthly QA for priority pages: /, /growth-system, /services, /book-call, /contact, /about, /blog, /privacy-policy, /terms-and-conditions."
+    ),
+    w(
+      "ntech-w-quarterly-geo-audit",
+      "Quarterly geo strategy progress",
+      "weekly",
+      "Advance quarterly audit prep: service areas, NAP consistency, local category strategy, and location/service intent map reprioritization."
     ),
   ];
 }
