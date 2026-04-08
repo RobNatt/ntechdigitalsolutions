@@ -108,7 +108,8 @@ export function CeoAnalyticsSection() {
   const [mode, setMode] = useState<"ntech" | "client">("ntech");
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [clientId, setClientId] = useState<string>("");
-  const [days, setDays] = useState<7 | 30 | 90>(30);
+  const [days, setDays] = useState<number>(30);
+  const [customDaysInput, setCustomDaysInput] = useState<string>("30");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
@@ -171,6 +172,10 @@ export function CeoAnalyticsSection() {
       setLoading(false);
     }
   }, [activeCompanyId, days]);
+
+  useEffect(() => {
+    setCustomDaysInput(String(days));
+  }, [days]);
 
   useEffect(() => {
     void loadClients();
@@ -286,6 +291,14 @@ export function CeoAnalyticsSection() {
   const embedSnippet = (writeKey: string) =>
     `// Set in your app env: NEXT_PUBLIC_ANALYTICS_WRITE_KEY=${writeKey}\n// Or POST JSON to ${SITE_URL}/api/analytics/collect`;
 
+  function applyCustomCalendarSize() {
+    const parsed = parseInt(customDaysInput, 10);
+    if (!Number.isFinite(parsed)) return;
+    const clamped = Math.min(Math.max(parsed, 1), 365);
+    setDays(clamped);
+    setCustomDaysInput(String(clamped));
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -325,21 +338,48 @@ export function CeoAnalyticsSection() {
             />
             Auto (45s)
           </label>
-          {([7, 30, 90] as const).map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => setDays(d)}
-              className={cn(
-                "rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm",
-                days === d
-                  ? "border-sky-600 bg-sky-100/90 text-sky-900"
-                  : "border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 text-gray-800 dark:text-neutral-200 hover:bg-gray-300/50 dark:hover:bg-neutral-800/50"
-              )}
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-neutral-300">
+            Day selector
+            <select
+              value={String(days)}
+              onChange={(e) => setDays(Math.min(Math.max(parseInt(e.target.value, 10), 1), 365))}
+              className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-2 py-1.5 text-xs font-semibold text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
             >
-              Last {d}d
+              {[7, 14, 30, 60, 90, 180, 365].map((d) => (
+                <option key={d} value={d}>
+                  Last {d}d
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="inline-flex items-center gap-1.5 rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-gray-200/40 px-2 py-1.5">
+            <span className="text-[11px] font-semibold text-gray-700 dark:text-neutral-300">
+              Calendar size
+            </span>
+            <input
+              type="number"
+              min={1}
+              max={365}
+              value={customDaysInput}
+              onChange={(e) => setCustomDaysInput(e.target.value)}
+              onBlur={applyCustomCalendarSize}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  applyCustomCalendarSize();
+                }
+              }}
+              className="w-16 rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-1.5 py-0.5 text-xs text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+              aria-label="Custom calendar size in days"
+            />
+            <button
+              type="button"
+              onClick={applyCustomCalendarSize}
+              className="rounded border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-800 hover:bg-gray-100/90 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
+            >
+              Apply
             </button>
-          ))}
+          </div>
         </div>
       </div>
 
