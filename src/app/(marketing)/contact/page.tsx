@@ -3,11 +3,16 @@ import { MarketingPageShell } from "@/components/marketing/marketing-page-shell"
 import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
 import { TrackedPhoneLink } from "@/components/marketing/TrackedPhoneLink";
 import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
+
+const contactDesc =
+  "Reach N-Tech Digital Solutions for project inquiries, partnerships, and support — Omaha and remote-friendly.";
 
 export const metadata: Metadata = {
   title: "Contact | N-Tech Digital Solutions",
-  description:
-    "Reach N-Tech Digital Solutions for project inquiries, partnerships, and support — Omaha and remote-friendly.",
+  description: contactDesc,
+  alternates: { canonical: canonicalUrl("/contact") },
+  openGraph: ogForPath("/contact", "Contact | N-Tech Digital Solutions", contactDesc),
 };
 
 type ContactPageProps = {

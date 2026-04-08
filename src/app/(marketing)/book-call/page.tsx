@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { BookCallForm } from "@/components/marketing/BookCallForm";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
+
+const bookDesc =
+  "Book a strategy call with N-Tech. Available starting next day with focused business-hour windows.";
 
 export const metadata: Metadata = {
   title: "Book a Call | N-Tech Digital Solutions",
-  description:
-    "Book a strategy call with N-Tech. Available starting next day with focused business-hour windows.",
+  description: bookDesc,
+  alternates: { canonical: canonicalUrl("/book-call") },
+  openGraph: ogForPath("/book-call", "Book a Call | N-Tech Digital Solutions", bookDesc),
 };
 
 type BookCallPageProps = {

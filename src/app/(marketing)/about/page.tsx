@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
+
+const aboutDesc =
+  "N-Tech Digital Solutions builds websites, lead systems, and automation for businesses that want measurable growth.";
 
 export const metadata: Metadata = {
   title: "About | N-Tech Digital Solutions",
-  description:
-    "N-Tech Digital Solutions builds websites, lead systems, and automation for businesses that want measurable growth.",
+  description: aboutDesc,
+  alternates: { canonical: canonicalUrl("/about") },
+  openGraph: ogForPath("/about", "About | N-Tech Digital Solutions", aboutDesc),
 };
 
 const FAQ_SECTIONS = [

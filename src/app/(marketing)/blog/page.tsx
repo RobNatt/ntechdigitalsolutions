@@ -3,14 +3,19 @@ import Link from "next/link";
 import { BlogPostsReader } from "@/components/marketing/BlogPostsReader";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 /** Blog reads Supabase at request time; static prerender would cache an empty list. */
 export const dynamic = "force-dynamic";
 
+const blogDesc =
+  "Notes on lead generation, web performance, automation, and growing a local business online.";
+
 export const metadata: Metadata = {
   title: "Blog | N-Tech Digital Solutions",
-  description:
-    "Notes on lead generation, web performance, automation, and growing a local business online.",
+  description: blogDesc,
+  alternates: { canonical: canonicalUrl("/blog") },
+  openGraph: ogForPath("/blog", "Blog | N-Tech Digital Solutions", blogDesc),
 };
 
 type BlogPost = {

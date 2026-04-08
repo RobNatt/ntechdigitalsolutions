@@ -13,12 +13,17 @@ import {
 } from "lucide-react";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { CONSTANTS } from "@/constants/links";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { cn } from "@/lib/utils";
+
+const servicesDesc =
+  "N-Tech Digital Solutions designs websites, lead systems, automation, and SEO for businesses that want traffic to turn into booked conversations — not dead ends.";
 
 export const metadata: Metadata = {
   title: "What We Do | N-Tech Digital Solutions",
-  description:
-    "N-Tech Digital Solutions designs websites, lead systems, automation, and SEO for businesses that want traffic to turn into booked conversations — not dead ends.",
+  description: servicesDesc,
+  alternates: { canonical: canonicalUrl("/services") },
+  openGraph: ogForPath("/services", "What We Do | N-Tech Digital Solutions", servicesDesc),
 };
 
 const CAPABILITIES = [

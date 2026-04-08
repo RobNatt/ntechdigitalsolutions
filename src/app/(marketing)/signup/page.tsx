@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { canonicalUrl } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
   title: "Sign Up | N-Tech Digital Solutions",
   description:
     "Create an N-Tech Digital Solutions account or register interest for client dashboards and tools.",
+  alternates: { canonical: canonicalUrl("/signup") },
+  robots: { index: false, follow: false },
 };
 
 export default function SignupPage() {

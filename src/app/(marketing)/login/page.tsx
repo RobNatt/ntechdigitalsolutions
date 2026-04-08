@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SignInCard from "@/components/SignInCard";
+import { canonicalUrl } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
   title: "Login | N-Tech Digital Solutions",
   description: "Sign in to your N-Tech Digital Solutions account.",
+  alternates: { canonical: canonicalUrl("/login") },
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {
