@@ -44,6 +44,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local lighthouse runs (large; regenerate with npx lighthouse)
+lighthouse*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

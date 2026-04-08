@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { HolographicDashboardTabs } from "@/components/dashboard/HolographicDashboardTabs";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
@@ -11,6 +11,24 @@ import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
 import { HeroTicker } from "./hero-ticker";
+
+const HolographicDashboardTabs = dynamic(
+  () =>
+    import("@/components/dashboard/HolographicDashboardTabs").then((m) => ({
+      default: m.HolographicDashboardTabs,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex h-[min(68vh,640px)] w-full items-center justify-center rounded-3xl border border-neutral-200/70 bg-neutral-100/40 dark:border-neutral-700/80 dark:bg-neutral-800/25 md:h-[min(72vh,720px)]"
+        aria-hidden
+      >
+        <div className="h-8 w-8 animate-pulse rounded-full bg-neutral-300/80 dark:bg-neutral-600/50" />
+      </div>
+    ),
+  }
+);
 
 const HEADLINE_WORDS =
   "Turn Clicks Into Paying Customers. On Autopilot.".split(" ");

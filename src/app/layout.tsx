@@ -1,25 +1,13 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { DeferredAnalyticsRoot } from "@/components/analytics/DeferredAnalyticsRoot";
 import { SITE_URL } from "@/constants/site";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/providers";
-import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
-import { Analytics } from "@vercel/analytics/next"
 
 const GA_MEASUREMENT_ID = "G-9BWR9R2696";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -42,19 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn(
-          geistSans.variable,
-          geistMono.variable,
-          inter.variable,
-          inter.className,
-          "min-h-screen bg-background antialiased"
-        )}
+        className={cn(inter.variable, inter.className, "min-h-screen bg-background antialiased")}
       >
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics-gtag" strategy="afterInteractive">
+        <Script id="google-analytics-gtag" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -68,13 +50,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Suspense fallback={null}>
-            <AnalyticsTracker />
-          </Suspense>
           <div className="relative min-h-screen">{children}</div>
+          <DeferredAnalyticsRoot />
         </ThemeProvider>
       </body>
-      <Analytics />
     </html>
   );
 }

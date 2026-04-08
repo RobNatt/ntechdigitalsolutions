@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
-import { ChatWidget } from "@/components/chat/chat-widget";
-import { CursorReactiveEnvironment } from "@/components/cursor-reactive/CursorReactiveEnvironment";
-import { Features } from "@/components/startup-landing/features";
+import dynamic from "next/dynamic";
+import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
+import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
 import { Footer } from "@/components/startup-landing/footer";
 import { Hero } from "@/components/startup-landing/hero";
 import { Navbar } from "@/components/startup-landing/navbar";
-import { Process } from "@/components/startup-landing/process";
-import { Pricing } from "@/components/startup-landing/pricing";
-import { Testimonials } from "@/components/startup-landing/testimonials";
+
+const Features = dynamic(() =>
+  import("@/components/startup-landing/features").then((m) => ({ default: m.Features }))
+);
+const Process = dynamic(() =>
+  import("@/components/startup-landing/process").then((m) => ({ default: m.Process }))
+);
+const Pricing = dynamic(() =>
+  import("@/components/startup-landing/pricing").then((m) => ({ default: m.Pricing }))
+);
+const Testimonials = dynamic(() =>
+  import("@/components/startup-landing/testimonials").then((m) => ({ default: m.Testimonials }))
+);
 import {
   SITE_BUSINESS_PHONE,
   SITE_CONTACT_EMAIL,
@@ -87,7 +97,7 @@ const localBusinessJsonLd = {
 export default function HomePage() {
   return (
     <>
-      <CursorReactiveEnvironment />
+      <CursorReactiveLazy />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -103,7 +113,7 @@ export default function HomePage() {
         <Testimonials />
       </main>
       <Footer />
-      <ChatWidget />
+      <ChatWidgetLazy />
     </>
   );
 }

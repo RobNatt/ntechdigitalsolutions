@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["xlsx"],
   reactCompiler: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react", "@tabler/icons-react", "framer-motion", "motion"],
+  },
   async redirects() {
     return [
       { source: "/tools-preview", destination: "/", permanent: true },
