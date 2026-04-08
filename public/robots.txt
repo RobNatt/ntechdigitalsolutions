@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://ntechdigital.solutions/sitemap.xml
+Sitemap: https://ntechdigital.solutions/sitemap-pages.xml
