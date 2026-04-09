@@ -69,6 +69,68 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 - Description finalized
 - Messaging enabled (if staffed)
 
+### NAP + citations audit (post-GBP)
+
+Use this after GBP baseline is set. Goal: **one canonical business identity** everywhere you control, and no stray descriptions that contradict your current positioning.
+
+#### Step 0 — Lock your canonical record (one-time, Owner)
+
+Fill once; AI PA copies this into every profile.
+
+| Field | Canonical value (fill in) |
+|---|---|
+| Legal / display name | |
+| Public brand line (if different from legal) | |
+| Street address (if customer-facing; or “service area business”) | |
+| City, state, ZIP | |
+| Primary phone (click-to-call) | |
+| Primary email | |
+| Website | `https://ntechdigital.solutions` |
+| Booking / contact URL | `https://ntechdigital.solutions/book-call` |
+| Hours (match GBP) | |
+
+Rules: **same spelling and punctuation** for name; **one primary phone**; website and booking links **match GBP**.
+
+#### Step 1 — Site + owned properties (one-time + on change)
+
+| Location | Check |
+|---|---|
+| Site footer / contact | NAP + links match canonical |
+| `/contact`, `/about` | No outdated industry copy |
+| Social bios (LinkedIn, Facebook, X) | Name, URL, service area line consistent |
+| Email signatures | Phone + URL consistent |
+
+#### Step 2 — Core directories (one-time + quarterly)
+
+For each: open listing → compare name, address (if shown), phone, website, categories, description. Log URL in a sheet.
+
+| Platform | Listing URL | NAP match | Description OK | Action / owner |
+|---|---|---|---|---|
+| Google Business Profile | | ☐ | ☐ | |
+| Bing Places / Bing Webmaster business | | ☐ | ☐ | |
+| Apple Business Connect (if used) | | ☐ | ☐ | |
+| Facebook Business Page | | ☐ | ☐ | |
+| LinkedIn Company Page | | ☐ | ☐ | |
+| Yelp (if claimed) | | ☐ | ☐ | |
+| Better Business Bureau (if listed) | | ☐ | ☐ | |
+| Local / industry chambers (if any) | | ☐ | ☐ | |
+
+**Description OK** = no old vertical-specific copy (e.g. storm leads, homeowner/roofer routing) unless that is still the business model.
+
+#### Step 3 — Snippet and duplicate-listing hunt (one-time)
+
+- Search: `"{business name}"` + phone digits; open top 10 non-owned results.
+- Search old phrases if you ever used them (e.g. storm, homeowners, roofers) + brand.
+- For each wrong listing: **claim**, **suggest edit**, or **request removal** per platform rules.
+
+#### Step 4 — Ongoing cadence
+
+| Task | Type | Cadence | Owner |
+|---|---|---|---|
+| Spot-check top citations still match canonical NAP | Long-term | Monthly | AI PA |
+| Full directory pass | Long-term | Quarterly | AI PA + Owner |
+| Re-run Step 3 after any rebrand or URL change | One-time | Immediately | Owner + AI PA |
+
 ---
 
 ## Phase 5 - Content Engine
