@@ -15,7 +15,7 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 - `Done`: Homepage primary headline is a semantic `h1` (matches page title intent).
 - `Done`: Core metadata/canonical work on key marketing and legal pages (including `/roofing` landing: canonical, OG, `h1`, JSON-LD).
 - `Done`: Legacy roofing demo slug permanently redirects to `/roofing` (301).
-- `Next` (tomorrow): GA4 — mark key events as **conversion goals** in Admin (e.g. inquiry submit, book-call / key CTAs; align names with events the site already sends).
+- `Done`: GA4 conversion goals configured for primary actions (`inquiry_submit`, `info_submit`, `calendar_booking_click`); monitoring events retained for reporting (`new_visitor`, `page_view`, `funnel_view`, `form_click`, `pa_interaction`).
 - `Ongoing`: Index coverage spot-checks, CWV drift, and conversion-definition audits per the Phase 3 table (not one-time).
 
 ### Phase 3 Closeout Tasks
