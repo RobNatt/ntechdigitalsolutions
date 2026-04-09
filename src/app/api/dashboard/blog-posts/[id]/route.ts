@@ -27,6 +27,7 @@ export async function PATCH(
     excerpt?: string;
     content?: string;
     status?: "draft" | "published";
+    scheduledPublishAt?: string | null;
   };
 
   const patch: Record<string, unknown> = {
@@ -36,9 +37,22 @@ export async function PATCH(
   if (typeof body.title === "string") patch.title = body.title.trim();
   if (typeof body.excerpt === "string") patch.excerpt = body.excerpt.trim() || null;
   if (typeof body.content === "string") patch.content = body.content.trim();
+  if (body.scheduledPublishAt === null) {
+    patch.published_at = null;
+  } else if (typeof body.scheduledPublishAt === "string") {
+    const parsed = new Date(body.scheduledPublishAt.trim());
+    if (Number.isNaN(parsed.getTime())) {
+      return NextResponse.json({ error: "Invalid scheduled publish date." }, { status: 400 });
+    }
+    patch.published_at = parsed.toISOString();
+  }
   if (body.status === "draft" || body.status === "published") {
     patch.status = body.status;
-    patch.published_at = body.status === "published" ? new Date().toISOString() : null;
+    if (body.status === "draft") {
+      patch.published_at = null;
+    } else if (!("published_at" in patch)) {
+      patch.published_at = new Date().toISOString();
+    }
   }
 
   const admin = createAdminClient();

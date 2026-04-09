@@ -50,6 +50,7 @@ export async function POST(request: Request) {
     excerpt?: string;
     content?: string;
     publish?: boolean;
+    scheduledPublishAt?: string | null;
   };
 
   const title = String(body.title ?? "").trim();
@@ -78,6 +79,20 @@ export async function POST(request: Request) {
   }
 
   const publish = body.publish === true;
+  const rawScheduledAt =
+    typeof body.scheduledPublishAt === "string" ? body.scheduledPublishAt.trim() : "";
+  let scheduledPublishAt: string | null = null;
+  if (rawScheduledAt) {
+    const parsed = new Date(rawScheduledAt);
+    if (Number.isNaN(parsed.getTime())) {
+      return NextResponse.json({ error: "Invalid scheduled publish date." }, { status: 400 });
+    }
+    scheduledPublishAt = parsed.toISOString();
+  }
+
+  const resolvedPublishedAt = publish
+    ? scheduledPublishAt ?? new Date().toISOString()
+    : null;
   const { data, error } = await admin
     .from("dashboard_blog_posts")
     .insert({
@@ -86,7 +101,7 @@ export async function POST(request: Request) {
       excerpt: excerpt || null,
       content,
       status: publish ? "published" : "draft",
-      published_at: publish ? new Date().toISOString() : null,
+      published_at: resolvedPublishedAt,
       created_by: user.id,
       updated_by: user.id,
     })

@@ -19,6 +19,7 @@ export function CeoBlogPostsSection() {
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
+  const [scheduledPublishAt, setScheduledPublishAt] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,17 +62,30 @@ export function CeoBlogPostsSection() {
       const res = await fetch("/api/dashboard/blog-posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, excerpt, content, publish }),
+        body: JSON.stringify({
+          title,
+          excerpt,
+          content,
+          publish,
+          scheduledPublishAt: publish && scheduledPublishAt ? scheduledPublishAt : null,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(typeof data.error === "string" ? data.error : "Failed to create post.");
         return;
       }
-      setMessage(publish ? "Post published to /blog." : "Draft saved.");
+      setMessage(
+        publish
+          ? scheduledPublishAt
+            ? "Post scheduled for publish."
+            : "Post published to /blog."
+          : "Draft saved."
+      );
       setTitle("");
       setExcerpt("");
       setContent("");
+      setScheduledPublishAt("");
       await load();
     } catch {
       setError("Failed to create post.");
@@ -153,6 +167,20 @@ export function CeoBlogPostsSection() {
             rows={10}
             className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
+          <div className="grid gap-1">
+            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+              Schedule publish date
+            </label>
+            <input
+              type="datetime-local"
+              value={scheduledPublishAt}
+              onChange={(e) => setScheduledPublishAt(e.target.value)}
+              className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
+            />
+            <p className="text-[11px] text-gray-500 dark:text-neutral-400">
+              Optional. Use with “Publish now” to schedule a future publish time.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -201,6 +229,11 @@ export function CeoBlogPostsSection() {
                     <span className="rounded bg-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-700 dark:text-neutral-300">
                       {p.status}
                     </span>
+                    {p.status === "published" && p.published_at ? (
+                      <span className="rounded bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-sky-800">
+                        {new Date(p.published_at).getTime() > Date.now() ? "scheduled" : "live"}
+                      </span>
+                    ) : null}
                     {p.status === "draft" ? (
                       <button
                         type="button"

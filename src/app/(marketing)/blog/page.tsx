@@ -35,6 +35,7 @@ export default async function BlogPage() {
       .from("dashboard_blog_posts")
       .select("id, title, slug, excerpt, content, published_at")
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .order("published_at", { ascending: false, nullsFirst: false });
     if (error) {
       console.error("blog page dashboard_blog_posts:", error.message);
