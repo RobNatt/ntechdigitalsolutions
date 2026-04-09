@@ -6,6 +6,95 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 
 ---
 
+## Cadence playbook — SEO + GEO + organic growth
+
+**“Set and forget”** here means: done until a **trigger** fires (rebrand, new product line, URL/tracking change, site redesign, major algorithm shift you need to react to). It is not “never maintain” — weekly/monthly/quarterly tasks below cover that.
+
+### Set and forget (baseline)
+
+**Technical & indexation**
+- [ ] Google Search Console + Bing Webmaster: property verified, owners correct.
+- [ ] `robots.txt` allows crawling of public marketing URLs; `sitemap.xml` points at page sitemap.
+- [ ] `sitemap-pages.xml` lists every indexable URL you want discovered (including new routes when shipped).
+- [ ] Redirect strategy for retired slugs (301s), no chains on key landings.
+- [ ] Core template: canonical URLs, unique `<title>` + meta description per important page, one clear `h1` per page.
+
+**Site structure (national / topic SEO)**
+- [ ] Hub: `/services` explains the full offer and links to topic deep-dives.
+- [ ] Topic pillars live and interlinked: `/services/websites-and-leads`, `/services/seo-and-visibility`, `/services/automation-and-crm`.
+- [ ] Money paths obvious: `/book-call`, `/contact`, `/growth-system` linked from nav and key content.
+
+**Analytics & conversions**
+- [ ] GA4 property + web stream; first-party/event capture aligned with site (e.g. inquiry, book-call events).
+- [ ] GA4 **key events marked as conversions** for primary actions (book, submit, critical CTAs).
+- [ ] Baseline: confirm events fire in debug/real traffic after deploy.
+
+**GEO (generative / AI visibility)**
+- [ ] `public/llms.txt` accurate: offerings, positioning, commercial notes, **topic service URLs**, FAQ — update when offers or URLs change.
+- [ ] Site copy supports **clear entity + FAQ-style answers** on pillar pages (feeds both SEO snippets and AI citation-style answers).
+
+**Local / trust layer (still worth having even if national-first)**
+- [ ] Google Business Profile baseline complete (category, services, hours, links, description).
+- [ ] **Canonical NAP** documented (Phase 4 NAP section); applied on site footer, contact, and owned profiles.
+
+**Re-submit sitemaps in GSC/Bing when:** you add/remove routes, change canonical strategy, or after a large batch of new URLs.
+
+---
+
+### Weekly (~60–90 min)
+
+**Search & site health**
+- [ ] GSC: Page indexing / coverage — new errors, spikes in “Excluded”, soft 404s.
+- [ ] GSC: Performance snapshot — top queries and pages; note surprises (drops/climbs).
+- [ ] Quick CWV / mobile sanity check on homepage + one money page (Lighthouse or GSC CWV report).
+
+**Content & distribution**
+- [ ] Publish or schedule **1 blog** (dashboard `published_at` if scheduling ahead).
+- [ ] **Internal links**: from the new post to `/services`, 1–2 topic pillars, and `/book-call` or `/contact` as appropriate.
+- [ ] **GBP post** (if GBP is active for the business) aligned with blog or offer.
+- [ ] **Review asks** after client wins (if you use reviews).
+
+**Measurement**
+- [ ] GA4 + first-party dashboard: traffic and conversion trend vs. prior week; flag anomalies.
+
+---
+
+### Monthly (~2–3 hours)
+
+**On-page QA (priority URLs)**
+- [ ] Spot-check **title, meta, canonical, h1** on: `/`, `/growth-system`, `/services`, topic pillars (`/services/websites-and-leads`, `/services/seo-and-visibility`, `/services/automation-and-crm`), `/book-call`, `/contact`, `/about`, `/blog`, `/roofing`, legal pages.
+- [ ] **Internal links**: homepage → services + pillars; recent blogs → pillars + conversion pages.
+- [ ] **Refresh 1–2 pages** with GSC data (queries with impressions but weak CTR or position 5–15).
+
+**Analytics**
+- [ ] GA4: conversions still match intended events; no duplicate or missing key events after releases.
+- [ ] Content ROI: which posts/pages drive engaged sessions and conversion assists.
+
+**Local / citations (lighter pass)**
+- [ ] GBP: photos or posts refresh if you have new assets; messaging/hours still accurate.
+- [ ] **NAP spot-check** on top citations (see Phase 4 NAP Step 4).
+
+**GEO**
+- [ ] Read `llms.txt` vs. live positioning — update if pricing, services, or URLs drift.
+
+---
+
+### Quarterly (half day)
+
+**Strategy & structure**
+- [ ] **Topic map**: which new pillar or blog cluster to add next (from GSC + sales questions); avoid cannibalization between pillars.
+- [ ] **Service areas / GBP** (if used): still match how you sell (national vs. regional emphasis).
+- [ ] **Full NAP / directory pass** (Phase 4 matrix — every row checked).
+
+**Technical debt**
+- [ ] Redirect audit, broken internal links, orphan pages.
+- [ ] Sitemap vs. live routes: anything indexable missing from `sitemap-pages.xml`?
+
+**Competitive & SERP reality**
+- [ ] Spot-check target queries: who ranks; what format wins (guides, tools, video); adjust one pillar if needed.
+
+---
+
 ## Phase 3 - Search Foundation
 
 ### Completion Snapshot
@@ -34,6 +123,9 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 - `/`
 - `/growth-system`
 - `/services`
+- `/services/websites-and-leads`
+- `/services/seo-and-visibility`
+- `/services/automation-and-crm`
 - `/roofing`
 - `/book-call`
 - `/contact`
