@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Twitter } from "lucide-react";
+import { SITE_CONTACT_EMAIL } from "@/constants/site";
 
 const QUICK_LINKS = [
   { label: "Home", href: "#top" },
@@ -25,14 +26,14 @@ const CTA_BTN =
 const inputClass =
   "min-h-[44px] w-full min-w-0 rounded-md border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/40 outline-none ring-[#b45309]/0 transition focus:border-[#b45309]/50 focus:ring-2 focus:ring-[#b45309]/30";
 
-export function SouthOFooter() {
+export function RoofingFooter() {
   const [subscribed, setSubscribed] = useState(false);
+  const mailto = `mailto:${SITE_CONTACT_EMAIL}`;
 
   return (
     <footer className="border-t border-white/10 bg-neutral-950 text-neutral-300">
       <div className="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-          {/* Column 1 — brand */}
           <div className="flex flex-col gap-5">
             <Link href="#top" className="inline-flex w-fit items-center gap-3">
               <span
@@ -44,7 +45,7 @@ export function SouthOFooter() {
                 </svg>
               </span>
               <span className="text-lg font-semibold leading-tight tracking-tight text-white">
-                South-O Roofing
+                Roofing
               </span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-neutral-400">
@@ -67,7 +68,6 @@ export function SouthOFooter() {
             </ul>
           </div>
 
-          {/* Column 2 — newsletter */}
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-white">
               Stay Updated
@@ -109,7 +109,6 @@ export function SouthOFooter() {
             </form>
           </div>
 
-          {/* Column 3 — quick links */}
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-white">
               Quick links
@@ -118,10 +117,7 @@ export function SouthOFooter() {
               <ul className="space-y-3 text-sm">
                 {QUICK_LINKS.map((item) => (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-neutral-400 transition hover:text-white"
-                    >
+                    <Link href={item.href} className="text-neutral-400 transition hover:text-white">
                       {item.label}
                     </Link>
                   </li>
@@ -130,7 +126,6 @@ export function SouthOFooter() {
             </nav>
           </div>
 
-          {/* Column 4 — connect */}
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-white">
               Connect
@@ -138,7 +133,7 @@ export function SouthOFooter() {
             <ul className="mt-4 space-y-4 text-sm">
               <li>
                 <a
-                  href="mailto:hello@southoroofing.com"
+                  href={mailto}
                   className="group flex gap-3 text-neutral-400 transition hover:text-white"
                 >
                   <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-white/5 text-[#fdba73] ring-1 ring-white/10">
@@ -149,7 +144,7 @@ export function SouthOFooter() {
                       Email
                     </span>
                     <span className="break-all font-medium text-neutral-200 group-hover:text-white">
-                      hello@southoroofing.com
+                      {SITE_CONTACT_EMAIL}
                     </span>
                   </span>
                 </a>
@@ -172,7 +167,7 @@ export function SouthOFooter() {
         </div>
 
         <div className="mt-14 border-t border-white/10 pt-8 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} South-O Roofing. All rights reserved.
+          © {new Date().getFullYear()} Roofing. All rights reserved.
         </div>
       </div>
     </footer>

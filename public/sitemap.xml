@@ -13,6 +13,12 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://ntechdigital.solutions/roofing</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://ntechdigital.solutions/blog</loc>
     <lastmod>2026-04-08</lastmod>
     <changefreq>weekly</changefreq>

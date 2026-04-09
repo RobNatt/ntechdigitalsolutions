@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Clock, Mail, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
+import { SITE_CONTACT_EMAIL } from "@/constants/site";
 import { cn } from "@/lib/utils";
 
 const SERVICE_OPTIONS = [
@@ -16,18 +17,17 @@ const SERVICE_OPTIONS = [
   "Skylight installation",
 ] as const;
 
-/** Matches header “Free Estimate” CTA */
 const ESTIMATE_CTA =
   "w-full rounded-md bg-[#b45309] px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9a4508] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#b45309] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 const fieldClass =
   "mt-1.5 w-full rounded-md border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none ring-[#b45309]/0 transition focus:border-[#b45309]/40 focus:ring-2 focus:ring-[#b45309]/25";
 
-export function SouthOContactSection() {
+export function RoofingContactSection() {
   const hookReduce = useReducedMotion();
-  /** SSR + first client paint must match — `useReducedMotion()` can be null/undefined on server. */
   const [reduceMotion, setReduceMotion] = useState(false);
   const [sent, setSent] = useState(false);
+  const mailto = `mailto:${SITE_CONTACT_EMAIL}`;
 
   useEffect(() => {
     setReduceMotion(hookReduce === true);
@@ -90,7 +90,7 @@ export function SouthOContactSection() {
             <ul className="mt-10 space-y-6">
               <li>
                 <Link
-                  href="mailto:hello@southoroofing.com"
+                  href={mailto}
                   className="group flex gap-4 rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10"
                 >
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-white/15 text-white">
@@ -101,7 +101,7 @@ export function SouthOContactSection() {
                       Email Us
                     </p>
                     <p className="mt-1 break-all text-lg font-semibold text-white group-hover:text-[#fdba73]">
-                      hello@southoroofing.com
+                      {SITE_CONTACT_EMAIL}
                     </p>
                   </div>
                 </Link>

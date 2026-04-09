@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       { source: "/tools-preview", destination: "/", permanent: true },
       { source: "/pricing", destination: "/#pricing", permanent: true },
       { source: "/case-studies", destination: "/", permanent: true },
-      { source: "/south-o-roofing", destination: "/", permanent: false },
+      { source: "/south-o-roofing", destination: "/roofing", permanent: true },
     ];
   },
   images: {

@@ -12,15 +12,14 @@ const NAV = [
   { label: "Contact", href: "#contact" },
 ] as const;
 
-/** Orange-brown fill for CTA */
 const CTA_CLASS =
   "rounded-md bg-[#b45309] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9a4508] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#b45309] focus-visible:ring-offset-2";
 
-export function SouthOHeader() {
+export function RoofingHeader() {
   const [solid, setSolid] = useState(false);
 
   const update = useCallback(() => {
-    const hero = document.getElementById("south-o-hero");
+    const hero = document.getElementById("roofing-hero");
     if (!hero) {
       setSolid(false);
       return;
@@ -43,9 +42,7 @@ export function SouthOHeader() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300",
-        solid
-          ? "bg-white shadow-sm"
-          : "bg-transparent"
+        solid ? "bg-white shadow-sm" : "bg-transparent"
       )}
     >
       <div className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-2 sm:h-[4.25rem] sm:min-h-0 sm:flex-nowrap sm:px-6 sm:py-0">
@@ -56,7 +53,7 @@ export function SouthOHeader() {
             solid ? "text-neutral-900" : "text-white"
           )}
         >
-          South-O Roofing
+          Roofing
         </Link>
 
         <nav

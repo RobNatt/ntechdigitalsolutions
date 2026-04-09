@@ -11,7 +11,8 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 ### Completion Snapshot
 - `Done`: Google Search Console + Bing Webmaster setup (confirmed live).
 - `Done`: `sitemap.xml`, `sitemap-pages.xml`, and `robots.txt` alignment.
-- `Done`: Core metadata/canonical work on key marketing and legal pages.
+- `Done`: Core metadata/canonical work on key marketing and legal pages (including `/roofing` landing: canonical, OG, `h1`, JSON-LD).
+- `Done`: Legacy roofing demo slug permanently redirects to `/roofing` (301).
 - `Partial`: Final validation pass for indexability, page quality signals, and conversion tracking.
 
 ### Phase 3 Closeout Tasks
@@ -30,6 +31,7 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 - `/`
 - `/growth-system`
 - `/services`
+- `/roofing`
 - `/book-call`
 - `/contact`
 - `/about`
