@@ -55,6 +55,14 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
         return;
       }
       setDone(true);
+      trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.INFO_SUBMIT, {
+        surface: "contact",
+        status: "submitted",
+        ...(planInterest ? { plan: planInterest } : {}),
+      });
+      trackClientAnalyticsEvent("inquiry_submit", {
+        surface: "contact",
+      });
       setName("");
       setEmail("");
       setCompany("");
@@ -93,6 +101,10 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
   function onFormFocusCapture() {
     if (formStartedRef.current) return;
     formStartedRef.current = true;
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_CLICK, {
+      surface: "contact",
+      ...(planInterest ? { plan: planInterest } : {}),
+    });
     trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_START, {
       surface: "contact",
       ...(planInterest ? { plan: planInterest } : {}),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,7 @@ const PLAN_OPTIONS = [
 ] as const;
 
 export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
+  const formInteractedRef = useRef(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -115,6 +116,10 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
         placement: "book_call_form",
         status: "booked",
       });
+      trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.INFO_SUBMIT, {
+        surface: "book_call",
+        status: "submitted",
+      });
       setDone(true);
     } catch {
       setError("Network error. Please try again.");
@@ -131,8 +136,17 @@ export function BookCallForm({ initialPlan }: { initialPlan?: string }) {
     );
   }
 
+  function onFormFocusCapture() {
+    if (formInteractedRef.current) return;
+    formInteractedRef.current = true;
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_CLICK, {
+      surface: "book_call",
+      status: "interacted",
+    });
+  }
+
   return (
-    <form onSubmit={(e) => void submit(e)} className="space-y-4" noValidate>
+    <form onSubmit={(e) => void submit(e)} onFocusCapture={onFormFocusCapture} className="space-y-4" noValidate>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Name

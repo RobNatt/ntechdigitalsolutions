@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Bot } from "lucide-react";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import {
   getNtechAccountabilityPack,
   weekdaySlotLabel,
 } from "@/lib/dashboard/pa-assignments-defaults";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import {
   DEFAULT_PA_TIMEZONE,
   evaluatePaAssignments,
@@ -283,6 +285,9 @@ export function DashboardAssistantPanel() {
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || loadingRef.current) return;
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.PA_INTERACTION, {
+      action: "send_message",
+    });
     await runAssistant(text, true);
   }, [input, runAssistant]);
 
@@ -305,6 +310,9 @@ export function DashboardAssistantPanel() {
       ...(newFrequency === "weekday" ? { weekdaySlot: newWeekdaySlot } : {}),
     };
     setAssignments((prev) => [...prev, row]);
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.PA_INTERACTION, {
+      action: "add_assignment",
+    });
     setNewTitle("");
     setNewDescription("");
   }
@@ -318,6 +326,9 @@ export function DashboardAssistantPanel() {
     setAssignments((prev) =>
       prev.map((a) => (a.id === id ? { ...a, lastCompletedAt: now } : a))
     );
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.PA_INTERACTION, {
+      action: "mark_assignment_done",
+    });
   }
 
   function removeAssignment(id: string) {

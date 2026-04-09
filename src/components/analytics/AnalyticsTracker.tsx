@@ -14,6 +14,12 @@ const VID = ANALYTICS_STORAGE_KEYS.visitorId;
 const SID = ANALYTICS_STORAGE_KEYS.sessionId;
 const PV_DEDUPE = "ntech_pv_ts";
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 function randomId(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -74,12 +80,19 @@ export function AnalyticsTracker() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!writeKey) return;
     if (isAnalyticsOptedOut()) return;
 
     const path =
       pathname +
       (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "page_view", {
+        page_path: path,
+        page_location:
+          typeof window !== "undefined" ? `${window.location.origin}${path}` : undefined,
+      });
+    }
 
     try {
       const prev = sessionStorage.getItem(PV_DEDUPE);
@@ -94,9 +107,24 @@ export function AnalyticsTracker() {
       /* ignore */
     }
 
+    let isNewVisitor = false;
+    try {
+      isNewVisitor = !localStorage.getItem(VID);
+    } catch {
+      isNewVisitor = false;
+    }
+
     const visitorId = getOrCreateVisitorId();
     const sessionId = getOrCreateSessionId();
     const utm = parseUtm(searchParams?.toString() ?? "");
+
+    if (isNewVisitor && typeof window.gtag === "function") {
+      window.gtag("event", "new_visitor", {
+        page_path: path,
+      });
+    }
+
+    if (!writeKey) return;
 
     const payload = {
       writeKey,

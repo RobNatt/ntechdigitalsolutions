@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Phone, ArrowRight } from "lucide-react";
@@ -139,6 +139,14 @@ function Bullet({ children }: { children: ReactNode }) {
 
 export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "c" }) {
   const v = FUNNEL_VARIANTS[variant];
+
+  useEffect(() => {
+    trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FUNNEL_VIEW, {
+      funnel: "growth_system",
+      variant,
+    });
+  }, [variant]);
+
   return (
     <div style={{ backgroundColor: COLORS.bg }}>
       {/* 1. HERO */}

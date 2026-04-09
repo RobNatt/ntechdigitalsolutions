@@ -5,7 +5,11 @@
 export const ANALYTICS_CUSTOM_EVENTS = {
   CTA_CLICK: "cta_click",
   PRICING_PLAN_CLICK: "pricing_plan_click",
+  FUNNEL_VIEW: "funnel_view",
+  FORM_CLICK: "form_click",
   FORM_START: "form_start",
+  INFO_SUBMIT: "info_submit",
+  PA_INTERACTION: "pa_interaction",
   CALL_CLICK: "call_click",
   CALENDAR_BOOKING_CLICK: "calendar_booking_click",
   CHAT_OPEN: "chat_open",

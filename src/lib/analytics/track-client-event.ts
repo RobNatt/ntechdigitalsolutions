@@ -6,6 +6,12 @@ import {
   isAnalyticsOptedOut,
 } from "@/lib/analytics/internal-traffic";
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 const MAX_METADATA_JSON = 1800;
 const MAX_KEYS = 12;
 const MAX_KEY_LEN = 64;
@@ -57,10 +63,18 @@ export function trackClientAnalyticsEvent(
   metadata?: Record<string, unknown>
 ): void {
   if (typeof window === "undefined") return;
+  if (isAnalyticsOptedOut()) return;
+
+  const et = eventType.trim().slice(0, 64);
+  if (!et) return;
+
+  const gaPayload = sanitizeMetadata(metadata);
+  if (typeof window.gtag === "function") {
+    window.gtag("event", et, gaPayload);
+  }
 
   const writeKey = process.env.NEXT_PUBLIC_ANALYTICS_WRITE_KEY?.trim();
   if (!writeKey) return;
-  if (isAnalyticsOptedOut()) return;
 
   let visitorId = "";
   let sessionId = "";
@@ -89,8 +103,7 @@ export function trackClientAnalyticsEvent(
     metadataPayload = {};
   }
 
-  const et = eventType.trim().slice(0, 64);
-  if (!et || et.toLowerCase() === "inquiry_submit") return;
+  if (et.toLowerCase() === "inquiry_submit") return;
 
   void fetch("/api/analytics/collect", {
     method: "POST",
