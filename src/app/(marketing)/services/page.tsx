@@ -134,6 +134,48 @@ export default async function ServicesPage() {
           </p>
         </section>
 
+        <section className="rounded-2xl border border-sky-200/80 bg-gradient-to-br from-sky-50/90 to-white p-6 dark:border-sky-900/50 dark:from-sky-950/25 dark:to-neutral-950 sm:p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+            Topic guides
+          </p>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+            Deeper dives (national & remote-friendly)
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Intent-focused pages you can link from ads, email, and editorial content — each with its own title, summary, and internal links into the rest of the site.
+          </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+            {[
+              {
+                href: "/services/websites-and-leads",
+                title: "Websites & lead-ready builds",
+                blurb: "Conversion-first sites and landing pages, structured for search.",
+              },
+              {
+                href: "/services/seo-and-visibility",
+                title: "SEO & search visibility",
+                blurb: "Topics, technical baseline, and measurement tied to pipeline.",
+              },
+              {
+                href: "/services/automation-and-crm",
+                title: "Automation & CRM",
+                blurb: "Routing, follow-up, and handoffs that match how you sell.",
+              },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex h-full flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 transition hover:border-sky-300/80 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-950/60 dark:hover:border-sky-800"
+                >
+                  <span className="font-semibold text-neutral-900 dark:text-white">{item.title}</span>
+                  <span className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{item.blurb}</span>
+                  <span className="mt-3 text-sm font-medium text-sky-700 dark:text-sky-400">Read more →</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
             Proof layer

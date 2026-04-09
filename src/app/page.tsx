@@ -30,10 +30,10 @@ const OG_IMAGE_PATH = "/ntech-official-logo.png";
 export const metadata: Metadata = {
   title: {
     absolute:
-      "N-Tech Digital Solutions | AI-Powered Lead Generation & Web Design Omaha",
+      "N-Tech Digital Solutions | Websites, SEO & Lead Systems for Small Business",
   },
   description:
-    "N-Tech Digital Solutions builds AI-powered lead generation systems, high-converting websites, and automated lead funnels for small businesses. SEO-optimized WordPress sites built to rank and convert.",
+    "N-Tech Digital Solutions builds lead-ready websites, SEO and search visibility, and CRM-backed automation for small businesses across the U.S. Remote-first delivery — systems that turn traffic into booked conversations.",
   keywords: [
     "lead generation agency",
     "AI lead generation",
@@ -42,7 +42,8 @@ export const metadata: Metadata = {
     "WordPress website",
     "lead funnels",
     "automated lead tracking",
-    "local SEO",
+    "SEO services",
+    "marketing automation small business",
     "web development agency",
   ],
   authors: [{ name: "N-Tech Digital Solutions" }],
@@ -83,7 +84,7 @@ const localBusinessJsonLd = {
     addressRegion: "NE",
     addressCountry: "US",
   },
-  areaServed: SITE_SERVICE_AREAS,
+  areaServed: [{ "@type": "Country", name: "United States" }, SITE_SERVICE_AREAS],
   serviceType: [
     "Lead Generation",
     "Web Design",

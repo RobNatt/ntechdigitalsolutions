@@ -8,6 +8,11 @@ Core offerings
 - GEO (Generative Engine Optimization for AI visibility)
 - Automation and lead operations (CRM routing, follow-up flows, reporting)
 
+Topic service pages (intent / national)
+- https://ntechdigital.solutions/services/websites-and-leads
+- https://ntechdigital.solutions/services/seo-and-visibility
+- https://ntechdigital.solutions/services/automation-and-crm
+
 Service notes
 - Services can be engaged individually or combined for compounding effect.
 - Websites are built mobile-first and optimized for speed/Core Web Vitals.

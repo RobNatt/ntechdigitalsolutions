@@ -29,7 +29,7 @@ const FEATURES = [
       "Custom lead funnel + dedicated landing page built to convert",
       "Lead capture forms with automated email follow-up sequences",
       "CRM setup, pipeline configuration, and lead tracking dashboard",
-      "Google Business Profile optimization + local SEO for your service area",
+      "Google Business Profile and organic search visibility for your markets",
       "Monthly performance report (traffic, leads, conversions) + conversion review every 90 days",
     ],
     variant: "right" as const,
@@ -42,7 +42,7 @@ const FEATURES = [
     bullets: [
       "Multi-page lead funnel with A/B tested variations",
       "Automated lead qualification and scoring + SMS & email follow-up (multi-touch)",
-      "Monthly SEO content (2 blog posts or location pages for your keywords)",
+      "Monthly SEO content (2 blog posts or topic/service pages for your keywords)",
       "Ongoing Google + Bing Search Console monitoring + quarterly landing page refresh",
       "Priority support (48hr response), dedicated account manager, monthly strategy call",
     ],
@@ -64,7 +64,7 @@ export default function FeaturesWithIsometricBlocks() {
       <div className="relative z-10 mx-auto w-full max-w-6xl px-4 md:px-6">
         <div className="mb-14 text-center md:mb-16">
           <h2 className="mb-4 text-2xl font-bold tracking-tight text-neutral-900 md:text-4xl dark:text-neutral-100">
-            Everything you need to dominate your local market.
+            Everything you need to turn traffic into qualified leads.
           </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-neutral-600 md:text-base dark:text-neutral-400">
             Three transparent packages — from a solid web foundation to lead
