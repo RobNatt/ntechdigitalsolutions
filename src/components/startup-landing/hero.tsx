@@ -91,7 +91,7 @@ export function Hero() {
 
       <div className="text-balance relative z-20 mx-auto mb-4 mt-2 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
         <Balancer>
-          <motion.h2>
+          <motion.h1 className="text-[inherit]">
             {HEADLINE_WORDS.map((word, index) => (
               <motion.span
                 key={index}
@@ -114,7 +114,7 @@ export function Hero() {
                 {word}&nbsp;
               </motion.span>
             ))}
-          </motion.h2>
+          </motion.h1>
         </Balancer>
       </div>
       <motion.p

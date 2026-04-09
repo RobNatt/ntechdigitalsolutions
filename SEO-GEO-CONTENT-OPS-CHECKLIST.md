@@ -9,11 +9,14 @@ Use this as the operating checklist for your AI PA. Each item is labeled by exec
 ## Phase 3 - Search Foundation
 
 ### Completion Snapshot
-- `Done`: Google Search Console + Bing Webmaster setup (confirmed live).
+- `Done`: Google Search Console + Bing Webmaster — properties verified, sitemaps submitted, baseline healthy (keep weekly checks in the table below).
 - `Done`: `sitemap.xml`, `sitemap-pages.xml`, and `robots.txt` alignment.
+- `Done`: Performance + mobile — Lighthouse / Core Web Vitals + mobile usability baseline validated on key URLs (keep monitoring on cadence below).
+- `Done`: Homepage primary headline is a semantic `h1` (matches page title intent).
 - `Done`: Core metadata/canonical work on key marketing and legal pages (including `/roofing` landing: canonical, OG, `h1`, JSON-LD).
 - `Done`: Legacy roofing demo slug permanently redirects to `/roofing` (301).
-- `Partial`: Final validation pass for indexability, page quality signals, and conversion tracking.
+- `Next` (tomorrow): GA4 — mark key events as **conversion goals** in Admin (e.g. inquiry submit, book-call / key CTAs; align names with events the site already sends).
+- `Ongoing`: Index coverage spot-checks, CWV drift, and conversion-definition audits per the Phase 3 table (not one-time).
 
 ### Phase 3 Closeout Tasks
 
