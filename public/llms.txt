@@ -237,7 +237,7 @@ Contact
 Contact: info@n-techllc.com | (402) XXX-XXXX | Schedule via Calendly for web dev consultations.
 
 Service Area
-Service Area: Omaha metro, Nebraska statewide, remote for US freelancers/agencies; focus on local businesses like contractors, dentists, roofers needing lead gen websites.
+Service Area: Omaha metro, Nebraska statewide, remote for US freelancers/agencies; focus on local businesses needing lead gen websites.
 
 Key Facts
 5+ years front-end expertise (React, TypeScript, Tailwind).
