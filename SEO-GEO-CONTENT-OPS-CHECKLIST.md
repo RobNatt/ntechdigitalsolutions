@@ -167,7 +167,7 @@ Use this after GBP baseline is set. Goal: **one canonical business identity** ev
 
 #### Step 0 — Lock your canonical record (one-time, Owner)
 
-Fill once; AI PA copies this into every profile.
+Fill the table below **in this file** so it is the single source of truth your AI PA mirrors into GBP, the site, and directories. If the repository is **public** and you do not want phone or street address in git, use a private sheet/doc instead and leave placeholders here. Otherwise, completing the cells in this document is the intended workflow.
 
 | Field | Canonical value (fill in) |
 |---|---|
