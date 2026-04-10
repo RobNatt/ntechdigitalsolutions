@@ -38,6 +38,7 @@ const CONTEXT_POLL_MS = 45_000;
 const SHORT_TERM_MEMORY_KEY = "ntech_dashboard_assistant_short_memory_v1";
 const SHORT_TERM_MEMORY_LIMIT = 60;
 const SHORT_TERM_MEMORY_RETENTION_DAYS = 7;
+const CHECKLIST_CHAT_FOCUS_KEY = "ntech_dashboard_assistant_checklist_chat_focus_v1";
 
 function statusBadgeClass(s: "ok" | "due" | "overdue") {
   if (s === "ok")
@@ -99,12 +100,22 @@ export function DashboardAssistantPanel() {
     useState<PaAssignmentFrequency>("daily");
   const [newWeekdaySlot, setNewWeekdaySlot] = useState(0);
   const [assignmentsOpen, setAssignmentsOpen] = useState(true);
+  /** When true, only a slim assignments summary bar — chat transcript gets the height. */
+  const [checklistChatFocus, setChecklistChatFocus] = useState(false);
   const [assistantTimeZone, setAssistantTimeZone] = useState(DEFAULT_PA_TIMEZONE);
   const [shortTermMemory, setShortTermMemory] = useState<ShortTermMemoryTurn[]>([]);
 
   const evaluatedAssignments = useMemo(
     () => evaluatePaAssignments(assignments, assistantTimeZone),
     [assignments, assistantTimeZone]
+  );
+
+  const assignmentAttentionCount = useMemo(
+    () =>
+      evaluatedAssignments.filter(
+        (a) => a.status === "due" || a.status === "overdue"
+      ).length,
+    [evaluatedAssignments]
   );
 
   /** Scroll only the chat transcript — never `scrollIntoView` (it scrolls parent dashboard panes). */
@@ -141,8 +152,27 @@ export function DashboardAssistantPanel() {
       loaded.length > 0 ? loaded : getNtechAccountabilityPack()
     );
     setShortTermMemory(loadShortMemory());
+    try {
+      if (window.localStorage.getItem(CHECKLIST_CHAT_FOCUS_KEY) === "1") {
+        setChecklistChatFocus(true);
+      }
+    } catch {
+      /* ignore */
+    }
     setAssignmentsHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!assignmentsHydrated || typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(
+        CHECKLIST_CHAT_FOCUS_KEY,
+        checklistChatFocus ? "1" : "0"
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [checklistChatFocus, assignmentsHydrated]);
 
   useEffect(() => {
     if (!assignmentsHydrated) return;
@@ -429,20 +459,69 @@ export function DashboardAssistantPanel() {
       </div>
 
       <div className="shrink-0 border-b border-gray-400/25 px-4 py-3">
+        {checklistChatFocus ? (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-sky-400/35 bg-sky-50/80 px-3 py-2 shadow-sm dark:border-sky-800/50 dark:bg-sky-950/30">
+            <p className="min-w-0 text-xs text-gray-800 dark:text-gray-200">
+              <span className="font-semibold text-gray-900 dark:text-white">
+                PA assignments
+              </span>
+              <span className="text-gray-600 dark:text-gray-400">
+                {" "}
+                · {assignments.length} item{assignments.length === 1 ? "" : "s"}
+                {assignmentAttentionCount > 0 ? (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <span className="font-medium text-amber-800 dark:text-amber-200">
+                      {assignmentAttentionCount} due or overdue
+                    </span>
+                  </>
+                ) : (
+                  <> · all caught up</>
+                )}
+              </span>
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setChecklistChatFocus(false);
+                setAssignmentsOpen(true);
+              }}
+              className="shrink-0 rounded-lg border border-gray-400/50 bg-white px-3 py-1.5 text-[11px] font-semibold text-gray-900 shadow-sm hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              Expand checklist
+            </button>
+          </div>
+        ) : (
         <div className="rounded-xl border border-gray-400/35 bg-white/90 shadow-sm">
-          <button
-            type="button"
-            onClick={() => setAssignmentsOpen((o) => !o)}
-            className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-gray-900"
-          >
-            <span>PA assignment checklist</span>
-            <span className="text-xs font-normal text-gray-500">
-              {assignmentsOpen ? "Hide" : "Show"} · {assignments.length} item
-              {assignments.length === 1 ? "" : "s"}
-            </span>
-          </button>
+          <div className="flex items-stretch border-b border-gray-400/25">
+            <button
+              type="button"
+              onClick={() => setAssignmentsOpen((o) => !o)}
+              className="flex min-w-0 flex-1 items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-gray-900"
+            >
+              <span className="truncate">PA assignment checklist</span>
+              <span className="shrink-0 text-xs font-normal text-gray-500">
+                {assignmentsOpen ? "Hide" : "Show"} · {assignments.length} item
+                {assignments.length === 1 ? "" : "s"}
+              </span>
+            </button>
+            <div className="flex shrink-0 items-center border-l border-gray-400/25 px-1.5 dark:border-neutral-600">
+              <button
+                type="button"
+                title="Minimize checklist so the assistant chat uses almost the full panel"
+                onClick={() => {
+                  setChecklistChatFocus(true);
+                  setAssignmentsOpen(false);
+                }}
+                className="rounded-md px-2 py-1.5 text-[11px] font-semibold text-sky-800 hover:bg-sky-100/80 dark:text-sky-300 dark:hover:bg-sky-950/50"
+              >
+                Chat focus
+              </button>
+            </div>
+          </div>
           {assignmentsOpen ? (
-            <div className="max-h-[min(42vh,24rem)] space-y-3 overflow-y-auto overscroll-contain border-t border-gray-400/25 px-3 py-3">
+            <div className="max-h-[min(30vh,16rem)] space-y-3 overflow-y-auto overscroll-contain px-3 py-3">
               <p className="text-xs text-gray-600">
                 <strong className="font-semibold text-gray-800">Daily</strong> — due
                 each calendar day ({assistantTimeZone}).{" "}
@@ -594,6 +673,7 @@ export function DashboardAssistantPanel() {
             </div>
           ) : null}
         </div>
+        )}
       </div>
 
       <div
