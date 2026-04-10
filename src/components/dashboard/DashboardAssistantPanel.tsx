@@ -49,8 +49,8 @@ function statusBadgeClass(s: "ok" | "due" | "overdue") {
 
 function assignmentCadenceLabel(a: PaAssignment): string {
   if (a.frequency === "daily") return "Daily";
-  if (a.frequency === "weekly") return "Weekly (7-day)";
-  return `Weekday · ${weekdaySlotLabel(a.weekdaySlot ?? 0)}`;
+  if (a.frequency === "weekly") return "Weekly · rolling 7-day";
+  return `Weekly · ${weekdaySlotLabel(a.weekdaySlot ?? 0)}`;
 }
 
 function loadShortMemory(): ShortTermMemoryTurn[] {
@@ -107,7 +107,8 @@ export function DashboardAssistantPanel() {
     [assignments, assistantTimeZone]
   );
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+  /** Scroll only the chat transcript — never `scrollIntoView` (it scrolls parent dashboard panes). */
+  const messagesScrollRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Msg[]>([]);
   const loadingRef = useRef(false);
   const contextRef = useRef<AssistantContext | null>(null);
@@ -117,7 +118,9 @@ export function DashboardAssistantPanel() {
   const autoBriefTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesScrollRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
   }, [messages, loading]);
 
   useEffect(() => {
@@ -425,7 +428,7 @@ export function DashboardAssistantPanel() {
         ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3">
+      <div className="shrink-0 border-b border-gray-400/25 px-4 py-3">
         <div className="rounded-xl border border-gray-400/35 bg-white/90 shadow-sm">
           <button
             type="button"
@@ -439,13 +442,20 @@ export function DashboardAssistantPanel() {
             </span>
           </button>
           {assignmentsOpen ? (
-            <div className="space-y-3 border-t border-gray-400/25 px-3 py-3">
+            <div className="max-h-[min(42vh,24rem)] space-y-3 overflow-y-auto overscroll-contain border-t border-gray-400/25 px-3 py-3">
               <p className="text-xs text-gray-600">
-                Daily = each calendar day ({assistantTimeZone}). Weekly = rolling 7
-                days after last mark-done. Weekday = due on that day each week
-                (Mon–Sun). Stored on this browser only. First visit loads the N-Tech
-                accountability pack; use the button below to merge in any missing
-                defaults.
+                <strong className="font-semibold text-gray-800">Daily</strong> — due
+                each calendar day ({assistantTimeZone}).{" "}
+                <strong className="font-semibold text-gray-800">
+                  Weekly · rolling
+                </strong>{" "}
+                — next due 7 days after you last mark done.{" "}
+                <strong className="font-semibold text-gray-800">
+                  Weekly · fixed day
+                </strong>{" "}
+                — due on the same weekday every week (pick below). Stored on this
+                browser only. First visit loads the N-Tech accountability pack; merge
+                defaults with the button if needed.
               </p>
               <button
                 type="button"
@@ -483,11 +493,11 @@ export function DashboardAssistantPanel() {
                         onChange={(e) =>
                           setNewFrequency(e.target.value as PaAssignmentFrequency)
                         }
-                        className="mt-1 block w-full min-w-[8rem] rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900 sm:w-auto"
+                        className="mt-1 block w-full min-w-[12rem] rounded-lg border border-gray-400/45 bg-white px-2 py-1.5 text-sm text-gray-900 sm:w-auto"
                       >
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="weekday">Weekday</option>
+                        <option value="daily">Daily · each calendar day</option>
+                        <option value="weekly">Weekly · rolling (7 days after done)</option>
+                        <option value="weekday">Weekly · same weekday</option>
                       </select>
                     </label>
                     {newFrequency === "weekday" ? (
@@ -584,7 +594,12 @@ export function DashboardAssistantPanel() {
             </div>
           ) : null}
         </div>
+      </div>
 
+      <div
+        ref={messagesScrollRef}
+        className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3"
+      >
         {messages.length === 0 && (
           <div className="rounded-xl border border-gray-400/30 bg-gray-100/60 p-4 text-sm text-gray-700">
             <p className="font-semibold text-gray-900">Getting your briefing ready…</p>
@@ -613,7 +628,6 @@ export function DashboardAssistantPanel() {
         {loading && messages[messages.length - 1]?.role !== "assistant" && (
           <p className="text-xs text-gray-500">Thinking…</p>
         )}
-        <div ref={bottomRef} />
       </div>
 
       {error && (

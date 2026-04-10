@@ -136,6 +136,8 @@ export function HolographicDashboardTabs({
     }
   }
   const sidebarWidthClass = variant === "ceo" ? "w-[228px]" : "w-[200px]";
+  /** Assistant tab manages its own scroll regions; outer pane must not scroll (avoids jump with long replies). */
+  const assistantFillsPane = variant === "ceo" && activeTab === "assistant";
 
   return (
     <motion.div
@@ -265,7 +267,14 @@ export function HolographicDashboardTabs({
                   </div>
                 </header>
 
-                <div className="relative z-[1] min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 md:p-4">
+                <div
+                  className={cn(
+                    "relative z-[1] min-h-0 flex-1 overscroll-contain p-3 md:p-4",
+                    assistantFillsPane
+                      ? "flex flex-col overflow-hidden"
+                      : "overflow-y-auto"
+                  )}
+                >
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTab}
@@ -273,6 +282,10 @@ export function HolographicDashboardTabs({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.2 }}
+                      className={cn(
+                        assistantFillsPane &&
+                          "flex min-h-0 min-w-0 flex-1 flex-col"
+                      )}
                     >
                       {variant === "marketing" && activeTab === "lighthouse" && (
                         <MarketingLighthousePanel />
