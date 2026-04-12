@@ -1,9 +1,54 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  forwardRef,
+  Fragment,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
+import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+/** Markdown-style heading at start of a line (# … ######). All render as <h2> for a flat outline under the post <h1>. */
+const MD_HEADING = /^#{1,6}\s+(.+)$/;
+
+const H2_CLASS =
+  "mb-3 mt-8 scroll-mt-4 text-base font-semibold tracking-tight text-neutral-900 first:mt-0 dark:text-white sm:text-lg";
+
+/**
+ * Split body on blank lines; blocks whose first line is a markdown heading become <h2>
+ * (any # count). Remaining lines in that block become a paragraph. Other blocks are <p>.
+ */
+export function renderBlogPostBody(content: string): ReactNode[] {
+  const blocks = content.split(/\n\n+/).map((b) => b.trim()).filter(Boolean);
+  return blocks.map((block, i) => {
+    const lines = block.split("\n");
+    const first = lines[0] ?? "";
+    const m = MD_HEADING.exec(first);
+    if (m) {
+      const headingText = m[1].trim();
+      const rest = lines.slice(1).join("\n").trim();
+      return (
+        <Fragment key={i}>
+          <h2 className={H2_CLASS}>{headingText}</h2>
+          {rest ? (
+            <p className="mb-4 whitespace-pre-wrap last:mb-0">{rest}</p>
+          ) : null}
+        </Fragment>
+      );
+    }
+    return (
+      <p key={i} className="mb-4 whitespace-pre-wrap last:mb-0">
+        {block}
+      </p>
+    );
+  });
+}
 
 export type BlogPostPublic = {
   id: string;
@@ -86,12 +131,12 @@ const PostModal = forwardRef<
             <p className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
               {formatDate(post.published_at)}
             </p>
-            <h2
+            <h1
               id={titleId}
-              className="mt-1 text-lg font-semibold leading-snug text-neutral-900 dark:text-white sm:text-xl"
+              className="mt-1 text-xl font-semibold leading-snug text-neutral-900 dark:text-white sm:text-2xl"
             >
               {post.title}
-            </h2>
+            </h1>
           </div>
           <button
             ref={closeRef}
@@ -105,11 +150,7 @@ const PostModal = forwardRef<
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5">
           <article className="prose-blog text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
-            {post.content.split(/\n\n+/).map((para, i) => (
-              <p key={i} className="mb-4 last:mb-0 whitespace-pre-wrap">
-                {para}
-              </p>
-            ))}
+            {renderBlogPostBody(post.content)}
           </article>
         </div>
       </motion.div>
