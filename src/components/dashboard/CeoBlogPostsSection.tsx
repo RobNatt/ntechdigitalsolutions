@@ -23,6 +23,23 @@ function toDatetimeLocalValue(iso: string | null): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/** Locale date + time for dashboard labels (scheduled / published). */
+function formatDateTimeShort(iso: string): string {
+  try {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  } catch {
+    return iso;
+  }
+}
+
+function isScheduledFuture(publishedAt: string | null): boolean {
+  if (!publishedAt) return false;
+  const t = new Date(publishedAt).getTime();
+  return !Number.isNaN(t) && t > Date.now();
+}
+
 export function CeoBlogPostsSection() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [title, setTitle] = useState("");
@@ -420,6 +437,13 @@ export function CeoBlogPostsSection() {
           <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
             Existing posts
           </h3>
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-gray-600 dark:text-neutral-400">
+            <strong className="font-semibold text-gray-800 dark:text-neutral-200">Scheduled posts:</strong> the date
+            and time below are when each post is set to go live. The public{" "}
+            <code className="rounded bg-gray-400/20 px-1 text-[11px]">/blog</code> page only lists posts whose
+            publish time is in the past, so they appear automatically on the next visit after that moment—no
+            separate scheduler to run.
+          </p>
         </div>
         {loading ? (
           <p className="px-4 py-8 text-sm text-gray-600 dark:text-neutral-400">Loading…</p>
@@ -433,8 +457,38 @@ export function CeoBlogPostsSection() {
                   <div className="min-w-0">
                     <p className="truncate font-semibold text-gray-900 dark:text-neutral-50">{p.title}</p>
                     <p className="text-xs text-gray-500 dark:text-neutral-500">
-                      /blog#{p.slug} · {new Date(p.updated_at).toLocaleString()}
+                      Slug <code className="rounded bg-gray-400/15 px-1 text-[11px]">{p.slug}</code> · Last
+                      updated {new Date(p.updated_at).toLocaleString()}
                     </p>
+                    {p.status === "published" && p.published_at ? (
+                      <p
+                        className={
+                          isScheduledFuture(p.published_at)
+                            ? "mt-1 text-xs font-semibold text-amber-900 dark:text-amber-100"
+                            : "mt-1 text-xs text-gray-600 dark:text-neutral-400"
+                        }
+                      >
+                        {isScheduledFuture(p.published_at) ? (
+                          <>
+                            Goes live{" "}
+                            <time dateTime={p.published_at}>{formatDateTimeShort(p.published_at)}</time>
+                            <span className="font-normal text-amber-800/90 dark:text-amber-200/85">
+                              {" "}
+                              (your local time)
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            Published{" "}
+                            <time dateTime={p.published_at}>{formatDateTimeShort(p.published_at)}</time>
+                          </>
+                        )}
+                      </p>
+                    ) : p.status === "draft" ? (
+                      <p className="mt-1 text-xs text-gray-500 dark:text-neutral-500">
+                        Draft — not on /blog until you publish (optionally with a future date in the editor).
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <button
