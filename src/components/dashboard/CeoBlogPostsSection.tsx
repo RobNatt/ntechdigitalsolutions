@@ -12,6 +12,8 @@ type BlogPost = {
   content: string;
   status: "draft" | "published";
   published_at: string | null;
+  /** Set on drafts when you pick a go-live time before publishing (shown in the list). */
+  scheduled_publish_at?: string | null;
   updated_at: string;
 };
 
@@ -103,7 +105,7 @@ export function CeoBlogPostsSection() {
           excerpt,
           content,
           publish,
-          scheduledPublishAt: publish && scheduledPublishAt ? scheduledPublishAt : null,
+          scheduledPublishAt: scheduledPublishAt.trim() ? scheduledPublishAt : null,
         }),
       });
       const data = await res.json();
@@ -150,9 +152,9 @@ export function CeoBlogPostsSection() {
     setEditExcerpt(post.excerpt ?? "");
     setEditContent(post.content);
     setEditScheduledPublishAt(
-      post.status === "published" && post.published_at
-        ? toDatetimeLocalValue(post.published_at)
-        : ""
+      post.status === "draft"
+        ? toDatetimeLocalValue(post.scheduled_publish_at ?? null)
+        : toDatetimeLocalValue(post.published_at ?? null)
     );
     setShowPreview(true);
     setEditError(null);
@@ -189,6 +191,8 @@ export function CeoBlogPostsSection() {
         if (rawSchedule) {
           body.scheduledPublishAt = rawSchedule;
         }
+      } else if (editing.status === "draft") {
+        body.scheduledPublishAt = rawSchedule || null;
       } else if (editing.status === "published" && rawSchedule) {
         body.scheduledPublishAt = rawSchedule;
       }
@@ -217,8 +221,12 @@ export function CeoBlogPostsSection() {
         setEditTitle(p.title);
         setEditExcerpt(p.excerpt ?? "");
         setEditContent(p.content);
-        if (p.published_at) {
+        if (p.status === "draft") {
+          setEditScheduledPublishAt(toDatetimeLocalValue(p.scheduled_publish_at ?? null));
+        } else if (p.published_at) {
           setEditScheduledPublishAt(toDatetimeLocalValue(p.published_at));
+        } else {
+          setEditScheduledPublishAt("");
         }
       }
     } catch {
@@ -298,7 +306,9 @@ export function CeoBlogPostsSection() {
               className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
             />
             <p className="text-[11px] text-gray-500 dark:text-neutral-400">
-              Optional. Use with “Publish now” to schedule a future publish time.
+              With <strong className="font-semibold">Save draft</strong>, this is stored as the planned go-live time and
+              listed under Existing posts. With <strong className="font-semibold">Publish now</strong>, it schedules
+              (or publishes) on <code className="rounded bg-gray-400/20 px-0.5">/blog</code> for that moment.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -380,7 +390,7 @@ export function CeoBlogPostsSection() {
               <div className="grid gap-1">
                 <label className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
                   {editing.status === "draft"
-                    ? "Schedule publish (optional, use with Publish below)"
+                    ? "Planned go-live (saved with Save draft; or use Publish now below)"
                     : "Adjust publish / display date"}
                 </label>
                 <input
@@ -438,11 +448,12 @@ export function CeoBlogPostsSection() {
             Existing posts
           </h3>
           <p className="mt-2 max-w-2xl text-xs leading-relaxed text-gray-600 dark:text-neutral-400">
-            <strong className="font-semibold text-gray-800 dark:text-neutral-200">Scheduled posts:</strong> the date
-            and time below are when each post is set to go live. The public{" "}
-            <code className="rounded bg-gray-400/20 px-1 text-[11px]">/blog</code> page only lists posts whose
-            publish time is in the past, so they appear automatically on the next visit after that moment—no
-            separate scheduler to run.
+            <strong className="font-semibold text-gray-800 dark:text-neutral-200">Dates below:</strong> for{" "}
+            <strong className="font-semibold">published</strong> posts, <em>Goes live</em> / <em>Published</em> uses
+            the time stored in the database. For <strong className="font-semibold">drafts</strong>,{" "}
+            <em>Planned go-live</em> is what you set when saving a draft (or in the editor); it is not public until you
+            click Publish. The <code className="rounded bg-gray-400/20 px-1 text-[11px]">/blog</code> page only shows
+            published posts whose publish time has passed—no separate cron job.
           </p>
         </div>
         {loading ? (
@@ -470,7 +481,7 @@ export function CeoBlogPostsSection() {
                       >
                         {isScheduledFuture(p.published_at) ? (
                           <>
-                            Goes live{" "}
+                            Goes live on{" "}
                             <time dateTime={p.published_at}>{formatDateTimeShort(p.published_at)}</time>
                             <span className="font-normal text-amber-800/90 dark:text-amber-200/85">
                               {" "}
@@ -484,9 +495,35 @@ export function CeoBlogPostsSection() {
                           </>
                         )}
                       </p>
+                    ) : p.status === "draft" && p.scheduled_publish_at ? (
+                      <p
+                        className={
+                          isScheduledFuture(p.scheduled_publish_at)
+                            ? "mt-1 text-xs font-semibold text-amber-900 dark:text-amber-100"
+                            : "mt-1 text-xs text-gray-600 dark:text-neutral-400"
+                        }
+                      >
+                        Planned go-live{" "}
+                        <time dateTime={p.scheduled_publish_at}>
+                          {formatDateTimeShort(p.scheduled_publish_at)}
+                        </time>
+                        {isScheduledFuture(p.scheduled_publish_at) ? (
+                          <span className="font-normal text-amber-800/90 dark:text-amber-200/85">
+                            {" "}
+                            — draft; click <strong className="font-semibold">Publish</strong> when ready (uses this
+                            time on /blog if still in the future).
+                          </span>
+                        ) : (
+                          <span className="font-normal">
+                            {" "}
+                            — date is in the past; open View &amp; edit to set a new time or publish now.
+                          </span>
+                        )}
+                      </p>
                     ) : p.status === "draft" ? (
                       <p className="mt-1 text-xs text-gray-500 dark:text-neutral-500">
-                        Draft — not on /blog until you publish (optionally with a future date in the editor).
+                        Draft — no go-live date saved. Set &quot;Schedule publish date&quot; and Save draft, or open
+                        View &amp; edit.
                       </p>
                     ) : null}
                   </div>
@@ -504,6 +541,10 @@ export function CeoBlogPostsSection() {
                     {p.status === "published" && p.published_at ? (
                       <span className="rounded bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-sky-800">
                         {new Date(p.published_at).getTime() > Date.now() ? "scheduled" : "live"}
+                      </span>
+                    ) : p.status === "draft" && p.scheduled_publish_at ? (
+                      <span className="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+                        planned
                       </span>
                     ) : null}
                     {p.status === "draft" ? (

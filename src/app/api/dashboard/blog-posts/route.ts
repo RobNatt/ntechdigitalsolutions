@@ -93,6 +93,10 @@ export async function POST(request: Request) {
   const resolvedPublishedAt = publish
     ? scheduledPublishAt ?? new Date().toISOString()
     : null;
+  /** Drafts: store chosen date as planned go-live (shown in dashboard). Publishing uses published_at only. */
+  const resolvedPlannedAt =
+    !publish && scheduledPublishAt ? scheduledPublishAt : null;
+
   const { data, error } = await admin
     .from("dashboard_blog_posts")
     .insert({
@@ -102,6 +106,7 @@ export async function POST(request: Request) {
       content,
       status: publish ? "published" : "draft",
       published_at: resolvedPublishedAt,
+      scheduled_publish_at: publish ? null : resolvedPlannedAt,
       created_by: user.id,
       updated_by: user.id,
     })
