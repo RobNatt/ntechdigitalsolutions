@@ -15,6 +15,12 @@ export function Footer() {
     { title: "Contact", href: "/contact" },
   ];
 
+  const omahaMetro = [
+    { title: "Web design — Omaha", href: "/web-design-omaha-ne" },
+    { title: "SEO — Omaha", href: "/seo-services-omaha-ne" },
+    { title: "Digital marketing — Omaha", href: "/digital-marketing-omaha-ne" },
+  ];
+
   const legals = [
     { title: "Privacy Policy", href: "/privacy-policy" },
     { title: "Terms of Service", href: "/terms-and-conditions" },
@@ -72,7 +78,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 items-start gap-10 sm:mt-0 md:mt-0 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 items-start gap-10 sm:mt-0 md:mt-0 lg:grid-cols-4">
             <div className="flex w-full flex-col justify-center space-y-4">
               <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
                 Pages
@@ -85,6 +91,24 @@ export function Footer() {
                         "transition-colors hover:text-text-neutral-800",
                         page.href === "/contact" && "btn-primary"
                       )}
+                      href={page.href}
+                    >
+                      {page.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex w-full flex-col justify-center space-y-4">
+              <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
+                Omaha metro
+              </p>
+              <ul className="list-none space-y-4 text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
+                {omahaMetro.map((page, idx) => (
+                  <li key={`omaha-${idx}`} className="list-none">
+                    <Link
+                      className="transition-colors hover:text-text-neutral-800"
                       href={page.href}
                     >
                       {page.title}
@@ -112,7 +136,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="col-span-2 flex flex-col justify-center space-y-4 lg:col-span-1">
+            <div className="flex flex-col justify-center space-y-4">
               <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
                 Register
               </p>

@@ -117,10 +117,50 @@ export function Hero() {
           </motion.h1>
         </Balancer>
       </div>
+
+      <motion.h2
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, delay: 0.42 }}
+        className="relative z-20 mx-auto mt-5 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 md:text-2xl"
+      >
+        <Balancer>
+          Web design, SEO &amp; lead systems for Omaha, Lincoln &amp; the Nebraska metro — we
+          deliver nationwide too.
+        </Balancer>
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: 0.5 }}
+        className="relative z-20 mx-auto mt-2 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 md:text-base"
+      >
+        <Link
+          href="/web-design-omaha-ne"
+          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
+        >
+          Omaha web design
+        </Link>
+        <span className="text-gray-400 dark:text-gray-500"> · </span>
+        <Link
+          href="/seo-services-omaha-ne"
+          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
+        >
+          SEO Omaha
+        </Link>
+        <span className="text-gray-400 dark:text-gray-500"> · </span>
+        <Link
+          href="/digital-marketing-omaha-ne"
+          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
+        >
+          Digital marketing Omaha
+        </Link>
+      </motion.p>
+
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.5 }}
+        transition={{ duration: 0.2, delay: 0.58 }}
         className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 md:text-lg"
       >
         N-Tech builds the same stack as our packages — from Foundation
@@ -131,7 +171,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.7 }}
+        transition={{ duration: 0.2, delay: 0.78 }}
         className="mb-4 mt-8 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-6"
       >
         <Button
@@ -181,7 +221,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.82, ease: "easeOut" }}
+        transition={{ duration: 0.35, delay: 0.88, ease: "easeOut" }}
         className="relative z-20 w-full px-4"
       >
         <HeroTicker />
@@ -190,7 +230,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.9, ease: "easeOut" }}
+        transition={{ duration: 0.4, delay: 0.96, ease: "easeOut" }}
         ref={containerRef}
         className="relative z-20 mx-auto w-full max-w-7xl px-1 sm:px-2"
       >

@@ -13,6 +13,15 @@ Topic service pages (intent / national)
 - https://ntechdigital.solutions/services/seo-and-visibility
 - https://ntechdigital.solutions/services/automation-and-crm
 
+Omaha / Nebraska metro landing pages (local intent)
+- https://ntechdigital.solutions/web-design-omaha-ne
+- https://ntechdigital.solutions/seo-services-omaha-ne
+- https://ntechdigital.solutions/digital-marketing-omaha-ne
+
+Blog editorial direction
+- Prioritize long-tail, winnable queries (how-to, comparisons, checklists, industry-specific problems, tooling and measurement). Deprioritize broad head terms like "website design company" until authority and backlinks support them.
+- Each post should map to one primary intent, link internally to relevant service/topic pages and /book-call or /contact.
+
 Service notes
 - Services can be engaged individually or combined for compounding effect.
 - Websites are built mobile-first and optimized for speed/Core Web Vitals.

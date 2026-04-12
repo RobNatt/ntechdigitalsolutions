@@ -176,6 +176,53 @@ export default async function ServicesPage() {
           </ul>
         </section>
 
+        <section className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 to-white p-6 dark:border-emerald-900/40 dark:from-emerald-950/20 dark:to-neutral-950 sm:p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-800 dark:text-emerald-400">
+            Omaha &amp; Nebraska metro
+          </p>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+            Local landing pages (web, SEO, growth)
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Same systems as our national topic guides — tuned for Omaha, Lincoln, and regional
+            intent. Use these for ads, GBP, and email deep links.
+          </p>
+          <ul className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[
+              {
+                href: "/web-design-omaha-ne",
+                title: "Web design — Omaha, NE",
+                blurb: "Lead-ready sites and redesigns for the metro.",
+              },
+              {
+                href: "/seo-services-omaha-ne",
+                title: "SEO — Omaha, NE",
+                blurb: "Organic and local visibility tied to pipeline.",
+              },
+              {
+                href: "/digital-marketing-omaha-ne",
+                title: "Digital marketing — Omaha, NE",
+                blurb: "Funnels, automation, and full-funnel growth.",
+              },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex h-full flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 transition hover:border-emerald-300/80 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-950/60 dark:hover:border-emerald-800"
+                >
+                  <span className="font-semibold text-neutral-900 dark:text-white">{item.title}</span>
+                  <span className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                    {item.blurb}
+                  </span>
+                  <span className="mt-3 text-sm font-medium text-emerald-800 dark:text-emerald-400">
+                    View page →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
             Proof layer

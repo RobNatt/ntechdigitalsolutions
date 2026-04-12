@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
+import { SITE_URL } from "@/constants/site";
 
 const aboutDesc =
   "N-Tech Digital Solutions builds websites, lead systems, and automation for businesses that want measurable growth.";
@@ -137,16 +138,54 @@ const FAQ_SECTIONS = [
   },
 ] as const;
 
-const FAQ_SCHEMA = {
+const faqMainEntity = FAQ_SECTIONS.flatMap((section) =>
+  section.items.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  }))
+);
+
+const aboutPageUrl = `${SITE_URL.replace(/\/$/, "")}/about`;
+
+const ABOUT_STRUCTURED_DATA = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQ_SECTIONS.flatMap((section) =>
-    section.items.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: { "@type": "Answer", text: item.a },
-    }))
-  ),
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": `${aboutPageUrl}#faq`,
+      mainEntity: faqMainEntity,
+    },
+    {
+      "@type": "Organization",
+      "@id": `${aboutPageUrl}#organization`,
+      name: "N-Tech Digital Solutions",
+      url: SITE_URL.replace(/\/$/, ""),
+      description: aboutDesc,
+      founder: { "@id": `${aboutPageUrl}#founder` },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Omaha",
+        addressRegion: "NE",
+        addressCountry: "US",
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": `${aboutPageUrl}#founder`,
+      name: "Robert Nattrass",
+      jobTitle: "Founder & Principal",
+      worksFor: { "@id": `${aboutPageUrl}#organization` },
+      description:
+        "Founder of N-Tech Digital Solutions. Works directly with clients on websites, SEO and search visibility, marketing automation, and lead systems that connect growth to day-to-day operations.",
+      knowsAbout: [
+        "Web design",
+        "Search engine optimization",
+        "Marketing automation",
+        "Lead generation",
+      ],
+    },
+  ],
 };
 
 export default function AboutPage() {
@@ -157,7 +196,7 @@ export default function AboutPage() {
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ABOUT_STRUCTURED_DATA) }}
       />
       <p>
         Based in Omaha, we work with local and regional businesses that are ready to invest in a web
@@ -184,6 +223,46 @@ export default function AboutPage() {
         </Link>
         .
       </p>
+
+      <section
+        className="rounded-2xl border border-neutral-200 bg-white/80 p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-6"
+        aria-labelledby="founder-heading"
+      >
+        <h2
+          id="founder-heading"
+          className="text-lg font-semibold text-neutral-900 dark:text-white"
+        >
+          Founder &amp; principal
+        </h2>
+        <p className="mt-1 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Robert Nattrass
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+          Robert leads N-Tech Digital Solutions from Omaha, Nebraska. He works hands-on with
+          clients on strategy and delivery: lead-ready websites, SEO and GEO visibility, CRM and
+          automation, and the operational handoffs that make marketing spend traceable to
+          conversations and revenue. The focus is always the same — fewer broken handoffs, clearer
+          messaging, and systems your team can run after launch.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+          Prefer to talk it through?{" "}
+          <Link
+            href="/book-call"
+            className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+          >
+            Book a call
+          </Link>{" "}
+          or{" "}
+          <Link
+            href="/contact"
+            className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+          >
+            send a message
+          </Link>
+          .
+        </p>
+      </section>
+
       <section className="pt-6">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Frequently asked questions</h2>
         <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
