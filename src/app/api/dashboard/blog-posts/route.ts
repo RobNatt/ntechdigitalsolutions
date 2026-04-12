@@ -79,6 +79,7 @@ export async function POST(request: Request) {
   }
 
   const publish = body.publish === true;
+  /** Prefer UTC ISO from the client (datetime-local converted in the browser). Raw T strings parse as UTC on the server. */
   const rawScheduledAt =
     typeof body.scheduledPublishAt === "string" ? body.scheduledPublishAt.trim() : "";
   let scheduledPublishAt: string | null = null;

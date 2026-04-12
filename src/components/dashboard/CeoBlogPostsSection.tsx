@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FileText } from "lucide-react";
 import { renderBlogPostBody } from "@/components/marketing/BlogPostsReader";
+import { datetimeLocalInputToIsoUtc, isoUtcToDatetimeLocalValue } from "@/lib/datetime-local";
 
 type BlogPost = {
   id: string;
@@ -16,14 +17,6 @@ type BlogPost = {
   scheduled_publish_at?: string | null;
   updated_at: string;
 };
-
-function toDatetimeLocalValue(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 /** Locale date + time for dashboard labels (scheduled / published). */
 function formatDateTimeShort(iso: string): string {
@@ -97,6 +90,12 @@ export function CeoBlogPostsSection() {
     setError(null);
     setMessage(null);
     try {
+      const rawSchedule = scheduledPublishAt.trim();
+      const scheduleIso = rawSchedule ? datetimeLocalInputToIsoUtc(rawSchedule) : null;
+      if (rawSchedule && !scheduleIso) {
+        setError("Invalid schedule date.");
+        return;
+      }
       const res = await fetch("/api/dashboard/blog-posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,7 +104,7 @@ export function CeoBlogPostsSection() {
           excerpt,
           content,
           publish,
-          scheduledPublishAt: scheduledPublishAt.trim() ? scheduledPublishAt : null,
+          scheduledPublishAt: scheduleIso,
         }),
       });
       const data = await res.json();
@@ -115,7 +114,7 @@ export function CeoBlogPostsSection() {
       }
       setMessage(
         publish
-          ? scheduledPublishAt
+          ? scheduleIso
             ? "Post scheduled for publish."
             : "Post published to /blog."
           : "Draft saved."
@@ -153,8 +152,8 @@ export function CeoBlogPostsSection() {
     setEditContent(post.content);
     setEditScheduledPublishAt(
       post.status === "draft"
-        ? toDatetimeLocalValue(post.scheduled_publish_at ?? null)
-        : toDatetimeLocalValue(post.published_at ?? null)
+        ? isoUtcToDatetimeLocalValue(post.scheduled_publish_at ?? null)
+        : isoUtcToDatetimeLocalValue(post.published_at ?? null)
     );
     setShowPreview(true);
     setEditError(null);
@@ -181,6 +180,11 @@ export function CeoBlogPostsSection() {
     try {
       const publish = options?.publish === true;
       const rawSchedule = editScheduledPublishAt.trim();
+      const scheduleIso = rawSchedule ? datetimeLocalInputToIsoUtc(rawSchedule) : null;
+      if (rawSchedule && !scheduleIso) {
+        setEditError("Invalid schedule date.");
+        return;
+      }
       const body: Record<string, unknown> = {
         title: t,
         excerpt: editExcerpt.trim() || null,
@@ -188,13 +192,13 @@ export function CeoBlogPostsSection() {
       };
       if (publish) {
         body.status = "published";
-        if (rawSchedule) {
-          body.scheduledPublishAt = rawSchedule;
+        if (scheduleIso) {
+          body.scheduledPublishAt = scheduleIso;
         }
       } else if (editing.status === "draft") {
-        body.scheduledPublishAt = rawSchedule || null;
-      } else if (editing.status === "published" && rawSchedule) {
-        body.scheduledPublishAt = rawSchedule;
+        body.scheduledPublishAt = scheduleIso;
+      } else if (editing.status === "published" && scheduleIso) {
+        body.scheduledPublishAt = scheduleIso;
       }
 
       const res = await fetch(`/api/dashboard/blog-posts/${editing.id}`, {
@@ -209,7 +213,7 @@ export function CeoBlogPostsSection() {
       }
       setEditMessage(
         publish
-          ? rawSchedule
+          ? scheduleIso
             ? "Updates saved; post is scheduled as set."
             : "Updates saved and post is published."
           : "Draft saved."
@@ -222,9 +226,9 @@ export function CeoBlogPostsSection() {
         setEditExcerpt(p.excerpt ?? "");
         setEditContent(p.content);
         if (p.status === "draft") {
-          setEditScheduledPublishAt(toDatetimeLocalValue(p.scheduled_publish_at ?? null));
+          setEditScheduledPublishAt(isoUtcToDatetimeLocalValue(p.scheduled_publish_at ?? null));
         } else if (p.published_at) {
-          setEditScheduledPublishAt(toDatetimeLocalValue(p.published_at));
+          setEditScheduledPublishAt(isoUtcToDatetimeLocalValue(p.published_at));
         } else {
           setEditScheduledPublishAt("");
         }
