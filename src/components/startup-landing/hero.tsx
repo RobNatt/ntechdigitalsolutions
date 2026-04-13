@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
 import { HeroTicker } from "./hero-ticker";
-import { HomeDiscoveryLead } from "./home-discovery-lead";
+import { HeroDiscoveryLeadPanel } from "./home-discovery-lead";
 
 const HolographicDashboardTabs = dynamic(
   () =>
@@ -85,150 +85,158 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-20 mb-6 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
-        <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
-        AI-Driven Growth Systems for Small Business
-      </div>
+      <div className="relative z-20 mx-auto w-full max-w-7xl px-4 md:px-6">
+        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-14">
+          <div className="min-w-0 flex-1 lg:max-w-[min(100%,52rem)]">
+            <div className="flex justify-center lg:justify-start">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
+                <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+                AI-Driven Growth Systems for Small Business
+              </div>
+            </div>
 
-      <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
-        <Balancer>
-          <motion.h1 className="text-[inherit]">
-            {HEADLINE_WORDS.map((word, index) => (
-              <motion.span
-                key={index}
-                initial={{
-                  filter: "blur(10px)",
-                  opacity: 0,
-                  y: 10,
-                }}
-                animate={{
-                  filter: "blur(0px)",
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.4,
-                  delay: index * 0.05,
-                }}
-                className="inline-block"
+            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 lg:mx-0 lg:text-left md:text-7xl">
+              <Balancer>
+                <motion.h1 className="text-[inherit]">
+                  {HEADLINE_WORDS.map((word, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{
+                        filter: "blur(10px)",
+                        opacity: 0,
+                        y: 10,
+                      }}
+                      animate={{
+                        filter: "blur(0px)",
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        delay: index * 0.05,
+                      }}
+                      className="inline-block"
+                    >
+                      {word}&nbsp;
+                    </motion.span>
+                  ))}
+                </motion.h1>
+              </Balancer>
+            </div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: 0.42 }}
+              className="relative z-20 mx-auto mt-8 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 lg:mx-0 lg:max-w-none lg:px-0 lg:text-left md:text-2xl"
+            >
+              <Balancer>
+                Web design, SEO &amp; lead systems for Omaha, Lincoln &amp; the Nebraska metro — we
+                deliver nationwide too.
+              </Balancer>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, delay: 0.5 }}
+              className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 lg:mx-0 lg:px-0 lg:text-left md:text-base"
+            >
+              <Link
+                href="/web-design-omaha-ne"
+                className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
               >
-                {word}&nbsp;
-              </motion.span>
-            ))}
-          </motion.h1>
-        </Balancer>
+                Omaha web design
+              </Link>
+              <span className="text-gray-400 dark:text-gray-500"> · </span>
+              <Link
+                href="/seo-services-omaha-ne"
+                className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
+              >
+                SEO Omaha
+              </Link>
+              <span className="text-gray-400 dark:text-gray-500"> · </span>
+              <Link
+                href="/digital-marketing-omaha-ne"
+                className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
+              >
+                Digital marketing Omaha
+              </Link>
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.58 }}
+              className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 lg:mx-0 lg:px-0 lg:text-left md:text-lg"
+            >
+              N-Tech builds the same stack as our packages — from Foundation
+              (SEO-ready sites and WordPress training) through Growth (funnels, CRM,
+              local SEO) to Pro (automation, content, and ongoing optimization) — so
+              you can focus on running your business.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.78 }}
+              className="mb-2 mt-12 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:mx-0 lg:justify-start lg:px-0 md:mb-4 md:mt-14"
+            >
+              <Button
+                as={Link}
+                href={CONSTANTS.CONTACT_PATH}
+                variant="dark"
+                className="w-full text-center sm:w-auto sm:min-w-[11rem]"
+                onClick={() =>
+                  trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+                    placement: "hero",
+                    cta: "get_in_touch",
+                  })
+                }
+              >
+                Get in touch
+              </Button>
+              <Button
+                as={Link}
+                href="/growth-system"
+                variant="secondary"
+                className="w-full border border-neutral-300 bg-white/90 text-center font-semibold text-neutral-900 hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:w-auto sm:min-w-[11rem]"
+                onClick={() =>
+                  trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+                    placement: "hero",
+                    cta: "growth_system",
+                  })
+                }
+              >
+                Growth System
+              </Button>
+              <Button
+                as={Link}
+                href="/#features"
+                variant="secondary"
+                className="w-full text-center sm:w-auto sm:min-w-[11rem]"
+                onClick={() =>
+                  trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
+                    placement: "hero",
+                    cta: "see_features",
+                  })
+                }
+              >
+                See what we build
+              </Button>
+            </motion.div>
+          </div>
+
+          <HeroDiscoveryLeadPanel className="mx-auto shrink-0 lg:mx-0 lg:max-w-[min(100%,26rem)] lg:pt-1 xl:max-w-[28rem]" />
+        </div>
       </div>
-
-      <motion.h2
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, delay: 0.42 }}
-        className="relative z-20 mx-auto mt-8 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 md:text-2xl"
-      >
-        <Balancer>
-          Web design, SEO &amp; lead systems for Omaha, Lincoln &amp; the Nebraska metro — we
-          deliver nationwide too.
-        </Balancer>
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, delay: 0.5 }}
-        className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 md:text-base"
-      >
-        <Link
-          href="/web-design-omaha-ne"
-          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
-        >
-          Omaha web design
-        </Link>
-        <span className="text-gray-400 dark:text-gray-500"> · </span>
-        <Link
-          href="/seo-services-omaha-ne"
-          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
-        >
-          SEO Omaha
-        </Link>
-        <span className="text-gray-400 dark:text-gray-500"> · </span>
-        <Link
-          href="/digital-marketing-omaha-ne"
-          className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
-        >
-          Digital marketing Omaha
-        </Link>
-      </motion.p>
-
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.58 }}
-        className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 md:text-lg"
-      >
-        N-Tech builds the same stack as our packages — from Foundation
-        (SEO-ready sites and WordPress training) through Growth (funnels, CRM,
-        local SEO) to Pro (automation, content, and ongoing optimization) — so
-        you can focus on running your business.
-      </motion.p>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.78 }}
-        className="mb-6 mt-12 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-8 md:mt-14"
-      >
-        <Button
-          as={Link}
-          href={CONSTANTS.CONTACT_PATH}
-          variant="dark"
-          className="w-full text-center sm:w-auto sm:min-w-[11rem]"
-          onClick={() =>
-            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
-              placement: "hero",
-              cta: "get_in_touch",
-            })
-          }
-        >
-          Get in touch
-        </Button>
-        <Button
-          as={Link}
-          href="/growth-system"
-          variant="secondary"
-          className="w-full border border-neutral-300 bg-white/90 text-center font-semibold text-neutral-900 hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:w-auto sm:min-w-[11rem]"
-          onClick={() =>
-            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
-              placement: "hero",
-              cta: "growth_system",
-            })
-          }
-        >
-          Growth System
-        </Button>
-        <Button
-          as={Link}
-          href="/#features"
-          variant="secondary"
-          className="w-full text-center sm:w-auto sm:min-w-[11rem]"
-          onClick={() =>
-            trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
-              placement: "hero",
-              cta: "see_features",
-            })
-          }
-        >
-          See what we build
-        </Button>
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.88, ease: "easeOut" }}
-        className="relative z-20 w-full px-4 pt-2 md:pt-4"
+        className="relative z-20 mt-10 w-full px-4 pt-2 md:mt-14 md:pt-4"
       >
         <HeroTicker />
       </motion.div>
-
-      <HomeDiscoveryLead />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
