@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Columns2,
   LayoutGrid,
+  Pencil,
   Plus,
   Square,
   Trash2,
@@ -104,6 +105,11 @@ function eventTimeLabel(ev: ApiCalendarEvent): string {
   return `${pad2(sh)}:${pad2(sm)}–${pad2(eh)}:${pad2(em)}`;
 }
 
+function alertMinutesLabel(minutes: number): string {
+  const o = ALERT_MINUTES_OPTIONS.find((x) => x.value === minutes);
+  return o?.label ?? `${minutes} min before`;
+}
+
 function formatRemindLocal(iso: string): string {
   try {
     return new Date(iso).toLocaleString(undefined, {
@@ -190,6 +196,8 @@ export function CeoCalendarSection() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  /** Existing events open in read-only view until the user chooses Edit. New events are always editable. */
+  const [isEditingForm, setIsEditingForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -408,6 +416,7 @@ export function CeoCalendarSection() {
     setSelectedDay(ymd);
     setEventAnchorDate(ymd);
     setEditingId(null);
+    setIsEditingForm(true);
     setTitle("");
     setEventType("lead_call");
     setStartTime("09:00");
@@ -421,12 +430,13 @@ export function CeoCalendarSection() {
     setFormOpen(true);
   }
 
-  function openEdit(ev: ApiCalendarEvent) {
+  function openEventDetail(ev: ApiCalendarEvent) {
     const day = String(ev.date).slice(0, 10);
     const anchor = (ev.series_start_date ?? day).slice(0, 10);
     setSelectedDay(day);
     setEventAnchorDate(anchor);
     setEditingId(ev.id);
+    setIsEditingForm(false);
     setTitle(ev.title);
     setEventType((ev.event_type as CalendarEventType) || "other");
     setStartTime(`${pad2(ev.hour)}:${pad2(ev.start_minutes ?? 0)}`);
@@ -457,6 +467,11 @@ export function CeoCalendarSection() {
       setAlertMinutes(preset);
     }
     setFormOpen(true);
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setIsEditingForm(false);
   }
 
   async function saveEvent() {
@@ -503,7 +518,7 @@ export function CeoCalendarSection() {
         setError(typeof data.error === "string" ? data.error : "Save failed.");
         return;
       }
-      setFormOpen(false);
+      closeForm();
       await loadEvents();
     } catch {
       setError("Save failed.");
@@ -530,7 +545,7 @@ export function CeoCalendarSection() {
         setError(typeof data.error === "string" ? data.error : "Delete failed.");
         return;
       }
-      setFormOpen(false);
+      closeForm();
       await loadEvents();
     } catch {
       setError("Delete failed.");
@@ -544,6 +559,14 @@ export function CeoCalendarSection() {
 
   const inputClass =
     "mt-1 w-full rounded-md border border-gray-400/45 dark:border-neutral-600/50 bg-white/90 px-2.5 py-1.5 text-sm text-gray-900 dark:text-neutral-50 shadow-sm focus:border-sky-500/60 focus:outline-none focus:ring-1 focus:ring-sky-500/40";
+
+  const detailReadOnlyBox =
+    "mt-1 rounded-md border border-gray-400/30 dark:border-neutral-600/40 bg-white/70 px-2.5 py-1.5 text-sm text-gray-900 dark:text-neutral-50";
+
+  const leadDisplay =
+    leadId ? leadOptions.find((o) => o.id === leadId)?.label ?? leadId : "—";
+  const clientDisplay =
+    clientId ? clientOptions.find((o) => o.id === clientId)?.label ?? clientId : "—";
 
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -702,7 +725,7 @@ export function CeoCalendarSection() {
                       type="button"
                       onClick={() => {
                         setSelectedDay(ymd);
-                        setFormOpen(false);
+                        if (formOpen) closeForm();
                       }}
                       onDoubleClick={() => openNewForDay(ymd)}
                       className={cn(
@@ -772,7 +795,7 @@ export function CeoCalendarSection() {
                       type="button"
                       onClick={() => {
                         setSelectedDay(ymd);
-                        setFormOpen(false);
+                        if (formOpen) closeForm();
                       }}
                       onDoubleClick={() => openNewForDay(ymd)}
                       className={cn(
@@ -788,7 +811,7 @@ export function CeoCalendarSection() {
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                openEdit(ev);
+                                openEventDetail(ev);
                               }}
                               className="w-full rounded border border-gray-400/30 dark:border-neutral-600/35 bg-white/90 px-1 py-0.5 text-left text-[10px] font-medium text-gray-900 dark:text-neutral-50 hover:bg-gray-50"
                               style={{ borderLeftWidth: 3, borderLeftColor: ev.color || "#64748b" }}
@@ -821,7 +844,7 @@ export function CeoCalendarSection() {
                       <li key={ev.instance_id ?? `${ev.id}-${ev.date}`}>
                         <button
                           type="button"
-                          onClick={() => openEdit(ev)}
+                          onClick={() => openEventDetail(ev)}
                           className="flex w-full gap-3 rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/90 px-3 py-2.5 text-left shadow-sm hover:bg-gray-50"
                         >
                           <span
@@ -863,7 +886,7 @@ export function CeoCalendarSection() {
             {viewMode === "month"
               ? "Double-click a day to add an event. Single click selects the day for the list and form."
               : viewMode === "week"
-                ? "Click a day to select it; double-click to add. Event chips open the editor."
+                ? "Click a day to select it; double-click to add. Event chips open details (edit from there if needed)."
                 : "Use arrows to change days. Add from the sidebar or switch to month/week to pick another day."}
           </p>
         </div>
@@ -882,7 +905,7 @@ export function CeoCalendarSection() {
                   <li key={e.instance_id ?? `${e.id}-${e.date}`}>
                     <button
                       type="button"
-                      onClick={() => openEdit(e)}
+                      onClick={() => openEventDetail(e)}
                       className="w-full rounded-md border border-amber-200/60 bg-white/80 px-2 py-1.5 text-left hover:bg-amber-100/50"
                     >
                       <span className="font-semibold text-gray-900 dark:text-neutral-50">{e.title}</span>
@@ -918,7 +941,7 @@ export function CeoCalendarSection() {
                   <li key={ev.instance_id ?? `${ev.id}-${ev.date}`}>
                     <button
                       type="button"
-                      onClick={() => openEdit(ev)}
+                      onClick={() => openEventDetail(ev)}
                       className="w-full rounded-lg border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 px-2 py-1.5 text-left text-xs hover:bg-gray-50"
                     >
                       <span className="font-semibold text-gray-900 dark:text-neutral-50">{ev.title}</span>
@@ -952,12 +975,16 @@ export function CeoCalendarSection() {
           aria-modal="true"
           aria-labelledby="cal-form-title"
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setFormOpen(false);
+            if (e.target === e.currentTarget) closeForm();
           }}
         >
           <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-gray-400/50 dark:border-neutral-600/55 bg-neutral-100 p-4 shadow-xl">
             <h2 id="cal-form-title" className="text-base font-bold text-gray-900 dark:text-neutral-50">
-              {editingId ? "Edit event" : "New event"}
+              {editingId
+                ? isEditingForm
+                  ? "Edit event"
+                  : "Event"
+                : "New event"}
             </h2>
             <p className="text-xs text-gray-600 dark:text-neutral-400">
               {editingId && recurrence !== "none" && selectedDay !== eventAnchorDate
@@ -965,163 +992,261 @@ export function CeoCalendarSection() {
                 : selectedDay}
             </p>
 
-            <div className="mt-3 space-y-3">
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Date (series start)
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={eventAnchorDate}
-                  onChange={(e) => setEventAnchorDate(e.target.value)}
-                />
-              </label>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Title
-                <input className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
-              </label>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Type
-                <select
-                  className={cn(inputClass, "cursor-pointer")}
-                  value={eventType}
-                  onChange={(e) => setEventType(e.target.value as CalendarEventType)}
-                >
-                  {CALENDAR_EVENT_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {EVENT_TYPE_LABELS[t]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                  Start
-                  <input
-                    type="time"
-                    className={inputClass}
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </label>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                  End
-                  <input
-                    type="time"
-                    className={inputClass}
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
-                </label>
+            {editingId && !isEditingForm ? (
+              <div className="mt-3 space-y-3">
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Date (series start)
+                  </div>
+                  <div className={detailReadOnlyBox}>{eventAnchorDate}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Title</div>
+                  <div className={detailReadOnlyBox}>{title || "—"}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Type</div>
+                  <div className={detailReadOnlyBox}>{EVENT_TYPE_LABELS[eventType]}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Start</div>
+                    <div className={detailReadOnlyBox}>{startTime}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">End</div>
+                    <div className={detailReadOnlyBox}>{endTime}</div>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Repeat</div>
+                  <div className={detailReadOnlyBox}>{RECURRENCE_LABELS[recurrence]}</div>
+                </div>
+                {recurrence !== "none" ? (
+                  <div>
+                    <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                      Repeat until
+                    </div>
+                    <div className={detailReadOnlyBox}>
+                      {recurrenceUntil.trim() ? recurrenceUntil : "No end date (see calendar load cap)"}
+                    </div>
+                  </div>
+                ) : null}
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Link lead (optional)
+                  </div>
+                  <div className={detailReadOnlyBox}>{leadDisplay}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Link client (optional)
+                  </div>
+                  <div className={detailReadOnlyBox}>{clientDisplay}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Alert</div>
+                  <div className={detailReadOnlyBox}>{alertMinutesLabel(alertMinutes)}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Notes</div>
+                  <div className={cn(detailReadOnlyBox, "min-h-[72px] whitespace-pre-wrap")}>
+                    {notes.trim() ? notes : "—"}
+                  </div>
+                </div>
               </div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Repeat
-                <select
-                  className={cn(inputClass, "cursor-pointer")}
-                  value={recurrence}
-                  onChange={(e) => setRecurrence(e.target.value as RecurrenceType)}
-                >
-                  {RECURRENCE_TYPES.map((r) => (
-                    <option key={r} value={r}>
-                      {RECURRENCE_LABELS[r]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {recurrence !== "none" ? (
+            ) : (
+              <div className="mt-3 space-y-3">
                 <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                  Repeat until (optional)
+                  Date (series start)
                   <input
                     type="date"
                     className={inputClass}
-                    value={recurrenceUntil}
-                    onChange={(e) => setRecurrenceUntil(e.target.value)}
+                    value={eventAnchorDate}
+                    onChange={(e) => setEventAnchorDate(e.target.value)}
                   />
-                  <span className="mt-0.5 block text-[10px] font-normal text-gray-500 dark:text-neutral-500">
-                    Leave empty to repeat far into the future (capped when loading the calendar).
-                  </span>
                 </label>
-              ) : null}
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Link lead (optional)
-                <select
-                  className={cn(inputClass, "cursor-pointer")}
-                  value={leadId}
-                  onChange={(e) => setLeadId(e.target.value)}
-                >
-                  <option value="">—</option>
-                  {leadOptions.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Link client (optional)
-                <select
-                  className={cn(inputClass, "cursor-pointer")}
-                  value={clientId}
-                  onChange={(e) => setClientId(e.target.value)}
-                >
-                  <option value="">—</option>
-                  {clientOptions.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Alert
-                <select
-                  className={cn(inputClass, "cursor-pointer")}
-                  value={alertMinutes}
-                  onChange={(e) => setAlertMinutes(Number(e.target.value))}
-                >
-                  {ALERT_MINUTES_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                Notes
-                <textarea
-                  className={cn(inputClass, "min-h-[72px] resize-y")}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                />
-              </label>
-            </div>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Title
+                  <input className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
+                </label>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Type
+                  <select
+                    className={cn(inputClass, "cursor-pointer")}
+                    value={eventType}
+                    onChange={(e) => setEventType(e.target.value as CalendarEventType)}
+                  >
+                    {CALENDAR_EVENT_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {EVENT_TYPE_LABELS[t]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Start
+                    <input
+                      type="time"
+                      className={inputClass}
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    End
+                    <input
+                      type="time"
+                      className={inputClass}
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                    />
+                  </label>
+                </div>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Repeat
+                  <select
+                    className={cn(inputClass, "cursor-pointer")}
+                    value={recurrence}
+                    onChange={(e) => setRecurrence(e.target.value as RecurrenceType)}
+                  >
+                    {RECURRENCE_TYPES.map((r) => (
+                      <option key={r} value={r}>
+                        {RECURRENCE_LABELS[r]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {recurrence !== "none" ? (
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Repeat until (optional)
+                    <input
+                      type="date"
+                      className={inputClass}
+                      value={recurrenceUntil}
+                      onChange={(e) => setRecurrenceUntil(e.target.value)}
+                    />
+                    <span className="mt-0.5 block text-[10px] font-normal text-gray-500 dark:text-neutral-500">
+                      Leave empty to repeat far into the future (capped when loading the calendar).
+                    </span>
+                  </label>
+                ) : null}
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Link lead (optional)
+                  <select
+                    className={cn(inputClass, "cursor-pointer")}
+                    value={leadId}
+                    onChange={(e) => setLeadId(e.target.value)}
+                  >
+                    <option value="">—</option>
+                    {leadOptions.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Link client (optional)
+                  <select
+                    className={cn(inputClass, "cursor-pointer")}
+                    value={clientId}
+                    onChange={(e) => setClientId(e.target.value)}
+                  >
+                    <option value="">—</option>
+                    {clientOptions.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Alert
+                  <select
+                    className={cn(inputClass, "cursor-pointer")}
+                    value={alertMinutes}
+                    onChange={(e) => setAlertMinutes(Number(e.target.value))}
+                  >
+                    {ALERT_MINUTES_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Notes
+                  <textarea
+                    className={cn(inputClass, "min-h-[72px] resize-y")}
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={3}
+                  />
+                </label>
+              </div>
+            )}
 
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-400/30 dark:border-neutral-600/35 pt-3">
-              <button
-                type="button"
-                disabled={saving || !title.trim()}
-                onClick={() => void saveEvent()}
-                className="rounded-lg border border-gray-500/40 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 disabled:opacity-40"
-              >
-                {saving ? "Saving…" : "Save"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormOpen(false)}
-                className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-200/60"
-              >
-                Cancel
-              </button>
-              {editingId ? (
-                <button
-                  type="button"
-                  onClick={() => void deleteEvent(editingId)}
-                  className="ml-auto inline-flex items-center gap-1 rounded-lg border border-red-400/50 bg-red-50 px-3 py-2 text-xs font-semibold text-red-900"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete
-                </button>
-              ) : null}
+              {editingId && !isEditingForm ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingForm(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 bg-sky-100/80 px-3 py-2 text-xs font-semibold text-sky-950"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => closeForm()}
+                    className="rounded-lg border border-gray-500/40 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void deleteEvent(editingId)}
+                    className="ml-auto inline-flex items-center gap-1 rounded-lg border border-red-400/50 bg-red-50 px-3 py-2 text-xs font-semibold text-red-900"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    disabled={saving || !title.trim()}
+                    onClick={() => void saveEvent()}
+                    className="rounded-lg border border-gray-500/40 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 disabled:opacity-40"
+                  >
+                    {saving ? "Saving…" : "Save"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingId) setIsEditingForm(false);
+                      else closeForm();
+                    }}
+                    className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-200/60"
+                  >
+                    Cancel
+                  </button>
+                  {editingId ? (
+                    <button
+                      type="button"
+                      onClick={() => void deleteEvent(editingId)}
+                      className="ml-auto inline-flex items-center gap-1 rounded-lg border border-red-400/50 bg-red-50 px-3 py-2 text-xs font-semibold text-red-900"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Delete
+                    </button>
+                  ) : null}
+                </>
+              )}
             </div>
           </div>
         </div>
