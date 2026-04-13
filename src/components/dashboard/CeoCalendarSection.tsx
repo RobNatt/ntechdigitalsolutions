@@ -105,11 +105,6 @@ function eventTimeLabel(ev: ApiCalendarEvent): string {
   return `${pad2(sh)}:${pad2(sm)}–${pad2(eh)}:${pad2(em)}`;
 }
 
-function alertMinutesLabel(minutes: number): string {
-  const o = ALERT_MINUTES_OPTIONS.find((x) => x.value === minutes);
-  return o?.label ?? `${minutes} min before`;
-}
-
 function formatRemindLocal(iso: string): string {
   try {
     return new Date(iso).toLocaleString(undefined, {
@@ -563,11 +558,6 @@ export function CeoCalendarSection() {
   const detailReadOnlyBox =
     "mt-1 rounded-md border border-gray-400/30 dark:border-neutral-600/40 bg-white/70 px-2.5 py-1.5 text-sm text-gray-900 dark:text-neutral-50";
 
-  const leadDisplay =
-    leadId ? leadOptions.find((o) => o.id === leadId)?.label ?? leadId : "—";
-  const clientDisplay =
-    clientId ? clientOptions.find((o) => o.id === clientId)?.label ?? clientId : "—";
-
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
@@ -1017,36 +1007,6 @@ export function CeoCalendarSection() {
                     <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">End</div>
                     <div className={detailReadOnlyBox}>{endTime}</div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Repeat</div>
-                  <div className={detailReadOnlyBox}>{RECURRENCE_LABELS[recurrence]}</div>
-                </div>
-                {recurrence !== "none" ? (
-                  <div>
-                    <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                      Repeat until
-                    </div>
-                    <div className={detailReadOnlyBox}>
-                      {recurrenceUntil.trim() ? recurrenceUntil : "No end date (see calendar load cap)"}
-                    </div>
-                  </div>
-                ) : null}
-                <div>
-                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                    Link lead (optional)
-                  </div>
-                  <div className={detailReadOnlyBox}>{leadDisplay}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">
-                    Link client (optional)
-                  </div>
-                  <div className={detailReadOnlyBox}>{clientDisplay}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Alert</div>
-                  <div className={detailReadOnlyBox}>{alertMinutesLabel(alertMinutes)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-gray-700 dark:text-neutral-300">Notes</div>
