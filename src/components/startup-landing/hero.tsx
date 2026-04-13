@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
 import { HeroTicker } from "./hero-ticker";
+import { HomeDiscoveryLead } from "./home-discovery-lead";
 
 const HolographicDashboardTabs = dynamic(
   () =>
@@ -40,7 +41,7 @@ export function Hero() {
   return (
     <div
       ref={parentRef}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-20 md:px-8 md:py-40 bg-neutral-50 dark:bg-neutral-900"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-neutral-50 px-4 py-28 dark:bg-neutral-900 md:px-8 md:py-44"
     >
       <BackgroundGrids />
       <CollisionMechanism
@@ -84,12 +85,12 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-20 mb-4 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
+      <div className="relative z-20 mb-6 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
         <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
         AI-Driven Growth Systems for Small Business
       </div>
 
-      <div className="text-balance relative z-20 mx-auto mb-4 mt-2 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
+      <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 md:text-7xl">
         <Balancer>
           <motion.h1 className="text-[inherit]">
             {HEADLINE_WORDS.map((word, index) => (
@@ -122,7 +123,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, delay: 0.42 }}
-        className="relative z-20 mx-auto mt-5 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 md:text-2xl"
+        className="relative z-20 mx-auto mt-8 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 md:text-2xl"
       >
         <Balancer>
           Web design, SEO &amp; lead systems for Omaha, Lincoln &amp; the Nebraska metro — we
@@ -133,7 +134,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.22, delay: 0.5 }}
-        className="relative z-20 mx-auto mt-2 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 md:text-base"
+        className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 md:text-base"
       >
         <Link
           href="/web-design-omaha-ne"
@@ -161,7 +162,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.58 }}
-        className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 md:text-lg"
+        className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 md:text-lg"
       >
         N-Tech builds the same stack as our packages — from Foundation
         (SEO-ready sites and WordPress training) through Growth (funnels, CRM,
@@ -172,7 +173,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.78 }}
-        className="mb-4 mt-8 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-6"
+        className="mb-6 mt-12 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-8 md:mt-14"
       >
         <Button
           as={Link}
@@ -222,17 +223,19 @@ export function Hero() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.88, ease: "easeOut" }}
-        className="relative z-20 w-full px-4"
+        className="relative z-20 w-full px-4 pt-2 md:pt-4"
       >
         <HeroTicker />
       </motion.div>
+
+      <HomeDiscoveryLead />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.96, ease: "easeOut" }}
         ref={containerRef}
-        className="relative z-20 mx-auto w-full max-w-7xl px-1 sm:px-2"
+        className="relative z-20 mx-auto mt-2 w-full max-w-7xl px-1 sm:px-2 md:mt-4"
       >
         <HolographicDashboardTabs className="h-[min(68vh,640px)] md:h-[min(72vh,720px)]" />
       </motion.div>

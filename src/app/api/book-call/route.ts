@@ -48,6 +48,7 @@ export async function POST(request: Request) {
       phone,
       company,
       planInterest: plan,
+      budget: null,
       message: notes || "Booked phone call with Robert Nattrass",
       sourcePage: "/book-call",
     });

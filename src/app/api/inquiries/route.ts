@@ -51,6 +51,10 @@ export async function POST(request: Request) {
     const message = String(body.message || "").trim();
     const planInterest =
       typeof body.plan === "string" && body.plan.trim() ? body.plan.trim().slice(0, 80) : null;
+    const budget =
+      typeof body.budget === "string" && body.budget.trim()
+        ? body.budget.trim().slice(0, 120)
+        : null;
     const sourcePage =
       typeof body.sourcePage === "string" && body.sourcePage.trim()
         ? body.sourcePage.trim().slice(0, 500)
@@ -82,13 +86,13 @@ export async function POST(request: Request) {
     if (company && company.length > 200) {
       return NextResponse.json({ error: "Company name is too long." }, { status: 400 });
     }
-
     const companyId = process.env.DEFAULT_COMPANY_ID;
     const nowIso = new Date().toISOString();
     const leadScore = scoreInquiryLead({
       phone,
       company,
       planInterest,
+      budget,
       message,
       sourcePage,
     });
@@ -96,6 +100,7 @@ export async function POST(request: Request) {
       message,
       ...(company ? { company } : {}),
       ...(planInterest ? { plan_interest: planInterest } : {}),
+      ...(budget ? { budget_range: budget } : {}),
       ...(sourcePage ? { source_page: sourcePage } : {}),
       lead_score: leadScore.score,
       lead_temperature: leadScore.temperature,
@@ -145,6 +150,7 @@ export async function POST(request: Request) {
         phone,
         message,
         planInterest,
+        budget,
         sourcePage,
       });
       await sendInquiryAutoReply({
@@ -175,6 +181,7 @@ export async function POST(request: Request) {
       metadata: {
         lead_id: leadId ?? null,
         plan_interest: planInterest,
+        budget_range: budget,
         lead_score: leadScore.score,
         lead_temperature: leadScore.temperature,
       },

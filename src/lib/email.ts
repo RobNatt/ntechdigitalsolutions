@@ -74,6 +74,7 @@ export type InquiryNotificationPayload = {
   phone?: string | null;
   message: string;
   planInterest?: string | null;
+  budget?: string | null;
   sourcePage?: string | null;
 };
 
@@ -98,6 +99,7 @@ export async function sendInquiryNotification(payload: InquiryNotificationPayloa
     payload.company ? `Company: ${payload.company}` : null,
     payload.phone ? `Phone: ${payload.phone}` : null,
     payload.planInterest ? `Plan / package interest: ${payload.planInterest}` : null,
+    payload.budget ? `Budget range: ${payload.budget}` : null,
     payload.sourcePage ? `Submitted from: ${payload.sourcePage}` : null,
     payload.id ? `Lead ID (CRM): ${payload.id}` : null,
     "",

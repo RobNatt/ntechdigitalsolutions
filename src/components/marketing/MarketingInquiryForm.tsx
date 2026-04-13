@@ -9,18 +9,37 @@ import { cn } from "@/lib/utils";
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400";
 
+const BUDGET_RANGE_OPTIONS = [
+  { value: "", label: "Prefer not to say" },
+  { value: "Under $2,500", label: "Under $2,500" },
+  { value: "$2,500 – $7,500", label: "$2,500 – $7,500" },
+  { value: "$7,500 – $15,000", label: "$7,500 – $15,000" },
+  { value: "$15,000+", label: "$15,000+" },
+  { value: "Not sure yet", label: "Not sure yet — let’s talk" },
+] as const;
+
 type MarketingInquiryFormProps = {
   /** From URL ?plan= (pricing CTAs) */
   planInterest?: string;
   className?: string;
+  /** Optional budget range (e.g. home discovery form). */
+  showBudget?: boolean;
+  /** Passed to analytics as `surface` (default: contact). */
+  analyticsSurface?: string;
 };
 
-export function MarketingInquiryForm({ planInterest, className }: MarketingInquiryFormProps) {
+export function MarketingInquiryForm({
+  planInterest,
+  className,
+  showBudget = false,
+  analyticsSurface = "contact",
+}: MarketingInquiryFormProps) {
   const formStartedRef = useRef(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
+  const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -44,6 +63,7 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
           phone,
           message,
           ...(planInterest ? { plan: planInterest } : {}),
+          ...(showBudget && budget.trim() ? { budget: budget.trim() } : {}),
           sourcePage,
           ...analyticsIds,
         }),
@@ -56,17 +76,18 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
       }
       setDone(true);
       trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.INFO_SUBMIT, {
-        surface: "contact",
+        surface: analyticsSurface,
         status: "submitted",
         ...(planInterest ? { plan: planInterest } : {}),
       });
       trackClientAnalyticsEvent("inquiry_submit", {
-        surface: "contact",
+        surface: analyticsSurface,
       });
       setName("");
       setEmail("");
       setCompany("");
       setPhone("");
+      setBudget("");
       setMessage("");
     } catch {
       setError("Network error. Please try again.");
@@ -102,11 +123,11 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
     if (formStartedRef.current) return;
     formStartedRef.current = true;
     trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_CLICK, {
-      surface: "contact",
+      surface: analyticsSurface,
       ...(planInterest ? { plan: planInterest } : {}),
     });
     trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FORM_START, {
-      surface: "contact",
+      surface: analyticsSurface,
       ...(planInterest ? { plan: planInterest } : {}),
     });
   }
@@ -176,6 +197,24 @@ export function MarketingInquiryForm({ planInterest, className }: MarketingInqui
           maxLength={40}
         />
       </label>
+
+      {showBudget ? (
+        <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+          Project budget
+          <select
+            className={cn(inputClass, "cursor-pointer")}
+            name="budget"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+          >
+            {BUDGET_RANGE_OPTIONS.map((o) => (
+              <option key={o.value || "unspecified"} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : null}
 
       <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
         How can we help? <span className="text-red-600 dark:text-red-400">*</span>
