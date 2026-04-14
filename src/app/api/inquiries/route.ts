@@ -142,36 +142,70 @@ export async function POST(request: Request) {
     let leadId: string | undefined;
     try {
       const supabase = createAdminClient();
-      const insertPayload: Record<string, unknown> = {
+      const { data: owner } = await supabase
+        .from("profiles")
+        .select("id, role")
+        .in("role", ["ceo", "admin"])
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const commonPayload: Record<string, unknown> = {
         ...(companyId ? { company_id: companyId } : {}),
+        ...(owner?.id ? { user_id: owner.id } : {}),
         source: "website_inquiry",
-        lead_type: "inquiry",
         name,
         full_name: fullName,
         email,
-        phone,
+        phone: phone || "",
         phone_number: phone || "",
-        address: null,
+        address: "",
         details,
         stage: "submitted",
         stage_updated_at: nowIso,
         updated_at: nowIso,
       };
 
-      const { data: inserted, error } = await supabase
-        .from("leads")
-        .insert(insertPayload)
-        .select("id")
-        .maybeSingle();
+      const attempts: Record<string, unknown>[] = [
+        { ...commonPayload, lead_type: "inquiry" },
+        { ...commonPayload, lead_type: "homeowner" },
+        {
+          ...(companyId ? { company_id: companyId } : {}),
+          source: "website_inquiry",
+          lead_type: "homeowner",
+          name,
+          full_name: fullName,
+          email,
+          phone: phone || "",
+          phone_number: phone || "",
+          address: "",
+          details,
+        },
+      ];
 
-      if (error) {
-        console.error("Inquiry lead insert error:", error.message);
+      let lastErrorMessage = "Unknown lead insert error.";
+      for (const insertPayload of attempts) {
+        const { data: inserted, error } = await supabase
+          .from("leads")
+          .insert(insertPayload)
+          .select("id")
+          .maybeSingle();
+        if (!error && inserted?.id) {
+          leadId = inserted.id;
+          break;
+        }
+        if (error) {
+          lastErrorMessage = error.message;
+          console.warn("Inquiry lead insert attempt failed:", error.message);
+        }
+      }
+
+      if (!leadId) {
+        console.error("Inquiry lead insert exhausted attempts:", lastErrorMessage);
         return NextResponse.json(
           { error: "Could not save your inquiry lead. Please try again." },
           { status: 500 }
         );
-      } else if (inserted?.id) {
-        leadId = inserted.id;
       }
     } catch (e) {
       console.error("Inquiry Supabase error:", e);
