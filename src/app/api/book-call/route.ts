@@ -82,15 +82,12 @@ export async function POST(request: Request) {
         source: "website_booking",
         lead_type: "book_call",
         name,
-        full_name: name,
         email,
         phone,
-        phone_number: phone,
         details,
         stage: "submitted",
         stage_updated_at: nowIso,
         updated_at: nowIso,
-        lead_temperature: score.temperature,
       })
       .select("id")
       .single();

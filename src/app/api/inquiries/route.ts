@@ -114,16 +114,13 @@ export async function POST(request: Request) {
         source: "website_inquiry",
         lead_type: "inquiry",
         name,
-        full_name: name,
         email,
         phone,
-        phone_number: phone,
         address: null,
         details,
         stage: "submitted",
         stage_updated_at: nowIso,
         updated_at: nowIso,
-        lead_temperature: leadScore.temperature,
       };
 
       const { data: inserted, error } = await supabase
@@ -134,11 +131,25 @@ export async function POST(request: Request) {
 
       if (error) {
         console.error("Inquiry lead insert error:", error.message);
+        return NextResponse.json(
+          { error: "Could not save your inquiry lead. Please try again." },
+          { status: 500 }
+        );
       } else if (inserted?.id) {
         leadId = inserted.id;
       }
     } catch (e) {
       console.error("Inquiry Supabase error:", e);
+      return NextResponse.json(
+        { error: "Could not save your inquiry lead. Please try again." },
+        { status: 500 }
+      );
+    }
+    if (!leadId) {
+      return NextResponse.json(
+        { error: "Could not save your inquiry lead. Please try again." },
+        { status: 500 }
+      );
     }
 
     try {

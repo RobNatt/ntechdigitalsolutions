@@ -38,6 +38,19 @@ type Draft = {
   notes: string;
 };
 
+type ManualLeadPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  source: string;
+  lead_type: string;
+  stage: string;
+  temperature: LeadTemperature;
+  notes: string;
+  details: Record<string, unknown>;
+};
+
 function notesFromDetails(details: unknown): string {
   if (details && typeof details === "object" && !Array.isArray(details)) {
     const n = (details as { notes?: unknown }).notes;
@@ -122,6 +135,8 @@ export function CeoLeadsSection() {
   const [error, setError] = useState<string | null>(null);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [quickAddText, setQuickAddText] = useState("");
+  const [addingQuickLead, setAddingQuickLead] = useState(false);
 
   const selectedLead = useMemo(
     () => leads.find((l) => l.id === selectedId) ?? null,
@@ -413,6 +428,88 @@ export function CeoLeadsSection() {
     }
   }
 
+  function parseQuickLeadText(raw: string): ManualLeadPayload {
+    const lines = raw
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    const details: Record<string, unknown> = {};
+    let name = "";
+    let email = "";
+    let phone = "";
+    let address = "";
+    let leadType = "business_owner";
+    let notes = "";
+
+    for (const line of lines) {
+      const idx = line.indexOf(":");
+      if (idx <= 0) continue;
+      const key = line.slice(0, idx).trim().toLowerCase();
+      const value = line.slice(idx + 1).trim();
+      if (!value) continue;
+
+      if (key === "name") name = value;
+      else if (key === "email") email = value;
+      else if (key === "phone") phone = value;
+      else if (key === "location" || key === "address") address = value;
+      else if (key === "service") leadType = value.toLowerCase().replace(/\s+/g, "_");
+      else if (key === "notes") notes = value;
+      else details[key.replace(/\s+/g, "_")] = value;
+    }
+
+    if (!notes) {
+      notes = lines.join("\n");
+    }
+
+    return {
+      name,
+      email,
+      phone,
+      address,
+      source: "manual_intake",
+      lead_type: leadType || "business_owner",
+      stage: "submitted",
+      temperature: "warm",
+      notes,
+      details,
+    };
+  }
+
+  async function addQuickLead() {
+    if (!quickAddText.trim()) {
+      setError("Paste the lead intake details first.");
+      return;
+    }
+    const payload = parseQuickLeadText(quickAddText);
+    if (!payload.name && !payload.email && !payload.phone) {
+      setError("Lead must include at least name, email, or phone.");
+      return;
+    }
+    setAddingQuickLead(true);
+    setError(null);
+    setActionMessage(null);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(apiErrorMessage(data as Record<string, unknown>, "Could not add lead."));
+        return;
+      }
+      setQuickAddText("");
+      setActionMessage("Lead added to CRM.");
+      await load();
+    } catch {
+      setError("Could not add lead.");
+    } finally {
+      setAddingQuickLead(false);
+    }
+  }
+
   const canPush =
     Boolean(draft) &&
     Boolean(
@@ -671,6 +768,32 @@ export function CeoLeadsSection() {
           {actionMessage}
         </p>
       )}
+
+      <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-3 shadow-inner">
+        <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+          Quick add lead
+        </h3>
+        <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">
+          Paste intake lines like Name:, Email:, Phone:, Service:, and Budget:.
+        </p>
+        <textarea
+          className={cn(inputClass, "min-h-[140px] resize-y")}
+          placeholder="Name: Nik&#10;Service: Web Design – New Website&#10;Location: Deer River, MN 56636&#10;Phone: (763) 203-5296&#10;Email: nik@hosierww.com"
+          value={quickAddText}
+          onChange={(e) => setQuickAddText(e.target.value)}
+        />
+        <div className="mt-2 flex justify-end">
+          <button
+            type="button"
+            disabled={addingQuickLead}
+            onClick={() => void addQuickLead()}
+            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/45 bg-emerald-100/80 px-3 py-2 text-xs font-semibold text-emerald-900 shadow-sm hover:bg-emerald-200/80 disabled:opacity-50"
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            {addingQuickLead ? "Adding…" : "Add lead from text"}
+          </button>
+        </div>
+      </div>
 
       <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
         <div className="border-b border-gray-400/30 dark:border-neutral-600/35 px-4 py-3">
