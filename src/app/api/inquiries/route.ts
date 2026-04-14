@@ -88,6 +88,7 @@ export async function POST(request: Request) {
     }
     const companyId = process.env.DEFAULT_COMPANY_ID;
     const nowIso = new Date().toISOString();
+    const fullName = name || email || phone || "Unknown Lead";
     const leadScore = scoreInquiryLead({
       phone,
       company,
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
         source: "website_inquiry",
         lead_type: "inquiry",
         name,
+        full_name: fullName,
         email,
         phone,
         address: null,

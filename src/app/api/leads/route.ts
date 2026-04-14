@@ -101,6 +101,7 @@ export async function POST(request: Request) {
     details.lead_temperature = temperature;
 
     const nowIso = new Date().toISOString();
+    const fullName = name || emailRaw || phone || "Unknown Lead";
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("leads")
@@ -109,6 +110,7 @@ export async function POST(request: Request) {
         source,
         lead_type: leadType,
         name: name || null,
+        full_name: fullName,
         email: emailRaw || null,
         phone: phone || null,
         address: address || null,

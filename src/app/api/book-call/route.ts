@@ -65,6 +65,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No dashboard owner user found." }, { status: 500 });
     }
     const nowIso = new Date().toISOString();
+    const fullName = name || email || phone || "Unknown Lead";
     const details: Record<string, unknown> = {
       source_page: "/book-call",
       booking_date: date,
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
         source: "website_booking",
         lead_type: "book_call",
         name,
+        full_name: fullName,
         email,
         phone,
         details,
