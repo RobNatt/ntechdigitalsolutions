@@ -82,21 +82,21 @@ function communicationHistoryFromDetails(details: unknown): CommunicationEntry[]
   const d = detailsObject(details);
   const raw = d.communication_history;
   if (!Array.isArray(raw)) return [];
-  return raw
-    .map((x) => {
-      if (!x || typeof x !== "object" || Array.isArray(x)) return null;
-      const row = x as Record<string, unknown>;
-      const note = typeof row.note === "string" ? row.note : "";
-      const at = typeof row.at === "string" ? row.at : "";
-      if (!note || !at) return null;
-      return {
-        at,
-        note,
-        channel: typeof row.channel === "string" ? row.channel : undefined,
-        by: typeof row.by === "string" ? row.by : undefined,
-      };
-    })
-    .filter((x): x is CommunicationEntry => x !== null);
+  const out: CommunicationEntry[] = [];
+  for (const x of raw) {
+    if (!x || typeof x !== "object" || Array.isArray(x)) continue;
+    const row = x as Record<string, unknown>;
+    const note = typeof row.note === "string" ? row.note : "";
+    const at = typeof row.at === "string" ? row.at : "";
+    if (!note || !at) continue;
+    out.push({
+      at,
+      note,
+      channel: typeof row.channel === "string" ? row.channel : undefined,
+      by: typeof row.by === "string" ? row.by : undefined,
+    });
+  }
+  return out;
 }
 
 function leadToDraft(lead: LeadRow): Draft {
