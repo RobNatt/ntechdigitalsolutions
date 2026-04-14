@@ -113,6 +113,7 @@ export async function POST(request: Request) {
         full_name: fullName,
         email: emailRaw || null,
         phone: phone || null,
+        phone_number: phone || "",
         address: address || null,
         details,
         stage,

@@ -118,6 +118,7 @@ export async function POST(request: Request) {
         full_name: fullName,
         email,
         phone,
+        phone_number: phone || "",
         address: null,
         details,
         stage: "submitted",
