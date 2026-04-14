@@ -12,14 +12,31 @@ const inquiryIps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 5;
 
-function isRateLimited(ip: string): boolean {
+function recentTimestamps(ip: string): number[] {
   const now = Date.now();
   const timestamps = inquiryIps.get(ip) || [];
   const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  if (recent.length >= RATE_LIMIT_MAX) return true;
-  recent.push(now);
   inquiryIps.set(ip, recent);
-  return false;
+  return recent;
+}
+
+function isRateLimited(ip: string): boolean {
+  return recentTimestamps(ip).length >= RATE_LIMIT_MAX;
+}
+
+function retryAfterSeconds(ip: string): number {
+  const recent = recentTimestamps(ip);
+  if (recent.length === 0) return 1;
+  const oldestMs = Math.min(...recent);
+  const elapsed = Date.now() - oldestMs;
+  const remaining = Math.ceil((RATE_LIMIT_WINDOW_MS - elapsed) / 1000);
+  return Math.max(1, remaining);
+}
+
+function consumeRateLimit(ip: string): void {
+  const recent = recentTimestamps(ip);
+  recent.push(Date.now());
+  inquiryIps.set(ip, recent);
 }
 
 function isValidEmail(s: string): boolean {
@@ -34,7 +51,18 @@ export async function POST(request: Request) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (isRateLimited(ip)) {
-      return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
+      const retryAfter = retryAfterSeconds(ip);
+      return NextResponse.json(
+        {
+          error: "Too many submissions. Please try again shortly.",
+          retryAfterSeconds: retryAfter,
+          hint: `Please wait about ${retryAfter}s before trying again.`,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(retryAfter) },
+        }
+      );
     }
 
     let body: Record<string, unknown>;
@@ -86,6 +114,10 @@ export async function POST(request: Request) {
     if (company && company.length > 200) {
       return NextResponse.json({ error: "Company name is too long." }, { status: 400 });
     }
+
+    // Count only validated submissions to avoid punishing users for malformed retries.
+    consumeRateLimit(ip);
+
     const companyId = process.env.DEFAULT_COMPANY_ID;
     const nowIso = new Date().toISOString();
     const fullName = name || email || phone || "Unknown Lead";
@@ -178,13 +210,7 @@ export async function POST(request: Request) {
       }
     } catch (e) {
       console.error("Inquiry email error:", e);
-      return NextResponse.json(
-        {
-          error: "We could not send your message right now. Please email us directly or try again shortly.",
-          hint: e instanceof Error ? e.message : String(e),
-        },
-        { status: 500 }
-      );
+      // Do not block lead capture success on downstream email/SMS failures.
     }
 
     void recordInquirySubmit({
