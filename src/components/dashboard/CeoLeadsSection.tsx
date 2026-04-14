@@ -51,12 +51,52 @@ type ManualLeadPayload = {
   details: Record<string, unknown>;
 };
 
+type CommunicationEntry = {
+  at: string;
+  note: string;
+  channel?: string;
+  by?: string;
+};
+
 function notesFromDetails(details: unknown): string {
   if (details && typeof details === "object" && !Array.isArray(details)) {
     const n = (details as { notes?: unknown }).notes;
     if (typeof n === "string") return n;
   }
   return "";
+}
+
+function detailsObject(details: unknown): Record<string, unknown> {
+  if (details && typeof details === "object" && !Array.isArray(details)) {
+    return details as Record<string, unknown>;
+  }
+  return {};
+}
+
+function selfNoteFromDetails(details: unknown): string {
+  const d = detailsObject(details);
+  return typeof d.self_note === "string" ? d.self_note : "";
+}
+
+function communicationHistoryFromDetails(details: unknown): CommunicationEntry[] {
+  const d = detailsObject(details);
+  const raw = d.communication_history;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((x) => {
+      if (!x || typeof x !== "object" || Array.isArray(x)) return null;
+      const row = x as Record<string, unknown>;
+      const note = typeof row.note === "string" ? row.note : "";
+      const at = typeof row.at === "string" ? row.at : "";
+      if (!note || !at) return null;
+      return {
+        at,
+        note,
+        channel: typeof row.channel === "string" ? row.channel : undefined,
+        by: typeof row.by === "string" ? row.by : undefined,
+      };
+    })
+    .filter((x): x is CommunicationEntry => x !== null);
 }
 
 function leadToDraft(lead: LeadRow): Draft {
@@ -137,6 +177,12 @@ export function CeoLeadsSection() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [quickAddText, setQuickAddText] = useState("");
   const [addingQuickLead, setAddingQuickLead] = useState(false);
+  const [commOpen, setCommOpen] = useState(false);
+  const [commSaving, setCommSaving] = useState(false);
+  const [commChannel, setCommChannel] = useState("call");
+  const [commNote, setCommNote] = useState("");
+  const [commAt, setCommAt] = useState(() => new Date().toISOString().slice(0, 16));
+  const [selfNoteDraft, setSelfNoteDraft] = useState("");
 
   const selectedLead = useMemo(
     () => leads.find((l) => l.id === selectedId) ?? null,
@@ -181,6 +227,18 @@ export function CeoLeadsSection() {
     setDraft(d);
     setBaseline(d);
   }, [selectedLead, editingView]);
+
+  useEffect(() => {
+    if (!selectedLead) {
+      setSelfNoteDraft("");
+      return;
+    }
+    setSelfNoteDraft(selfNoteFromDetails(selectedLead.details));
+  }, [selectedLead]);
+
+  useEffect(() => {
+    if (editingView) setCommOpen(false);
+  }, [editingView]);
 
   const dirty = draft && baseline ? !draftsEqual(draft, baseline) : false;
 
@@ -510,6 +568,67 @@ export function CeoLeadsSection() {
     }
   }
 
+  async function saveSelfNote() {
+    if (!selectedId) return;
+    setCommSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/leads/${selectedId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ self_note: selfNoteDraft }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(apiErrorMessage(data as Record<string, unknown>, "Could not save note."));
+        return;
+      }
+      setActionMessage("Private note saved.");
+      await load();
+    } catch {
+      setError("Could not save note.");
+    } finally {
+      setCommSaving(false);
+    }
+  }
+
+  async function logCommunication() {
+    if (!selectedId) return;
+    if (!commNote.trim()) {
+      setError("Add a communication note before logging.");
+      return;
+    }
+    setCommSaving(true);
+    setError(null);
+    try {
+      const atIso = new Date(commAt).toISOString();
+      const res = await fetch(`/api/leads/${selectedId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          communication_entry: {
+            at: atIso,
+            channel: commChannel,
+            note: commNote.trim(),
+          },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(apiErrorMessage(data as Record<string, unknown>, "Could not log communication."));
+        return;
+      }
+      setCommNote("");
+      setCommAt(new Date().toISOString().slice(0, 16));
+      setActionMessage("Communication logged.");
+      await load();
+    } catch {
+      setError("Could not log communication.");
+    } finally {
+      setCommSaving(false);
+    }
+  }
+
   const canPush =
     Boolean(draft) &&
     Boolean(
@@ -825,11 +944,15 @@ export function CeoLeadsSection() {
                       key={lead.id}
                       role="button"
                       tabIndex={0}
-                      onClick={() => setSelectedId(lead.id)}
+                      onClick={() => {
+                        setSelectedId(lead.id);
+                        setCommOpen(true);
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
                           setSelectedId(lead.id);
+                          setCommOpen(true);
                         }
                       }}
                       className={cn(
@@ -890,6 +1013,145 @@ export function CeoLeadsSection() {
           )}
         </div>
       </div>
+
+      {commOpen && selectedLead ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/35 p-3 sm:items-center"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setCommOpen(false);
+          }}
+        >
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-400/50 dark:border-neutral-600/55 bg-neutral-100 p-4 shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-base font-bold text-gray-900 dark:text-neutral-50">
+                Communications · {selectedLead.name || selectedLead.email || selectedLead.phone || "Lead"}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setCommOpen(false)}
+                className="rounded-lg border border-transparent px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-200/60"
+              >
+                Close
+              </button>
+            </div>
+
+            <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">
+              Last contacted:{" "}
+              {(() => {
+                const d = detailsObject(selectedLead.details);
+                const history = communicationHistoryFromDetails(selectedLead.details);
+                const last =
+                  typeof d.last_contacted_at === "string" && d.last_contacted_at.trim()
+                    ? d.last_contacted_at
+                    : history[0]?.at;
+                if (!last) return "Never logged";
+                const dt = new Date(last);
+                return Number.isNaN(dt.getTime()) ? last : dt.toLocaleString();
+              })()}
+            </p>
+
+            <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+              <div className="rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+                  Log communication
+                </p>
+                <div className="mt-2 grid gap-2">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Channel
+                    <select
+                      className={cn(inputClass, "cursor-pointer")}
+                      value={commChannel}
+                      onChange={(e) => setCommChannel(e.target.value)}
+                    >
+                      <option value="call">Call</option>
+                      <option value="email">Email</option>
+                      <option value="sms">SMS</option>
+                      <option value="meeting">Meeting</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    Contacted at
+                    <input
+                      type="datetime-local"
+                      className={inputClass}
+                      value={commAt}
+                      onChange={(e) => setCommAt(e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                    What happened
+                    <textarea
+                      className={cn(inputClass, "min-h-[100px] resize-y")}
+                      value={commNote}
+                      onChange={(e) => setCommNote(e.target.value)}
+                      rows={4}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    disabled={commSaving}
+                    onClick={() => void logCommunication()}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-sky-500/45 bg-sky-100/90 px-3 py-2 text-xs font-semibold text-sky-950 shadow-sm hover:bg-sky-200/90 disabled:opacity-45"
+                  >
+                    {commSaving ? "Saving…" : "Log communication"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+                  Private notes
+                </p>
+                <label className="mt-2 block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                  Notes to yourself
+                  <textarea
+                    className={cn(inputClass, "min-h-[100px] resize-y")}
+                    value={selfNoteDraft}
+                    onChange={(e) => setSelfNoteDraft(e.target.value)}
+                    rows={4}
+                  />
+                </label>
+                <button
+                  type="button"
+                  disabled={commSaving}
+                  onClick={() => void saveSelfNote()}
+                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg border border-gray-500/45 bg-gray-200/90 px-3 py-2 text-xs font-semibold text-gray-900 dark:text-neutral-50 shadow-sm hover:bg-gray-300/90 disabled:opacity-45"
+                >
+                  {commSaving ? "Saving…" : "Save note"}
+                </button>
+
+                <div className="mt-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+                    History
+                  </p>
+                  <ul className="mt-2 max-h-[260px] space-y-2 overflow-y-auto">
+                    {communicationHistoryFromDetails(selectedLead.details).length ? (
+                      communicationHistoryFromDetails(selectedLead.details).map((row, idx) => (
+                        <li
+                          key={`${row.at}-${idx}`}
+                          className="rounded-md border border-gray-300/60 dark:border-neutral-700/60 bg-gray-50/90 dark:bg-neutral-900/60 px-2.5 py-2"
+                        >
+                          <p className="text-[11px] font-semibold text-gray-700 dark:text-neutral-300">
+                            {(row.channel || "contact").toUpperCase()} · {new Date(row.at).toLocaleString()}
+                          </p>
+                          <p className="mt-1 whitespace-pre-wrap text-xs text-gray-700 dark:text-neutral-300">
+                            {row.note}
+                          </p>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-xs text-gray-500 dark:text-neutral-500">
+                        No communication history yet.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
