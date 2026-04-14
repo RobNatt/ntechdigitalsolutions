@@ -30,10 +30,10 @@ const OG_IMAGE_PATH = "/ntech-official-logo.png";
 export const metadata: Metadata = {
   title: {
     absolute:
-      "N-Tech Digital Solutions | Websites, SEO & Lead Systems for Small Business",
+      "N-Tech Digital Solutions | SEO, GEO & Lead Systems for Growth",
   },
   description:
-    "N-Tech Digital Solutions builds lead-ready websites, SEO and search visibility, and CRM-backed automation for small businesses across the U.S. Remote-first delivery — systems that turn traffic into booked conversations.",
+    "Get a faster website, stronger Google and AI visibility, and automated lead follow-up with SEO, GEO, and CRM-backed growth systems.",
   keywords: [
     "lead generation agency",
     "AI lead generation",
