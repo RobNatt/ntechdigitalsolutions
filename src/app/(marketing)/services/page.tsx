@@ -119,7 +119,7 @@ export default async function ServicesPage() {
     <MarketingPageShell
       title="What we do"
       maxWidthClass="max-w-4xl"
-      subtitle="N-Tech is a digital partner for businesses that are tired of pretty websites that don’t produce leads. We connect your front end (what people see) to the back end (what happens after they click) — so marketing spend turns into conversations you can track."
+      subtitle="N-Tech is a digital partner for businesses that are tired of pretty websites that don’t produce leads. We connect your front end (what people see) to the back end (what happens after they click) — so marketing spend turns into conversations you can track. We serve Omaha and the Nebraska metro with in-market strategy and execution, while still delivering nationwide for growth-focused teams."
       cta="full"
     >
       <div className="space-y-14">
