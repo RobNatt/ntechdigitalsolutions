@@ -49,6 +49,9 @@ export function Footer() {
               <Logo />
             </div>
             <p className="ml-2 max-w-sm text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+              <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                Service area:
+              </span>{" "}
               {SITE_SERVICE_AREAS}
             </p>
             <p className="ml-2 mt-3 text-xs font-medium text-neutral-700 dark:text-neutral-300">

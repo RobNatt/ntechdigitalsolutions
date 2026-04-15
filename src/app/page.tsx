@@ -107,6 +107,15 @@ export default function HomePage() {
       />
       <Navbar />
       <main>
+        <p
+          className="mx-auto max-w-7xl px-4 pt-4 text-center text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 md:px-8 lg:text-left"
+          data-seo-geo-area-note
+        >
+          <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+            Service area:
+          </span>{" "}
+          {SITE_SERVICE_AREAS}
+        </p>
         <Hero />
         <Features />
         <Process />
