@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { releaseDueScheduledBlogPosts } from "@/lib/dashboard/release-scheduled-blog-posts";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -27,6 +28,12 @@ async function requireUser() {
 export async function GET() {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    await releaseDueScheduledBlogPosts();
+  } catch (e) {
+    console.error("blog posts GET releaseDueScheduledBlogPosts:", e);
+  }
 
   const admin = createAdminClient();
   const { data, error } = await admin

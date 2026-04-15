@@ -310,9 +310,11 @@ export function CeoBlogPostsSection() {
               className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
             />
             <p className="text-[11px] text-gray-500 dark:text-neutral-400">
-              With <strong className="font-semibold">Save draft</strong>, this is stored as the planned go-live time and
-              listed under Existing posts. With <strong className="font-semibold">Publish now</strong>, it schedules
-              (or publishes) on <code className="rounded bg-gray-400/20 px-0.5">/blog</code> for that moment.
+              With <strong className="font-semibold">Save draft</strong>, the date is the planned go-live: the post
+              becomes public on <code className="rounded bg-gray-400/20 px-0.5">/blog</code> automatically once that
+              time passes (when someone opens the blog or CEO Blog tab, or on the Vercel cron).{" "}
+              <strong className="font-semibold">Publish now</strong> marks it published immediately (or at the chosen
+              future time if you set one).
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -455,9 +457,9 @@ export function CeoBlogPostsSection() {
             <strong className="font-semibold text-gray-800 dark:text-neutral-200">Dates below:</strong> for{" "}
             <strong className="font-semibold">published</strong> posts, <em>Goes live</em> / <em>Published</em> uses
             the time stored in the database. For <strong className="font-semibold">drafts</strong>,{" "}
-            <em>Planned go-live</em> is what you set when saving a draft (or in the editor); it is not public until you
-            click Publish. The <code className="rounded bg-gray-400/20 px-1 text-[11px]">/blog</code> page only shows
-            published posts whose publish time has passed—no separate cron job.
+            <em>Planned go-live</em> is when the post will flip to published automatically. The public{" "}
+            <code className="rounded bg-gray-400/20 px-1 text-[11px]">/blog</code> page only lists posts that are
+            published and whose publish time is not in the future.
           </p>
         </div>
         {loading ? (

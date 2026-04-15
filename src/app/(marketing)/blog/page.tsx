@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BlogPostsReader } from "@/components/marketing/BlogPostsReader";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { releaseDueScheduledBlogPosts } from "@/lib/dashboard/release-scheduled-blog-posts";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
@@ -30,6 +31,7 @@ type BlogPost = {
 export default async function BlogPage() {
   let posts: BlogPost[] = [];
   try {
+    await releaseDueScheduledBlogPosts();
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("dashboard_blog_posts")
