@@ -2,7 +2,6 @@
 
 import {
   forwardRef,
-  Fragment,
   useCallback,
   useEffect,
   useId,
@@ -14,40 +13,51 @@ import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Markdown-style heading at start of a line (# … ######). All render as <h2> for a flat outline under the post <h1>. */
-const MD_HEADING = /^#{1,6}\s+(.+)$/;
+/** Whole line (trimmed) is a markdown heading (# … ######). All render as <h2> under the post <h1>. */
+const MD_HEADING_LINE = /^#{1,6}\s+(.+)$/;
 
 const H2_CLASS =
   "mb-3 mt-8 scroll-mt-4 text-base font-semibold tracking-tight text-neutral-900 first:mt-0 dark:text-white sm:text-lg";
 
 /**
- * Split body on blank lines; blocks whose first line is a markdown heading become <h2>
- * (any # count). Remaining lines in that block become a paragraph. Other blocks are <p>.
+ * Walks line-by-line so `## Title` works after a single newline, not only after a blank line.
+ * Consecutive `##` lines each become an h2; lines between headings form paragraphs (blank lines preserved).
  */
 export function renderBlogPostBody(content: string): ReactNode[] {
-  const blocks = content.split(/\n\n+/).map((b) => b.trim()).filter(Boolean);
-  return blocks.map((block, i) => {
-    const lines = block.split("\n");
-    const first = lines[0] ?? "";
-    const m = MD_HEADING.exec(first);
-    if (m) {
-      const headingText = m[1].trim();
-      const rest = lines.slice(1).join("\n").trim();
-      return (
-        <Fragment key={i}>
-          <h2 className={H2_CLASS}>{headingText}</h2>
-          {rest ? (
-            <p className="mb-4 whitespace-pre-wrap last:mb-0">{rest}</p>
-          ) : null}
-        </Fragment>
-      );
-    }
-    return (
-      <p key={i} className="mb-4 whitespace-pre-wrap last:mb-0">
-        {block}
+  const normalized = content.replace(/\r\n/g, "\n");
+  const lines = normalized.split("\n");
+  const out: ReactNode[] = [];
+  const paraBuf: string[] = [];
+  let k = 0;
+
+  const flushParagraph = () => {
+    if (paraBuf.length === 0) return;
+    const text = paraBuf.join("\n");
+    paraBuf.length = 0;
+    if (!text.trim()) return;
+    out.push(
+      <p key={k++} className="mb-4 whitespace-pre-wrap last:mb-0">
+        {text}
       </p>
     );
-  });
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const m = trimmed ? MD_HEADING_LINE.exec(trimmed) : null;
+    if (m) {
+      flushParagraph();
+      out.push(
+        <h2 key={k++} className={H2_CLASS}>
+          {m[1].trim()}
+        </h2>
+      );
+      continue;
+    }
+    paraBuf.push(line);
+  }
+  flushParagraph();
+  return out;
 }
 
 export type BlogPostPublic = {

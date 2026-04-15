@@ -295,7 +295,7 @@ export function CeoBlogPostsSection() {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Body: blank lines between paragraphs. Start a line with ## Section title (# through ######) for sub-headings — they render as H2; the post title is the H1."
+            placeholder="Body: blank lines between paragraphs. Put ## Section title on its own line (# through ######) for sub-headings — they render as H2; a blank line before the heading is optional. The post title is the H1."
             rows={10}
             className="rounded-lg border border-gray-400/50 dark:border-neutral-600/55 bg-white/90 px-3 py-2 text-sm"
           />
