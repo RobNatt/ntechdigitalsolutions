@@ -65,7 +65,7 @@ export default async function BlogPage() {
         </Link>{" "}
         if you want a topic covered.
       </p>
-      <h2 className="pt-6 text-sm font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-500">
+      <h2 className="pt-8 text-sm font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 sm:pt-10">
         Latest posts
       </h2>
       <BlogPostsReader posts={posts} />

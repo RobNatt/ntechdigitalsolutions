@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 const MD_HEADING_LINE = /^#{1,6}(?!#)\s*(.+)$/;
 
 const H2_CLASS =
-  "mb-3 mt-8 scroll-mt-4 text-base font-semibold tracking-tight text-neutral-900 first:mt-0 dark:text-white sm:text-lg";
+  "mb-4 mt-9 scroll-mt-4 text-base font-semibold tracking-tight text-neutral-900 first:mt-0 dark:text-white sm:text-lg";
 
 function normalizeBodyNewlines(content: string): string {
   return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
@@ -105,7 +105,7 @@ export function renderBlogPostBody(content: string): ReactNode[] {
     paraBuf.length = 0;
     if (!text.trim()) return;
     out.push(
-      <p key={k++} className="mb-4 whitespace-pre-wrap last:mb-0">
+      <p key={k++} className="mb-5 whitespace-pre-wrap last:mb-0 sm:mb-6">
         {text}
       </p>
     );
@@ -178,7 +178,7 @@ const PostModal = forwardRef<
   return (
     <motion.div
       ref={ref}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-5 sm:p-8"
       role="presentation"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -204,7 +204,7 @@ const PostModal = forwardRef<
           "dark:border-neutral-700 dark:bg-neutral-950 dark:shadow-[0_25px_80px_-12px_rgba(0,0,0,0.65)]"
         )}
       >
-        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">
+        <header className="flex shrink-0 items-start justify-between gap-4 border-b border-neutral-200 px-6 py-5 sm:px-8 sm:py-6 dark:border-neutral-800">
           <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
               {formatDate(post.published_at)}
@@ -226,8 +226,8 @@ const PostModal = forwardRef<
             <X className="h-5 w-5" aria-hidden />
           </button>
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5">
-          <article className="prose-blog text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 sm:px-8 sm:py-8 sm:pb-10">
+          <article className="prose-blog max-w-prose text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
             {renderBlogPostBody(post.content)}
           </article>
         </div>
@@ -250,18 +250,18 @@ export function BlogPostsReader({ posts }: { posts: BlogPostPublic[] }) {
 
   return (
     <>
-      <ul className="mt-4 list-none space-y-3 p-0">
+      <ul className="mt-6 list-none space-y-4 p-0 sm:space-y-5">
         {posts.map((post) => (
           <li
             key={post.id}
-            className="border-b border-neutral-200 pb-4 last:border-0 dark:border-neutral-800"
+            className="border-b border-neutral-200 pb-6 last:border-0 dark:border-neutral-800 sm:pb-8"
           >
             <button
               type="button"
               onClick={() => setOpenId(post.id)}
-              className="group w-full rounded-xl border border-transparent px-1 py-1 text-left transition hover:border-neutral-200 hover:bg-neutral-50/80 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/40"
+              className="group w-full rounded-2xl border border-transparent px-5 py-5 text-left transition hover:border-neutral-200 hover:bg-neutral-50/80 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/40 sm:px-6 sm:py-6"
             >
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
                 <span className="font-medium text-neutral-900 decoration-neutral-400 decoration-2 underline-offset-2 transition group-hover:underline dark:text-white dark:decoration-neutral-500">
                   {post.title}
                 </span>
@@ -269,10 +269,10 @@ export function BlogPostsReader({ posts }: { posts: BlogPostPublic[] }) {
                   {formatDate(post.published_at)}
                 </span>
               </div>
-              <p className="mt-2 line-clamp-3 text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 sm:mt-4">
                 {blogListExcerpt(post)}
               </p>
-              <span className="mt-2 inline-block text-xs font-semibold text-sky-700 dark:text-sky-400">
+              <span className="mt-3 inline-block text-xs font-semibold text-sky-700 dark:text-sky-400 sm:mt-4">
                 Read full article
               </span>
             </button>
