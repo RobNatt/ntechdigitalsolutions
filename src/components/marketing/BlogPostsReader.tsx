@@ -13,19 +13,88 @@ import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Whole line (trimmed) is a markdown heading (# … ######). All render as <h2> under the post <h1>. */
-const MD_HEADING_LINE = /^#{1,6}\s+(.+)$/;
+/**
+ * 1–6 `#` at line start only (7+ `#` stays normal text). Optional space after hashes (`##Title` ok).
+ * (?!#) after the run prevents treating `#######` as a six-hash heading plus stray `#`.
+ */
+const MD_HEADING_LINE = /^#{1,6}(?!#)\s*(.+)$/;
 
 const H2_CLASS =
   "mb-3 mt-8 scroll-mt-4 text-base font-semibold tracking-tight text-neutral-900 first:mt-0 dark:text-white sm:text-lg";
+
+function normalizeBodyNewlines(content: string): string {
+  return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+}
+
+function splitBodyLines(content: string): string[] {
+  return normalizeBodyNewlines(content).split(/\n|\u2028|\u2029/);
+}
+
+/** Trim + strip BOM / zero-width chars that break `^#` matching when pasting from docs. */
+function stripHeadingNoise(line: string): string {
+  return line
+    .replace(/^\uFEFF/, "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim();
+}
+
+function parseMarkdownHeadingLine(rawLine: string): string | null {
+  const t = stripHeadingNoise(rawLine);
+  if (!t) return null;
+  const m = MD_HEADING_LINE.exec(t);
+  if (!m) return null;
+  const title = m[1].trim();
+  return title.length > 0 ? title : null;
+}
+
+function stripMarkdownHeadingLines(text: string): string {
+  return splitBodyLines(text)
+    .filter((line) => parseMarkdownHeadingLine(line) === null)
+    .join("\n")
+    .trim();
+}
+
+/** Plain teaser for the blog index card (no raw `##` from the body or excerpt). */
+export function blogListExcerpt(post: BlogPostPublic, maxLen = 220): string {
+  const excerpt = post.excerpt?.trim();
+  if (excerpt) {
+    const withoutHeadings = stripMarkdownHeadingLines(excerpt);
+    let blob = withoutHeadings.trim() ? withoutHeadings : excerpt;
+    if (!blob.trim()) {
+      for (const line of splitBodyLines(excerpt)) {
+        const t = parseMarkdownHeadingLine(line);
+        if (t) {
+          blob = t;
+          break;
+        }
+      }
+    }
+    const oneLine = blob.replace(/\s+/g, " ").trim();
+    if (!oneLine) return "…";
+    if (oneLine.length <= maxLen) return oneLine;
+    return `${oneLine.slice(0, maxLen)}…`;
+  }
+  const body = stripMarkdownHeadingLines(post.content);
+  let oneLine = body.replace(/\s+/g, " ").trim();
+  if (!oneLine) {
+    for (const line of splitBodyLines(post.content)) {
+      const title = parseMarkdownHeadingLine(line);
+      if (title) {
+        return title.length <= maxLen ? title : `${title.slice(0, maxLen)}…`;
+      }
+    }
+    return "…";
+  }
+  if (oneLine.length <= maxLen) return oneLine;
+  return `${oneLine.slice(0, maxLen)}…`;
+}
 
 /**
  * Walks line-by-line so `## Title` works after a single newline, not only after a blank line.
  * Consecutive `##` lines each become an h2; lines between headings form paragraphs (blank lines preserved).
  */
 export function renderBlogPostBody(content: string): ReactNode[] {
-  const normalized = content.replace(/\r\n/g, "\n");
-  const lines = normalized.split("\n");
+  const lines = splitBodyLines(content);
   const out: ReactNode[] = [];
   const paraBuf: string[] = [];
   let k = 0;
@@ -43,13 +112,12 @@ export function renderBlogPostBody(content: string): ReactNode[] {
   };
 
   for (const line of lines) {
-    const trimmed = line.trim();
-    const m = trimmed ? MD_HEADING_LINE.exec(trimmed) : null;
-    if (m) {
+    const title = parseMarkdownHeadingLine(line);
+    if (title !== null) {
       flushParagraph();
       out.push(
         <h2 key={k++} className={H2_CLASS}>
-          {m[1].trim()}
+          {title}
         </h2>
       );
       continue;
@@ -202,7 +270,7 @@ export function BlogPostsReader({ posts }: { posts: BlogPostPublic[] }) {
                 </span>
               </div>
               <p className="mt-2 line-clamp-3 text-sm text-neutral-600 dark:text-neutral-400">
-                {post.excerpt || `${post.content.slice(0, 220)}${post.content.length > 220 ? "…" : ""}`}
+                {blogListExcerpt(post)}
               </p>
               <span className="mt-2 inline-block text-xs font-semibold text-sky-700 dark:text-sky-400">
                 Read full article
