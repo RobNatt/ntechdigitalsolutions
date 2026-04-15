@@ -1,11 +1,5 @@
 {
   "framework": "nextjs",
-  "crons": [
-    {
-      "path": "/api/cron/publish-scheduled-blog-posts",
-      "schedule": "*/15 * * * *"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

@@ -4,8 +4,10 @@ import { releaseDueScheduledBlogPosts } from "@/lib/dashboard/release-scheduled-
 export const runtime = "nodejs";
 
 /**
- * Vercel Cron: set CRON_SECRET in project env; Vercel sends Authorization: Bearer <CRON_SECRET>.
- * Schedule in vercel.json (e.g. every 15 minutes).
+ * Optional scheduled trigger for blog auto-publish (same logic as /blog + dashboard load).
+ * Call with Authorization: Bearer <CRON_SECRET> (set CRON_SECRET in Vercel).
+ * Hobby plan: do not add frequent crons to vercel.json (deploy can fail); use an external
+ * scheduler hitting this URL, or Vercel Pro with a ≤1/day cron per their limits.
  */
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET?.trim();
