@@ -41,11 +41,9 @@ export function Hero() {
   return (
     <div
       ref={parentRef}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-x-hidden bg-neutral-50 px-4 py-28 dark:bg-neutral-900 md:px-8 md:py-44 lg:pt-36 xl:pt-40"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-neutral-50 px-4 py-28 dark:bg-neutral-900 md:px-8 md:py-44"
     >
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-        <BackgroundGrids />
-      </div>
+      <BackgroundGrids />
       <CollisionMechanism
         beamOptions={{
           initialX: -400,
@@ -372,7 +370,7 @@ const CollisionMechanism = ({
         }}
         variants={{
           animate: {
-            translateY: beamOptions.translateY || "2000px",
+            translateY: beamOptions.translateY || "800px",
             translateX: beamOptions.translateX || "700px",
             rotate: beamOptions.rotate || -45,
           },
@@ -386,7 +384,7 @@ const CollisionMechanism = ({
           repeatDelay: beamOptions.repeatDelay || 0,
         }}
         className={cn(
-          "pointer-events-none absolute left-96 top-20 z-[15] m-auto h-14 w-px rounded-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent",
+          "absolute left-96 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent",
           beamOptions.className
         )}
       />
@@ -417,7 +415,7 @@ const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
   }));
 
   return (
-    <div {...props} className={cn("pointer-events-none absolute z-[25] h-2 w-2", props.className)}>
+    <div {...props} className={cn("absolute z-50 h-2 w-2", props.className)}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}

@@ -106,16 +106,7 @@ export default function HomePage() {
         }}
       />
       <Navbar />
-      <main className="pt-[5.25rem] sm:pt-28 lg:pt-32">
-        <p
-          className="relative z-10 mx-auto max-w-7xl px-4 pb-2 pt-2 text-center text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 md:px-8 lg:mb-3 lg:pb-3 lg:text-left"
-          data-seo-geo-area-note
-        >
-          <span className="font-semibold text-neutral-800 dark:text-neutral-200">
-            Service area:
-          </span>{" "}
-          {SITE_SERVICE_AREAS}
-        </p>
+      <main>
         <Hero />
         <Features />
         <Process />
