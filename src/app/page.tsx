@@ -106,9 +106,9 @@ export default function HomePage() {
         }}
       />
       <Navbar />
-      <main>
+      <main className="pt-[4.75rem] sm:pt-24">
         <p
-          className="mx-auto max-w-7xl px-4 pt-4 text-center text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 md:px-8 lg:text-left"
+          className="mx-auto max-w-7xl px-4 pt-2 text-center text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 md:px-8 lg:text-left"
           data-seo-geo-area-note
         >
           <span className="font-semibold text-neutral-800 dark:text-neutral-200">
