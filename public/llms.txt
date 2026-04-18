@@ -9,6 +9,7 @@ Homepage (primary positioning)
 Audience: Dental practice owners and decision-makers in the Central US seeking predictable new patient bookings; also business owners for non-dental services elsewhere on the site (services pages, blog, Omaha metro landings).
 
 Core offerings
+- PatientFlow Foundation™ (dental): https://ntechdigital.solutions/patientflow-foundation — foundational patient-acquisition package for Central US dental practices (custom conversion site, on-page SEO, Search Console, Bing Webmaster, Analytics, email-connected capture). Positioned as revenue protection before scaling ads/SEO—not a generic “starter website.” Primary conversion: Free Patient Flow Audit via https://ntechdigital.solutions/contact?plan=patientflow-foundation
 - Website design and development (Webflow, WordPress, Shopify, custom React/JS builds)
 - SEO (traditional search optimization)
 - GEO (Generative Engine Optimization for AI visibility)
