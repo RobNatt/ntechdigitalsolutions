@@ -10,6 +10,7 @@ Audience: Dental practice owners and decision-makers in the Central US seeking p
 
 Core offerings
 - PatientFlow Foundation™ (dental): https://ntechdigital.solutions/patientflow-foundation — foundational patient-acquisition package for Central US dental practices (custom conversion site, on-page SEO, Search Console, Bing Webmaster, Analytics, email-connected capture). Positioned as revenue protection before scaling ads/SEO—not a generic “starter website.” Primary conversion: Free Patient Flow Audit via https://ntechdigital.solutions/contact?plan=patientflow-foundation
+- PatientFlow Lead Machine™ (dental flagship): https://ntechdigital.solutions/patientflow-lead-machine — full patient acquisition system (includes Foundation™ plus funnels, dedicated landing pages, CRM pipeline, automated follow-up, lead dashboard, GBP optimization, local SEO for service area, monthly reporting, 90-day conversion reviews). Positioned as predictable bookings infrastructure, not a generic marketing package. Audit CTA: https://ntechdigital.solutions/contact?plan=patientflow-lead-machine
 - Website design and development (Webflow, WordPress, Shopify, custom React/JS builds)
 - SEO (traditional search optimization)
 - GEO (Generative Engine Optimization for AI visibility)
