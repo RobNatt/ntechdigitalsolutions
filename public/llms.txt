@@ -3,7 +3,7 @@ Website: https://ntechdigital.solutions
 
 Homepage (primary positioning)
 - The homepage is built for dental practices across the Central US (Nebraska, Iowa, Kansas, Missouri, South Dakota, and surrounding markets). N-Tech positions as the Central US Dental Growth Partner.
-- Primary conversion: Free Patient Flow Audit — users submit via https://ntechdigital.solutions/contact?plan=patient-flow-audit
+- Primary conversion: Free Patient Flow Audit — dedicated intake at https://ntechdigital.solutions/free-patient-flow-audit (recommended) or contact form https://ntechdigital.solutions/contact?plan=patient-flow-audit
 - Core dental homepage themes: conversion-focused dental websites, local SEO for dentists, Google Business Profile optimization, automated lead follow-up, AI-assisted patient acquisition funnels, dental website conversion optimization, patient flow diagnosis before prescribing a service tier.
 
 Audience: Dental practice owners and decision-makers in the Central US seeking predictable new patient bookings; also business owners for non-dental services elsewhere on the site (services pages, blog, Omaha metro landings).
@@ -15,6 +15,7 @@ Core offerings
 - Premium Growth Partner™ (dental highest-touch): https://ntechdigital.solutions/patientflow-premium-partner — strategic growth partnership: includes Growth System™ plus faster execution, more funnel testing, more content throughput, faster support, deeper strategy involvement, ongoing CRO leadership, and priority execution across updates. Positioned as embedded growth department, not a retainer. Audit: https://ntechdigital.solutions/contact?plan=patientflow-premium-partner
 - Dental patient revenue leak / ROI calculator (funnel): https://ntechdigital.solutions/dental-roi-calculator — interactive estimate for Central US dental practices (visitors, inquiries, patient value, high-value case value, inquiry drop-off %, missed high-value cases/month). Positions revenue protection over “more traffic”; primary CTA scrolls to calculator, audit via https://ntechdigital.solutions/contact?plan=dental-roi-calculator
 - Cost of lost patients (math & logic funnel): https://ntechdigital.solutions/cost-of-lost-patients — consequence + financial logic for Central US dentists (silent leaks, cost of waiting, “more leads” reframe, self-diagnosis checklist, audit as leak map). Primary CTA scrolls to “where you lose” section; audit CTA https://ntechdigital.solutions/contact?plan=cost-of-lost-patients. Links to /dental-roi-calculator for numeric estimate.
+- Free Patient Flow Audit™ (direct conversion LP): https://ntechdigital.solutions/free-patient-flow-audit — dedicated diagnostic offer for Central US dental practices; single goal is audit requests via on-page intake (practice, website, area, new patient goal, frustration, email, optional phone and marketing provider). Submissions use plan tag free-patient-flow-audit. Positions clarity over services; no PHI required for request.
 - Website design and development (Webflow, WordPress, Shopify, custom React/JS builds)
 - SEO (traditional search optimization)
 - GEO (Generative Engine Optimization for AI visibility)
