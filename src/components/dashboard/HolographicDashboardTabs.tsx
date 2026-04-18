@@ -20,6 +20,7 @@ import {
   Bot,
   FileText,
   NotebookPen,
+  Workflow,
 } from "lucide-react";
 import { DashboardAssistantPanel } from "@/components/dashboard/DashboardAssistantPanel";
 import { CeoCalendarSection } from "@/components/dashboard/CeoCalendarSection";
@@ -31,6 +32,7 @@ import { CeoSupportInboxSection } from "@/components/dashboard/CeoSupportInboxSe
 import { CeoRevenueReportsSection } from "@/components/dashboard/CeoRevenueReportsSection";
 import { CeoBlogPostsSection } from "@/components/dashboard/CeoBlogPostsSection";
 import { CeoBusinessNotesSection } from "@/components/dashboard/CeoBusinessNotesSection";
+import { CeoFunnelPagesSection } from "@/components/dashboard/CeoFunnelPagesSection";
 import { ModeToggle } from "@/components/startup-landing/mode-toggle";
 import {
   MarketingAiAgentsDemoPanel,
@@ -49,6 +51,7 @@ const MARKETING_NAV_TABS = [
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
   { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "funnel-pages", label: "Funnel pages", icon: Workflow },
   { id: "assistant", label: "Assistant", icon: Bot },
   { id: "supabase", label: "Supabase", icon: Database },
   { id: "user-management", label: "User management", icon: UserCog },
@@ -302,6 +305,9 @@ export function HolographicDashboardTabs({
                       {variant === "ceo" && activeTab === "calendar" && (
                         <CeoCalendarSection />
                       )}
+                      {variant === "ceo" && activeTab === "funnel-pages" && (
+                        <CeoFunnelPagesSection />
+                      )}
                       {variant === "ceo" && activeTab === "assistant" && (
                         <DashboardAssistantPanel />
                       )}
@@ -327,6 +333,7 @@ export function HolographicDashboardTabs({
                       )}
                       {variant === "ceo" &&
                         activeTab !== "calendar" &&
+                        activeTab !== "funnel-pages" &&
                         activeTab !== "assistant" &&
                         activeTab !== "supabase" &&
                         activeTab !== "clients" &&
