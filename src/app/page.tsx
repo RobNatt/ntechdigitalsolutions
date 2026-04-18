@@ -1,80 +1,74 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
 import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
+import { DentalHomeLanding } from "@/components/dental-landing/DentalHomeLanding";
 import { Footer } from "@/components/startup-landing/footer";
-import { Hero } from "@/components/startup-landing/hero";
 import { Navbar } from "@/components/startup-landing/navbar";
-
-const Features = dynamic(() =>
-  import("@/components/startup-landing/features").then((m) => ({ default: m.Features }))
-);
-const Process = dynamic(() =>
-  import("@/components/startup-landing/process").then((m) => ({ default: m.Process }))
-);
-const Pricing = dynamic(() =>
-  import("@/components/startup-landing/pricing").then((m) => ({ default: m.Pricing }))
-);
-const Testimonials = dynamic(() =>
-  import("@/components/startup-landing/testimonials").then((m) => ({ default: m.Testimonials }))
-);
+import { DENTAL_HOME_FAQ } from "@/content/dental-home-faq";
 import {
   SITE_BUSINESS_PHONE,
   SITE_CONTACT_EMAIL,
   SITE_SERVICE_AREAS,
 } from "@/constants/site";
+import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 /** Swap to `/og-image.jpg` after adding a 1200×630 image under `public/`. */
 const OG_IMAGE_PATH = "/ntech-official-logo.png";
 
+const homeDesc =
+  "Central US dental growth partner: conversion websites, local SEO, Google Business Profile, and patient acquisition funnels that turn traffic into booked patients. Free Patient Flow Audit.";
+
 export const metadata: Metadata = {
   title: {
     absolute:
-      "N-Tech Digital Solutions | SEO, GEO & Lead Systems for Growth",
+      "Dental Marketing & Patient Acquisition | N-Tech Digital Solutions | Central US",
   },
-  description:
-    "Get a faster website, stronger Google and AI visibility, and automated lead follow-up with SEO, GEO, and CRM-backed growth systems.",
+  description: homeDesc,
   keywords: [
-    "lead generation agency",
-    "AI lead generation",
-    "web design small business",
-    "SEO website design",
-    "WordPress website",
-    "lead funnels",
-    "automated lead tracking",
-    "SEO services",
-    "marketing automation small business",
-    "web development agency",
+    "dental marketing agency Central US",
+    "dental SEO for dentists",
+    "dental patient acquisition",
+    "dental lead generation agency",
+    "new patient funnel for dentists",
+    "dental website conversion optimization",
+    "Google Business Profile dental",
+    "dental practice Nebraska",
+    "dental marketing Iowa",
+    "dental marketing Kansas",
+    "dental marketing Missouri",
+    "dental marketing South Dakota",
   ],
   authors: [{ name: "N-Tech Digital Solutions" }],
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://ntechdigital.solutions" },
+  alternates: { canonical: canonicalUrl("/") },
   openGraph: {
-    type: "website",
-    url: "https://ntechdigital.solutions",
-    title:
-      "N-Tech Digital Solutions | AI-Powered Lead Generation & Web Design",
-    description:
-      "We build AI-powered lead systems, SEO-optimized websites, and automated funnels that turn clicks into paying customers — on autopilot.",
+    ...ogForPath("/", "Dental Patient Acquisition | N-Tech Digital Solutions | Central US", homeDesc),
     siteName: "N-Tech Digital Solutions",
     locale: "en_US",
     images: [{ url: OG_IMAGE_PATH, alt: "N-Tech Digital Solutions" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "N-Tech Digital Solutions | AI Lead Generation & Web Design",
-    description:
-      "AI-powered lead generation, funnels, and SEO-optimized websites for small businesses ready to grow.",
+    title: "Dental Patient Acquisition | N-Tech Digital Solutions",
+    description: homeDesc,
     images: [OG_IMAGE_PATH],
   },
 };
+
+const areaCentralUs = [
+  { "@type": "State", name: "Nebraska" },
+  { "@type": "State", name: "Iowa" },
+  { "@type": "State", name: "Kansas" },
+  { "@type": "State", name: "Missouri" },
+  { "@type": "State", name: "South Dakota" },
+];
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: "N-Tech Digital Solutions",
   description:
-    "AI-powered lead generation systems, website design, and automated lead funnels for small businesses.",
+    "Dental patient acquisition for practices across the Central US: conversion-focused websites, local SEO, Google Business Profile optimization, automated follow-up, and AI-assisted funnels. Free Patient Flow Audit.",
   url: "https://ntechdigital.solutions",
   ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
   email: SITE_CONTACT_EMAIL,
@@ -84,15 +78,28 @@ const localBusinessJsonLd = {
     addressRegion: "NE",
     addressCountry: "US",
   },
-  areaServed: [{ "@type": "Country", name: "United States" }, SITE_SERVICE_AREAS],
+  areaServed: [{ "@type": "Country", name: "United States" }, ...areaCentralUs, SITE_SERVICE_AREAS],
   serviceType: [
-    "Lead Generation",
-    "Web Design",
-    "SEO",
-    "WordPress Development",
-    "AI Automation",
+    "Dental website design",
+    "Dental local SEO",
+    "Google Business Profile for dentists",
+    "Dental lead follow-up automation",
+    "Dental patient acquisition consulting",
   ],
   priceRange: "$$",
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: DENTAL_HOME_FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
 };
 
 export default function HomePage() {
@@ -105,13 +112,15 @@ export default function HomePage() {
           __html: JSON.stringify(localBusinessJsonLd),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd),
+        }}
+      />
       <Navbar />
-      <main>
-        <Hero />
-        <Features />
-        <Process />
-        <Pricing />
-        <Testimonials />
+      <main className="pt-[4.75rem] sm:pt-24 lg:pt-28">
+        <DentalHomeLanding />
       </main>
       <Footer />
       <ChatWidgetLazy />
