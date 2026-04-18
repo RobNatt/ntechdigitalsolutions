@@ -16,14 +16,22 @@ function trackCta(placement: string, cta: string) {
   });
 }
 
+const HERO_CTA_MICRO =
+  "Takes 10 minutes · No obligation · No PHI required · No pressure sales call";
+
 function PrimaryCta({
   className,
   placement,
   size = "default",
+  showMicroCopy = true,
+  linkClassName,
 }: {
   className?: string;
   placement: string;
   size?: "default" | "large";
+  /** When false, render only the button (e.g. hero row puts micro copy below both CTAs). */
+  showMicroCopy?: boolean;
+  linkClassName?: string;
 }) {
   return (
     <div className={cn("flex flex-col items-stretch gap-2", className)}>
@@ -31,17 +39,22 @@ function PrimaryCta({
         href={AUDIT_HREF}
         onClick={() => trackCta(placement, "patient_flow_audit")}
         className={cn(
-          "inline-flex items-center justify-center rounded-xl bg-neutral-900 px-6 py-3.5 text-center text-base font-semibold text-white shadow-sm transition hover:bg-neutral-800",
+          "inline-flex w-full items-center justify-center rounded-xl bg-neutral-900 text-center font-semibold text-white shadow-sm transition hover:bg-neutral-800",
           "focus-visible:outline focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
           "dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 dark:focus-visible:ring-offset-neutral-950",
-          size === "large" && "py-4 text-lg sm:px-8"
+          size === "large"
+            ? "h-14 px-6 text-lg sm:px-8"
+            : "px-6 py-3.5 text-base",
+          linkClassName
         )}
       >
         Get My Free Patient Flow Audit
       </Link>
-      <p className="text-center text-[11px] font-medium leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-xs">
-        Takes 10 minutes · No obligation · No PHI required · No pressure sales call
-      </p>
+      {showMicroCopy ? (
+        <p className="text-center text-[11px] font-medium leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-xs">
+          {HERO_CTA_MICRO}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -51,7 +64,7 @@ function SecondaryCta({ placement, className }: { placement: string; className?:
     <button
       type="button"
       className={cn(
-        "inline-flex items-center justify-center rounded-xl border border-neutral-300 bg-white px-6 py-3.5 text-base font-semibold text-neutral-900 transition hover:bg-neutral-50",
+        "inline-flex w-full items-center justify-center rounded-xl border border-neutral-300 bg-white px-6 py-3.5 text-base font-semibold text-neutral-900 transition hover:bg-neutral-50",
         "focus-visible:outline focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2",
         "dark:border-neutral-600 dark:bg-neutral-950 dark:text-white dark:hover:bg-neutral-900",
         className
@@ -88,9 +101,22 @@ export function DentalHomeLanding() {
           <p className="mx-auto mt-5 max-w-2xl text-sm font-medium leading-relaxed text-neutral-700 dark:text-neutral-200">
             No fluff. No vanity metrics. No “brand awareness” nonsense. Just predictable patient growth.
           </p>
-          <div className="mx-auto mt-10 flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-lg sm:flex-row sm:justify-center">
-            <PrimaryCta placement="dental_hero" className="sm:min-w-[240px]" size="large" />
-            <SecondaryCta placement="dental_hero" className="sm:min-w-[200px]" />
+          <div className="mx-auto mt-10 w-full max-w-xl sm:max-w-2xl">
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
+              <PrimaryCta
+                placement="dental_hero"
+                size="large"
+                showMicroCopy={false}
+                className="min-w-0 flex-1"
+              />
+              <SecondaryCta
+                placement="dental_hero"
+                className="h-14 flex-1 px-6 text-lg font-semibold"
+              />
+            </div>
+            <p className="mx-auto mt-4 max-w-lg text-center text-[11px] font-medium leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-xs">
+              {HERO_CTA_MICRO}
+            </p>
           </div>
         </div>
       </section>
