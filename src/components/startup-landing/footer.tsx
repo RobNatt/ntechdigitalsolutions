@@ -10,6 +10,7 @@ export function Footer() {
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },
     { title: "SEO services", href: "/seo-services" },
+    { title: "Nebraska SEO", href: "/nebraska-seo" },
     { title: "Growth System", href: "/growth-system" },
     { title: "Blog", href: "/blog" },
     { title: "About", href: "/about" },

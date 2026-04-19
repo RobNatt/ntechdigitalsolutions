@@ -174,6 +174,10 @@ export function SeoServicesLanding({ scheduleUrl, faqItems }: SeoServicesLanding
             <Link href="/omaha-seo" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
               Omaha SEO services
             </Link>
+            {" · "}
+            <Link href="/nebraska-seo" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+              Nebraska statewide SEO
+            </Link>
           </p>
         </section>
 

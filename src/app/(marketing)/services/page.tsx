@@ -189,10 +189,10 @@ export default async function ServicesPage() {
             Local landing pages (web, SEO, growth)
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-            Same systems as our national topic guides — tuned for Omaha, Lincoln, and regional
-            intent. Use these for ads, GBP, and email deep links.
+            Metro landings for Omaha and Lincoln-area intent, plus a statewide SEO page for
+            multi-city Nebraska coverage. Use these for ads, GBP, and email deep links.
           </p>
-          <ul className="mt-5 grid gap-3 sm:grid-cols-3">
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 href: "/web-design-omaha-ne",
@@ -203,6 +203,11 @@ export default async function ServicesPage() {
                 href: "/omaha-seo",
                 title: "Omaha SEO",
                 blurb: "Local search, maps, and pages built for Omaha metro lead flow.",
+              },
+              {
+                href: "/nebraska-seo",
+                title: "Nebraska SEO",
+                blurb: "Statewide and multi-city visibility beyond a single metro.",
               },
               {
                 href: "/digital-marketing-omaha-ne",

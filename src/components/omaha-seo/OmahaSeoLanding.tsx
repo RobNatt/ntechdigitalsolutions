@@ -91,7 +91,11 @@ export function OmahaSeoLanding({ scheduleUrl, faqItems }: OmahaSeoLandingProps)
             <Link href="/seo-services" className="font-medium text-emerald-800 underline-offset-2 hover:underline dark:text-emerald-400">
               SEO services
             </Link>
-            —this page is built for Omaha intent and local lead flow.
+            —this page is built for Omaha intent and local lead flow. Serving multiple cities? See{" "}
+            <Link href="/nebraska-seo" className="font-medium text-emerald-800 underline-offset-2 hover:underline dark:text-emerald-400">
+              Nebraska SEO
+            </Link>
+            .
           </p>
         </div>
       </section>
@@ -221,6 +225,14 @@ export function OmahaSeoLanding({ scheduleUrl, faqItems }: OmahaSeoLandingProps)
                 className="inline-flex rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
               >
                 SEO services (national overview)
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/nebraska-seo"
+                className="inline-flex rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Nebraska SEO (statewide)
               </Link>
             </li>
             <li>
