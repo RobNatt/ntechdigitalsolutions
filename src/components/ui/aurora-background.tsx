@@ -14,7 +14,7 @@ export function AuroraBackground({ className, showRadialGradient = true }: Auror
   return (
     <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)} aria-hidden>
       <div
-        className="animate-aurora absolute -inset-[38%] opacity-[0.92]"
+        className="animate-aurora absolute -inset-[38%] opacity-100 mix-blend-screen"
         style={{
           backgroundImage: [
             "repeating-linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 6%, rgba(255,255,255,1) 9%, rgba(255,255,255,0.88) 12%, rgba(255,255,255,0) 15%, rgba(255,255,255,0) 20%)",
@@ -30,7 +30,7 @@ export function AuroraBackground({ className, showRadialGradient = true }: Auror
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 95% 75% at 50% 18%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0) 68%)",
+              "radial-gradient(ellipse 90% 70% at 50% 22%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0) 65%)",
           }}
         />
       ) : null}
