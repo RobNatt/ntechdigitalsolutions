@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "figma-export",
-    "design-reference"
+    "design-reference",
+    "public/figma-landing"
   ]
 }
