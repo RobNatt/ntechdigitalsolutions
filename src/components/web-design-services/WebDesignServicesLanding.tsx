@@ -63,7 +63,7 @@ const auditChecklist = [
 export function WebDesignServicesLanding() {
   return (
     <div className="min-h-screen bg-[#F5F6F7]">
-      <section className="relative -mt-20 overflow-hidden bg-gradient-to-b from-[#E4E7ED] to-[#D8DCE4] px-8 py-28 md:px-14 md:py-40 lg:-mt-24 lg:px-20 lg:py-52 xl:px-24 xl:py-60">
+      <section className="relative -mt-20 overflow-hidden bg-gradient-to-b from-[#E4E7ED] to-[#D8DCE4] px-8 pb-28 pt-40 md:px-14 md:pb-40 md:pt-52 lg:-mt-24 lg:px-20 lg:pb-52 lg:pt-64 xl:px-24 xl:pb-60 xl:pt-80">
         <AuroraBackground />
         <div className="relative z-10 mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-4xl tracking-tight md:text-6xl" style={{ color: "#2B2E33" }}>
