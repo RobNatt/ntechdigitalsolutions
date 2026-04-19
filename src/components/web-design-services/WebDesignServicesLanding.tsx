@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { resolveCalendlyWidgetUrl } from "@/constants/scheduling";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { OldNewSiteSlider } from "@/components/web-design-services/OldNewSiteSlider";
 import { WebDesignCalendlyEmbed } from "@/components/web-design-services/WebDesignCalendlyEmbed";
 
-const AUDIT_HREF = "/free-patient-flow-audit";
+const CALENDLY_SCHEDULE_URL = resolveCalendlyWidgetUrl();
 
 function trackCta(placement: string, cta: string) {
   trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, { placement, cta });
@@ -79,14 +79,16 @@ export function WebDesignServicesLanding() {
 
           <div className="flex flex-col items-center gap-6">
             <div className="flex flex-col items-center gap-4 sm:flex-row">
-              <Link
-                href={AUDIT_HREF}
+              <a
+                href={CALENDLY_SCHEDULE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => trackCta("web_design_services_hero", "schedule_free_audit")}
                 className="rounded-lg px-8 py-4 transition-all hover:scale-105 hover:shadow-lg"
                 style={{ backgroundColor: "#2B2E33", color: "#F5F6F7" }}
               >
                 Schedule My Free Audit
-              </Link>
+              </a>
 
               <a
                 href="#signs"
@@ -162,8 +164,10 @@ export function WebDesignServicesLanding() {
           </div>
 
           <div className="flex justify-center">
-            <Link
-              href={AUDIT_HREF}
+            <a
+              href={CALENDLY_SCHEDULE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => trackCta("web_design_services_problems", "get_my_free_audit_now")}
               className="flex items-center gap-3 rounded-lg px-8 py-4 transition-all hover:scale-105 hover:shadow-lg"
               style={{ backgroundColor: "#F5F6F7", color: "#2B2E33" }}
@@ -178,7 +182,7 @@ export function WebDesignServicesLanding() {
                   strokeLinejoin="round"
                 />
               </svg>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -262,14 +266,16 @@ export function WebDesignServicesLanding() {
           </div>
 
           <div className="mt-12 flex justify-center">
-            <Link
-              href={AUDIT_HREF}
+            <a
+              href={CALENDLY_SCHEDULE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => trackCta("web_design_services_footer", "schedule_free_audit")}
               className="rounded-lg px-8 py-4 font-semibold transition-all hover:scale-105 hover:shadow-lg"
               style={{ backgroundColor: "#F5F6F7", color: "#2B2E33" }}
             >
               Start with a free audit
-            </Link>
+            </a>
           </div>
         </div>
       </section>
