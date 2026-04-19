@@ -4,15 +4,19 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 import { ANALYTICS_STORAGE_KEYS } from "@/constants/analytics";
+import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { getMarketingFunnelSlugForPath } from "@/constants/marketing-funnel-pages";
 import {
   getInternalAnalyticsMetadata,
   isAnalyticsOptedOut,
   setAnalyticsOptOut,
 } from "@/lib/analytics/internal-traffic";
+import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 
 const VID = ANALYTICS_STORAGE_KEYS.visitorId;
 const SID = ANALYTICS_STORAGE_KEYS.sessionId;
 const PV_DEDUPE = "ntech_pv_ts";
+const FUNNEL_VIEW_DEDUPE = "ntech_funnel_view_ts";
 
 declare global {
   interface Window {
@@ -124,33 +128,56 @@ export function AnalyticsTracker() {
       });
     }
 
-    if (!writeKey) return;
+    if (writeKey) {
+      const payload = {
+        writeKey,
+        path,
+        referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        sessionId,
+        visitorId,
+        utmSource: utm.utmSource,
+        utmMedium: utm.utmMedium,
+        utmCampaign: utm.utmCampaign,
+        eventType: "pageview",
+        metadata: getInternalAnalyticsMetadata(),
+      };
 
-    const payload = {
-      writeKey,
-      path,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      sessionId,
-      visitorId,
-      utmSource: utm.utmSource,
-      utmMedium: utm.utmMedium,
-      utmCampaign: utm.utmCampaign,
-      eventType: "pageview",
-      metadata: getInternalAnalyticsMetadata(),
-    };
+      const body = JSON.stringify(payload);
+      void fetch("/api/analytics/collect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(isAnalyticsOptedOut() ? { "x-ntech-internal": "1" } : {}),
+        },
+        body,
+        keepalive: true,
+      }).catch(() => {
+        /* ignore */
+      });
+    }
 
-    const body = JSON.stringify(payload);
-    void fetch("/api/analytics/collect", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(isAnalyticsOptedOut() ? { "x-ntech-internal": "1" } : {}),
-      },
-      body,
-      keepalive: true,
-    }).catch(() => {
-      /* ignore */
-    });
+    const funnelSlug = getMarketingFunnelSlugForPath(pathname ?? "");
+    if (funnelSlug && writeKey) {
+      const fvKey = `${path}|${funnelSlug}`;
+      try {
+        const prev = sessionStorage.getItem(FUNNEL_VIEW_DEDUPE);
+        if (prev) {
+          const [k, t] = prev.split("|");
+          const ts = Number(t);
+          if (k === fvKey && !Number.isNaN(ts) && Date.now() - ts < 2500) {
+            return;
+          }
+        }
+        sessionStorage.setItem(FUNNEL_VIEW_DEDUPE, `${fvKey}|${Date.now()}`);
+      } catch {
+        /* ignore */
+      }
+
+      trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.FUNNEL_VIEW, {
+        funnel: funnelSlug,
+        surface: "marketing_funnel_lp",
+      });
+    }
   }, [pathname, searchParams, writeKey]);
 
   return null;

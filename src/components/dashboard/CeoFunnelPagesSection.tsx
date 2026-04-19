@@ -3,34 +3,9 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-/** Marketing funnel routes (same origin) — open in this tab from the CEO dashboard. */
-const FUNNEL_PAGE_GROUPS = [
-  {
-    title: "Conversion",
-    items: [{ href: "/free-patient-flow-audit", label: "Free Patient Flow Audit™" }],
-  },
-  {
-    title: "Dental funnel landings",
-    items: [
-      { href: "/dental-patient-growth-case-study", label: "Dental patient growth case study" },
-      { href: "/why-dental-practices-trust-ntech-digital", label: "Why dental practices trust N-Tech" },
-      { href: "/new-patient-leak-funnel", label: "New patient leak funnel" },
-      { href: "/why-dental-website-isnt-booking-patients", label: "Why your dental website isn't booking patients" },
-      { href: "/why-agencies-fail-dentists", label: "Why agencies fail dentists" },
-      { href: "/cost-of-lost-patients", label: "Cost of lost patients" },
-      { href: "/dental-roi-calculator", label: "Dental ROI calculator" },
-    ],
-  },
-  {
-    title: "PatientFlow™ offers",
-    items: [
-      { href: "/patientflow-foundation", label: "PatientFlow Foundation™" },
-      { href: "/patientflow-lead-machine", label: "PatientFlow Lead Machine™" },
-      { href: "/patientflow-growth-system", label: "PatientFlow Growth System™" },
-      { href: "/patientflow-premium-partner", label: "Premium Growth Partner™" },
-    ],
-  },
-] as const;
+import { getMarketingFunnelPageGroupsForDashboard } from "@/constants/marketing-funnel-pages";
+
+const FUNNEL_PAGE_GROUPS = getMarketingFunnelPageGroupsForDashboard();
 
 export function CeoFunnelPagesSection() {
   return (
