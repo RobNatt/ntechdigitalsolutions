@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Check, Phone, ArrowRight } from "lucide-react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
+import { CalendlyInlineWidget } from "@/components/scheduling/CalendlyInlineWidget";
 import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { cn } from "@/lib/utils";
 
@@ -465,6 +466,21 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
             <PrimaryCta trackCta="offer_book_strategy">
               Book Your Strategy Call
             </PrimaryCta>
+          </div>
+        </div>
+      </section>
+
+      {/* 9b. CALENDLY */}
+      <section className="border-t px-4 py-16 sm:px-6 sm:py-20" style={{ borderColor: COLORS.border, backgroundColor: COLORS.bg }}>
+        <div className="mx-auto max-w-3xl text-center">
+          <Headline as="h2" className="text-2xl sm:text-3xl" style={{ color: COLORS.trust }}>
+            Book your discovery call
+          </Headline>
+          <p className="mt-3 text-base leading-relaxed text-[#4B5563]">
+            Pick a time that works for you — we&apos;ll confirm details before the call.
+          </p>
+          <div className="mt-8 overflow-hidden rounded-2xl border bg-white shadow-sm" style={{ borderColor: COLORS.border }}>
+            <CalendlyInlineWidget className="w-full" />
           </div>
         </div>
       </section>
