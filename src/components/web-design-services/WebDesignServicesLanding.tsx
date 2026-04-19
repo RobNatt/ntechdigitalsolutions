@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
+import { OldNewSiteSlider } from "@/components/web-design-services/OldNewSiteSlider";
+import { WebDesignCalendlyEmbed } from "@/components/web-design-services/WebDesignCalendlyEmbed";
 
 const AUDIT_HREF = "/free-patient-flow-audit";
 
@@ -193,13 +195,8 @@ export function WebDesignServicesLanding() {
             We don&apos;t just build websites — we build revenue-generating machines that work for you 24/7.
           </p>
 
-          <div
-            className="mx-auto mb-16 flex max-w-4xl items-center justify-center overflow-hidden rounded-2xl"
-            style={{ backgroundColor: "#C1C4C8", aspectRatio: "16/9" }}
-          >
-            <span className="text-sm" style={{ color: "#7B7F85" }}>
-              Image or video placeholder
-            </span>
+          <div className="mb-16">
+            <OldNewSiteSlider />
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
@@ -256,6 +253,10 @@ export function WebDesignServicesLanding() {
                 </span>
               </div>
             ))}
+          </div>
+
+          <div className="mt-14">
+            <WebDesignCalendlyEmbed />
           </div>
 
           <div className="mt-12 flex justify-center">

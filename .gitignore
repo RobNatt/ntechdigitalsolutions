@@ -23,9 +23,6 @@
 # local design exports (ported into src)
 /design-reference/
 
-# Figma / Vite scaffold under public (build artifacts live in public/web-design-services)
-public/figma-landing/node_modules
-
 # misc
 .DS_Store
 *.pem
