@@ -261,7 +261,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="pt-6">
+      <section id="faq" className="pt-6">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Frequently asked questions</h2>
         <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
           Grouped by service, delivery, pricing, and fit so you can quickly find what matters.

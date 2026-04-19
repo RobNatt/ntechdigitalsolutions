@@ -200,9 +200,9 @@ export default async function ServicesPage() {
                 blurb: "Lead-ready sites and redesigns for the metro.",
               },
               {
-                href: "/seo-services-omaha-ne",
-                title: "SEO — Omaha, NE",
-                blurb: "Organic and local visibility tied to pipeline.",
+                href: "/omaha-seo",
+                title: "Omaha SEO",
+                blurb: "Local search, maps, and pages built for Omaha metro lead flow.",
               },
               {
                 href: "/digital-marketing-omaha-ne",

@@ -171,8 +171,8 @@ export function SeoServicesLanding({ scheduleUrl, faqItems }: SeoServicesLanding
           </ul>
           <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
             Serving the Omaha metro and Lincoln region in person, with the same SEO systems for remote clients nationwide.{" "}
-            <Link href="/seo-services-omaha-ne" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
-              SEO services — Omaha, NE
+            <Link href="/omaha-seo" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+              Omaha SEO services
             </Link>
           </p>
         </section>

@@ -10,9 +10,17 @@ type SeoServicesCtaPairProps = {
   contactAuditHref: string;
   placement: string;
   className?: string;
+  /** Override primary CTA label (e.g. Omaha-specific audit). */
+  primaryLabel?: string;
 };
 
-export function SeoServicesCtaPair({ scheduleUrl, contactAuditHref, placement, className }: SeoServicesCtaPairProps) {
+export function SeoServicesCtaPair({
+  scheduleUrl,
+  contactAuditHref,
+  placement,
+  className,
+  primaryLabel = "Get an SEO Audit",
+}: SeoServicesCtaPairProps) {
   return (
     <div className={cn("flex flex-col gap-3 sm:flex-row sm:flex-wrap", className)}>
       <Link
@@ -22,7 +30,7 @@ export function SeoServicesCtaPair({ scheduleUrl, contactAuditHref, placement, c
         }
         className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
       >
-        Get an SEO Audit
+        {primaryLabel}
       </Link>
       <a
         href={scheduleUrl}

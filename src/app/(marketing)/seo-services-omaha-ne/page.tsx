@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const RELATED = [
+  { href: "/omaha-seo", label: "Omaha SEO (full local landing)" },
   { href: "/seo-services", label: "SEO services (small business)" },
   { href: "/web-design-omaha-ne", label: "Web design — Omaha" },
   { href: "/digital-marketing-omaha-ne", label: "Digital marketing — Omaha" },
@@ -40,6 +41,13 @@ export default function SeoServicesOmahaPage() {
         cta="full"
       >
         <div className="space-y-10">
+          <p className="rounded-xl border border-amber-200/90 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+            For our full Omaha-focused SEO landing (unique copy, FAQs, and CTAs), see{" "}
+            <Link href="/omaha-seo" className="font-semibold text-amber-900 underline-offset-2 hover:underline dark:text-amber-200">
+              Omaha SEO services
+            </Link>
+            . This page remains available for legacy links and short context.
+          </p>
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
               Local + traditional SEO, planned together

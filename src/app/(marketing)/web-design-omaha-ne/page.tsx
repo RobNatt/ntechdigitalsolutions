@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const RELATED = [
-  { href: "/seo-services-omaha-ne", label: "SEO — Omaha" },
+  { href: "/omaha-seo", label: "Omaha SEO" },
   { href: "/digital-marketing-omaha-ne", label: "Digital marketing — Omaha" },
   { href: "/services/websites-and-leads", label: "Websites & leads (national)" },
 ] as const;

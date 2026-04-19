@@ -149,7 +149,7 @@ export function Hero() {
               </Link>
               <span className="text-gray-400 dark:text-gray-500"> · </span>
               <Link
-                href="/seo-services-omaha-ne"
+                href="/omaha-seo"
                 className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
               >
                 SEO Omaha
