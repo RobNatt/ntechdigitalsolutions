@@ -305,7 +305,7 @@ const CollisionMechanism = ({
   const [cycleCollisionDetected, setCycleCollisionDetected] = useState(false);
 
   useEffect(() => {
-    const checkCollision = () => {
+        const checkCollision = () => {
       if (
         beamRef.current &&
         containerRef.current &&
@@ -316,7 +316,11 @@ const CollisionMechanism = ({
         const containerRect = containerRef.current.getBoundingClientRect();
         const parentRect = parentRef.current.getBoundingClientRect();
 
-        if (beamRect.bottom >= containerRect.top) {
+        const verticalHit = beamRect.bottom >= containerRect.top - 8;
+        const horizontalOverlap =
+          beamRect.right >= containerRect.left && beamRect.left <= containerRect.right;
+
+        if (verticalHit && horizontalOverlap) {
           const relativeX =
             beamRect.left - parentRect.left + beamRect.width / 2;
           const relativeY = beamRect.bottom - parentRect.top;
@@ -339,7 +343,7 @@ const CollisionMechanism = ({
     const animationInterval = setInterval(checkCollision, 50);
 
     return () => clearInterval(animationInterval);
-  }, [cycleCollisionDetected, containerRef]);
+  }, [cycleCollisionDetected, containerRef, parentRef]);
 
   useEffect(() => {
     if (collision.detected && collision.coordinates) {
@@ -370,7 +374,8 @@ const CollisionMechanism = ({
         }}
         variants={{
           animate: {
-            translateY: beamOptions.translateY || "800px",
+            /* Long enough path to reach the dashboard on tall viewports (path was too short). */
+            translateY: beamOptions.translateY ?? "calc(88vh + 520px)",
             translateX: beamOptions.translateX || "700px",
             rotate: beamOptions.rotate || -45,
           },
@@ -415,7 +420,7 @@ const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
   }));
 
   return (
-    <div {...props} className={cn("absolute z-50 h-2 w-2", props.className)}>
+    <div {...props} className={cn("pointer-events-none absolute z-[100] h-2 w-2", props.className)}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
