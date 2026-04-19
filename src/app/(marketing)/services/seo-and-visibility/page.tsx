@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const RELATED = [
+  { href: "/seo-services", label: "SEO services (commercial overview)" },
   { href: "/services/websites-and-leads", label: "Websites & lead-ready builds" },
   { href: "/services/automation-and-crm", label: "Automation & CRM" },
 ] as const;
@@ -38,6 +39,13 @@ export default function SeoAndVisibilityPage() {
         cta="full"
       >
         <div className="space-y-14">
+          <p className="rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 text-sm text-sky-950 dark:border-sky-900/50 dark:bg-sky-950/30 dark:text-sky-100">
+            Looking for the main{" "}
+            <Link href="/seo-services" className="font-semibold text-sky-800 underline-offset-2 hover:underline dark:text-sky-300">
+              SEO services
+            </Link>{" "}
+            page (audit, process, FAQs)? Start there—this guide goes deeper on methodology and GEO.
+          </p>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
               How we think about SEO

@@ -9,6 +9,7 @@ export function Footer() {
   const pages = [
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },
+    { title: "SEO services", href: "/seo-services" },
     { title: "Growth System", href: "/growth-system" },
     { title: "Blog", href: "/blog" },
     { title: "About", href: "/about" },
