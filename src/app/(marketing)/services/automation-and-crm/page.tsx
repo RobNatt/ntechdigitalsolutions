@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { ServiceTopicJsonLd } from "@/components/marketing/ServiceTopicJsonLd";
-import { CONSTANTS } from "@/constants/links";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const PATH = "/services/automation-and-crm";
@@ -125,12 +125,9 @@ export default function AutomationAndCrmPage() {
                 </li>
               ))}
               <li>
-                <Link
-                  href={CONSTANTS.BOOK_CALL_PATH}
-                  className="inline-flex rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-                >
+                <ScheduleCtaLink className="inline-flex rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
                   Book a call
-                </Link>
+                </ScheduleCtaLink>
               </li>
             </ul>
           </section>

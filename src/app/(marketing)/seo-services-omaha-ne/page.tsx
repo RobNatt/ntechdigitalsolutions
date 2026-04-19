@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { OmahaLocalServiceJsonLd } from "@/components/marketing/OmahaLocalServiceJsonLd";
-import { CONSTANTS } from "@/constants/links";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const PATH = "/seo-services-omaha-ne";
@@ -104,12 +104,9 @@ export default function SeoServicesOmahaPage() {
                 </li>
               ))}
               <li>
-                <Link
-                  href={CONSTANTS.BOOK_CALL_PATH}
-                  className="inline-flex rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white dark:bg-white dark:text-neutral-900"
-                >
+                <ScheduleCtaLink className="inline-flex rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white dark:bg-white dark:text-neutral-900">
                   Book a call
-                </Link>
+                </ScheduleCtaLink>
               </li>
             </ul>
           </section>

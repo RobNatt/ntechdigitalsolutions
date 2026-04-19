@@ -1,8 +1,9 @@
 "use client";
 
 import Script from "next/script";
+import { getCalendlyEventUrl } from "@/constants/scheduling";
 
-const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_EVENT_URL?.trim();
+const calendlyUrl = getCalendlyEventUrl();
 
 export function WebDesignCalendlyEmbed() {
   if (!calendlyUrl) {

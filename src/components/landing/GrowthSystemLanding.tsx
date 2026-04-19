@@ -2,11 +2,10 @@
 
 import { useEffect, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Check, Phone, ArrowRight } from "lucide-react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
-import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { cn } from "@/lib/utils";
 
 /** Conversion LP — Complete System tier. CTAs → /contact?plan=complete-system */
@@ -19,7 +18,7 @@ const COLORS = {
   border: "#E5E7EB",
 } as const;
 
-const CONTACT_COMPLETE_SYSTEM = `${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`;
+const GROWTH_SYSTEM_BOOK_CALL_SEARCH = "plan=complete-system";
 const FUNNEL_VARIANTS = {
   a: {
     badge: "Full lead system · Local + SEO",
@@ -66,19 +65,17 @@ function Headline({
 }
 
 function PrimaryCta({
-  href,
   children,
   className,
   trackCta,
 }: {
-  href: string;
   children: ReactNode;
   className?: string;
   trackCta: string;
 }) {
   return (
-    <Link
-      href={href}
+    <ScheduleCtaLink
+      bookCallSearch={GROWTH_SYSTEM_BOOK_CALL_SEARCH}
       onClick={() =>
         trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
           placement: "growth_system",
@@ -93,22 +90,20 @@ function PrimaryCta({
     >
       {children}
       <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-    </Link>
+    </ScheduleCtaLink>
   );
 }
 
 function SecondaryCta({
-  href,
   children,
   trackCta,
 }: {
-  href: string;
   children: ReactNode;
   trackCta: string;
 }) {
   return (
-    <Link
-      href={href}
+    <ScheduleCtaLink
+      bookCallSearch={GROWTH_SYSTEM_BOOK_CALL_SEARCH}
       onClick={() =>
         trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
           placement: "growth_system",
@@ -119,7 +114,7 @@ function SecondaryCta({
       style={{ borderColor: COLORS.action, color: COLORS.action }}
     >
       {children}
-    </Link>
+    </ScheduleCtaLink>
   );
 }
 
@@ -178,11 +173,11 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
               <Bullet>See every lead in your pipeline clearly</Bullet>
             </ul>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta={`hero_book_strategy_${variant}`}>
+              <PrimaryCta trackCta={`hero_book_strategy_${variant}`}>
                 Book Your Strategy Call
               </PrimaryCta>
-              <Link
-                href={`${CONSTANTS.BOOK_CALL_PATH}?plan=complete-system`}
+              <ScheduleCtaLink
+                bookCallSearch={GROWTH_SYSTEM_BOOK_CALL_SEARCH}
                 onClick={() =>
                   trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CALENDAR_BOOKING_CLICK, {
                     placement: "growth_system",
@@ -192,7 +187,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
                 className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-6 py-3.5 text-base font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
               >
                 Book calendar slot
-              </Link>
+              </ScheduleCtaLink>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
               Takes 15 minutes. No pressure. No obligation.
@@ -273,7 +268,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
               <Bullet>Dashboard so you always know what&apos;s working</Bullet>
             </ul>
             <div className="mt-8">
-              <SecondaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="solution_see_qualify">
+              <SecondaryCta trackCta="solution_see_qualify">
                 See If You Qualify
               </SecondaryCta>
             </div>
@@ -467,7 +462,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
             </p>
           </div>
           <div className="mt-10">
-            <PrimaryCta href={CONTACT_COMPLETE_SYSTEM} trackCta="offer_book_strategy">
+            <PrimaryCta trackCta="offer_book_strategy">
               Book Your Strategy Call
             </PrimaryCta>
           </div>
@@ -488,8 +483,8 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
             being lost.
           </p>
           <div className="mt-10">
-            <Link
-              href={CONTACT_COMPLETE_SYSTEM}
+            <ScheduleCtaLink
+              bookCallSearch={GROWTH_SYSTEM_BOOK_CALL_SEARCH}
               onClick={() =>
                 trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
                   placement: "growth_system",
@@ -504,7 +499,7 @@ export function GrowthSystemLanding({ variant = "a" }: { variant?: "a" | "b" | "
               </span>
               <Phone className="h-4 w-4" aria-hidden />
               Book Your Strategy Call
-            </Link>
+            </ScheduleCtaLink>
           </div>
         </div>
       </section>

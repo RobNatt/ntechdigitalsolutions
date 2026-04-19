@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { SITE_URL } from "@/constants/site";
@@ -246,12 +247,9 @@ export default function AboutPage() {
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           Prefer to talk it through?{" "}
-          <Link
-            href="/book-call"
-            className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
-          >
+          <ScheduleCtaLink className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
             Book a call
-          </Link>{" "}
+          </ScheduleCtaLink>{" "}
           or{" "}
           <Link
             href="/contact"

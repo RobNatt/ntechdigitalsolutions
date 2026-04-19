@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { IconCheck } from "@tabler/icons-react";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
@@ -209,18 +210,33 @@ export function Pricing() {
 
                 <div className="mt-5">
                   {tier.cta.style === "primary" ? (
-                    <Link
-                      href={href}
-                      onClick={onPlanClick}
-                      className={cn(
-                        "btn-primary flex w-full cursor-pointer items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold transition",
-                        "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
-                        "shadow-[0_0_28px_rgba(14,165,233,0.35)] hover:from-sky-300 hover:to-sky-500",
-                        "focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-400"
-                      )}
-                    >
-                      {tier.cta.label}
-                    </Link>
+                    tier.id === "lead-machine" ? (
+                      <ScheduleCtaLink
+                        bookCallSearch={`plan=${tier.id}`}
+                        onClick={onPlanClick}
+                        className={cn(
+                          "btn-primary flex w-full cursor-pointer items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold transition",
+                          "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
+                          "shadow-[0_0_28px_rgba(14,165,233,0.35)] hover:from-sky-300 hover:to-sky-500",
+                          "focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-400"
+                        )}
+                      >
+                        {tier.cta.label}
+                      </ScheduleCtaLink>
+                    ) : (
+                      <Link
+                        href={href}
+                        onClick={onPlanClick}
+                        className={cn(
+                          "btn-primary flex w-full cursor-pointer items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold transition",
+                          "bg-gradient-to-b from-sky-400 to-sky-600 text-neutral-950",
+                          "shadow-[0_0_28px_rgba(14,165,233,0.35)] hover:from-sky-300 hover:to-sky-500",
+                          "focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-400"
+                        )}
+                      >
+                        {tier.cta.label}
+                      </Link>
+                    )
                   ) : (
                     <Button
                       as={Link}
