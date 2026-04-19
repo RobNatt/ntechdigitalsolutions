@@ -51,7 +51,6 @@ const MARKETING_NAV_TABS = [
 /** CEO / executive dashboard — sections to be built out. */
 const CEO_NAV_TABS = [
   { id: "calendar", label: "Calendar", icon: CalendarDays },
-  { id: "funnel-pages", label: "Funnel pages", icon: Workflow },
   { id: "assistant", label: "Assistant", icon: Bot },
   { id: "supabase", label: "Supabase", icon: Database },
   { id: "user-management", label: "User management", icon: UserCog },
@@ -62,6 +61,7 @@ const CEO_NAV_TABS = [
   { id: "blog-posts", label: "Blog posts", icon: FileText },
   { id: "business-notes", label: "Business notes", icon: NotebookPen },
   { id: "revenue-reports", label: "Revenue reports", icon: DollarSign },
+  { id: "funnel-pages", label: "Funnel pages", icon: Workflow },
 ] as const;
 
 function PlaceholderTab({ label, variant }: { label: string; variant?: "ceo" }) {

@@ -1,12 +1,6 @@
 N-Tech Digital Solutions
 Website: https://ntechdigital.solutions
-
-Homepage (primary positioning)
-- The homepage is built for dental practices across the Central US (Nebraska, Iowa, Kansas, Missouri, South Dakota, and surrounding markets). N-Tech positions as the Central US Dental Growth Partner.
-- Primary conversion: Free Patient Flow Audit — dedicated intake at https://ntechdigital.solutions/free-patient-flow-audit (recommended) or contact form https://ntechdigital.solutions/contact?plan=patient-flow-audit
-- Core dental homepage themes: conversion-focused dental websites, local SEO for dentists, Google Business Profile optimization, automated lead follow-up, AI-assisted patient acquisition funnels, dental website conversion optimization, patient flow diagnosis before prescribing a service tier.
-
-Audience: Dental practice owners and decision-makers in the Central US seeking predictable new patient bookings; also business owners for non-dental services elsewhere on the site (services pages, blog, Omaha metro landings).
+Audience: Business owners and teams who want websites that convert traffic into qualified sales leads.
 
 Core offerings
 - PatientFlow Foundation™ (dental): https://ntechdigital.solutions/patientflow-foundation — foundational patient-acquisition package for Central US dental practices (custom conversion site, on-page SEO, Search Console, Bing Webmaster, Analytics, email-connected capture). Positioned as revenue protection before scaling ads/SEO—not a generic “starter website.” Primary conversion: Free Patient Flow Audit via https://ntechdigital.solutions/contact?plan=patientflow-foundation

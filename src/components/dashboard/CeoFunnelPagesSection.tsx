@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-import { getMarketingFunnelPageGroupsForDashboard } from "@/constants/marketing-funnel-pages";
+import { getMarketingFunnelNichesForDashboard } from "@/constants/marketing-funnel-pages";
 
-const FUNNEL_PAGE_GROUPS = getMarketingFunnelPageGroupsForDashboard();
+const FUNNEL_NICHES = getMarketingFunnelNichesForDashboard();
 
 export function CeoFunnelPagesSection() {
   return (
@@ -13,18 +13,18 @@ export function CeoFunnelPagesSection() {
       <div>
         <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-neutral-100">Funnel pages</h2>
         <p className="mt-1 text-sm text-gray-600 dark:text-neutral-400">
-          Quick links to live marketing funnels. Opens the page on this site.
+          Quick links to live marketing funnels by niche. Opens the page on this site.
         </p>
       </div>
 
       <div className="space-y-8">
-        {FUNNEL_PAGE_GROUPS.map((group) => (
-          <div key={group.title}>
+        {FUNNEL_NICHES.map((section) => (
+          <div key={section.niche}>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-500">
-              {group.title}
+              {section.niche}
             </h3>
             <ul className="overflow-hidden rounded-xl border border-gray-300/80 bg-white/90 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/80">
-              {group.items.map((item) => (
+              {section.items.map((item) => (
                 <li key={item.href} className="border-b border-gray-200/90 last:border-b-0 dark:border-neutral-800">
                   <Link
                     href={item.href}
