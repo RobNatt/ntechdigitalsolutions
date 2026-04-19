@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { OldNewSiteSlider } from "@/components/web-design-services/OldNewSiteSlider";
 import { WebDesignCalendlyEmbed } from "@/components/web-design-services/WebDesignCalendlyEmbed";
 
@@ -62,8 +63,9 @@ const auditChecklist = [
 export function WebDesignServicesLanding() {
   return (
     <div className="min-h-screen bg-[#F5F6F7]">
-      <section className="px-6 py-14 md:py-24 lg:py-28">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative overflow-hidden bg-white px-6 py-14 md:py-24 lg:py-28">
+        <AuroraBackground />
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-4xl tracking-tight md:text-6xl" style={{ color: "#2B2E33" }}>
             Your Website Is Costing You
             <br />

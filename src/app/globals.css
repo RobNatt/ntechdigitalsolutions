@@ -167,6 +167,14 @@
       animation: none;
     }
   }
+  .animate-aurora {
+    animation: aurora 60s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-aurora {
+      animation: none;
+    }
+  }
 }
 
 @keyframes hero-ticker {
@@ -189,5 +197,14 @@
   100% {
     transform: translate(-220%, 180%) rotate(-32deg) scaleX(1);
     opacity: 0;
+  }
+}
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
   }
 }
