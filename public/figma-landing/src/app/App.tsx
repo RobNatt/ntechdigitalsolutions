@@ -9,7 +9,9 @@ export default function App() {
           </h1>
 
           <p className="mb-10 text-lg md:text-xl max-w-2xl mx-auto" style={{ color: '#7B7F85' }}>
-            Find out exactly what's broken — and how to fix it — with a FREE Website Audit from Highest Point Studio.
+            {
+              "Find out exactly what's broken — and how to fix it — with a FREE Website Audit from N-Tech Digital Solutions."
+            }
           </p>
 
           <div className="flex flex-col items-center gap-6">
