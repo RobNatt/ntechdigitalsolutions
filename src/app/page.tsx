@@ -30,10 +30,10 @@ const OG_IMAGE_PATH = "/ntech-official-logo.png";
 export const metadata: Metadata = {
   title: {
     absolute:
-      "N-Tech Digital Solutions | SEO, GEO & Lead Systems for Growth",
+      "N-Tech Digital Solutions | Websites Built to Bring You Customers",
   },
   description:
-    "Get a faster website, stronger Google and AI visibility, and automated lead follow-up with SEO, GEO, and CRM-backed growth systems.",
+    "We start with your website, then SEO and GEO, lead capture with automation, and optional social and Google marketing—with funnels built on pain-to-relief, trust and evidence, and math and logic.",
   keywords: [
     "lead generation agency",
     "AI lead generation",
@@ -53,18 +53,18 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://ntechdigital.solutions",
     title:
-      "N-Tech Digital Solutions | AI-Powered Lead Generation & Web Design",
+      "N-Tech Digital Solutions | Websites Built to Bring You Customers",
     description:
-      "We build AI-powered lead systems, SEO-optimized websites, and automated funnels that turn clicks into paying customers — on autopilot.",
+      "Website-first growth: SEO and GEO, automated lead capture, and paid social and Google strategies with dedicated conversion funnels.",
     siteName: "N-Tech Digital Solutions",
     locale: "en_US",
     images: [{ url: OG_IMAGE_PATH, alt: "N-Tech Digital Solutions" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "N-Tech Digital Solutions | AI Lead Generation & Web Design",
+    title: "N-Tech Digital Solutions | Websites Built to Bring You Customers",
     description:
-      "AI-powered lead generation, funnels, and SEO-optimized websites for small businesses ready to grow.",
+      "Websites, SEO and GEO, lead automation, and performance marketing—built to bring you customers.",
     images: [OG_IMAGE_PATH],
   },
 };
@@ -74,7 +74,7 @@ const localBusinessJsonLd = {
   "@type": "ProfessionalService",
   name: "N-Tech Digital Solutions",
   description:
-    "AI-powered lead generation systems, website design, and automated lead funnels for small businesses.",
+    "Website design, SEO and GEO, lead capture and automation, and performance marketing for businesses that want more customers.",
   url: "https://ntechdigital.solutions",
   ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
   email: SITE_CONTACT_EMAIL,

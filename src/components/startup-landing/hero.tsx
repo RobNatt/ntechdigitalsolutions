@@ -31,9 +31,6 @@ const HolographicDashboardTabs = dynamic(
   }
 );
 
-const HEADLINE_WORDS =
-  "Turn Clicks Into Paying Customers. On Autopilot.".split(" ");
-
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -88,58 +85,58 @@ export function Hero() {
       <div className="relative z-20 mx-auto w-full max-w-7xl px-4 md:px-6">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-14">
           <div className="min-w-0 flex-1 lg:max-w-[min(100%,52rem)]">
-            <div className="flex justify-center lg:justify-start">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-100">
-                <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
-                AI-Driven Growth Systems for Small Business
-              </div>
-            </div>
-
-            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 lg:mx-0 lg:text-left md:text-7xl">
+            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-900 dark:text-neutral-100 lg:mx-0 lg:text-left sm:text-4xl md:text-5xl lg:text-[2.75rem] lg:leading-tight">
               <Balancer>
-                <motion.h1 className="text-[inherit]">
-                  {HEADLINE_WORDS.map((word, index) => (
-                    <motion.span
-                      key={index}
-                      initial={{
-                        filter: "blur(10px)",
-                        opacity: 0,
-                        y: 10,
-                      }}
-                      animate={{
-                        filter: "blur(0px)",
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      transition={{
-                        duration: 0.4,
-                        delay: index * 0.05,
-                      }}
-                      className="inline-block"
-                    >
-                      {word}&nbsp;
-                    </motion.span>
-                  ))}
+                <motion.h1
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="text-[inherit]"
+                >
+                  Websites built to bring you customers.
                 </motion.h1>
               </Balancer>
             </div>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: 0.42 }}
-              className="relative z-20 mx-auto mt-8 max-w-3xl px-4 text-center text-lg font-semibold tracking-tight text-sky-950 dark:text-sky-100 lg:mx-0 lg:max-w-none lg:px-0 lg:text-left md:text-2xl"
-            >
-              <Balancer>
-                Web design, SEO &amp; lead systems for Omaha, Lincoln &amp; the Nebraska metro — we
-                deliver nationwide too.
-              </Balancer>
-            </motion.h2>
+            <div className="relative z-20 mx-auto mt-6 max-w-2xl space-y-4 px-4 text-center text-base/relaxed text-gray-600 dark:text-gray-200 lg:mx-0 lg:max-w-none lg:px-0 lg:text-left md:text-lg">
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.08 }}
+              >
+                We start with the website, because that&apos;s where your customer learns about your business, and they do it very quickly.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.14 }}
+              >
+                Then, we build a strategic plan around your SEO and GEO because this is how you&apos;re going to get in front of them,{" "}
+                <strong className="font-semibold text-gray-900 dark:text-white">FOR FREE</strong>.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.2 }}
+              >
+                At this point, we add in a lead capture system with automation—so you don&apos;t miss a single sign-up from someone who wants to work with you, and you don&apos;t have to monitor every
+                incoming chat to follow up with your leads.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.26 }}
+              >
+                If this isn&apos;t enough, we take control of your social media marketing and Google marketing strategies and maximize the cost per click by creating dedicated funnels through the three
+                key marketing hooks: emotional pain to relief, trust funnel and evidence, and math and logic.
+              </motion.p>
+            </div>
+
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.22, delay: 0.5 }}
-              className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 lg:mx-0 lg:px-0 lg:text-left md:text-base"
+              transition={{ duration: 0.22, delay: 0.34 }}
+              className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 lg:mx-0 lg:px-0 lg:text-left md:text-base"
             >
               <Link
                 href="/omaha-web-design"
@@ -163,22 +160,11 @@ export function Hero() {
               </Link>
             </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: 0.58 }}
-              className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-base/6 text-gray-600 dark:text-gray-200 lg:mx-0 lg:px-0 lg:text-left md:text-lg"
-            >
-              N-Tech builds the same stack as our packages — from Foundation
-              (SEO-ready sites and WordPress training) through Growth (funnels, CRM,
-              local SEO) to Pro (automation, content, and ongoing optimization) — so
-              you can focus on running your business.
-            </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: 0.78 }}
-              className="mb-2 mt-12 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:mx-0 lg:justify-start lg:px-0 md:mb-4 md:mt-14"
+              transition={{ duration: 0.2, delay: 0.42 }}
+              className="mb-2 mt-10 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:mx-0 lg:justify-start lg:px-0 md:mb-4 md:mt-12"
             >
               <Button
                 as={Link}
