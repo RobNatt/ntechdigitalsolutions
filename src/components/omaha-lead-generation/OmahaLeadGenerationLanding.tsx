@@ -193,6 +193,11 @@ export function OmahaLeadGenerationLanding({ scheduleUrl, faqItems }: OmahaLeadG
               </Link>
             </li>
             <li>
+              <Link href="/seo-for-service-businesses" className="underline-offset-2 hover:underline">
+                SEO for service businesses
+              </Link>
+            </li>
+            <li>
               <Link href="/omaha-seo" className="underline-offset-2 hover:underline">
                 Omaha SEO
               </Link>
