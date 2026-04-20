@@ -165,6 +165,13 @@ export function SeoServicesLanding({ scheduleUrl, faqItems }: SeoServicesLanding
             </Link>{" "}
             for booked-job outcomes and local intent.
           </p>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Lead a dental practice? See{" "}
+            <Link href="/dentist-seo" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+              dentist SEO
+            </Link>{" "}
+            for new-patient acquisition from local and treatment-specific search.
+          </p>
         </section>
 
         <section className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-8" aria-labelledby="who-for">

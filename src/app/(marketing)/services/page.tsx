@@ -144,7 +144,7 @@ export default async function ServicesPage() {
           <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
             Intent-focused pages you can link from ads, email, and editorial content — each with its own title, summary, and internal links into the rest of the site.
           </p>
-          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6">
             {[
               {
                 href: "/seo-services",
@@ -155,6 +155,11 @@ export default async function ServicesPage() {
                 href: "/seo-for-service-businesses",
                 title: "SEO for service businesses",
                 blurb: "Trades and home services: local search, service pages, booked-job outcomes.",
+              },
+              {
+                href: "/dentist-seo",
+                title: "Dentist SEO",
+                blurb: "Dental practices: local patients, treatment pages, GBP and booking paths.",
               },
               {
                 href: "/services/websites-and-leads",

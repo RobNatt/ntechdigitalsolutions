@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 const RELATED = [
   { href: "/seo-services", label: "SEO services (commercial overview)" },
   { href: "/seo-for-service-businesses", label: "SEO for service businesses" },
+  { href: "/dentist-seo", label: "Dentist SEO" },
   { href: "/services/websites-and-leads", label: "Websites & lead-ready builds" },
   { href: "/services/automation-and-crm", label: "Automation & CRM" },
 ] as const;
@@ -45,9 +46,13 @@ export default function SeoAndVisibilityPage() {
             <Link href="/seo-services" className="font-semibold text-sky-800 underline-offset-2 hover:underline dark:text-sky-300">
               SEO services
             </Link>{" "}
-            page (audit, process, FAQs)? Start there—this guide goes deeper on methodology and GEO. For trades and home services, see{" "}
+            page (audit, process, FAQs)? Start there—this guide goes deeper on methodology and GEO.             For trades and home services, see{" "}
             <Link href="/seo-for-service-businesses" className="font-semibold text-sky-800 underline-offset-2 hover:underline dark:text-sky-300">
               SEO for service businesses
+            </Link>
+            . For dental practices, see{" "}
+            <Link href="/dentist-seo" className="font-semibold text-sky-800 underline-offset-2 hover:underline dark:text-sky-300">
+              dentist SEO
             </Link>
             .
           </p>
