@@ -142,7 +142,7 @@ export function Hero() {
               className="relative z-20 mx-auto mt-4 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 lg:mx-0 lg:px-0 lg:text-left md:text-base"
             >
               <Link
-                href="/web-design-omaha-ne"
+                href="/omaha-web-design"
                 className="font-medium text-sky-800 underline decoration-sky-400/50 underline-offset-2 hover:decoration-sky-600 dark:text-sky-300 dark:decoration-sky-500/40"
               >
                 Omaha web design

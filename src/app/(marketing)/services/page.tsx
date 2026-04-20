@@ -195,9 +195,9 @@ export default async function ServicesPage() {
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                href: "/web-design-omaha-ne",
-                title: "Web design — Omaha, NE",
-                blurb: "Lead-ready sites and redesigns for the metro.",
+                href: "/omaha-web-design",
+                title: "Omaha web design",
+                blurb: "Local landing: audits, conversion-focused builds, and discovery.",
               },
               {
                 href: "/omaha-seo",

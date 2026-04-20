@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { resolveCalendlyWidgetUrl } from "@/constants/scheduling";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
@@ -75,6 +76,13 @@ export function WebDesignServicesLanding() {
           <p className="mx-auto mb-10 max-w-2xl text-lg md:text-xl" style={{ color: "#7B7F85" }}>
             Find out exactly what&apos;s broken — and how to fix it — with a FREE Website Audit from N-Tech Digital
             Solutions.
+          </p>
+          <p className="mx-auto mb-8 max-w-xl text-center text-sm" style={{ color: "#7B7F85" }}>
+            Serving the Omaha metro? See our local{" "}
+            <Link href="/omaha-web-design" className="font-semibold underline decoration-[#7B7F85]/50 underline-offset-2 hover:opacity-90" style={{ color: "#2B2E33" }}>
+              Omaha web design
+            </Link>{" "}
+            page for audit-first messaging and FAQs.
           </p>
 
           <div className="flex flex-col items-center gap-6">

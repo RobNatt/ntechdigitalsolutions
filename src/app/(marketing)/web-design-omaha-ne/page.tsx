@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const RELATED = [
+  { href: "/omaha-web-design", label: "Omaha web design (full local landing)" },
   { href: "/omaha-seo", label: "Omaha SEO" },
   { href: "/digital-marketing-omaha-ne", label: "Digital marketing — Omaha" },
   { href: "/services/websites-and-leads", label: "Websites & leads (national)" },
@@ -39,6 +40,13 @@ export default function WebDesignOmahaPage() {
         cta="full"
       >
         <div className="space-y-10">
+          <p className="rounded-xl border border-amber-200/90 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+            For our dedicated Omaha web design landing (audit-first, FAQs, conversion focus), see{" "}
+            <Link href="/omaha-web-design" className="font-semibold text-amber-900 underline-offset-2 hover:underline dark:text-amber-200">
+              Omaha web design
+            </Link>
+            . This page stays for legacy links and short context.
+          </p>
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
               Built for businesses that need leads — not just a brochure
