@@ -4,6 +4,7 @@ import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
 import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
 import { Footer } from "@/components/startup-landing/footer";
 import { Hero } from "@/components/startup-landing/hero";
+import { HomeDashboardShowcase } from "@/components/startup-landing/home-dashboard-showcase";
 import { Navbar } from "@/components/startup-landing/navbar";
 
 const Features = dynamic(() =>
@@ -110,6 +111,7 @@ export default function HomePage() {
         <Hero />
         <Features />
         <Process />
+        <HomeDashboardShowcase />
         <Pricing />
         <Testimonials />
       </main>
