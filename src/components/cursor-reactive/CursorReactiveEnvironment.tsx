@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const GLOW_SIZE = 500;
+const GLOW_SIZE = 250;
 const HALF = GLOW_SIZE / 2;
 
 /**
