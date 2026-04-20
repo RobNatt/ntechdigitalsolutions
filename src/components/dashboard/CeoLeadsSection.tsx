@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Pencil, Save, Trash2, Upload, UserPlus } from "lucide-react";
+import { ArrowLeft, ClipboardCopy, Pencil, Save, Trash2, Upload, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PIPELINE_STAGES, stageLabel } from "@/lib/leads/stages";
 import {
@@ -26,6 +26,8 @@ type LeadRow = {
   created_at: string;
 };
 
+type DevelopmentKind = "" | "new_site" | "redesign";
+
 type Draft = {
   name: string;
   email: string;
@@ -36,6 +38,8 @@ type Draft = {
   stage: string;
   temperature: LeadTemperature;
   notes: string;
+  development: DevelopmentKind;
+  budget: string;
 };
 
 type ManualLeadPayload = {
@@ -48,6 +52,8 @@ type ManualLeadPayload = {
   stage: string;
   temperature: LeadTemperature;
   notes: string;
+  development: string;
+  budget: string;
   details: Record<string, unknown>;
 };
 
@@ -99,6 +105,76 @@ function communicationHistoryFromDetails(details: unknown): CommunicationEntry[]
   return out;
 }
 
+function normalizeDevelopment(value: unknown): DevelopmentKind {
+  const s = typeof value === "string" ? value.trim().toLowerCase() : "";
+  if (s === "new_site" || s === "new site" || s === "new-site") return "new_site";
+  if (s === "redesign" || s === "re-design") return "redesign";
+  return "";
+}
+
+function developmentFromDetails(details: unknown): DevelopmentKind {
+  return normalizeDevelopment(detailsObject(details).development);
+}
+
+function budgetFromDetails(details: unknown): string {
+  const b = detailsObject(details).budget;
+  return typeof b === "string" ? b.trim() : "";
+}
+
+function developmentLabel(d: DevelopmentKind): string {
+  if (d === "new_site") return "New site";
+  if (d === "redesign") return "Redesign";
+  return "—";
+}
+
+/** Milliseconds of last contact; 0 = never (sorts first for stale-first lists). */
+function lastContactMs(lead: LeadRow): number {
+  const d = detailsObject(lead.details);
+  const explicit = typeof d.last_contacted_at === "string" ? d.last_contacted_at.trim() : "";
+  if (explicit) {
+    const t = new Date(explicit).getTime();
+    if (!Number.isNaN(t)) return t;
+  }
+  const hist = communicationHistoryFromDetails(lead.details);
+  const newest = hist[0]?.at;
+  if (newest) {
+    const t = new Date(newest).getTime();
+    if (!Number.isNaN(t)) return t;
+  }
+  return 0;
+}
+
+function formatLastContacted(lead: LeadRow): string {
+  const ms = lastContactMs(lead);
+  if (ms === 0) return "Never";
+  return new Date(ms).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function escapeTsvCell(value: string): string {
+  return value.replace(/\t/g, " ").replace(/\r?\n/g, " ");
+}
+
+function buildColdCallsTsv(leads: LeadRow[]): string {
+  const header = ["Name", "Phone", "Email", "Development", "Budget", "Notes"].join("\t");
+  const lines = leads.map((lead) => {
+    const dev = developmentLabel(developmentFromDetails(lead.details));
+    const budget = budgetFromDetails(lead.details);
+    return [
+      escapeTsvCell(lead.name ?? ""),
+      escapeTsvCell(lead.phone ?? ""),
+      escapeTsvCell(lead.email ?? ""),
+      escapeTsvCell(dev === "—" ? "" : dev),
+      escapeTsvCell(budget),
+      "",
+    ].join("\t");
+  });
+  return [header, ...lines].join("\n");
+}
+
 function leadToDraft(lead: LeadRow): Draft {
   return {
     name: lead.name ?? "",
@@ -110,6 +186,8 @@ function leadToDraft(lead: LeadRow): Draft {
     stage: lead.stage ?? "submitted",
     temperature: normalizeLeadTemperature(lead.lead_temperature),
     notes: notesFromDetails(lead.details),
+    development: developmentFromDetails(lead.details),
+    budget: budgetFromDetails(lead.details),
   };
 }
 
@@ -129,21 +207,27 @@ function draftsEqual(a: Draft, b: Draft): boolean {
     a.lead_type === b.lead_type &&
     a.stage === b.stage &&
     a.temperature === b.temperature &&
-    a.notes === b.notes
+    a.notes === b.notes &&
+    a.development === b.development &&
+    a.budget === b.budget
   );
 }
 
 const TEMP_ORDER: Record<LeadTemperature, number> = { hot: 0, warm: 1, cold: 2 };
 
+/** Stale-first: never / oldest last-contact at top; most recently contacted at bottom. */
 function sortLeadsForCrm(list: LeadRow[]): LeadRow[] {
   return [...list].sort((a, b) => {
+    const ca = lastContactMs(a);
+    const cb = lastContactMs(b);
+    if (ca !== cb) return ca - cb;
     const ta = normalizeLeadTemperature(a.lead_temperature);
     const tb = normalizeLeadTemperature(b.lead_temperature);
-    const d = TEMP_ORDER[ta] - TEMP_ORDER[tb];
-    if (d !== 0) return d;
+    const td = TEMP_ORDER[ta] - TEMP_ORDER[tb];
+    if (td !== 0) return td;
     const da = a.created_at ? new Date(a.created_at).getTime() : 0;
     const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-    return db - da;
+    return da - db;
   });
 }
 
@@ -175,8 +259,11 @@ export function CeoLeadsSection() {
   const [error, setError] = useState<string | null>(null);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddText, setQuickAddText] = useState("");
   const [addingQuickLead, setAddingQuickLead] = useState(false);
+  const [coldCallsOpen, setColdCallsOpen] = useState(false);
+  const [coldCopied, setColdCopied] = useState(false);
   const [commOpen, setCommOpen] = useState(false);
   const [commSaving, setCommSaving] = useState(false);
   const [commChannel, setCommChannel] = useState("call");
@@ -190,6 +277,7 @@ export function CeoLeadsSection() {
   );
 
   const sortedLeads = useMemo(() => sortLeadsForCrm(leads), [leads]);
+  const coldCallsTsv = useMemo(() => buildColdCallsTsv(sortedLeads), [sortedLeads]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -292,6 +380,8 @@ export function CeoLeadsSection() {
           stage: draft.stage,
           temperature: draft.temperature,
           notes: draft.notes,
+          development: draft.development || "",
+          budget: draft.budget,
         }),
       });
       const data = await res.json();
@@ -499,6 +589,8 @@ export function CeoLeadsSection() {
     let address = "";
     let leadType = "business_owner";
     let notes = "";
+    let development = "";
+    let budget = "";
 
     for (const line of lines) {
       const idx = line.indexOf(":");
@@ -513,8 +605,14 @@ export function CeoLeadsSection() {
       else if (key === "location" || key === "address") address = value;
       else if (key === "service") leadType = value.toLowerCase().replace(/\s+/g, "_");
       else if (key === "notes") notes = value;
+      else if (key === "development") development = value;
+      else if (key === "budget") budget = value;
       else details[key.replace(/\s+/g, "_")] = value;
     }
+
+    const devNorm = normalizeDevelopment(development);
+    if (devNorm) details.development = devNorm;
+    if (budget) details.budget = budget;
 
     if (!notes) {
       notes = lines.join("\n");
@@ -530,6 +628,8 @@ export function CeoLeadsSection() {
       stage: "submitted",
       temperature: "warm",
       notes,
+      development: devNorm,
+      budget,
       details,
     };
   }
@@ -559,6 +659,7 @@ export function CeoLeadsSection() {
         return;
       }
       setQuickAddText("");
+      setQuickAddOpen(false);
       setActionMessage("Lead added to CRM.");
       await load();
     } catch {
@@ -740,11 +841,24 @@ export function CeoLeadsSection() {
               />
             </label>
             <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
-              Lead type
+              Development
+              <select
+                className={cn(inputClass, "cursor-pointer")}
+                value={draft.development}
+                onChange={(e) => updateDraft("development", e.target.value as DevelopmentKind)}
+              >
+                <option value="">Unspecified</option>
+                <option value="new_site">New site</option>
+                <option value="redesign">Redesign</option>
+              </select>
+            </label>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+              Budget
               <input
                 className={inputClass}
-                value={draft.lead_type}
-                onChange={(e) => updateDraft("lead_type", e.target.value)}
+                value={draft.budget}
+                onChange={(e) => updateDraft("budget", e.target.value)}
+                placeholder="e.g. $5k–$10k or TBD"
                 autoComplete="off"
               />
             </label>
@@ -823,8 +937,9 @@ export function CeoLeadsSection() {
         <p className="max-w-xl text-sm text-gray-600 dark:text-neutral-400">
           Website contact submissions are saved as <span className="font-medium text-gray-800 dark:text-neutral-200">hot</span>{" "}
           leads. Set <span className="font-medium text-gray-800 dark:text-neutral-200">warm</span> or{" "}
-          <span className="font-medium text-gray-800 dark:text-neutral-200">cold</span> in the first column anytime. Excel imports
-          default to warm.
+          <span className="font-medium text-gray-800 dark:text-neutral-200">cold</span> in the first column anytime. The table sorts
+          by <span className="font-medium text-gray-800 dark:text-neutral-200">last contacted</span> (stale at the top). Email and phone
+          appear only when you open <span className="font-medium text-gray-800 dark:text-neutral-200">Edit lead</span>.
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <input
@@ -844,6 +959,17 @@ export function CeoLeadsSection() {
           >
             <Upload className="h-3.5 w-3.5" />
             {importing ? "Importing…" : "Import Excel"}
+          </button>
+          <button
+            type="button"
+            disabled={sortedLeads.length === 0}
+            onClick={() => {
+              setColdCallsOpen(true);
+              setColdCopied(false);
+            }}
+            className="inline-flex items-center gap-2 rounded-lg border border-violet-500/45 bg-violet-100/80 px-3 py-2 text-xs font-semibold text-violet-950 shadow-sm hover:bg-violet-200/80 disabled:opacity-45"
+          >
+            Begin cold calls
           </button>
           <button
             type="button"
@@ -889,29 +1015,44 @@ export function CeoLeadsSection() {
       )}
 
       <div className="rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 p-3 shadow-inner">
-        <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
-          Quick add lead
-        </h3>
-        <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">
-          Paste intake lines like Name:, Email:, Phone:, Service:, and Budget:.
-        </p>
-        <textarea
-          className={cn(inputClass, "min-h-[140px] resize-y")}
-          placeholder="Name: Nik&#10;Service: Web Design – New Website&#10;Location: Deer River, MN 56636&#10;Phone: (763) 203-5296&#10;Email: nik@hosierww.com"
-          value={quickAddText}
-          onChange={(e) => setQuickAddText(e.target.value)}
-        />
-        <div className="mt-2 flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+            Quick add lead
+          </h3>
           <button
             type="button"
-            disabled={addingQuickLead}
-            onClick={() => void addQuickLead()}
-            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/45 bg-emerald-100/80 px-3 py-2 text-xs font-semibold text-emerald-900 shadow-sm hover:bg-emerald-200/80 disabled:opacity-50"
+            onClick={() => setQuickAddOpen((o) => !o)}
+            className="rounded-lg border border-emerald-500/45 bg-emerald-100/80 px-3 py-1.5 text-xs font-semibold text-emerald-900 shadow-sm hover:bg-emerald-200/80"
           >
-            <UserPlus className="h-3.5 w-3.5" />
-            {addingQuickLead ? "Adding…" : "Add lead from text"}
+            {quickAddOpen ? "Hide intake" : "Add lead from text"}
           </button>
         </div>
+        {quickAddOpen ? (
+          <>
+            <p className="mt-2 text-xs text-gray-600 dark:text-neutral-400">
+              Paste lines such as Name:, Email:, Phone:, Development: (new site or redesign), Budget:, Address:, Notes:.
+            </p>
+            <textarea
+              className={cn(inputClass, "mt-2 min-h-[140px] resize-y")}
+              placeholder={
+                "Name: Example Co\nEmail: hello@example.com\nPhone: 402-555-0100\nDevelopment: new site\nBudget: $8k–$12k"
+              }
+              value={quickAddText}
+              onChange={(e) => setQuickAddText(e.target.value)}
+            />
+            <div className="mt-2 flex justify-end">
+              <button
+                type="button"
+                disabled={addingQuickLead}
+                onClick={() => void addQuickLead()}
+                className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/45 bg-emerald-100/80 px-3 py-2 text-xs font-semibold text-emerald-900 shadow-sm hover:bg-emerald-200/80 disabled:opacity-50"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                {addingQuickLead ? "Adding…" : "Save lead"}
+              </button>
+            </div>
+          </>
+        ) : null}
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-gray-400/40 dark:border-neutral-600/45 bg-gray-300/20 dark:bg-neutral-800/50 shadow-inner backdrop-blur-sm">
@@ -924,14 +1065,14 @@ export function CeoLeadsSection() {
           ) : sortedLeads.length === 0 ? (
             <p className="px-4 py-10 text-center text-sm text-gray-600 dark:text-neutral-400">No leads yet.</p>
           ) : (
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-[520px] text-left text-sm">
               <thead className="sticky top-0 z-[1] bg-gray-300/95 dark:bg-neutral-900/95 shadow-sm">
                 <tr className="border-b border-gray-400/25 text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-700 dark:text-neutral-300">
                   <th className="px-2 py-2.5 pl-3">Temp</th>
                   <th className="px-3 py-2.5">Name</th>
-                  <th className="px-3 py-2.5">Email</th>
-                  <th className="px-3 py-2.5">Phone</th>
-                  <th className="px-3 py-2.5">Client</th>
+                  <th className="px-3 py-2.5">Development</th>
+                  <th className="px-3 py-2.5">Budget</th>
+                  <th className="px-3 py-2.5">Last contacted</th>
                   <th className="px-3 py-2.5">Created</th>
                 </tr>
               </thead>
@@ -939,6 +1080,8 @@ export function CeoLeadsSection() {
                 {sortedLeads.map((lead) => {
                   const isSel = lead.id === selectedId;
                   const t = normalizeLeadTemperature(lead.lead_temperature);
+                  const dev = developmentFromDetails(lead.details);
+                  const bud = budgetFromDetails(lead.details);
                   return (
                     <tr
                       key={lead.id}
@@ -983,18 +1126,14 @@ export function CeoLeadsSection() {
                         </select>
                       </td>
                       <td className="px-3 py-2 font-medium text-gray-900 dark:text-neutral-50">{lead.name || "—"}</td>
-                      <td className="max-w-[160px] truncate px-3 py-2 text-gray-700 dark:text-neutral-300">
-                        {lead.email || "—"}
+                      <td className="max-w-[120px] truncate px-3 py-2 text-xs text-gray-700 dark:text-neutral-300">
+                        {developmentLabel(dev)}
                       </td>
-                      <td className="px-3 py-2 text-gray-700 dark:text-neutral-300 tabular-nums">{lead.phone || "—"}</td>
-                      <td className="px-3 py-2">
-                        {lead.client_id ? (
-                          <span className="text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
-                            Linked
-                          </span>
-                        ) : (
-                          <span className="text-gray-500 dark:text-neutral-500">—</span>
-                        )}
+                      <td className="max-w-[120px] truncate px-3 py-2 text-xs text-gray-700 dark:text-neutral-300">
+                        {bud || "—"}
+                      </td>
+                      <td className="px-3 py-2 text-xs text-gray-600 dark:text-neutral-400 tabular-nums">
+                        {formatLastContacted(lead)}
                       </td>
                       <td className="px-3 py-2 text-xs text-gray-600 dark:text-neutral-400 tabular-nums">
                         {lead.created_at
@@ -1036,7 +1175,8 @@ export function CeoLeadsSection() {
             </div>
 
             <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">
-              Last contacted:{" "}
+              Email and phone are on <span className="font-medium text-gray-800 dark:text-neutral-200">Edit lead</span> only. Last
+              contacted:{" "}
               {(() => {
                 const d = detailsObject(selectedLead.details);
                 const history = communicationHistoryFromDetails(selectedLead.details);
@@ -1149,6 +1289,61 @@ export function CeoLeadsSection() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {coldCallsOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/35 p-3 sm:items-center"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setColdCallsOpen(false);
+          }}
+        >
+          <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-400/50 dark:border-neutral-600/55 bg-neutral-100 shadow-xl dark:bg-neutral-900">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-400/35 px-4 py-3 dark:border-neutral-600/40">
+              <div>
+                <h2 className="text-base font-bold text-gray-900 dark:text-neutral-50">Begin cold calls</h2>
+                <p className="mt-1 max-w-2xl text-xs text-gray-600 dark:text-neutral-400">
+                  One tab-separated block: call from top to bottom (stale first). Most recently contacted rows sit at the bottom. Paste into
+                  Sheets or dial from this view—fill the Notes column as you go.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    void (async () => {
+                      try {
+                        await navigator.clipboard.writeText(coldCallsTsv);
+                        setColdCopied(true);
+                        window.setTimeout(() => setColdCopied(false), 2200);
+                      } catch {
+                        setError("Could not copy to clipboard.");
+                      }
+                    })();
+                  }}
+                  className="inline-flex items-center gap-2 rounded-lg border border-violet-500/45 bg-violet-100/90 px-3 py-2 text-xs font-semibold text-violet-950 shadow-sm hover:bg-violet-200/90"
+                >
+                  <ClipboardCopy className="h-3.5 w-3.5" />
+                  {coldCopied ? "Copied" : "Copy all"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setColdCallsOpen(false)}
+                  className="rounded-lg border border-gray-400/50 px-3 py-2 text-xs font-medium text-gray-800 dark:border-neutral-600 dark:text-neutral-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+            <textarea
+              readOnly
+              className="min-h-[min(60vh,480px)] flex-1 resize-y border-0 bg-white px-4 py-3 font-mono text-[11px] leading-relaxed text-gray-900 focus:outline-none dark:bg-neutral-950 dark:text-neutral-100"
+              value={coldCallsTsv}
+              spellCheck={false}
+              aria-label="Cold call list tab-separated values"
+            />
           </div>
         </div>
       ) : null}

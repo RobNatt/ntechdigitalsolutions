@@ -99,6 +99,10 @@ export async function POST(request: Request) {
         : {};
     if (notes) details.notes = notes;
     details.lead_temperature = temperature;
+    const development = String(body.development ?? "").trim();
+    const budget = String(body.budget ?? "").trim();
+    if (development) details.development = development;
+    if (budget) details.budget = budget;
 
     const nowIso = new Date().toISOString();
     const fullName = name || emailRaw || phone || "Unknown Lead";

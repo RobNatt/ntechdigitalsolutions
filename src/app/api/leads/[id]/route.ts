@@ -147,6 +147,18 @@ export async function PATCH(
       detailsDraft.last_contacted_at = asIsoOrNow(body.last_contacted_at);
       detailsChanged = true;
     }
+    if (body.development !== undefined) {
+      const dev = String(body.development ?? "").trim();
+      if (!dev) delete detailsDraft.development;
+      else detailsDraft.development = dev;
+      detailsChanged = true;
+    }
+    if (body.budget !== undefined) {
+      const bud = String(body.budget ?? "").trim();
+      if (!bud) delete detailsDraft.budget;
+      else detailsDraft.budget = bud;
+      detailsChanged = true;
+    }
 
     if (detailsChanged) {
       updates.details = detailsDraft;
