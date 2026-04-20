@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const RELATED = [
+  { href: "/omaha-lead-generation-small-business", label: "Omaha lead generation" },
   { href: "/omaha-web-design", label: "Omaha web design" },
   { href: "/omaha-seo", label: "Omaha SEO" },
   { href: "/growth-system", label: "Growth System" },

@@ -19,6 +19,7 @@ export function Footer() {
 
   const omahaMetro = [
     { title: "Omaha web design", href: "/omaha-web-design" },
+    { title: "Omaha lead generation", href: "/omaha-lead-generation-small-business" },
     { title: "Omaha SEO", href: "/omaha-seo" },
     { title: "Digital marketing — Omaha", href: "/digital-marketing-omaha-ne" },
   ];

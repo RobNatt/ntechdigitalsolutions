@@ -171,6 +171,11 @@ export function OmahaWebDesignLanding({ scheduleUrl, faqItems }: OmahaWebDesignL
               </Link>
             </li>
             <li>
+              <Link href="/omaha-lead-generation-small-business" className="underline-offset-2 hover:underline">
+                Omaha lead generation
+              </Link>
+            </li>
+            <li>
               <Link href="/seo-services" className="underline-offset-2 hover:underline">
                 SEO services
               </Link>

@@ -189,15 +189,20 @@ export default async function ServicesPage() {
             Local landing pages (web, SEO, growth)
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-            Metro landings for Omaha and Lincoln-area intent, plus a statewide SEO page for
+            Metro landings for Omaha and Lincoln-area intent, lead systems for small businesses, plus a statewide SEO page for
             multi-city Nebraska coverage. Use these for ads, GBP, and email deep links.
           </p>
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {[
               {
                 href: "/omaha-web-design",
                 title: "Omaha web design",
                 blurb: "Local landing: audits, conversion-focused builds, and discovery.",
+              },
+              {
+                href: "/omaha-lead-generation-small-business",
+                title: "Omaha lead generation",
+                blurb: "System-first funnels, capture, and follow-up for booked jobs.",
               },
               {
                 href: "/omaha-seo",

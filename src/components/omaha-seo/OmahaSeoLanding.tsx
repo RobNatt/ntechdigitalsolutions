@@ -205,6 +205,14 @@ export function OmahaSeoLanding({ scheduleUrl, faqItems }: OmahaSeoLandingProps)
           <ul className="mt-4 flex flex-wrap gap-2">
             <li>
               <Link
+                href="/omaha-lead-generation-small-business"
+                className="inline-flex rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Omaha lead generation
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/omaha-web-design"
                 className="inline-flex rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
               >
