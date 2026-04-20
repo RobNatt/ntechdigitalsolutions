@@ -31,6 +31,8 @@ const HolographicDashboardTabs = dynamic(
   }
 );
 
+const HEADLINE_WORDS = "Websites built to bring you customers.".split(" ");
+
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -85,15 +87,31 @@ export function Hero() {
       <div className="relative z-20 mx-auto w-full max-w-7xl px-4 md:px-6">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-14">
           <div className="min-w-0 flex-1 lg:max-w-[min(100%,52rem)]">
-            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-900 dark:text-neutral-100 lg:mx-0 lg:text-left sm:text-4xl md:text-5xl lg:text-[2.75rem] lg:leading-tight">
+            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 lg:mx-0 lg:text-left md:text-7xl">
               <Balancer>
-                <motion.h1
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="text-[inherit]"
-                >
-                  Websites built to bring you customers.
+                <motion.h1 className="text-[inherit]">
+                  {HEADLINE_WORDS.map((word, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{
+                        filter: "blur(10px)",
+                        opacity: 0,
+                        y: 10,
+                      }}
+                      animate={{
+                        filter: "blur(0px)",
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        delay: index * 0.05,
+                      }}
+                      className="inline-block"
+                    >
+                      {word}&nbsp;
+                    </motion.span>
+                  ))}
                 </motion.h1>
               </Balancer>
             </div>
