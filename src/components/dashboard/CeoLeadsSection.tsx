@@ -938,8 +938,9 @@ export function CeoLeadsSection() {
           Website contact submissions are saved as <span className="font-medium text-gray-800 dark:text-neutral-200">hot</span>{" "}
           leads. Set <span className="font-medium text-gray-800 dark:text-neutral-200">warm</span> or{" "}
           <span className="font-medium text-gray-800 dark:text-neutral-200">cold</span> in the first column anytime. The table sorts
-          by <span className="font-medium text-gray-800 dark:text-neutral-200">last contacted</span> (stale at the top). Email and phone
-          appear only when you open <span className="font-medium text-gray-800 dark:text-neutral-200">Edit lead</span>.
+          by <span className="font-medium text-gray-800 dark:text-neutral-200">last contacted</span> (stale at the top). Open a row for
+          communications—email and phone show there; use <span className="font-medium text-gray-800 dark:text-neutral-200">Edit lead</span>{" "}
+          to change them.
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <input
@@ -1174,21 +1175,57 @@ export function CeoLeadsSection() {
               </button>
             </div>
 
-            <p className="mt-1 text-xs text-gray-600 dark:text-neutral-400">
-              Email and phone are on <span className="font-medium text-gray-800 dark:text-neutral-200">Edit lead</span> only. Last
-              contacted:{" "}
-              {(() => {
-                const d = detailsObject(selectedLead.details);
-                const history = communicationHistoryFromDetails(selectedLead.details);
-                const last =
-                  typeof d.last_contacted_at === "string" && d.last_contacted_at.trim()
-                    ? d.last_contacted_at
-                    : history[0]?.at;
-                if (!last) return "Never logged";
-                const dt = new Date(last);
-                return Number.isNaN(dt.getTime()) ? last : dt.toLocaleString();
-              })()}
-            </p>
+            <div className="mt-3 rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 p-3 dark:bg-neutral-900/50">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-neutral-400">
+                Contact
+              </p>
+              <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-500">Email</dt>
+                  <dd className="mt-0.5 break-all text-sm text-gray-900 dark:text-neutral-100">
+                    {selectedLead.email?.trim() ? (
+                      <a
+                        href={`mailto:${selectedLead.email.trim()}`}
+                        className="font-medium text-sky-800 underline-offset-2 hover:underline dark:text-sky-400"
+                      >
+                        {selectedLead.email.trim()}
+                      </a>
+                    ) : (
+                      <span className="text-gray-500 dark:text-neutral-500">—</span>
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-500">Phone</dt>
+                  <dd className="mt-0.5 text-sm tabular-nums text-gray-900 dark:text-neutral-100">
+                    {selectedLead.phone?.trim() ? (
+                      <a
+                        href={`tel:${(selectedLead.phone ?? "").replace(/\s/g, "")}`}
+                        className="font-medium text-sky-800 underline-offset-2 hover:underline dark:text-sky-400"
+                      >
+                        {selectedLead.phone.trim()}
+                      </a>
+                    ) : (
+                      <span className="text-gray-500 dark:text-neutral-500">—</span>
+                    )}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-3 border-t border-gray-300/60 pt-2 text-xs text-gray-600 dark:border-neutral-700/60 dark:text-neutral-400">
+                Last contacted:{" "}
+                {(() => {
+                  const d = detailsObject(selectedLead.details);
+                  const history = communicationHistoryFromDetails(selectedLead.details);
+                  const last =
+                    typeof d.last_contacted_at === "string" && d.last_contacted_at.trim()
+                      ? d.last_contacted_at
+                      : history[0]?.at;
+                  if (!last) return "Never logged";
+                  const dt = new Date(last);
+                  return Number.isNaN(dt.getTime()) ? last : dt.toLocaleString();
+                })()}
+              </p>
+            </div>
 
             <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <div className="rounded-xl border border-gray-400/35 dark:border-neutral-600/40 bg-white/85 p-3">
