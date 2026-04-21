@@ -95,7 +95,7 @@ export type ParsedLeadRow = {
   lead_type: string;
   name: string | null;
   phone: string | null;
-  address: string | null;
+  address: string;
   email: string | null;
   stage: string;
   details: Record<string, unknown>;
@@ -203,7 +203,7 @@ export function workbookBufferToLeadRows(buffer: ArrayBuffer): {
     }
     const email = pick(m, ["email", "e_mail", "e-mail"]) || null;
     const phone = pick(m, ["phone", "mobile", "phone_number", "cell", "telephone"]) || null;
-    const address = pick(m, ["address", "street", "location"]) || null;
+    const address = pick(m, ["address", "street", "location"]) || "N/A";
     const company =
       pick(m, ["company", "business", "company_name", "organization"]) || null;
     const stageRaw = pick(m, ["stage", "status", "pipeline_stage"]);

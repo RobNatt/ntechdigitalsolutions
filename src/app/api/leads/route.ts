@@ -70,6 +70,7 @@ export async function POST(request: Request) {
     const emailRaw = String(body.email ?? "").trim().toLowerCase();
     const phone = String(body.phone ?? "").trim();
     const address = String(body.address ?? "").trim();
+    const safeAddress = address || "N/A";
     const source = String(body.source ?? "").trim() || "manual_entry";
     const leadType = String(body.lead_type ?? "").trim() || "business_owner";
     const stage = String(body.stage ?? "").trim() || "submitted";
@@ -118,7 +119,8 @@ export async function POST(request: Request) {
         email: emailRaw || null,
         phone: phone || null,
         phone_number: phone || "",
-        address: address || null,
+        // Some DB setups normalize empty strings to NULL; keep address non-empty to satisfy NOT NULL.
+        address: safeAddress,
         details,
         stage,
         stage_updated_at: nowIso,

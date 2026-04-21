@@ -74,7 +74,7 @@ export async function PATCH(
       updates.phone = String(body.phone ?? "").trim() || null;
     }
     if (body.address !== undefined) {
-      updates.address = String(body.address ?? "").trim() || null;
+      updates.address = String(body.address ?? "").trim() || "N/A";
     }
     if (body.source !== undefined) {
       const source = String(body.source ?? "").trim();

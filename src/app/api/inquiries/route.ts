@@ -159,7 +159,7 @@ export async function POST(request: Request) {
         email,
         phone: phone || "",
         phone_number: phone || "",
-        address: "",
+        address: "N/A",
         details,
         stage: "submitted",
         stage_updated_at: nowIso,
@@ -178,7 +178,7 @@ export async function POST(request: Request) {
           email,
           phone: phone || "",
           phone_number: phone || "",
-          address: "",
+          address: "N/A",
           details,
         },
       ];

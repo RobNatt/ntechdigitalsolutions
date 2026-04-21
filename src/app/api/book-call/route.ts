@@ -75,6 +75,7 @@ export async function POST(request: Request) {
       lead_score: score.score,
       lead_temperature: score.temperature,
     };
+    const safeAddress = "N/A";
 
     const { data: leadRow, error: leadErr } = await admin
       .from("leads")
@@ -87,6 +88,7 @@ export async function POST(request: Request) {
         email,
         phone,
         phone_number: phone || "",
+        address: safeAddress,
         details,
         stage: "submitted",
         stage_updated_at: nowIso,
