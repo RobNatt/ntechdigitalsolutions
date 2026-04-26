@@ -8,44 +8,26 @@ import { ShootingStarsBackground } from "@/components/ui/shooting-stars-backgrou
 const FEATURES = [
   {
     id: 1,
-    title: "Starter: The Foundation",
+    title: "Phase 1 — Build the foundation",
     description:
-      "A fast, professional, SEO-optimized site that puts you on the map — WordPress CMS with full training and a 14-day delivery guarantee.",
-    bullets: [
-      "5-page custom website (Home, About, Services, Contact + 1 custom page)",
-      "Mobile-first responsive design",
-      "On-page SEO setup (meta tags, schema, sitemap, robots.txt)",
-      "Google Search Console + Bing Webmaster submission",
-      "Contact form to your email, Google Analytics, WordPress with full training",
-    ],
+      "A fast, professional site is your handshake. Without it, everything else fails. Most local businesses lose prospects in 8 seconds.",
+    bullets: ["Speed", "Mobile-first", "Clear CTA"],
     variant: "left" as const,
   },
   {
     id: 2,
-    title: "Growth: The Lead Machine",
+    title: "Phase 2 — Get found (SEO + GEO)",
     description:
-      "Your site plus a complete lead capture and follow-up system — every interested visitor gets tracked, contacted, and nurtured automatically.",
-    bullets: [
-      "Custom lead funnel + dedicated landing page built to convert",
-      "Lead capture forms with automated email follow-up sequences",
-      "CRM setup, pipeline configuration, and lead tracking dashboard",
-      "Google Business Profile and organic search visibility for your markets",
-      "Monthly performance report (traffic, leads, conversions) + conversion review every 90 days",
-    ],
+      "Your website means nothing if no one lands on it. Organic visibility — in Google Search and AI answer engines — is how you get consistent, free traffic. This is the multiplier.",
+    bullets: ["Google Business", "GEO / AI search", "Local rankings"],
     variant: "right" as const,
   },
   {
     id: 3,
-    title: "Pro: The Full Growth System",
+    title: "Phase 3 — Capture + convert leads automatically",
     description:
-      "Website, funnel, automation, SEO content, and ongoing optimization in one system — you close deals; we run what fills the pipeline.",
-    bullets: [
-      "Multi-page lead funnel with A/B tested variations",
-      "Automated lead qualification and scoring + SMS & email follow-up (multi-touch)",
-      "Monthly SEO content (2 blog posts or topic/service pages for your keywords)",
-      "Ongoing Google + Bing Search Console monitoring + quarterly landing page refresh",
-      "Priority support (48hr response), dedicated account manager, monthly strategy call",
-    ],
+      "Traffic without a system leaks money. AI-qualified leads, automated follow-up, and a CRM that closes the loop — this is the Lead Machine. This is what makes your phone ring while you sleep.",
+    bullets: ["AI qualification", "CRM + pipeline", "SMS + email sequences"],
     variant: "top" as const,
   },
 ];
