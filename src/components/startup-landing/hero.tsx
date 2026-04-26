@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
 import { Button } from "./button";
 import { HeroTicker } from "./hero-ticker";
-import { HeroDiscoveryLeadPanel } from "./home-discovery-lead";
 
 const HEADLINE =
   "Your competitor is getting the call. Here's why — and how to fix it.";
@@ -22,9 +21,9 @@ export function Hero() {
       <BackgroundGrids />
 
       <div className="relative z-20 mx-auto w-full max-w-7xl px-4 md:px-6">
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-14">
-          <div className="min-w-0 flex-1 lg:max-w-[min(100%,52rem)]">
-            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-center text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 sm:text-4xl md:text-5xl lg:mx-0 lg:text-left lg:text-6xl">
+        <div className="flex flex-col items-center">
+          <div className="min-w-0 w-full max-w-4xl text-center">
+            <div className="text-balance relative z-20 mx-auto mb-6 mt-3 max-w-4xl text-3xl font-semibold tracking-tight text-gray-700 dark:text-neutral-300 sm:text-4xl md:text-5xl lg:text-6xl">
               <Balancer>
                 <motion.h1 className="text-[inherit]">
                   {HEADLINE_WORDS.map((word, index) => (
@@ -53,7 +52,7 @@ export function Hero() {
               </Balancer>
             </div>
 
-            <div className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-base/relaxed text-gray-600 dark:text-gray-200 lg:mx-0 lg:max-w-none lg:px-0 lg:text-left md:text-lg">
+            <div className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-base/relaxed text-gray-600 dark:text-gray-200 md:text-lg">
               <motion.p
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -67,7 +66,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.22, delay: 0.34 }}
-              className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-center text-sm text-gray-600 dark:text-gray-300 lg:mx-0 lg:px-0 lg:text-left md:text-base"
+              className="relative z-20 mx-auto mt-6 max-w-2xl px-4 text-sm text-gray-600 dark:text-gray-300 md:text-base"
             >
               <Link
                 href="/omaha-web-design"
@@ -95,7 +94,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: 0.42 }}
-              className="mb-2 mt-10 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:mx-0 lg:justify-start lg:px-0 md:mb-4 md:mt-12"
+              className="mb-2 mt-10 flex w-full max-w-2xl flex-col items-stretch justify-center gap-3 px-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:mb-4 md:mt-12"
             >
               <Button
                 as={Link}
@@ -127,8 +126,6 @@ export function Hero() {
               </Button>
             </motion.div>
           </div>
-
-          <HeroDiscoveryLeadPanel className="mx-auto shrink-0 lg:mx-0 lg:max-w-[min(100%,26rem)] lg:pt-1 xl:max-w-[28rem]" />
         </div>
       </div>
 
