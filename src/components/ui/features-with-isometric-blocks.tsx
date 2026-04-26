@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { Bot, Check, Globe2, LayoutTemplate } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CONSTANTS } from "@/constants/links";
 import { motion } from "motion/react";
 import { ShootingStarsBackground } from "@/components/ui/shooting-stars-background";
 
@@ -22,15 +25,20 @@ const FEATURES = [
     bullets: ["Google Business", "GEO / AI search", "Local rankings"],
     variant: "right" as const,
   },
-  {
-    id: 3,
-    title: "Phase 3 — Capture + convert leads automatically",
-    description:
-      "Traffic without a system leaks money. AI-qualified leads, automated follow-up, and a CRM that closes the loop — this is the Lead Machine. This is what makes your phone ring while you sleep.",
-    bullets: ["AI qualification", "CRM + pipeline", "SMS + email sequences"],
-    variant: "top" as const,
-  },
-];
+] as const;
+
+const LEAD_MACHINE_INCLUDES = [
+  "5-page custom website build",
+  "CRM setup + pipeline dashboard",
+  "Google Business Profile optimization",
+  "AI-powered lead qualification",
+  "On-page SEO (all 5 pages)",
+  "SMS + email follow-up sequences",
+  "GEO / AI search visibility setup",
+  "Monthly performance reports",
+  "Lead training dashboard access",
+  "30-day post-launch optimization",
+] as const;
 
 export default function FeaturesWithIsometricBlocks() {
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -55,15 +63,14 @@ export default function FeaturesWithIsometricBlocks() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-0">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-0">
           {FEATURES.map((feature, index) => (
             <div
               key={feature.id}
-              id={feature.id === 2 ? "lead-machine" : undefined}
               onMouseEnter={() => setActiveId(feature.id)}
               onMouseLeave={() => setActiveId(null)}
               className={cn(
-                "relative flex scroll-mt-24 flex-col px-0 md:px-8",
+                "relative flex flex-col px-0 md:px-8",
                 "md:border-r md:border-neutral-200 dark:md:border-neutral-800",
                 index === FEATURES.length - 1 && "md:border-r-0"
               )}
@@ -107,8 +114,196 @@ export default function FeaturesWithIsometricBlocks() {
             </div>
           ))}
         </div>
+
+        <LeadMachineOfferSection />
       </div>
     </section>
+  );
+}
+
+function LeadMachineOfferSection() {
+  return (
+    <div
+      id="lead-machine"
+      className="scroll-mt-24 mt-20 border-t border-neutral-200 pt-16 md:mt-24 md:pt-20 dark:border-neutral-800"
+    >
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+        The Lead Machine — $7,000
+      </p>
+      <h2 className="mx-auto mt-3 max-w-3xl text-center text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl lg:text-4xl dark:text-neutral-100">
+        A complete system that turns your website into a lead engine.
+      </h2>
+      <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-neutral-600 md:text-base dark:text-neutral-400">
+        Built for Omaha businesses that are done waiting on referrals. The Lead Machine combines a
+        high-converting website, local SEO, and AI-powered lead capture into one fully managed system.
+      </p>
+
+      <div className="mx-auto mt-8 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 text-center">
+        <h3 className="text-3xl font-bold tabular-nums text-neutral-900 md:text-4xl dark:text-neutral-50">
+          $7,000
+        </h3>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          one-time setup · system is yours to keep.
+        </p>
+      </div>
+
+      <hr className="mx-auto my-10 max-w-2xl border-neutral-200 dark:border-neutral-700" />
+
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+        What&apos;s included — 3 pillar breakdown
+      </p>
+
+      <div className="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 md:gap-5">
+        <PillarCard
+          icon={<LayoutTemplate className="size-6" aria-hidden />}
+          title="High-converting website"
+          body="Custom-built on WordPress. Fast, mobile-first, with clear calls to action and a contact funnel designed to convert visitors — not just impress them."
+          layer="Foundation layer"
+        />
+        <PillarCard
+          icon={<Globe2 className="size-6" aria-hidden />}
+          title="Local SEO + GEO setup"
+          body="Google Business Profile optimization, on-page SEO, and AI search visibility — so you rank where your customers are actually looking, including ChatGPT and Gemini."
+          layer="Visibility layer"
+        />
+        <PillarCard
+          icon={<Bot className="size-6" aria-hidden />}
+          title="AI lead capture + CRM"
+          body="Automated lead qualification, SMS and email follow-up sequences, and a pipeline dashboard — so every lead is tracked and followed up within seconds, not days."
+          layer="Conversion layer"
+        />
+      </div>
+
+      <hr className="mx-auto my-12 max-w-2xl border-neutral-200 dark:border-neutral-700" />
+
+      <div className="mx-auto max-w-2xl">
+        <TimelinePhase
+          title="Week 1 — Discovery + strategy"
+          body="We audit your current presence, map your local competitors, and define your lead capture funnel before writing a single line of code."
+          foot="Kickoff call + intake form"
+        />
+        <TimelinePhase
+          title="Weeks 2–3 — Build"
+          body="Custom site built, CRM configured, lead forms wired up, SMS and email sequences written and loaded. Google Business Profile fully optimized."
+          foot="You review, we revise"
+        />
+        <TimelinePhase
+          title="Week 4 — Launch + handoff"
+          body="Live launch with full testing. You get a 60-minute walkthrough of your dashboard, pipeline, and how leads flow through the system."
+          foot="First leads within 30 days"
+        />
+        <TimelinePhase
+          title="Day 30 — Performance review"
+          body="We review real data together. Traffic sources, lead volume, conversion rate. Adjust and optimize. You own the system — we make sure it's working."
+          foot="Monthly reports included."
+          isLast
+        />
+      </div>
+
+      <hr className="mx-auto my-12 max-w-2xl border-neutral-200 dark:border-neutral-700" />
+
+      <div className="mx-auto max-w-xl">
+        <h3 className="text-center text-lg font-bold text-neutral-900 md:text-xl dark:text-neutral-100">
+          What you get — full includes list
+        </h3>
+        <ul className="mt-6 space-y-3 text-left text-sm text-neutral-700 md:text-base dark:text-neutral-300">
+          {LEAD_MACHINE_INCLUDES.map((line) => (
+            <li key={line} className="flex gap-3">
+              <Check
+                className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                aria-hidden
+              />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <figure className="mx-auto mt-14 max-w-3xl rounded-2xl border border-neutral-200 bg-neutral-50/90 px-6 py-8 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/60 md:px-10 md:py-10">
+        <blockquote className="text-center text-sm font-medium leading-relaxed text-neutral-800 md:text-base dark:text-neutral-200">
+          &ldquo;Within 2 months, we went from a basic site, no online presence and no leads to having an
+          impressive website that informed potential customers, ranking top 10 in every search, and getting
+          regular calls and leads from our website.&rdquo;
+        </blockquote>
+        <figcaption className="mt-5 text-center text-xs text-neutral-600 md:text-sm dark:text-neutral-400">
+          — James, Roofer and exterior contractor, Omaha NE — Lead Machine customer
+        </figcaption>
+      </figure>
+
+      <div className="mx-auto mt-14 flex max-w-4xl flex-col gap-8 rounded-2xl border border-neutral-200 bg-white px-6 py-8 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/50 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10">
+        <div className="min-w-0 flex-1 text-center md:text-left">
+          <h3 className="text-lg font-bold text-neutral-900 md:text-xl dark:text-neutral-50">
+            Ready to see if the Lead Machine is right for your business?
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Book a free 20-minute strategy call. We&apos;ll look at your current web presence, identify
+            exactly where leads are slipping through, and show you what a system built for your business
+            would look like.
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col items-center gap-2 md:items-end">
+          <Link
+            href={CONSTANTS.BOOK_CALL_PATH}
+            className="inline-flex w-full min-w-[12rem] items-center justify-center rounded-lg bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 md:w-auto dark:bg-sky-500 dark:hover:bg-sky-400"
+          >
+            Book a strategy call
+          </Link>
+          <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 md:text-right">
+            No commitment. 20 minutes. Honest advice.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PillarCard({
+  icon,
+  title,
+  body,
+  layer,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  layer: string;
+}) {
+  return (
+    <div className="flex flex-col rounded-2xl border border-neutral-200 bg-neutral-50/80 p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/50 md:p-6">
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-300">
+        {icon}
+      </div>
+      <h4 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{title}</h4>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{body}</p>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400">
+        {layer}
+      </p>
+    </div>
+  );
+}
+
+function TimelinePhase({
+  title,
+  body,
+  foot,
+  isLast,
+}: {
+  title: string;
+  body: string;
+  foot: string;
+  isLast?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "border-neutral-200 py-6 dark:border-neutral-700",
+        !isLast && "border-b"
+      )}
+    >
+      <h4 className="text-base font-bold text-neutral-900 md:text-lg dark:text-neutral-100">{title}</h4>
+      <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{body}</p>
+      <p className="mt-3 text-xs font-medium text-neutral-500 dark:text-neutral-500">{foot}</p>
+    </div>
   );
 }
 
