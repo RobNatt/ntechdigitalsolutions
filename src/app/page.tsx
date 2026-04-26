@@ -10,9 +10,6 @@ import { Navbar } from "@/components/startup-landing/navbar";
 const Features = dynamic(() =>
   import("@/components/startup-landing/features").then((m) => ({ default: m.Features }))
 );
-const Process = dynamic(() =>
-  import("@/components/startup-landing/process").then((m) => ({ default: m.Process }))
-);
 const Pricing = dynamic(() =>
   import("@/components/startup-landing/pricing").then((m) => ({ default: m.Pricing }))
 );
@@ -110,7 +107,6 @@ export default function HomePage() {
       <main>
         <Hero />
         <Features />
-        <Process />
         <HomeDashboardShowcase />
         <Pricing />
         <Testimonials />

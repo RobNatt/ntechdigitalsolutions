@@ -210,11 +210,11 @@ function LeadMachineOfferSection() {
 
       <hr className="mx-auto my-12 max-w-2xl border-neutral-200 dark:border-neutral-700" />
 
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-4xl">
         <h3 className="text-center text-lg font-bold text-neutral-900 md:text-xl dark:text-neutral-100">
           What you get — full includes list
         </h3>
-        <ul className="mt-6 space-y-3 text-left text-sm text-neutral-700 md:text-base dark:text-neutral-300">
+        <ul className="mt-6 grid grid-cols-1 gap-x-8 gap-y-3 text-left text-sm text-neutral-700 sm:grid-cols-2 md:text-base dark:text-neutral-300">
           {LEAD_MACHINE_INCLUDES.map((line) => (
             <li key={line} className="flex gap-3">
               <Check
