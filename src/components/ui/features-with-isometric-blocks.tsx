@@ -25,6 +25,14 @@ const FEATURES = [
     bullets: ["Google Business", "GEO / AI search", "Local rankings"],
     variant: "right" as const,
   },
+  {
+    id: 3,
+    title: "Phase 3 — Capture + convert leads automatically",
+    description:
+      "Traffic without a system leaks money. AI-qualified leads, automated follow-up, and a CRM that closes the loop — this is the Lead Machine. This is what makes your phone ring while you sleep.",
+    bullets: ["AI qualification", "CRM + pipeline", "SMS + email sequences"],
+    variant: "top" as const,
+  },
 ] as const;
 
 const LEAD_MACHINE_INCLUDES = [
@@ -63,7 +71,7 @@ export default function FeaturesWithIsometricBlocks() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-0">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-0">
           {FEATURES.map((feature, index) => (
             <div
               key={feature.id}
