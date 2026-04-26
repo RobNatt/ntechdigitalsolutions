@@ -77,10 +77,11 @@ export default function FeaturesWithIsometricBlocks() {
           {FEATURES.map((feature, index) => (
             <div
               key={feature.id}
+              id={feature.id === 2 ? "lead-machine" : undefined}
               onMouseEnter={() => setActiveId(feature.id)}
               onMouseLeave={() => setActiveId(null)}
               className={cn(
-                "relative flex flex-col px-0 md:px-8",
+                "relative flex scroll-mt-24 flex-col px-0 md:px-8",
                 "md:border-r md:border-neutral-200 dark:md:border-neutral-800",
                 index === FEATURES.length - 1 && "md:border-r-0"
               )}
