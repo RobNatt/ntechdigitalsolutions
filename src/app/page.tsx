@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
 import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
+import { HomeBrandHub } from "@/components/home/HomeBrandHub";
 import { Footer } from "@/components/startup-landing/footer";
-import { Hero } from "@/components/startup-landing/hero";
-import { HomeDashboardShowcase } from "@/components/startup-landing/home-dashboard-showcase";
 import { Navbar } from "@/components/startup-landing/navbar";
-
-const Features = dynamic(() =>
-  import("@/components/startup-landing/features").then((m) => ({ default: m.Features }))
-);
-const Pricing = dynamic(() =>
-  import("@/components/startup-landing/pricing").then((m) => ({ default: m.Pricing }))
-);
-const Testimonials = dynamic(() =>
-  import("@/components/startup-landing/testimonials").then((m) => ({ default: m.Testimonials }))
-);
 import {
   SITE_BUSINESS_PHONE,
   SITE_CONTACT_EMAIL,
@@ -27,22 +15,18 @@ const OG_IMAGE_PATH = "/ntech-official-logo.png";
 
 export const metadata: Metadata = {
   title: {
-    absolute:
-      "N-Tech Digital Solutions | Websites Built to Bring You Customers",
+    absolute: "N-Tech Digital Solutions | Growth Systems for Service Businesses",
   },
   description:
-    "We start with your website, then SEO and GEO, lead capture with automation, and optional social and Google marketing—with funnels built on pain-to-relief, trust and evidence, and math and logic.",
+    "Website-first growth for roofers, HVAC, plumbers, dental practices, and similar service businesses — flagship 3 Step Scale System: site + funnel, lead dashboard, paid ads and SEO.",
   keywords: [
+    "service business marketing",
     "lead generation agency",
-    "AI lead generation",
-    "web design small business",
-    "SEO website design",
-    "WordPress website",
+    "web design for contractors",
+    "local SEO",
     "lead funnels",
-    "automated lead tracking",
-    "SEO services",
-    "marketing automation small business",
-    "web development agency",
+    "HVAC marketing",
+    "dental practice marketing",
   ],
   authors: [{ name: "N-Tech Digital Solutions" }],
   robots: { index: true, follow: true },
@@ -50,19 +34,18 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://ntechdigital.solutions",
-    title:
-      "N-Tech Digital Solutions | Websites Built to Bring You Customers",
+    title: "N-Tech Digital Solutions | Growth Systems for Service Businesses",
     description:
-      "Website-first growth: SEO and GEO, automated lead capture, and paid social and Google strategies with dedicated conversion funnels.",
+      "Websites, funnels, lead tracking, and traffic — built as one system for service businesses that want qualified buyers, not vanity traffic.",
     siteName: "N-Tech Digital Solutions",
     locale: "en_US",
     images: [{ url: OG_IMAGE_PATH, alt: "N-Tech Digital Solutions" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "N-Tech Digital Solutions | Websites Built to Bring You Customers",
+    title: "N-Tech Digital Solutions | Growth Systems for Service Businesses",
     description:
-      "Websites, SEO and GEO, lead automation, and performance marketing—built to bring you customers.",
+      "Website, funnel, dashboard, paid ads, and SEO — one path from click to booked work.",
     images: [OG_IMAGE_PATH],
   },
 };
@@ -72,7 +55,7 @@ const localBusinessJsonLd = {
   "@type": "ProfessionalService",
   name: "N-Tech Digital Solutions",
   description:
-    "Website design, SEO and GEO, lead capture and automation, and performance marketing for businesses that want more customers.",
+    "Website design, lead capture, funnels, SEO, and paid traffic for service businesses that want more qualified buyers.",
   url: "https://ntechdigital.solutions",
   ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
   email: SITE_CONTACT_EMAIL,
@@ -87,8 +70,8 @@ const localBusinessJsonLd = {
     "Lead Generation",
     "Web Design",
     "SEO",
-    "WordPress Development",
-    "AI Automation",
+    "Paid Ads",
+    "Marketing Automation",
   ],
   priceRange: "$$",
 };
@@ -105,11 +88,7 @@ export default function HomePage() {
       />
       <Navbar />
       <main>
-        <Hero />
-        <Features />
-        <HomeDashboardShowcase />
-        <Pricing />
-        <Testimonials />
+        <HomeBrandHub />
       </main>
       <Footer />
       <ChatWidgetLazy />

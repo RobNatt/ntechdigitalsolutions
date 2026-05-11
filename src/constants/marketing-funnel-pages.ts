@@ -11,7 +11,9 @@ export type MarketingFunnelPageNiche =
   /** Tiered dental patient acquisition product pages */
   | "PatientFlow™ (dental packages)"
   /** Figma-built marketing / web design funnel */
-  | "Web design services";
+  | "Web design services"
+  /** Flagship service-business offer (site + dashboard + ads/SEO) */
+  | "Service businesses";
 
 export type MarketingFunnelPageDef = {
   path: `/${string}`;
@@ -100,6 +102,12 @@ export const MARKETING_FUNNEL_PAGES: readonly MarketingFunnelPageDef[] = [
     funnel: "web_design_services",
     label: "Web design services",
     niche: "Web design services",
+  },
+  {
+    path: "/growthsystem",
+    funnel: "three_step_scale_system",
+    label: "3 Step Scale System",
+    niche: "Service businesses",
   },
 ] as const;
 

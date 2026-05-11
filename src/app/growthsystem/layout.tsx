@@ -17,7 +17,7 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export default function GrowthSystemLayout({
+export default function GrowthSystemFunnelLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (

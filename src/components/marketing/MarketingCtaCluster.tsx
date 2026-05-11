@@ -56,7 +56,7 @@ export function MarketingCtaCluster({
           </a>
         ) : null}
         <Link
-          href="/growth-system"
+          href="/growthsystem"
           onClick={() =>
             trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
               placement: "marketing_cta_cluster",

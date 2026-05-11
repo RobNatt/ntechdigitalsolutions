@@ -14,7 +14,9 @@ export function scoreInquiryLead(input: {
   if (input.planInterest) score += 20;
   if (input.budget) score += 15;
   if (input.message.trim().length >= 80) score += 20;
-  if (input.sourcePage && /growth-system|plan|pricing/i.test(input.sourcePage)) score += 20;
+  if (input.sourcePage && /growth-system|growthsystem|plan|pricing/i.test(input.sourcePage)) {
+    score += 20;
+  }
   if (score >= 70) return { score, temperature: "hot" };
   if (score >= 40) return { score, temperature: "warm" };
   return { score, temperature: "cold" };

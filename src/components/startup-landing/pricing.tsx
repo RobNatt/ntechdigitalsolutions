@@ -12,6 +12,7 @@ const TIERS = [
     price: "$4,000",
     description:
       "A professional, fast site with SEO fundamentals and analytics — so you launch with credibility and a clear path to being found online.",
+    featured: false,
   },
   {
     id: "lead-machine",
@@ -21,6 +22,7 @@ const TIERS = [
     description:
       "Everything in Foundation, plus a funnel, CRM, and follow-up so interest turns into pipeline — not lost tabs and voicemail.",
     featured: true,
+    badge: "Most popular",
   },
   {
     id: "complete-system",
@@ -29,6 +31,7 @@ const TIERS = [
     price: "$12,000",
     description:
       "Full-stack growth: qualification, SMS + email sequences, content, and ongoing optimization so your funnel keeps compounding.",
+    featured: false,
   },
   {
     id: "premium-growth-partner",
@@ -37,6 +40,7 @@ const TIERS = [
     price: "$20,000",
     description:
       "Our highest-touch partnership: faster execution, more testing and content, and deeper strategy — for teams who want us operating as an extension of theirs.",
+    featured: false,
   },
 ] as const;
 

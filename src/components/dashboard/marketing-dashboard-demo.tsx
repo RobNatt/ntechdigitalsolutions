@@ -194,7 +194,7 @@ export function MarketingAnalyticsDemoPanel() {
           title="Top paths"
           rows={[
             { left: "/", count: 18200 },
-            { left: "/growth-system", count: 6240 },
+            { left: "/growthsystem", count: 6240 },
             { left: "/contact", count: 4180 },
             { left: "/services", count: 3950 },
             { left: "/book-call", count: 2120 },
@@ -295,7 +295,7 @@ export function MarketingFunnelsDemoPanel() {
       <div className="grid gap-3 lg:grid-cols-3">
         <FunnelCard
           name="Funnel A · Growth System headline test"
-          hypothesis="Variant A emphasizes speed to lead; B emphasizes ROI — split 50/50 on /growth-system."
+          hypothesis="Variant A emphasizes speed to lead; B emphasizes ROI — split 50/50 on /growthsystem."
           stages={[
             { label: "Landing pageviews", count: 18400 },
             { label: "Scroll to pricing", count: 9200 },

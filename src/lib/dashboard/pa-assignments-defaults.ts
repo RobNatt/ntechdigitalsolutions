@@ -236,7 +236,7 @@ Capture blockers and set the next concrete owner/date.`,
       "ntech-w-monthly-priority-qa",
       "Monthly QA progress: priority page metadata/canonical/internal links",
       "weekly",
-      "Progress through monthly QA for priority pages: /, /growth-system, /services, /book-call, /contact, /about, /blog, /privacy-policy, /terms-and-conditions."
+      "Progress through monthly QA for priority pages: /, /growthsystem, /services, /book-call, /contact, /about, /blog, /privacy-policy, /terms-and-conditions."
     ),
     w(
       "ntech-w-quarterly-geo-audit",

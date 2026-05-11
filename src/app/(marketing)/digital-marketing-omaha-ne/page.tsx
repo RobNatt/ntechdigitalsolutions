@@ -21,7 +21,7 @@ const RELATED = [
   { href: "/omaha-lead-generation-small-business", label: "Omaha lead generation" },
   { href: "/omaha-web-design", label: "Omaha web design" },
   { href: "/omaha-seo", label: "Omaha SEO" },
-  { href: "/growth-system", label: "Growth System" },
+  { href: "/growthsystem", label: "Growth System" },
 ] as const;
 
 export default function DigitalMarketingOmahaPage() {
@@ -79,7 +79,7 @@ export default function DigitalMarketingOmahaPage() {
             <p>
               Many teams begin with a focused rebuild or funnel plus automation, then layer ongoing
               SEO and content. Explore the{" "}
-              <Link href="/growth-system" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+              <Link href="/growthsystem" className="font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
                 Growth System
               </Link>{" "}
               overview for how we package those phases — or jump to{" "}

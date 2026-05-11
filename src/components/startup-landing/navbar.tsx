@@ -14,6 +14,7 @@ import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
+import { GROWTH_SYSTEM_FUNNEL_PATH } from "@/constants/growth-system-offer";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 
 interface NavbarProps {
@@ -25,7 +26,7 @@ interface NavbarProps {
 }
 
 function trackNavCta(href: string) {
-  if (href === "/contact" || href === "/growth-system") {
+  if (href === "/contact" || href === GROWTH_SYSTEM_FUNNEL_PATH) {
     trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
       placement: "nav",
       href,
@@ -39,7 +40,7 @@ const SCROLL_PILL_THRESHOLD = 72;
 export const Navbar = () => {
   const navItems = [
     { name: "Services", link: "/services" },
-    { name: "Growth System", link: "/growth-system" },
+    { name: "Growth System", link: GROWTH_SYSTEM_FUNNEL_PATH },
     { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
     { name: "Contact", link: "/contact" },
@@ -100,7 +101,8 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
               onClick={() => trackNavCta(navItem.link)}
               className={cn(
                 "relative px-3 py-2 text-xs text-neutral-700 lg:px-4 lg:text-sm dark:text-neutral-200",
-                (navItem.link === "/contact" || navItem.link === "/growth-system") && "btn-primary",
+                (navItem.link === "/contact" || navItem.link === GROWTH_SYSTEM_FUNNEL_PATH) &&
+                  "btn-primary",
               )}
               key={`link=${idx}`}
               href={navItem.link}
@@ -190,7 +192,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   }}
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
-                    (navItem.link === "/contact" || navItem.link === "/growth-system") &&
+                    (navItem.link === "/contact" || navItem.link === GROWTH_SYSTEM_FUNNEL_PATH) &&
                       "btn-primary"
                   )}
                 >

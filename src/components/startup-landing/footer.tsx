@@ -13,7 +13,7 @@ export function Footer() {
     { title: "SEO for service businesses", href: "/seo-for-service-businesses" },
     { title: "Dentist SEO", href: "/dentist-seo" },
     { title: "Nebraska SEO", href: "/nebraska-seo" },
-    { title: "Growth System", href: "/growth-system" },
+    { title: "Growth System", href: "/growthsystem" },
     { title: "Blog", href: "/blog" },
     { title: "About", href: "/about" },
     { title: "Contact", href: "/contact" },
@@ -32,7 +32,7 @@ export function Footer() {
   ];
 
   const signups = [
-    { title: "Growth System", href: "/growth-system" },
+    { title: "Growth System", href: "/growthsystem" },
     { title: "Sign up", href: "/signup" },
     { title: "Login", href: "/login" },
     { title: "Book a demo", href: CONSTANTS.CONTACT_PATH },
@@ -151,7 +151,7 @@ export function Footer() {
                     <Link
                       className={cn(
                         "transition-colors hover:text-text-neutral-800",
-                        auth.href === "/growth-system" && "btn-primary inline-flex w-fit"
+                        auth.href === "/growthsystem" && "btn-primary inline-flex w-fit"
                       )}
                       href={auth.href}
                     >

@@ -129,6 +129,48 @@ export async function sendInquiryNotification(payload: InquiryNotificationPayloa
   console.log("Inquiry notification email sent", { to: toEmail, name: payload.name });
 }
 
+/** Auto-reply for Growth System funnel leads who are below the Calendly booking threshold (nurture + discount framing). */
+export async function sendGrowthSystemUnqualifiedAutoReply(payload: {
+  name: string;
+  email: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
+  if (!apiKey) return;
+
+  const firstName = payload.name.split(" ")[0] || payload.name;
+  const lines = [
+    `Hi ${firstName},`,
+    "",
+    "Thanks for completing the short form for the 3 Step Scale System.",
+    "",
+    "Based on what you shared, we may not be the right fit for the full done-for-you package today — but we still want to help you grow.",
+    "Watch your inbox: we'll follow up personally. From time to time we extend a limited-time introductory offer for owners who are building toward the next revenue band.",
+    "",
+    "If you have questions in the meantime, reply to this email.",
+    "",
+    "— N-Tech Digital Solutions",
+  ];
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: payload.email,
+      subject: "We received your info — N-Tech Digital Solutions",
+      text: lines.join("\n"),
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Growth system nurture auto-reply failed:", err);
+  }
+}
+
 export async function sendInquiryAutoReply(payload: {
   name: string;
   email: string;
