@@ -8,6 +8,8 @@ export type OsSettingsRow = {
   enable_content_engine: boolean;
   enable_analytics: boolean;
   enable_sops: boolean;
+  /** Stage value counted as "uncontacted" for KPI (default New). */
+  uncontacted_stage: string;
   enum_defaults: Record<string, string[]> | null;
   created_at?: string;
   updated_at?: string;

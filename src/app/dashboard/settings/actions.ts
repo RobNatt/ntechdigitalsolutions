@@ -21,6 +21,7 @@ export async function updateOsSettingsAction(
   const enable_content_engine = formData.get("enable_content_engine") === "on";
   const enable_analytics = formData.get("enable_analytics") === "on";
   const enable_sops = formData.get("enable_sops") === "on";
+  const uncontacted_stage = String(formData.get("uncontacted_stage") ?? "").trim() || "New";
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -33,6 +34,7 @@ export async function updateOsSettingsAction(
       enable_content_engine,
       enable_analytics,
       enable_sops,
+      uncontacted_stage,
     })
     .eq("id", session.settings.id);
 

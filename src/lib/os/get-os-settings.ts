@@ -26,6 +26,7 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
     enable_content_engine: Boolean(row.enable_content_engine ?? true),
     enable_analytics: Boolean(row.enable_analytics ?? true),
     enable_sops: Boolean(row.enable_sops ?? true),
+    uncontacted_stage: String(row.uncontacted_stage ?? "New"),
     enum_defaults:
       row.enum_defaults && typeof row.enum_defaults === "object"
         ? (row.enum_defaults as Record<string, string[]>)

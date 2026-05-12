@@ -89,6 +89,28 @@ export function OsSettingsForm({ settings }: OsSettingsFormProps) {
       </div>
 
       <fieldset className="space-y-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700">
+        <legend className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Leads CRM</legend>
+        <div>
+          <label
+            htmlFor="uncontacted_stage"
+            className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
+          >
+            Uncontacted stage (KPI)
+          </label>
+          <input
+            id="uncontacted_stage"
+            name="uncontacted_stage"
+            defaultValue={settings.uncontacted_stage}
+            className="mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-600 dark:bg-neutral-900"
+            placeholder="New"
+          />
+          <p className="mt-1 text-xs text-neutral-500">
+            Must match one of your pipeline stage names (e.g. New).
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700">
         <legend className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Feature toggles</legend>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="enable_content_engine" defaultChecked={settings.enable_content_engine} />

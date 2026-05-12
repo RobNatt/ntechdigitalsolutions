@@ -11,6 +11,7 @@ export const DEFAULT_OS_SETTINGS: Omit<OsSettingsRow, "id"> & { id: string } = {
   enable_content_engine: true,
   enable_analytics: true,
   enable_sops: true,
+  uncontacted_stage: "New",
   enum_defaults: {
     lead_stages: ["New", "Contacted", "Booked", "Showed", "Qualified"],
     project_stages: ["Onboarding", "Development", "In Review", "Live"],
