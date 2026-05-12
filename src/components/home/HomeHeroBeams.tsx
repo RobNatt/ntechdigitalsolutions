@@ -99,8 +99,7 @@ export function HomeHeroBeams() {
         <Balancer>Digital Systems Built to Grow Local Businesses</Balancer>
       </h1>
       <p className="relative z-50 mx-auto mt-4 max-w-2xl px-4 text-center text-base/relaxed text-gray-600 md:text-lg dark:text-neutral-300">
-        We combine conversion-focused websites, live business dashboards, and targeted advertising
-        into one unified growth system.
+        a conversion optimized website, ads traffic and a dashboard to track it all.
       </p>
       <div
         id="offer-path"
@@ -179,9 +178,9 @@ export function HomeHeroBeams() {
 
       <div
         ref={containerRef}
-        className="relative z-40 mx-auto w-full max-w-7xl rounded-[32px] border border-neutral-200/50 bg-neutral-100 p-2 backdrop-blur-lg md:p-4 dark:border-neutral-700 dark:bg-neutral-800/50"
+        className="relative z-40 mx-auto w-full max-w-3xl rounded-2xl border border-neutral-200/50 bg-neutral-100 p-1.5 backdrop-blur-lg sm:p-2 dark:border-neutral-700 dark:bg-neutral-800/50"
       >
-        <div className="rounded-[24px] border border-neutral-200 bg-white p-4 shadow-sm sm:p-6 md:p-8 dark:border-neutral-700 dark:bg-neutral-950">
+        <div className="rounded-xl border border-neutral-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-4 dark:border-neutral-700 dark:bg-neutral-950">
           <HeroPreviewCarousel />
         </div>
       </div>
@@ -198,16 +197,16 @@ function HeroPreviewCarousel() {
   const slide = HERO_PREVIEW_SLIDES[index];
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-center text-2xl font-semibold tracking-tight text-neutral-900 md:text-3xl dark:text-white">
+    <div className="space-y-3 sm:space-y-4">
+      <h2 className="text-center text-lg font-semibold tracking-tight text-neutral-900 sm:text-xl md:text-2xl dark:text-white">
         <Balancer>A Revenue Generating System at your finger tips</Balancer>
       </h2>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <div
           role="tablist"
           aria-label="Product preview"
-          className="flex flex-wrap items-center justify-center gap-2"
+          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
         >
           {HERO_PREVIEW_SLIDES.map((s, i) => (
             <button
@@ -219,7 +218,7 @@ function HeroPreviewCarousel() {
               id={`hero-preview-tab-${s.id}`}
               onClick={() => setIndex(i)}
               className={cn(
-                "rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600",
+                "rounded-full border px-3 py-1.5 text-xs font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 sm:px-4 sm:py-2 sm:text-sm",
                 i === index
                   ? "border-sky-600 bg-sky-50 text-sky-900 dark:border-sky-500 dark:bg-sky-950/60 dark:text-sky-50"
                   : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-neutral-600",
@@ -245,7 +244,7 @@ function HeroPreviewCarousel() {
               setIndex((i) => (i - 1 + n) % n);
             }
           }}
-          className="relative w-full overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 aspect-[16/10] outline-none ring-sky-500/40 focus-visible:ring-2 dark:border-neutral-800 dark:bg-neutral-900"
+          className="relative w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 aspect-video outline-none ring-sky-500/40 focus-visible:ring-2 dark:border-neutral-800 dark:bg-neutral-900"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -254,7 +253,7 @@ function HeroPreviewCarousel() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18 }}
-              className="absolute inset-0 flex items-center justify-center p-2 sm:p-4"
+              className="absolute inset-0 flex items-center justify-center p-1.5 sm:p-3"
             >
               {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
               <img
@@ -267,24 +266,24 @@ function HeroPreviewCarousel() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-1 sm:pl-2">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-0.5 sm:pl-1.5">
             <button
               type="button"
               onClick={prev}
               aria-label="Previous preview"
-              className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
             >
-              <ChevronLeft className="h-5 w-5" aria-hidden />
+              <ChevronLeft className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
             </button>
           </div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 flex items-center pr-1 sm:pr-2">
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 flex items-center pr-0.5 sm:pr-1.5">
             <button
               type="button"
               onClick={next}
               aria-label="Next preview"
-              className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
             >
-              <ChevronRight className="h-5 w-5" aria-hidden />
+              <ChevronRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
             </button>
           </div>
         </div>
