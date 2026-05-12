@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import Balancer from "react-wrap-balancer";
 import { CONSTANTS } from "@/constants/links";
@@ -42,6 +42,8 @@ const HERO_TRUST_POINTS = [
 export function HomeHeroBeams() {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const trustLoop = reduceMotion ? [...HERO_TRUST_POINTS] : [...HERO_TRUST_POINTS, ...HERO_TRUST_POINTS];
 
   return (
     <section
@@ -123,22 +125,55 @@ export function HomeHeroBeams() {
         aria-label="Trust highlights"
         className="relative z-50 mx-auto mb-10 w-full max-w-4xl px-4 md:mb-16"
       >
-        <div className="rounded-2xl border border-neutral-200/90 bg-white/70 px-3 py-3 shadow-sm backdrop-blur-sm dark:border-neutral-700/90 dark:bg-neutral-900/60">
-          <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:gap-x-4">
-            {HERO_TRUST_POINTS.map((label) => (
-              <li
-                key={label}
-                className="flex max-w-[min(100%,20rem)] items-center gap-1.5 text-left text-xs font-medium text-neutral-700 sm:text-sm dark:text-neutral-200"
+        <ul className="sr-only">
+          {HERO_TRUST_POINTS.map((label) => (
+            <li key={label}>{label}</li>
+          ))}
+        </ul>
+        <div
+          aria-hidden
+          className="overflow-hidden rounded-2xl border border-neutral-200/90 bg-white/70 py-2.5 shadow-sm backdrop-blur-sm dark:border-neutral-700/90 dark:bg-neutral-900/60"
+        >
+          <div
+            className={cn(
+              "flex items-center gap-0",
+              reduceMotion
+                ? "w-full max-w-full flex-wrap justify-center gap-x-4 gap-y-2 py-1"
+                : "animate-trust-marquee w-max pr-8 md:pr-12",
+            )}
+          >
+            {trustLoop.map((label, i) => (
+              <span
+                key={reduceMotion ? label : `${label}-${i}`}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-neutral-700 sm:text-sm dark:text-neutral-200",
+                  reduceMotion ? "px-1" : "pl-6 sm:pl-8 md:pl-10",
+                )}
               >
                 <Check
                   className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400"
                   strokeWidth={2.5}
                   aria-hidden
                 />
-                <span>{label}</span>
-              </li>
+                <span className="whitespace-nowrap">{label}</span>
+                {!reduceMotion ? (
+                  <span
+                    className="pl-4 text-neutral-300 select-none sm:pl-6 dark:text-neutral-600"
+                    aria-hidden
+                  >
+                    ·
+                  </span>
+                ) : i < trustLoop.length - 1 ? (
+                  <span
+                    className="pl-2 text-neutral-300 select-none dark:text-neutral-600"
+                    aria-hidden
+                  >
+                    ·
+                  </span>
+                ) : null}
+              </span>
             ))}
-          </ul>
+          </div>
         </div>
       </nav>
 

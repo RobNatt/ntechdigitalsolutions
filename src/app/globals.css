@@ -156,6 +156,14 @@
       animation: none;
     }
   }
+  .animate-trust-marquee {
+    animation: hero-ticker 28s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-trust-marquee {
+      animation: none;
+    }
+  }
   .animate-features-shoot {
     animation-name: features-shoot;
     animation-timing-function: linear;
