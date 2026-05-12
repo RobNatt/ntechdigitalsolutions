@@ -179,7 +179,7 @@ export function HomeHeroBeams() {
 
       <div
         ref={containerRef}
-        className="relative z-40 mx-auto w-full max-w-3xl rounded-2xl border border-neutral-200/50 bg-neutral-100 p-1.5 backdrop-blur-lg sm:p-2 dark:border-neutral-700 dark:bg-neutral-800/50"
+        className="relative z-40 mx-auto w-full max-w-4xl rounded-2xl border border-neutral-200/50 bg-neutral-100 p-1.5 backdrop-blur-lg sm:p-2 dark:border-neutral-700 dark:bg-neutral-800/50"
       >
         <div className="rounded-xl border border-neutral-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-4 dark:border-neutral-700 dark:bg-neutral-950">
           <HeroPreviewCarousel />
@@ -247,7 +247,7 @@ function HeroPreviewCarousel() {
           }}
           className="flex w-full flex-col items-center outline-none ring-sky-500/40 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950"
         >
-          <div className="flex w-full max-w-md items-center justify-center gap-1 sm:gap-2 md:max-w-lg md:gap-4">
+          <div className="flex w-full max-w-xl items-center justify-center gap-2 sm:max-w-2xl sm:gap-3 md:max-w-3xl md:gap-5">
             <button
               type="button"
               onClick={prev}
@@ -265,7 +265,7 @@ function HeroPreviewCarousel() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute inset-0"
+                  className="absolute inset-0 flex items-start justify-center overflow-hidden bg-neutral-950 px-3 pt-3 sm:px-4 sm:pt-4 md:px-5 md:pt-5"
                 >
                   {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
                   <img
@@ -273,7 +273,7 @@ function HeroPreviewCarousel() {
                     alt={slide.alt}
                     decoding="async"
                     fetchPriority={index === 0 ? "high" : "low"}
-                    className="h-full w-full object-cover object-top"
+                    className="mx-auto h-[68%] max-h-[min(68%,24rem)] w-[78%] max-w-full object-contain object-top sm:h-[70%] sm:w-[76%] md:h-[72%] md:w-[74%]"
                   />
                 </motion.div>
               </AnimatePresence>

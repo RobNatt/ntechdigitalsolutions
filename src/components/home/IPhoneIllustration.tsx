@@ -33,24 +33,24 @@ export function IPhoneIllustration({ children }: IPhoneIllustrationProps) {
       initial="initial"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="mx-auto w-full max-w-[15rem] shrink-0 sm:max-w-[17rem] md:max-w-[18.5rem]"
+      className="mx-auto w-full max-w-[19rem] shrink-0 sm:max-w-[22rem] md:max-w-[25rem]"
     >
-      <div className="relative mx-auto w-44 sm:w-52 md:w-56">
+      <div className="relative mx-auto w-56 sm:w-64 md:w-72">
         {/* Left side buttons */}
-        <div className="absolute top-[18%] -left-[2px] flex flex-col gap-2">
-          <div className="h-3 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
-          <div className="h-5 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
-          <div className="h-5 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
+        <div className="absolute top-[18%] -left-[2px] flex flex-col gap-2.5">
+          <div className="h-3.5 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
+          <div className="h-6 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
+          <div className="h-6 w-[2px] rounded-l-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
         </div>
 
         {/* Right side — power */}
         <div className="absolute top-[22%] -right-[2px]">
-          <div className="h-8 w-[2px] rounded-r-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
+          <div className="h-9 w-[2px] rounded-r-sm bg-neutral-300 shadow-[0px_0px_1px_0px_var(--color-neutral-400)] dark:bg-neutral-600 dark:shadow-[0px_0px_1px_0px_var(--color-neutral-500)]" />
         </div>
 
         {/* Body */}
-        <div className="rounded-[1.5rem] bg-neutral-100 p-1 shadow-sm ring-1 ring-black/10 shadow-black/10 dark:bg-neutral-800 dark:shadow-white/5 dark:ring-white/10">
-          <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[1.25rem] bg-neutral-950">
+        <div className="rounded-[1.75rem] bg-neutral-100 p-[5px] shadow-sm ring-1 ring-black/10 shadow-black/10 dark:bg-neutral-800 dark:shadow-white/5 dark:ring-white/10 md:rounded-[2rem] md:p-1.5">
+          <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[1.35rem] bg-neutral-950 md:rounded-[1.5rem]">
             <motion.div
               variants={screenContentVariants}
               transition={CONTENT_TRANSITION}
@@ -65,7 +65,7 @@ export function IPhoneIllustration({ children }: IPhoneIllustrationProps) {
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-2 mx-auto h-1 w-10 rounded-full bg-neutral-300 dark:bg-neutral-600" />
+        <div className="absolute inset-x-0 bottom-2.5 mx-auto h-1 w-12 rounded-full bg-neutral-300 md:bottom-3 md:w-14 dark:bg-neutral-600" />
       </div>
     </motion.div>
   );
