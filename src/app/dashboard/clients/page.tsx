@@ -1,12 +1,12 @@
 import { OsPageFrame } from "@/components/os/OsPageFrame";
 import { loadDashboardPage } from "@/lib/os/load-dashboard-page";
 
-export default async function DashboardHomePage() {
+export default async function ClientsPage() {
   const session = await loadDashboardPage();
   return (
     <OsPageFrame
-      title="Dashboard"
-      description="Operating system overview. Lists, charts, and automations will land in later prompts."
+      title="Clients"
+      description="Accounts you serve. Directory UI hooks up after data wiring."
       brandColor={session.settings.brand_color}
     />
   );

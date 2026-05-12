@@ -1,6 +1,6 @@
 /**
  * Registry of marketing funnel landings used for:
- * - CEO dashboard quick links (`CeoFunnelPagesSection`) — grouped by niche
+ * - CEO / OS dashboard funnel quick links — grouped by niche
  * - First-party `funnel_view` analytics (`AnalyticsTracker`)
  *
  * Keep paths in sync with `src/app/(marketing)/...` routes.
