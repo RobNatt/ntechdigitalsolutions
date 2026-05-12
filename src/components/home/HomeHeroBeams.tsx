@@ -3,34 +3,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Balancer from "react-wrap-balancer";
-import { IPhoneIllustration } from "@/components/home/IPhoneIllustration";
 import { CONSTANTS } from "@/constants/links";
 import { cn } from "@/lib/utils";
 
 const VIEW_WORK_PATH = "/dental-patient-growth-case-study";
-
-const HERO_PREVIEW_SLIDES = [
-  {
-    id: "roof-mockup",
-    src: "/roof-mockup.png",
-    label: "Roof mockup",
-    alt: "Roofing website mockup — branded site preview",
-  },
-  {
-    id: "customer-dashboard-preview",
-    src: "/customer-dashboard-preview.png",
-    label: "Customer dashboard",
-    alt: "Customer lead dashboard preview",
-  },
-  {
-    id: "traffic-metrics",
-    src: "/traffic-metrics.png",
-    label: "Traffic metrics",
-    alt: "Paid and organic traffic metrics overview",
-  },
-] as const;
 
 const HERO_TRUST_POINTS = [
   "Fast turnaround",
@@ -122,8 +100,9 @@ export function HomeHeroBeams() {
       </div>
 
       <nav
+        ref={containerRef}
         aria-label="Trust highlights"
-        className="relative z-50 mx-auto mb-10 w-full max-w-4xl px-4 md:mb-16"
+        className="relative z-50 mx-auto mb-12 w-full max-w-4xl px-4 md:mb-20"
       >
         <ul className="sr-only">
           {HERO_TRUST_POINTS.map((label) => (
@@ -176,121 +155,7 @@ export function HomeHeroBeams() {
           </div>
         </div>
       </nav>
-
-      <div
-        ref={containerRef}
-        className="relative z-40 mx-auto w-full max-w-4xl rounded-2xl border border-neutral-200/50 bg-neutral-100 p-1.5 backdrop-blur-lg sm:p-2 dark:border-neutral-700 dark:bg-neutral-800/50"
-      >
-        <div className="rounded-xl border border-neutral-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-4 dark:border-neutral-700 dark:bg-neutral-950">
-          <HeroPreviewCarousel />
-        </div>
-      </div>
     </section>
-  );
-}
-
-function HeroPreviewCarousel() {
-  const [index, setIndex] = useState(0);
-  const n = HERO_PREVIEW_SLIDES.length;
-  const go = (i: number) => setIndex(((i % n) + n) % n);
-  const next = () => go(index + 1);
-  const prev = () => go(index - 1);
-  const slide = HERO_PREVIEW_SLIDES[index];
-
-  return (
-    <div className="space-y-3 sm:space-y-4">
-      <h2 className="text-center text-lg font-semibold tracking-tight text-neutral-900 sm:text-xl md:text-2xl dark:text-white">
-        <Balancer>A Revenue Generating System at your finger tips</Balancer>
-      </h2>
-
-      <div className="flex flex-col gap-3">
-        <div
-          role="tablist"
-          aria-label="Product preview"
-          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
-        >
-          {HERO_PREVIEW_SLIDES.map((s, i) => (
-            <button
-              key={s.id}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-controls={`hero-preview-panel-${s.id}`}
-              id={`hero-preview-tab-${s.id}`}
-              onClick={() => setIndex(i)}
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-xs font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 sm:px-4 sm:py-2 sm:text-sm",
-                i === index
-                  ? "border-sky-600 bg-sky-50 text-sky-900 dark:border-sky-500 dark:bg-sky-950/60 dark:text-sky-50"
-                  : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-neutral-600",
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-
-        <div
-          id={`hero-preview-panel-${slide.id}`}
-          role="tabpanel"
-          aria-labelledby={`hero-preview-tab-${slide.id}`}
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowRight") {
-              e.preventDefault();
-              setIndex((i) => (i + 1) % n);
-            }
-            if (e.key === "ArrowLeft") {
-              e.preventDefault();
-              setIndex((i) => (i - 1 + n) % n);
-            }
-          }}
-          className="flex w-full flex-col items-center outline-none ring-sky-500/40 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950"
-        >
-          <div className="flex w-full max-w-xl items-center justify-center gap-2 sm:max-w-2xl sm:gap-3 md:max-w-3xl md:gap-5">
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="Previous preview"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
-            >
-              <ChevronLeft className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
-            </button>
-
-            <IPhoneIllustration>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slide.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0 flex items-start justify-center overflow-hidden bg-neutral-950 px-3 pt-3 sm:px-4 sm:pt-4 md:px-5 md:pt-5"
-                >
-                  {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
-                  <img
-                    src={slide.src}
-                    alt={slide.alt}
-                    decoding="async"
-                    fetchPriority={index === 0 ? "high" : "low"}
-                    className="mx-auto h-[68%] max-h-[min(68%,24rem)] w-[78%] max-w-full object-contain object-top sm:h-[70%] sm:w-[76%] md:h-[72%] md:w-[74%]"
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </IPhoneIllustration>
-
-            <button
-              type="button"
-              onClick={next}
-              aria-label="Next preview"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
-            >
-              <ChevronRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 

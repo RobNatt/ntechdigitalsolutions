@@ -49,6 +49,7 @@ export const Navbar = () => {
   const [visible, setVisible] = useState<boolean>(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mount scroll sync for header pill; scroll listener updates after
     setVisible(window.scrollY > SCROLL_PILL_THRESHOLD);
   }, []);
 
@@ -77,7 +78,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         damping: 30,
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden flex-row items-center justify-between gap-4 transition-[width,background-color,box-shadow,border-color,backdrop-filter] duration-300 ease-out lg:flex",
+        "relative z-[60] mx-auto hidden flex-row items-center justify-between gap-6 transition-[width,background-color,box-shadow,border-color,backdrop-filter] duration-300 ease-out lg:flex lg:gap-10",
         visible
           ? "w-[min(94vw,72rem)] max-w-[min(94vw,72rem)] rounded-full border border-neutral-200/75 bg-white/90 py-3 pl-5 pr-4 shadow-[0_12px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-neutral-700/80 dark:bg-neutral-950/90"
           : "w-full max-w-7xl border-transparent bg-transparent py-2.5 shadow-none backdrop-blur-none dark:bg-transparent",
@@ -91,14 +92,14 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
       <div className="pointer-events-none absolute inset-0 hidden items-center justify-center lg:flex">
         <nav
           aria-label="Main"
-          className="pointer-events-auto flex flex-row items-center justify-center gap-1 text-sm font-medium lg:gap-2"
+          className="pointer-events-auto flex flex-row items-center justify-center gap-2 text-sm font-medium sm:gap-4 lg:gap-6"
         >
           {navItems.map((navItem, idx: number) => (
             <Link
               onMouseEnter={() => setHovered(idx)}
               onClick={() => trackNavCta(navItem.link)}
               className={cn(
-                "relative px-3 py-2 text-xs text-neutral-700 lg:px-4 lg:text-sm dark:text-neutral-200",
+                "relative px-4 py-2 text-xs text-neutral-700 sm:px-5 lg:px-6 lg:text-sm dark:text-neutral-200",
                 (navItem.link === "/contact" || navItem.link === GROWTH_SYSTEM_FUNNEL_PATH) &&
                   "btn-primary",
               )}
@@ -117,7 +118,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         </nav>
       </div>
 
-      <div className="relative z-20 flex shrink-0 items-center gap-2 md:gap-3">
+      <div className="relative z-20 flex shrink-0 items-center gap-3 md:gap-4">
         <ModeToggle />
         <Link
           href="/signup"
@@ -178,9 +179,9 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
               }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex rounded-lg absolute top-16 bg-white dark:bg-neutral-950 inset-x-0 z-50 flex-col items-start justify-start gap-4 w-full px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]"
+              className="flex rounded-lg absolute top-16 bg-white dark:bg-neutral-950 inset-x-0 z-50 flex-col items-start justify-start gap-6 w-full px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]"
             >
-              {navItems.map((navItem: any, idx: number) => (
+              {navItems.map((navItem, idx: number) => (
                 <Link
                   key={`link=${idx}`}
                   href={navItem.link}
