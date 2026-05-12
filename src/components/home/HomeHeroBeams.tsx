@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -189,15 +188,15 @@ function HeroPreviewCarousel() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18 }}
-              className="absolute inset-0"
+              className="absolute inset-0 flex items-center justify-center p-2 sm:p-4"
             >
-              <Image
+              {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
+              <img
                 src={slide.src}
                 alt={slide.alt}
-                fill
-                className="object-contain p-2 sm:p-4"
-                sizes="(max-width: 768px) 100vw, min(1152px, 92vw)"
-                priority={index === 0}
+                decoding="async"
+                fetchPriority={index === 0 ? "high" : "low"}
+                className="max-h-full max-w-full object-contain"
               />
             </motion.div>
           </AnimatePresence>
