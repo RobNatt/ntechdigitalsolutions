@@ -23,4 +23,12 @@ export const DEFAULT_OS_SETTINGS: Omit<OsSettingsRow, "id"> & { id: string } = {
     payment_methods: ["Bank Transfer", "Card", "Cash", "Other"],
     sales_outcomes: ["Closed", "No Show", "Showed No Close", "Rescheduled"],
   },
+  integration_sheets_enabled: false,
+  integration_calendly_enabled: false,
+  integration_google_calendar_enabled: false,
+  integration_webhook_secret: null,
+  integration_sheets_column_map: {},
+  integration_calendly_booked_stage: "Booked",
+  integration_google_calendar_id: null,
+  integration_google_oauth_connected: false,
 };

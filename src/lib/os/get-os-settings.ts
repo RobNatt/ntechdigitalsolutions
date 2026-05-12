@@ -47,6 +47,23 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
       if (!Array.isArray(merged.common_tags)) merged.common_tags = [];
       return merged;
     })(),
+    integration_sheets_enabled: Boolean(row.integration_sheets_enabled ?? false),
+    integration_calendly_enabled: Boolean(row.integration_calendly_enabled ?? false),
+    integration_google_calendar_enabled: Boolean(row.integration_google_calendar_enabled ?? false),
+    integration_webhook_secret:
+      row.integration_webhook_secret != null && String(row.integration_webhook_secret).trim()
+        ? String(row.integration_webhook_secret)
+        : null,
+    integration_sheets_column_map:
+      row.integration_sheets_column_map && typeof row.integration_sheets_column_map === "object"
+        ? (row.integration_sheets_column_map as Record<string, string>)
+        : {},
+    integration_calendly_booked_stage: String(
+      row.integration_calendly_booked_stage ?? DEFAULT_OS_SETTINGS.integration_calendly_booked_stage
+    ),
+    integration_google_calendar_id:
+      row.integration_google_calendar_id != null ? String(row.integration_google_calendar_id) : null,
+    integration_google_oauth_connected: Boolean(row.integration_google_oauth_connected ?? false),
     created_at: row.created_at != null ? String(row.created_at) : undefined,
     updated_at: row.updated_at != null ? String(row.updated_at) : undefined,
   };

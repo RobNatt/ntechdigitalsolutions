@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { DEFAULT_OS_SETTINGS, OS_SETTINGS_SINGLETON_ID } from "@/lib/os/default-settings";
@@ -393,6 +394,61 @@ export async function updateProfileLinkedClientAction(profileId: string, osClien
   );
   revalidatePath("/dashboard/settings");
   return { ok: true };
+}
+
+export async function saveIntegrationSettingsAction(payload: {
+  integration_sheets_enabled: boolean;
+  integration_calendly_enabled: boolean;
+  integration_google_calendar_enabled: boolean;
+  integration_calendly_booked_stage: string;
+  integration_google_calendar_id: string | null;
+  integration_google_oauth_connected: boolean;
+  integration_sheets_column_map: Record<string, string>;
+}): Promise<ActionResult> {
+  const gate = await requireInternalSession();
+  if (!gate.ok) return { ok: false, error: gate.error };
+  const { supabase } = gate;
+  const { data: cur, error: readErr } = await supabase
+    .from("os_settings")
+    .select("integration_webhook_secret")
+    .eq("id", SETTINGS_ID)
+    .maybeSingle();
+  if (readErr) return { ok: false, error: readErr.message };
+  let secret =
+    cur && (cur as { integration_webhook_secret?: string | null }).integration_webhook_secret != null
+      ? String((cur as { integration_webhook_secret?: string | null }).integration_webhook_secret).trim()
+      : "";
+  if (
+    (payload.integration_sheets_enabled || payload.integration_calendly_enabled) &&
+    !secret
+  ) {
+    secret = randomBytes(32).toString("hex");
+  }
+  const patch: Record<string, unknown> = {
+    integration_sheets_enabled: payload.integration_sheets_enabled,
+    integration_calendly_enabled: payload.integration_calendly_enabled,
+    integration_google_calendar_enabled: payload.integration_google_calendar_enabled,
+    integration_calendly_booked_stage: payload.integration_calendly_booked_stage.trim() || "Booked",
+    integration_google_calendar_id: payload.integration_google_calendar_id?.trim() || null,
+    integration_google_oauth_connected: payload.integration_google_oauth_connected,
+    integration_sheets_column_map: payload.integration_sheets_column_map,
+  };
+  if (secret) patch.integration_webhook_secret = secret;
+  return persistRow(
+    supabase,
+    patch,
+    `Integrations: sheets=${payload.integration_sheets_enabled}, calendly=${payload.integration_calendly_enabled}, gcal=${payload.integration_google_calendar_enabled}`
+  );
+}
+
+export async function regenerateIntegrationWebhookSecretAction(): Promise<ActionResult<{ secret: string }>> {
+  const gate = await requireInternalSession();
+  if (!gate.ok) return { ok: false, error: gate.error };
+  const { supabase } = gate;
+  const secret = randomBytes(32).toString("hex");
+  const r = await persistRow(supabase, { integration_webhook_secret: secret }, "Integrations: webhook secret regenerated");
+  if (!r.ok) return r;
+  return { ok: true, data: { secret } };
 }
 
 /** Legacy single-form save — kept for compatibility. Prefer granular actions above. */

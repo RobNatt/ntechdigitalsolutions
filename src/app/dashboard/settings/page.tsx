@@ -53,6 +53,10 @@ export default async function SettingsPage() {
     };
   });
 
+  const webhookBaseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+
   return (
     <OsSettingsPanel
       settings={session.settings}
@@ -60,6 +64,7 @@ export default async function SettingsPage() {
       profiles={profiles}
       clients={clients}
       currentUserId={session.userId}
+      webhookBaseUrl={webhookBaseUrl}
     />
   );
 }

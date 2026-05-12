@@ -21,6 +21,8 @@ import {
   updateProfileLinkedClientAction,
   updateProfileOsRoleAction,
 } from "@/app/dashboard/settings/actions";
+import { IntegrationsSection } from "@/app/dashboard/settings/IntegrationsSection";
+import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
 import type { OsSettingsRow } from "@/lib/os/types";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +41,7 @@ type OsSettingsPanelProps = {
   profiles: WorkspaceProfileRow[];
   clients: { id: string; label: string }[];
   currentUserId: string;
+  webhookBaseUrl: string;
 };
 
 const CURRENCY_OPTIONS = ["AUD", "USD", "EUR", "GBP", "NZD", "CAD", "JPY", "SGD", "INR"];
@@ -75,6 +78,7 @@ export function OsSettingsPanel({
   profiles,
   clients,
   currentUserId,
+  webhookBaseUrl,
 }: OsSettingsPanelProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -104,7 +108,9 @@ export function OsSettingsPanel({
   });
 
   const leadStages = useMemo(
-    () => settings.enum_defaults?.lead_stages ?? [],
+    () => settings.enum_defaults?.lead_stages?.length
+      ? settings.enum_defaults.lead_stages
+      : DEFAULT_OS_SETTINGS.enum_defaults!.lead_stages,
     [settings.enum_defaults?.lead_stages]
   );
   const projectStages = useMemo(
@@ -166,6 +172,10 @@ export function OsSettingsPanel({
     },
     [router]
   );
+
+  const refresh = useCallback(() => {
+    router.refresh();
+  }, [router]);
 
   const effectiveCurrency =
     currencySelect === "__custom__"
@@ -656,6 +666,17 @@ export function OsSettingsPanel({
           </button>
         </div>
       </section>
+
+      <IntegrationsSection
+        settings={settings}
+        brandColor={brandColor}
+        leadStages={leadStages}
+        webhookBaseUrl={webhookBaseUrl}
+        pending={pending}
+        startTransition={startTransition}
+        onFlash={(kind, text) => setFlash({ kind, text })}
+        onRefresh={refresh}
+      />
 
       {/* 6) User management */}
       {isWorkspaceAdmin ? (
