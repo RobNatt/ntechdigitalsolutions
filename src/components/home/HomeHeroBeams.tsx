@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import Balancer from "react-wrap-balancer";
 import { CONSTANTS } from "@/constants/links";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,14 @@ const HERO_PREVIEW_SLIDES = [
     label: "Traffic metrics",
     alt: "Paid and organic traffic metrics overview",
   },
+] as const;
+
+const HERO_TRUST_POINTS = [
+  "Fast turnaround",
+  "SEO-focused builds",
+  "AI-powered automation",
+  "Omaha-based / US-based",
+  "Trusted by local businesses",
 ] as const;
 
 export function HomeHeroBeams() {
@@ -94,7 +102,7 @@ export function HomeHeroBeams() {
       </p>
       <div
         id="offer-path"
-        className="relative z-50 mt-8 mb-10 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap md:mb-20"
+        className="relative z-50 mt-8 mb-5 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap"
       >
         <Link
           href={CONSTANTS.BOOK_CALL_PATH}
@@ -110,6 +118,29 @@ export function HomeHeroBeams() {
           View Our Work
         </Link>
       </div>
+
+      <nav
+        aria-label="Trust highlights"
+        className="relative z-50 mx-auto mb-10 w-full max-w-4xl px-4 md:mb-16"
+      >
+        <div className="rounded-2xl border border-neutral-200/90 bg-white/70 px-3 py-3 shadow-sm backdrop-blur-sm dark:border-neutral-700/90 dark:bg-neutral-900/60">
+          <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:gap-x-4">
+            {HERO_TRUST_POINTS.map((label) => (
+              <li
+                key={label}
+                className="flex max-w-[min(100%,20rem)] items-center gap-1.5 text-left text-xs font-medium text-neutral-700 sm:text-sm dark:text-neutral-200"
+              >
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                  strokeWidth={2.5}
+                  aria-hidden
+                />
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
 
       <div
         ref={containerRef}
