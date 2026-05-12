@@ -10,11 +10,23 @@ export default async function SettingsPage() {
   requireOsInternal(session);
   const supabase = await createClient();
 
-  const { data: profRows, error: pErr } = await supabase
+  const profilesQuery = supabase
     .from("profiles")
     .select("id, email, full_name, role, os_role, os_client_id")
     .order("full_name", { ascending: true })
     .limit(500);
+
+  const clientsQuery = supabase
+    .from("os_clients")
+    .select("*")
+    .order("business_name", { ascending: true })
+    .limit(1000);
+
+  const [{ data: profRows, error: pErr }, { data: clientRows, error: cErr }] = await Promise.all([
+    profilesQuery,
+    clientsQuery,
+  ]);
+
   if (pErr) {
     console.warn("settings profiles fetch:", pErr.message);
   }
@@ -37,11 +49,6 @@ export default async function SettingsPage() {
     };
   });
 
-  const { data: clientRows, error: cErr } = await supabase
-    .from("os_clients")
-    .select("*")
-    .order("business_name", { ascending: true })
-    .limit(1000);
   if (cErr) {
     console.warn("settings clients fetch:", cErr.message);
   }

@@ -12,24 +12,31 @@ export default async function RevenuePage() {
   const { y, m } = currentWallYmdParts(tz);
   const { from, to } = getMonthRangeYmd(y, m);
 
-  const { data: payRows, error: payErr } = await supabase
+  const paymentsQuery = supabase
     .from("os_payments")
     .select("*")
     .gte("date", from)
     .lte("date", to)
     .order("date", { ascending: false })
     .limit(2000);
+
+  const clientsQuery = supabase
+    .from("os_clients")
+    .select("*")
+    .order("business_name", { ascending: true })
+    .limit(2000);
+
+  const [{ data: payRows, error: payErr }, { data: clientRows, error: cErr }] = await Promise.all([
+    paymentsQuery,
+    clientsQuery,
+  ]);
+
   if (payErr) {
     console.warn("os_payments fetch:", payErr.message);
   }
   const payments = (payRows ?? []).map((r) => mapOsPaymentRow(r as Record<string, unknown>));
   const total = payments.reduce((s, p) => s + p.amount, 0);
 
-  const { data: clientRows, error: cErr } = await supabase
-    .from("os_clients")
-    .select("*")
-    .order("business_name", { ascending: true })
-    .limit(2000);
   if (cErr) {
     console.warn("os_clients fetch (revenue):", cErr.message);
   }
