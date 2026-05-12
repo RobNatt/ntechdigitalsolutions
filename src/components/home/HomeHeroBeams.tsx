@@ -67,20 +67,12 @@ export function HomeHeroBeams() {
       <p className="relative z-50 mx-auto mb-2 max-w-4xl text-center text-xs font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-400">
         N-Tech Digital Solutions
       </p>
-      <h1 className="relative z-50 mx-auto mt-2 mb-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-balance text-gray-700 md:text-6xl lg:text-7xl dark:text-neutral-200">
-        <Balancer>
-          Built for service businesses that want{" "}
-          <span className="relative mx-auto inline-block w-max filter-[drop-shadow(0px_1px_3px_rgba(27,37,80,0.14))]">
-            <span className="text-neutral-900 [text-shadow:0_0_rgba(0,0,0,0.06)] dark:text-white">
-              <span>the phone to ring.</span>
-            </span>
-          </span>
-        </Balancer>
+      <h1 className="relative z-50 mx-auto mt-2 mb-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-balance text-neutral-900 md:text-5xl lg:text-6xl dark:text-white">
+        <Balancer>Digital Systems Built to Grow Local Businesses</Balancer>
       </h1>
       <p className="relative z-50 mx-auto mt-4 max-w-2xl px-4 text-center text-base/relaxed text-gray-600 md:text-lg dark:text-neutral-300">
-        We&apos;re a website-first growth partner for roofers, HVAC, plumbers, dental practices, and
-        similar operators — not e-commerce or restaurants. When you&apos;re ready to treat growth
-        like a system instead of a one-off project, we&apos;ll walk you through our flagship offer.
+        We combine conversion-focused websites, live business dashboards, and targeted advertising
+        into one unified growth system.
       </p>
       <div
         id="offer-path"
