@@ -39,9 +39,7 @@ const SCROLL_PILL_THRESHOLD = 72;
 
 export const Navbar = () => {
   const navItems = [
-    { name: "Services", link: "/services" },
     { name: "Growth System", link: GROWTH_SYSTEM_FUNNEL_PATH },
-    { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
     { name: "Contact", link: "/contact" },
   ];

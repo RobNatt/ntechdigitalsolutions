@@ -6,26 +6,6 @@ import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 
 export function Footer() {
-  const pages = [
-    { title: "Home", href: "/" },
-    { title: "Services", href: "/services" },
-    { title: "SEO services", href: "/seo-services" },
-    { title: "SEO for service businesses", href: "/seo-for-service-businesses" },
-    { title: "Dentist SEO", href: "/dentist-seo" },
-    { title: "Nebraska SEO", href: "/nebraska-seo" },
-    { title: "Growth System", href: "/growthsystem" },
-    { title: "Blog", href: "/blog" },
-    { title: "About", href: "/about" },
-    { title: "Contact", href: "/contact" },
-  ];
-
-  const omahaMetro = [
-    { title: "Omaha web design", href: "/omaha-web-design" },
-    { title: "Omaha lead generation", href: "/omaha-lead-generation-small-business" },
-    { title: "Omaha SEO", href: "/omaha-seo" },
-    { title: "Digital marketing — Omaha", href: "/digital-marketing-omaha-ne" },
-  ];
-
   const legals = [
     { title: "Privacy Policy", href: "/privacy-policy" },
     { title: "Terms of Service", href: "/terms-and-conditions" },
@@ -83,46 +63,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 items-start gap-10 sm:mt-0 md:mt-0 lg:grid-cols-4">
-            <div className="flex w-full flex-col justify-center space-y-4">
-              <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                Pages
-              </p>
-              <ul className="list-none space-y-4 text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                {pages.map((page, idx) => (
-                  <li key={"pages" + idx} className="list-none">
-                    <Link
-                      className={cn(
-                        "transition-colors hover:text-text-neutral-800",
-                        page.href === "/contact" && "btn-primary"
-                      )}
-                      href={page.href}
-                    >
-                      {page.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex w-full flex-col justify-center space-y-4">
-              <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                Omaha metro
-              </p>
-              <ul className="list-none space-y-4 text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                {omahaMetro.map((page, idx) => (
-                  <li key={`omaha-${idx}`} className="list-none">
-                    <Link
-                      className="transition-colors hover:text-text-neutral-800"
-                      href={page.href}
-                    >
-                      {page.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
+          <div className="mt-10 grid grid-cols-2 items-start gap-10 sm:mt-0 md:mt-0 lg:max-w-md lg:grid-cols-2 lg:gap-12">
             <div className="flex flex-col justify-center space-y-4">
               <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
                 Legal
