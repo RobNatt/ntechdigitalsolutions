@@ -1,17 +1,36 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Balancer from "react-wrap-balancer";
-import {
-  GROWTH_SYSTEM_FUNNEL_PATH,
-} from "@/constants/growth-system-offer";
+import { CONSTANTS } from "@/constants/links";
 import { cn } from "@/lib/utils";
 
-const funnel = GROWTH_SYSTEM_FUNNEL_PATH;
-const qualifyHref = `${funnel}#qualify`;
+const VIEW_WORK_PATH = "/dental-patient-growth-case-study";
+
+const HERO_PREVIEW_SLIDES = [
+  {
+    id: "roof-mockup",
+    src: "/roof-mockup.png",
+    label: "Roof mockup",
+    alt: "Roofing website mockup — branded site preview",
+  },
+  {
+    id: "customer-dashboard-preview",
+    src: "/customer-dashboard-preview.png",
+    label: "Customer dashboard",
+    alt: "Customer lead dashboard preview",
+  },
+  {
+    id: "traffic-metrics",
+    src: "/traffic-metrics.png",
+    label: "Traffic metrics",
+    alt: "Paid and organic traffic metrics overview",
+  },
+] as const;
 
 export function HomeHeroBeams() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,42 +98,133 @@ export function HomeHeroBeams() {
         className="relative z-50 mt-8 mb-10 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap md:mb-20"
       >
         <Link
-          href={funnel}
-          className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-52"
+          href={CONSTANTS.BOOK_CALL_PATH}
+          className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-56"
         >
-          Get Started NOW!
+          Book a Strategy Call
           <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
         </Link>
         <Link
-          href={qualifyHref}
-          className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-sky-800 bg-white px-4 py-2 text-sm font-semibold leading-6 text-sky-950 no-underline transition hover:-translate-y-0.5 dark:border-sky-500 dark:bg-neutral-900 dark:text-sky-100 sm:w-52"
+          href={VIEW_WORK_PATH}
+          className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-sky-800 bg-white px-4 py-2 text-sm font-semibold leading-6 text-sky-950 no-underline transition hover:-translate-y-0.5 dark:border-sky-500 dark:bg-neutral-900 dark:text-sky-100 sm:w-56"
         >
-          Get quote
-        </Link>
-        <Link
-          href={funnel}
-          className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-neutral-300 bg-white/90 px-4 py-2 text-sm font-semibold leading-6 text-neutral-800 no-underline transition hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/90 dark:text-neutral-100 sm:w-52"
-        >
-          Learn more
+          View Our Work
         </Link>
       </div>
 
       <div
         ref={containerRef}
-        className="relative z-40 mx-auto max-w-7xl rounded-[32px] border border-neutral-200/50 bg-neutral-100 p-2 backdrop-blur-lg md:p-4 dark:border-neutral-700 dark:bg-neutral-800/50"
+        className="relative z-40 mx-auto w-full max-w-7xl rounded-[32px] border border-neutral-200/50 bg-neutral-100 p-2 backdrop-blur-lg md:p-4 dark:border-neutral-700 dark:bg-neutral-800/50"
       >
-        <div className="rounded-[24px] border border-neutral-200 bg-white p-2 dark:border-neutral-700 dark:bg-black">
-          {/* Placeholder card — swap asset/content in follow-up */}
-          <img
-            src="https://assets.aceternity.com/pro/aceternity-landing.webp"
-            alt="Preview"
-            width={1920}
-            height={1080}
-            className="rounded-[20px]"
-          />
+        <div className="rounded-[24px] border border-neutral-200 bg-white p-4 shadow-sm sm:p-6 md:p-8 dark:border-neutral-700 dark:bg-neutral-950">
+          <HeroPreviewCarousel />
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroPreviewCarousel() {
+  const [index, setIndex] = useState(0);
+  const n = HERO_PREVIEW_SLIDES.length;
+  const go = (i: number) => setIndex(((i % n) + n) % n);
+  const next = () => go(index + 1);
+  const prev = () => go(index - 1);
+  const slide = HERO_PREVIEW_SLIDES[index];
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-center text-2xl font-semibold tracking-tight text-neutral-900 md:text-3xl dark:text-white">
+        <Balancer>A Revenue Generating System at your finger tips</Balancer>
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        <div
+          role="tablist"
+          aria-label="Product preview"
+          className="flex flex-wrap items-center justify-center gap-2"
+        >
+          {HERO_PREVIEW_SLIDES.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-controls={`hero-preview-panel-${s.id}`}
+              id={`hero-preview-tab-${s.id}`}
+              onClick={() => setIndex(i)}
+              className={cn(
+                "rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600",
+                i === index
+                  ? "border-sky-600 bg-sky-50 text-sky-900 dark:border-sky-500 dark:bg-sky-950/60 dark:text-sky-50"
+                  : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-neutral-600",
+              )}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+
+        <div
+          id={`hero-preview-panel-${slide.id}`}
+          role="tabpanel"
+          aria-labelledby={`hero-preview-tab-${slide.id}`}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowRight") {
+              e.preventDefault();
+              setIndex((i) => (i + 1) % n);
+            }
+            if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              setIndex((i) => (i - 1 + n) % n);
+            }
+          }}
+          className="relative w-full overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 aspect-[16/10] outline-none ring-sky-500/40 focus-visible:ring-2 dark:border-neutral-800 dark:bg-neutral-900"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                className="object-contain p-2 sm:p-4"
+                sizes="(max-width: 768px) 100vw, min(1152px, 92vw)"
+                priority={index === 0}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-1 sm:pl-2">
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Previous preview"
+              className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 flex items-center pr-1 sm:pr-2">
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next preview"
+              className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
