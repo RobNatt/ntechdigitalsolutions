@@ -1,69 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, LayoutTemplate, Megaphone } from "lucide-react";
-import {
-  GROWTH_SYSTEM_FUNNEL_PATH,
-  GROWTH_SYSTEM_OFFER_NAME,
-} from "@/constants/growth-system-offer";
-import { cn } from "@/lib/utils";
+import { BarChart3, LayoutTemplate, Megaphone } from "lucide-react";
+import { GROWTH_SYSTEM_FUNNEL_PATH, GROWTH_SYSTEM_OFFER_NAME } from "@/constants/growth-system-offer";
+import { HomeHeroBeams } from "@/components/home/HomeHeroBeams";
 
 const funnel = GROWTH_SYSTEM_FUNNEL_PATH;
-const qualifyHref = `${funnel}#qualify`;
-
-function ctaClassPrimary() {
-  return cn(
-    "inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-center text-base font-semibold text-white shadow-sm transition sm:w-auto",
-    "bg-emerald-600 hover:bg-emerald-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-950"
-  );
-}
-
-function ctaClassSecondary() {
-  return cn(
-    "inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-sky-800 bg-white/90 px-6 py-3.5 text-center text-base font-semibold text-sky-900 transition sm:w-auto",
-    "hover:bg-white dark:border-sky-500 dark:bg-neutral-900/90 dark:text-sky-200 dark:hover:bg-neutral-900"
-  );
-}
-
-function ctaClassGhost() {
-  return cn(
-    "inline-flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white/80 px-6 py-3.5 text-center text-base font-semibold text-neutral-800 transition sm:w-auto",
-    "hover:bg-white dark:border-neutral-600 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-900"
-  );
-}
 
 export function HomeBrandHub() {
   return (
     <div className="bg-neutral-50 dark:bg-neutral-950">
-      <section className="border-b border-neutral-200/80 bg-gradient-to-b from-white to-neutral-50 px-4 pb-20 pt-24 dark:border-neutral-800 dark:from-neutral-950 dark:to-neutral-900 sm:pb-28 sm:pt-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-400">
-            N-Tech Digital Solutions
-          </p>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white sm:text-4xl sm:leading-tight">
-            Built for service businesses that want the phone to ring
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-lg">
-            We&apos;re a website-first growth partner for roofers, HVAC, plumbers, dental practices,
-            and similar operators — not e-commerce or restaurants. When you&apos;re ready to treat
-            growth like a system instead of a one-off project, we&apos;ll walk you through our
-            flagship offer.
-          </p>
-          <div
-            id="offer-path"
-            className="mt-10 flex max-w-xl flex-col items-stretch justify-center gap-3 sm:mx-auto sm:flex-row sm:flex-wrap"
-          >
-            <Link href={funnel} className={ctaClassPrimary()}>
-              Get Started NOW!
-              <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-            </Link>
-            <Link href={qualifyHref} className={ctaClassSecondary()}>
-              Get quote
-            </Link>
-            <Link href={funnel} className={ctaClassGhost()}>
-              Learn more
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HomeHeroBeams />
 
       <section className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
