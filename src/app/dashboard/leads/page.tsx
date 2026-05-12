@@ -16,6 +16,8 @@ export default async function LeadsPage() {
     DEFAULT_OS_SETTINGS.enum_defaults!.lead_temperatures;
   const uncontacted = session.settings.uncontacted_stage ?? "New";
 
+  const commonTags = session.settings.enum_defaults?.common_tags ?? [];
+
   const { data: leadRows, error: leadsErr } = await supabase
     .from("os_leads")
     .select("*")
@@ -70,6 +72,7 @@ export default async function LeadsPage() {
       assignees={assignees}
       kpiNew7d={c7 ?? 0}
       kpiUncontacted={cu ?? 0}
+      commonTags={commonTags}
     />
   );
 }

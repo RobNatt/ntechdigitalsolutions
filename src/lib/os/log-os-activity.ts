@@ -1,6 +1,12 @@
 import type { createClient } from "@/lib/supabase/server";
 
-export type OsActivityEntityType = "os_lead" | "os_client" | "os_project" | "os_payment" | "os_event";
+export type OsActivityEntityType =
+  | "os_lead"
+  | "os_client"
+  | "os_project"
+  | "os_payment"
+  | "os_event"
+  | "os_settings";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 

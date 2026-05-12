@@ -19,3 +19,11 @@ export function formatTagsForInput(tags: string[] | null | undefined): string {
   if (!tags?.length) return "";
   return tags.join(", ");
 }
+
+export function mergeTagIntoTagsInput(raw: string, tag: string): string {
+  const t = tag.trim();
+  if (!t) return raw;
+  const cur = parseTagsInput(raw);
+  if (cur.some((x) => x.toLowerCase() === t.toLowerCase())) return raw;
+  return formatTagsForInput([...cur, t]);
+}

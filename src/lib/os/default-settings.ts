@@ -16,6 +16,8 @@ export const DEFAULT_OS_SETTINGS: Omit<OsSettingsRow, "id"> & { id: string } = {
     lead_stages: ["New", "Contacted", "Booked", "Showed", "Qualified"],
     project_stages: ["Onboarding", "Development", "In Review", "Live"],
     lead_temperatures: ["Cold", "Warm", "Hot"],
+    /** Preset tag labels for quick selection on leads (Settings-managed). */
+    common_tags: [] as string[],
     event_types: ["Call", "Meeting", "Follow-up", "Content"],
     event_status: ["Confirmed", "Completed", "Missed"],
     payment_methods: ["Bank Transfer", "Card", "Cash", "Other"],

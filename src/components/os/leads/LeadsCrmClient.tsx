@@ -13,7 +13,7 @@ import {
   updateLeadAction,
   type LeadUpsertPayload,
 } from "@/app/dashboard/leads/actions";
-import { formatTagsForInput, isValidEmail, normalizePhoneDigits } from "@/lib/os/lead-utils";
+import { formatTagsForInput, isValidEmail, mergeTagIntoTagsInput, normalizePhoneDigits } from "@/lib/os/lead-utils";
 import type { AssigneeOption, OsActivityRow, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +29,7 @@ type LeadsCrmClientProps = {
   assignees: AssigneeOption[];
   kpiNew7d: number;
   kpiUncontacted: number;
+  commonTags?: string[];
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -54,6 +55,7 @@ export function LeadsCrmClient({
   assignees,
   kpiNew7d,
   kpiUncontacted,
+  commonTags = [],
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -322,6 +324,7 @@ export function LeadsCrmClient({
           assignees={assignees}
           isInternal={isInternal}
           brandColor={brandColor}
+          commonTags={commonTags}
           onClose={() => setModal({ mode: "closed" })}
           onSaved={() => {
             setModal({ mode: "closed" });
@@ -424,6 +427,7 @@ function LeadModal({
   assignees,
   isInternal,
   brandColor,
+  commonTags,
   onClose,
   onSaved,
 }: {
@@ -434,6 +438,7 @@ function LeadModal({
   assignees: AssigneeOption[];
   isInternal: boolean;
   brandColor: string;
+  commonTags: string[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -597,6 +602,25 @@ function LeadModal({
               onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
             />
           </Field>
+          {commonTags.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              <span className="w-full text-[10px] font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                Quick tags
+              </span>
+              {commonTags.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className="rounded-full border border-neutral-200 px-2 py-0.5 text-[11px] text-neutral-700 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                  onClick={() =>
+                    setForm((f) => ({ ...f, tags: mergeTagIntoTagsInput(f.tags, t) }))
+                  }
+                >
+                  +{t}
+                </button>
+              ))}
+            </div>
+          ) : null}
           {isInternal ? (
             <Field label="Assigned user">
               <select

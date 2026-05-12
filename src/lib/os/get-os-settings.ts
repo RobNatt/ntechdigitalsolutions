@@ -27,10 +27,26 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
     enable_analytics: Boolean(row.enable_analytics ?? true),
     enable_sops: Boolean(row.enable_sops ?? true),
     uncontacted_stage: String(row.uncontacted_stage ?? "New"),
-    enum_defaults:
-      row.enum_defaults && typeof row.enum_defaults === "object"
-        ? (row.enum_defaults as Record<string, string[]>)
-        : DEFAULT_OS_SETTINGS.enum_defaults,
+    enum_defaults: (() => {
+      const d = DEFAULT_OS_SETTINGS.enum_defaults!;
+      const raw =
+        row.enum_defaults && typeof row.enum_defaults === "object"
+          ? (row.enum_defaults as Record<string, unknown>)
+          : {};
+      const merged: Record<string, string[]> = {};
+      for (const key of Object.keys(d)) {
+        const v = raw[key];
+        merged[key] = Array.isArray(v) ? v.map((x) => String(x)) : [...d[key as keyof typeof d]!];
+      }
+      for (const key of Object.keys(raw)) {
+        if (!(key in merged)) {
+          const v = raw[key];
+          if (Array.isArray(v)) merged[key] = v.map((x) => String(x));
+        }
+      }
+      if (!Array.isArray(merged.common_tags)) merged.common_tags = [];
+      return merged;
+    })(),
     created_at: row.created_at != null ? String(row.created_at) : undefined,
     updated_at: row.updated_at != null ? String(row.updated_at) : undefined,
   };
