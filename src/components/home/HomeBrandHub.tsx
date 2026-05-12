@@ -1,5 +1,6 @@
 import { HomeCaseStudies } from "@/components/home/HomeCaseStudies";
 import { HomeCoreServices } from "@/components/home/HomeCoreServices";
+import { HomeFinalCta } from "@/components/home/HomeFinalCta";
 import { HomeHeroBeams } from "@/components/home/HomeHeroBeams";
 import { HomeWhyChooseNtech } from "@/components/home/HomeWhyChooseNtech";
 
@@ -10,6 +11,7 @@ export function HomeBrandHub() {
       <HomeCoreServices />
       <HomeWhyChooseNtech />
       <HomeCaseStudies />
+      <HomeFinalCta />
     </div>
   );
 }
