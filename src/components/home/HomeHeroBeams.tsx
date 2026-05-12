@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import Balancer from "react-wrap-balancer";
+import { IPhoneIllustration } from "@/components/home/IPhoneIllustration";
 import { CONSTANTS } from "@/constants/links";
 import { cn } from "@/lib/utils";
 
@@ -244,44 +245,45 @@ function HeroPreviewCarousel() {
               setIndex((i) => (i - 1 + n) % n);
             }
           }}
-          className="relative w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 aspect-video outline-none ring-sky-500/40 focus-visible:ring-2 dark:border-neutral-800 dark:bg-neutral-900"
+          className="flex w-full flex-col items-center outline-none ring-sky-500/40 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950"
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="absolute inset-0 flex items-center justify-center p-1.5 sm:p-3"
-            >
-              {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
-              <img
-                src={slide.src}
-                alt={slide.alt}
-                decoding="async"
-                fetchPriority={index === 0 ? "high" : "low"}
-                className="max-h-full max-w-full object-contain"
-              />
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-0.5 sm:pl-1.5">
+          <div className="flex w-full max-w-md items-center justify-center gap-1 sm:gap-2 md:max-w-lg md:gap-4">
             <button
               type="button"
               onClick={prev}
               aria-label="Previous preview"
-              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
             >
               <ChevronLeft className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
             </button>
-          </div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 flex items-center pr-0.5 sm:pr-1.5">
+
+            <IPhoneIllustration>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={slide.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0"
+                >
+                  {/* Plain <img>: avoids /_next/image optimizer (large PNGs can fail on serverless). */}
+                  <img
+                    src={slide.src}
+                    alt={slide.alt}
+                    decoding="async"
+                    fetchPriority={index === 0 ? "high" : "low"}
+                    className="h-full w-full object-cover object-top"
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </IPhoneIllustration>
+
             <button
               type="button"
               onClick={next}
               aria-label="Next preview"
-              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white/95 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 sm:h-9 sm:w-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
             >
               <ChevronRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden />
             </button>
