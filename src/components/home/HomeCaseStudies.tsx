@@ -1,11 +1,13 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown } from "lucide-react";
 
 type CaseStudy = {
   industry: string;
   imageSrc: string;
   imageAlt: string;
+  scrollOnHover?: boolean;
   badges: readonly { label: string }[];
   challenge: string;
   solution: string;
@@ -15,8 +17,9 @@ type CaseStudy = {
 const CASE_STUDIES: readonly CaseStudy[] = [
   {
     industry: "Roofing Company",
-    imageSrc: "/roof-mockup.png",
+    imageSrc: "/roof-mockup-fullpage.png",
     imageAlt: "Roofing company website preview in a browser frame",
+    scrollOnHover: true,
     badges: [{ label: "+42% form fills" }, { label: "Core Web Vitals" }],
     challenge: "Outdated website with poor mobile conversion.",
     solution: "Redesigned the site with conversion-focused layouts and local SEO optimization.",
@@ -27,9 +30,10 @@ const CASE_STUDIES: readonly CaseStudy[] = [
     ],
   },
   {
-    industry: "HVAC Company",
-    imageSrc: "/customer-dashboard-preview.png",
-    imageAlt: "Lead and campaign dashboard preview",
+    industry: "Landscaping Company",
+    imageSrc: "/ryliable-landscaping.png",
+    imageAlt: "Landscaping company website full-page preview",
+    scrollOnHover: true,
     badges: [{ label: "Attribution" }, { label: "CPL trending down" }],
     challenge: "Running ads without clear lead tracking.",
     solution: "Built landing pages, reporting dashboards, and campaign tracking systems.",
@@ -41,8 +45,9 @@ const CASE_STUDIES: readonly CaseStudy[] = [
   },
   {
     industry: "Dental Practice",
-    imageSrc: "/new-site.png",
-    imageAlt: "Modern dental practice website preview",
+    imageSrc: "/dental-website.png",
+    imageAlt: "Dental practice website full-page preview",
+    scrollOnHover: true,
     badges: [{ label: "Bookings up" }, { label: "Mobile UX" }],
     challenge: "Low online visibility and outdated branding.",
     solution: "Modern website redesign with SEO-focused structure and optimized conversion paths.",
@@ -50,6 +55,20 @@ const CASE_STUDIES: readonly CaseStudy[] = [
       "Increased appointment requests",
       "Better mobile engagement",
       "Improved search rankings",
+    ],
+  },
+  {
+    industry: "Life Insurance",
+    imageSrc: "/Soratorio.png",
+    imageAlt: "Life insurance website full-page preview",
+    scrollOnHover: true,
+    badges: [{ label: "Lead quality up" }, { label: "Conversion UX" }],
+    challenge: "Low policy inquiry volume from digital channels.",
+    solution: "Built a conversion-first site experience with clearer offers and stronger trust signals.",
+    results: [
+      "More qualified policy inquiries",
+      "Improved mobile conversion flow",
+      "Stronger on-page engagement",
     ],
   },
 ];
@@ -75,6 +94,15 @@ function PreviewChrome() {
 }
 
 export function HomeCaseStudies() {
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+
+  const toggleCard = (industry: string) => {
+    setExpandedCards((prev) => ({
+      ...prev,
+      [industry]: !prev[industry],
+    }));
+  };
+
   return (
     <section
       className="border-t border-neutral-200/60 bg-neutral-50 py-20 md:py-28 dark:border-neutral-800 dark:bg-neutral-900/40"
@@ -93,20 +121,37 @@ export function HomeCaseStudies() {
           </p>
         </header>
 
-        <ul className="mt-14 grid list-none gap-10 md:mt-20 md:grid-cols-3 md:gap-8 lg:mt-24 lg:gap-10">
-          {CASE_STUDIES.map((cs) => (
+        <ul className="mt-14 grid list-none gap-10 md:mt-20 md:grid-cols-2 md:gap-8 lg:mt-24 lg:grid-cols-4 lg:gap-8">
+          {CASE_STUDIES.map((cs) => {
+            const isExpanded = !!expandedCards[cs.industry];
+
+            return (
             <li key={cs.industry}>
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200/90 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)] transition duration-300 ease-out hover:-translate-y-1 hover:border-neutral-300 hover:shadow-[0_16px_48px_-20px_rgba(15,23,42,0.12)] dark:border-neutral-800 dark:bg-neutral-950 dark:shadow-[0_1px_3px_rgba(0,0,0,0.25)] dark:hover:border-neutral-700 dark:hover:shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]">
                 <div className="overflow-hidden border-b border-neutral-200/80 bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900/50">
                   <PreviewChrome />
                   <div className="relative aspect-[16/11] w-full overflow-hidden">
-                    <img
-                      src={cs.imageSrc}
-                      alt={cs.imageAlt}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.04]"
-                    />
+                    {cs.scrollOnHover ? (
+                      <div
+                        role="img"
+                        aria-label={cs.imageAlt}
+                        className={`h-full w-full bg-top bg-no-repeat transition-[background-position,transform] duration-[7000ms] ease-linear group-hover:scale-[1.02] group-hover:bg-bottom ${
+                          isExpanded ? "max-md:bg-bottom" : "max-md:bg-top"
+                        }`}
+                        style={{
+                          backgroundImage: `url(${cs.imageSrc})`,
+                          backgroundSize: "100% auto",
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={cs.imageSrc}
+                        alt={cs.imageAlt}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.04]"
+                      />
+                    )}
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-neutral-950/25 via-transparent to-transparent opacity-80 dark:from-neutral-950/50" />
                     <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2">
                       {cs.badges.map((b) => (
@@ -122,14 +167,44 @@ export function HomeCaseStudies() {
                 </div>
 
                 <div className="flex flex-1 flex-col px-6 pb-7 pt-6 md:px-7 md:pb-8 md:pt-7">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
-                    Industry
-                  </p>
-                  <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
-                    {cs.industry}
-                  </h3>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between gap-3 text-left md:hidden"
+                    onClick={() => toggleCard(cs.industry)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`case-study-details-${cs.industry.replace(/\s+/g, "-").toLowerCase()}`}
+                  >
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                        Industry
+                      </p>
+                      <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
+                        {cs.industry}
+                      </h3>
+                    </div>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-neutral-500 transition-transform duration-300 dark:text-neutral-400 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                      aria-hidden
+                    />
+                  </button>
 
-                  <dl className="mt-6 space-y-5 text-sm">
+                  <div className="hidden md:block">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                      Industry
+                    </p>
+                    <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
+                      {cs.industry}
+                    </h3>
+                  </div>
+
+                  <dl
+                    id={`case-study-details-${cs.industry.replace(/\s+/g, "-").toLowerCase()}`}
+                    className={`space-y-5 overflow-hidden text-sm transition-all duration-300 ${
+                      isExpanded ? "mt-6 max-h-[460px] opacity-100" : "max-h-0 opacity-0"
+                    } md:mt-6 md:max-h-none md:opacity-100`}
+                  >
                     <div>
                       <dt className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                         Challenge
@@ -172,7 +247,7 @@ export function HomeCaseStudies() {
                 </div>
               </article>
             </li>
-          ))}
+          )})}
         </ul>
       </div>
     </section>

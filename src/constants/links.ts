@@ -3,6 +3,8 @@ export const CONSTANTS = {
   /** Public contact + inquiry form (replaces external lead agent app). */
   CONTACT_PATH: "/contact",
   BOOK_CALL_PATH: "/book-call",
+  /** Homepage “Schedule a Strategy Call” → qualify before Calendly. */
+  STRATEGY_QUALIFICATION_PATH: "/strategy-call",
   CALCOM_NAMESPACE: "chat-with-manu-demo",
   CALCOM_BRAND_COLOR: "#000000",
   CALCOM_HIDE_EVENT_TYPE_DETAILS: false,

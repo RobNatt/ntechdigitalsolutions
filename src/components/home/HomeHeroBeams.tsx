@@ -85,7 +85,7 @@ export function HomeHeroBeams() {
         className="relative z-50 mt-8 mb-5 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap"
       >
         <Link
-          href={CONSTANTS.BOOK_CALL_PATH}
+          href={CONSTANTS.STRATEGY_QUALIFICATION_PATH}
           className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-56"
         >
           Book a Strategy Call

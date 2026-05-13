@@ -70,7 +70,7 @@ export function HomeFinalCta() {
 
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
             <Link
-              href={CONSTANTS.BOOK_CALL_PATH}
+              href={CONSTANTS.STRATEGY_QUALIFICATION_PATH}
               className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-8 py-3.5 text-center text-sm font-semibold text-slate-900 shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_12px_40px_-8px_rgba(59,130,246,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
             >
               Schedule a Strategy Call

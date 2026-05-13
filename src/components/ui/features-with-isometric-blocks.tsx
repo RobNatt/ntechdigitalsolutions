@@ -251,7 +251,7 @@ function LeadMachineOfferSection() {
         </div>
         <div className="flex shrink-0 flex-col items-center gap-2 md:items-end">
           <Link
-            href={CONSTANTS.BOOK_CALL_PATH}
+            href={CONSTANTS.STRATEGY_QUALIFICATION_PATH}
             className="inline-flex w-full min-w-[12rem] items-center justify-center rounded-lg bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 md:w-auto dark:bg-sky-500 dark:hover:bg-sky-400"
           >
             Book a strategy call
