@@ -5,6 +5,7 @@ import {
   sendInquiryNotification,
   sendInquirySmsFollowUp,
 } from "@/lib/email";
+import { mirrorFunnelLeadToOsLeads } from "@/lib/os/mirror-funnel-lead";
 import { recordInquirySubmit } from "@/lib/analytics/record-inquiry";
 import { scoreInquiryLead } from "@/lib/inquiries/lead-qualifier";
 
@@ -207,6 +208,22 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+
+      await mirrorFunnelLeadToOsLeads(supabase, {
+        name,
+        businessName: company,
+        email,
+        phone,
+        source: "website_inquiry",
+        assignedUserId: owner?.id ?? null,
+        temperature:
+          leadScore.temperature === "hot"
+            ? "Hot"
+            : leadScore.temperature === "warm"
+              ? "Warm"
+              : "Cold",
+        tags: ["Funnel", "Inquiry"],
+      });
     } catch (e) {
       console.error("Inquiry Supabase error:", e);
       return NextResponse.json(

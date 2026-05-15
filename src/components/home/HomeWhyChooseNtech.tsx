@@ -44,10 +44,10 @@ export function HomeWhyChooseNtech() {
             id="why-choose-heading"
             className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl dark:text-white"
           >
-            Why Businesses Choose NTech
+            Why Businesses Choose Our Website Development Company
           </h2>
           <p className="mt-5 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            Built to create measurable growth through connected digital systems.
+            Built to create measurable growth through connected website development services and digital systems.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
             Conversion-focused sites, targeted ads, and live lead views are wired as one flow—so you can

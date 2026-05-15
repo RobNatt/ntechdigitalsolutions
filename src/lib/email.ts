@@ -129,6 +129,70 @@ export async function sendInquiryNotification(payload: InquiryNotificationPayloa
   console.log("Inquiry notification email sent", { to: toEmail, name: payload.name });
 }
 
+export type RankVaultLeadNotificationPayload = {
+  leadId?: string | null;
+  name: string;
+  businessName?: string | null;
+  email: string;
+  phone: string;
+  industry: string;
+  monthlyRevenue: string;
+  message: string;
+};
+
+/** RankVault landing lead notification. Subject is fixed per business requirements. */
+export async function sendRankVaultLeadNotification(
+  payload: RankVaultLeadNotificationPayload
+): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
+  const from = process.env.LEAD_NOTIFICATION_FROM ?? "nTech Leads <onboarding@resend.dev>";
+
+  if (!apiKey || !toEmail) {
+    console.warn("RankVault notification skipped: missing RESEND_API_KEY and/or LEAD_NOTIFICATION_EMAIL", {
+      hasResendApiKey: !!apiKey,
+      hasLeadNotificationEmail: !!toEmail,
+    });
+    return;
+  }
+
+  const lines = [
+    "New RankVault lead submitted from /rankvault",
+    "",
+    `Name: ${payload.name}`,
+    payload.businessName ? `Business Name: ${payload.businessName}` : "Business Name: (not provided)",
+    `Email: ${payload.email}`,
+    `Phone: ${payload.phone}`,
+    `Industry: ${payload.industry}`,
+    `Monthly Revenue: ${payload.monthlyRevenue}`,
+    payload.leadId ? `Lead ID (CRM): ${payload.leadId}` : null,
+    "",
+    "Message:",
+    payload.message,
+  ].filter((line): line is string => line != null);
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: toEmail,
+      subject: "You have a new RankVault lead",
+      text: lines.join("\n"),
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend API error: ${err}`);
+  }
+
+  console.log("RankVault lead notification email sent", { to: toEmail, name: payload.name });
+}
+
 /** Auto-reply for Growth System funnel leads who are below the Calendly booking threshold (nurture + discount framing). */
 export async function sendGrowthSystemUnqualifiedAutoReply(payload: {
   name: string;

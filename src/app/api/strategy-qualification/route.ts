@@ -8,6 +8,7 @@ import { GROWTH_SYSTEM_CALENDLY_EVENT_URL } from "@/constants/growth-system-offe
 import { recordInquirySubmit } from "@/lib/analytics/record-inquiry";
 import { buildCalendlyPrefillUrl } from "@/lib/growth-system/build-calendly-prefill-url";
 import { sendInquiryNotification } from "@/lib/email";
+import { mirrorFunnelLeadToOsLeads } from "@/lib/os/mirror-funnel-lead";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const intakeIps = new Map<string, number[]>();
@@ -203,6 +204,17 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+
+      await mirrorFunnelLeadToOsLeads(supabase, {
+        name,
+        businessName,
+        email,
+        phone,
+        source: "strategy_call_funnel",
+        assignedUserId: owner?.id ?? null,
+        temperature: qualified ? "Hot" : "Warm",
+        tags: ["Funnel", "Strategy Call"],
+      });
     } catch (e) {
       console.error("Strategy qualification Supabase error:", e);
       return NextResponse.json(

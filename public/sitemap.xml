@@ -13,6 +13,18 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://ntechdigital.solutions/strategy-call</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.94</priority>
+  </url>
+  <url>
+    <loc>https://ntechdigital.solutions/rankvault</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.87</priority>
+  </url>
+  <url>
     <loc>https://ntechdigital.solutions/free-patient-flow-audit</loc>
     <lastmod>2026-04-17</lastmod>
     <changefreq>monthly</changefreq>

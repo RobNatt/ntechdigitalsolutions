@@ -18,7 +18,7 @@ const CASE_STUDIES: readonly CaseStudy[] = [
   {
     industry: "Roofing Company",
     imageSrc: "/roof-mockup-fullpage.png",
-    imageAlt: "Roofing company website preview in a browser frame",
+    imageAlt: "Conversion-focused website development preview for a roofing business",
     scrollOnHover: true,
     badges: [{ label: "+42% form fills" }, { label: "Core Web Vitals" }],
     challenge: "Outdated website with poor mobile conversion.",
@@ -32,7 +32,7 @@ const CASE_STUDIES: readonly CaseStudy[] = [
   {
     industry: "Landscaping Company",
     imageSrc: "/ryliable-landscaping.png",
-    imageAlt: "Landscaping company website full-page preview",
+    imageAlt: "Modern website design dashboard for a landscaping company",
     scrollOnHover: true,
     badges: [{ label: "Attribution" }, { label: "CPL trending down" }],
     challenge: "Running ads without clear lead tracking.",
@@ -46,7 +46,7 @@ const CASE_STUDIES: readonly CaseStudy[] = [
   {
     industry: "Dental Practice",
     imageSrc: "/dental-website.png",
-    imageAlt: "Dental practice website full-page preview",
+    imageAlt: "Professional website development layout for a dental practice",
     scrollOnHover: true,
     badges: [{ label: "Bookings up" }, { label: "Mobile UX" }],
     challenge: "Low online visibility and outdated branding.",
@@ -60,7 +60,7 @@ const CASE_STUDIES: readonly CaseStudy[] = [
   {
     industry: "Life Insurance",
     imageSrc: "/Soratorio.png",
-    imageAlt: "Life insurance website full-page preview",
+    imageAlt: "Lead tracking dashboard interface and website design for a life insurance brand",
     scrollOnHover: true,
     badges: [{ label: "Lead quality up" }, { label: "Conversion UX" }],
     challenge: "Low policy inquiry volume from digital channels.",
@@ -114,10 +114,11 @@ export function HomeCaseStudies() {
             id="case-studies-heading"
             className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl dark:text-white"
           >
-            Recent Growth Projects
+            Website Development Company Growth Projects
           </h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            Real systems designed to improve visibility, conversion, and business performance.
+            Real website design and business website development systems improving visibility, conversion, and
+            performance.
           </p>
         </header>
 

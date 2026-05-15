@@ -63,10 +63,11 @@ export function HomeCoreServices() {
             id="core-services-heading"
             className="text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-[2.5rem] lg:leading-tight dark:text-white"
           >
-            The Growth System
+            Website Development Services Built as One Growth System
           </h2>
           <p className="mt-5 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            Three connected systems designed to drive traffic, convert visitors, and track business growth.
+            A website design company framework with three connected systems that drive traffic, convert visitors, and
+            track growth.
           </p>
         </div>
 
@@ -109,7 +110,28 @@ export function HomeCoreServices() {
         </div>
 
         <p className="mx-auto mt-16 max-w-xl text-center text-sm text-neutral-500 dark:text-neutral-400 md:mt-20">
-          See how it fits together on the{" "}
+          Explore{" "}
+          <Link
+            href="/services/websites-and-leads"
+            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
+          >
+            website development services
+          </Link>
+          ,{" "}
+          <Link
+            href={funnel}
+            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
+          >
+            targeted advertising
+          </Link>
+          , and{" "}
+          <Link
+            href="/services/automation-and-crm"
+            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
+          >
+            lead tracking dashboards
+          </Link>
+          . See how it fits together on the{" "}
           <Link
             href={funnel}
             className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"

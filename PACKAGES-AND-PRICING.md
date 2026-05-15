@@ -18,7 +18,7 @@ When you change copy or numbers on the site, update that file **and** this doc (
 
 ### Features
 
-- 5-page custom website
+- 5-page minimum custom website
 - Mobile-first responsive design
 - On-page SEO setup
 - Google Search Console + Bing Webmaster submission

@@ -6,6 +6,7 @@ import {
   sendInquiryNotification,
   sendInquirySmsFollowUp,
 } from "@/lib/email";
+import { mirrorFunnelLeadToOsLeads } from "@/lib/os/mirror-funnel-lead";
 import { scoreInquiryLead } from "@/lib/inquiries/lead-qualifier";
 
 function isValidEmail(s: string): boolean {
@@ -101,6 +102,18 @@ export async function POST(request: Request) {
       console.error("book-call lead insert:", leadErr);
       return NextResponse.json({ error: "Could not save booking lead." }, { status: 500 });
     }
+
+    await mirrorFunnelLeadToOsLeads(admin, {
+      name,
+      businessName: company,
+      email,
+      phone,
+      source: "website_booking",
+      assignedUserId: owner.id,
+      temperature:
+        score.temperature === "hot" ? "Hot" : score.temperature === "warm" ? "Warm" : "Cold",
+      tags: ["Funnel", "Book Call"],
+    });
 
     const [h, m] = time.split(":").map(Number);
     const startTotal = h * 60 + m;

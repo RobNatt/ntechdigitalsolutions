@@ -64,8 +64,8 @@ export function HomeFinalCta() {
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-slate-400 md:text-lg">
             Most businesses rely on disconnected tools that create wasted traffic, missed leads, and unclear
-            performance. We combine conversion-focused websites, targeted advertising, and lead tracking dashboards
-            into one connected growth system.
+            performance. We combine conversion-focused websites, targeted advertising, and lead tracking dashboards into
+            one connected growth system, serving businesses locally and nationwide.
           </p>
 
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">

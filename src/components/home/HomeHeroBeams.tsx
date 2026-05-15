@@ -8,7 +8,7 @@ import Balancer from "react-wrap-balancer";
 import { CONSTANTS } from "@/constants/links";
 import { cn } from "@/lib/utils";
 
-const VIEW_WORK_PATH = "/dental-patient-growth-case-study";
+const VIEW_WORK_PATH = "/#case-studies-heading";
 
 const HERO_TRUST_POINTS = [
   "Fast turnaround",
@@ -75,10 +75,11 @@ export function HomeHeroBeams() {
         N-Tech Digital Solutions
       </p>
       <h1 className="relative z-50 mx-auto mt-2 mb-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-balance text-neutral-900 md:text-5xl lg:text-6xl dark:text-white">
-        <Balancer>Digital Systems Built to Grow Local Businesses</Balancer>
+        <Balancer>Conversion-Focused Website Design &amp; Growth Systems</Balancer>
       </h1>
       <p className="relative z-50 mx-auto mt-4 max-w-2xl px-4 text-center text-base/relaxed text-gray-600 md:text-lg dark:text-neutral-300">
-        a conversion optimized website, ads traffic and a dashboard to track it all.
+        A modern website development company approach: conversion-focused website development, targeted advertising,
+        and lead tracking dashboards in one connected system.
       </p>
       <div
         id="offer-path"

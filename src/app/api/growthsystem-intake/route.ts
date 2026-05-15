@@ -10,6 +10,7 @@ import {
   sendGrowthSystemUnqualifiedAutoReply,
   sendInquiryNotification,
 } from "@/lib/email";
+import { mirrorFunnelLeadToOsLeads } from "@/lib/os/mirror-funnel-lead";
 
 const intakeIps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -199,6 +200,17 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+
+      await mirrorFunnelLeadToOsLeads(supabase, {
+        name,
+        businessName,
+        email,
+        phone,
+        source: "growth_system_funnel",
+        assignedUserId: owner?.id ?? null,
+        temperature: qualified ? "Hot" : "Warm",
+        tags: ["Funnel", "Growth System"],
+      });
     } catch (e) {
       console.error("Growth system Supabase error:", e);
       return NextResponse.json(

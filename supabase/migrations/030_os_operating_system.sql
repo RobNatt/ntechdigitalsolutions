@@ -13,7 +13,14 @@ SET search_path = public
 AS $$
   SELECT COALESCE(
     (
-      SELECT (p.os_role IS NULL OR p.os_role <> 'client')
+      /* Backward-compatible during migration bootstrap:
+         os_role may not exist yet in some environments. */
+      SELECT (
+        COALESCE(
+          NULLIF(to_jsonb(p)->>'os_role', ''),
+          NULLIF(to_jsonb(p)->>'role', '')
+        ) IS DISTINCT FROM 'client'
+      )
       FROM public.profiles p
       WHERE p.id = auth.uid()
     ),

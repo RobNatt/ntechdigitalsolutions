@@ -171,15 +171,15 @@ Fill the table below **in this file** so it is the single source of truth your A
 
 | Field | Canonical value (fill in) |
 |---|---|
-| Legal / display name | |
+| Legal / display name | N-Tech Digital Solutions |
 | Public brand line (if different from legal) | |
 | Street address (if customer-facing; or “service area business”) | |
-| City, state, ZIP | |
+| City, state, ZIP |Omaha, NE |
 | Primary phone (click-to-call) | |
-| Primary email | |
+| Primary email |hello@ntechdigital.solutions |
 | Website | `https://ntechdigital.solutions` |
 | Booking / contact URL | `https://ntechdigital.solutions/book-call` |
-| Hours (match GBP) | |
+| Hours (match GBP) |9-6 m-f |
 
 Rules: **same spelling and punctuation** for name; **one primary phone**; website and booking links **match GBP**.
 
