@@ -247,3 +247,65 @@ export function workbookBufferToLeadRows(buffer: ArrayBuffer): {
 
   return { rows, skippedEmpty, parseWarnings };
 }
+
+/** Raw header-keyed rows for OS CRM import (uses your column mapping in Settings). */
+export function workbookBufferToSheetRowObjects(buffer: ArrayBuffer): {
+  rows: Record<string, unknown>[];
+  skippedEmpty: number;
+  parseWarnings: string[];
+} {
+  const parseWarnings: string[] = [];
+  const wb = XLSX.read(buffer, { type: "array" });
+  const firstName = wb.SheetNames[0];
+  if (!firstName) {
+    parseWarnings.push("No worksheets found in the file.");
+    return { rows: [], skippedEmpty: 0, parseWarnings };
+  }
+  const sheet = wb.Sheets[firstName];
+  const aoa = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
+    header: 1,
+    defval: "",
+    raw: false,
+  }) as unknown[][];
+
+  if (!aoa.length) {
+    parseWarnings.push("The first sheet has no rows.");
+    return { rows: [], skippedEmpty: 0, parseWarnings };
+  }
+
+  let headerIdx = 0;
+  let bestScore = headerRowScore(aoa[0] ?? []);
+  const scanLimit = Math.min(25, aoa.length);
+  for (let i = 1; i < scanLimit; i++) {
+    const sc = headerRowScore(aoa[i] ?? []);
+    if (sc > bestScore) {
+      bestScore = sc;
+      headerIdx = i;
+    }
+  }
+
+  if (bestScore === 0) {
+    parseWarnings.push(
+      "No recognizable header row (expected columns like Name, Email, or Phone in the first rows)."
+    );
+  }
+
+  const rawRows = rowsFromAoA(aoa, headerIdx);
+  let skippedEmpty = 0;
+  const rows: Record<string, unknown>[] = [];
+
+  for (const raw of rawRows) {
+    const m = rowToNormalizedMap(raw);
+    const hasCore = Boolean(
+      pick(m, ["name", "full_name", "contact_name", "lead_name", "email", "e_mail", "phone", "mobile", "phone_number"]) ||
+        pick(m, ["company", "business", "company_name"])
+    );
+    if (!hasCore) {
+      skippedEmpty++;
+      continue;
+    }
+    rows.push(raw);
+  }
+
+  return { rows, skippedEmpty, parseWarnings };
+}

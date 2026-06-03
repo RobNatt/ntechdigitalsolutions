@@ -168,6 +168,40 @@ function postRow_(row) {
     headers: { "X-Webhook-Token": WEBHOOK_TOKEN },
     payload: JSON.stringify(payload)
   });
+}
+
+/**
+ * Option C: Manual menu — sync every data row on the active sheet (skips header).
+ * Extensions → Apps Script → Run syncAllRowsFromActiveSheet once to import existing leads.
+ */
+function syncAllRowsFromActiveSheet() {
+  var sh = SpreadsheetApp.getActiveSheet();
+  var lastRow = sh.getLastRow();
+  var lastCol = sh.getLastColumn();
+  if (lastRow < 2) return;
+  var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+  var data = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  var rows = [];
+  for (var r = 0; r < data.length; r++) {
+    var obj = {};
+    for (var c = 0; c < headers.length; c++) {
+      obj[String(headers[c])] = data[r][c];
+    }
+    rows.push(obj);
+  }
+  var payload = {
+    sheetId: SpreadsheetApp.getActive().getId(),
+    sheetName: sh.getName(),
+    rows: rows
+  };
+  var res = UrlFetchApp.fetch(WEBHOOK_URL, {
+    method: "post",
+    contentType: "application/json",
+    muteHttpExceptions: true,
+    headers: { "X-Webhook-Token": WEBHOOK_TOKEN },
+    payload: JSON.stringify(payload)
+  });
+  Logger.log(res.getContentText());
 }`;
 
   return (
@@ -273,8 +307,9 @@ function postRow_(row) {
         <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Sample Google Apps Script</p>
         <p className="mt-1 text-xs text-neutral-500">
           Extensions → Apps Script → paste, set{" "}
-          <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">WEBHOOK_TOKEN</code> from above, then add a
-          trigger (form submit or spreadsheet on change).
+          <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">WEBHOOK_TOKEN</code> from above. For{" "}
+          <strong>existing rows</strong>, run <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">syncAllRowsFromActiveSheet</code>{" "}
+          once. For <strong>new rows</strong>, add a trigger (form submit or spreadsheet on change).
         </p>
         <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-neutral-800 dark:text-neutral-200">
           {appsScriptSample}

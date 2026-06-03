@@ -191,29 +191,37 @@ export type SheetsWebhookBody = {
   sheetId?: string;
   sheetName?: string;
   row?: Record<string, unknown>;
+  /** Bulk sync: array of header-keyed row objects from Google Sheets. */
+  rows?: Record<string, unknown>[];
 };
 
-export async function handleSheetsWebhook(body: unknown): Promise<{ status: number; json: Record<string, unknown> }> {
-  let admin: ReturnType<typeof createAdminClient>;
-  try {
-    admin = createAdminClient();
-  } catch {
-    return { status: 503, json: { ok: false, error: "Server not configured." } };
-  }
-  const settings = await loadIntegrationSettings(admin);
-  if (!settings?.integration_sheets_enabled) {
-    return { status: 403, json: { ok: false, error: "Sheets integration disabled." } };
-  }
-  const parsed = body as SheetsWebhookBody;
-  const row = parsed?.row && typeof parsed.row === "object" ? (parsed.row as Record<string, unknown>) : null;
-  if (!row || Object.keys(row).length === 0) {
-    return { status: 400, json: { ok: false, error: "Missing row object." } };
-  }
-  const map = mergeSheetsColumnMap(settings.integration_sheets_column_map);
+export type SheetRowUpsertResult =
+  | { ok: true; leadId: string; created: boolean }
+  | { ok: false; error: string; skipped?: boolean };
+
+function sheetRowHasIdentity(fields: ReturnType<typeof mapSheetsRowToLeadFields>): boolean {
+  if (fields.email || fields.phone) return true;
+  if (fields.business_name.trim()) return true;
+  return Boolean(fields.lead_name.trim() && fields.lead_name !== "Untitled");
+}
+
+/** Upsert one spreadsheet row into os_leads (match email, else phone). */
+export async function upsertOsLeadFromSheetRow(
+  admin: SupabaseClient,
+  settings: IntegrationSettingsSnapshot,
+  row: Record<string, unknown>,
+  columnMap?: Record<SheetLeadFieldKey, string>
+): Promise<SheetRowUpsertResult> {
+  const map = columnMap ?? mergeSheetsColumnMap(settings.integration_sheets_column_map);
   const fields = mapSheetsRowToLeadFields(row, map);
+  if (!sheetRowHasIdentity(fields)) {
+    return { ok: false, error: "Empty row", skipped: true };
+  }
+
   const temps = settings.enum_defaults?.lead_temperatures ?? DEFAULT_OS_SETTINGS.enum_defaults!.lead_temperatures!;
   const temperature = clampTemperature(fields.temperature, temps);
   const uncontacted = settings.uncontacted_stage;
+  const source = fields.source?.trim() || "Google Sheets";
 
   let leadId: string | null = null;
   if (fields.email) leadId = await findLeadIdByEmail(admin, fields.email);
@@ -227,35 +235,108 @@ export async function handleSheetsWebhook(body: unknown): Promise<{ status: numb
         business_name: fields.business_name,
         email: fields.email,
         phone: fields.phone,
-        source: fields.source,
+        source,
         tags: fields.tags,
         temperature,
       })
       .eq("id", leadId);
-    if (error) return { status: 500, json: { ok: false, error: error.message } };
-    await activityInsert(admin, "os_lead", leadId, "sheets_sync", "Lead upserted from Google Sheets");
-  } else {
-    const { data, error } = await admin
-      .from("os_leads")
-      .insert({
-        lead_name: fields.lead_name,
-        business_name: fields.business_name,
-        email: fields.email,
-        phone: fields.phone,
-        source: fields.source,
-        status: uncontacted,
-        temperature,
-        tags: fields.tags,
-        assigned_user_id: null,
-      })
-      .select("id")
-      .single();
-    if (error || !data?.id) return { status: 500, json: { ok: false, error: error?.message ?? "Insert failed." } };
-    leadId = String(data.id);
-    await activityInsert(admin, "os_lead", leadId, "sheets_sync", "Lead upserted from Google Sheets");
+    if (error) return { ok: false, error: error.message };
+    await activityInsert(admin, "os_lead", leadId, "sheets_sync", "Lead updated from spreadsheet");
+    return { ok: true, leadId, created: false };
   }
 
-  return { status: 200, json: { ok: true, leadId } };
+  const { data, error } = await admin
+    .from("os_leads")
+    .insert({
+      lead_name: fields.lead_name,
+      business_name: fields.business_name,
+      email: fields.email,
+      phone: fields.phone,
+      source,
+      status: uncontacted,
+      temperature,
+      tags: fields.tags,
+      assigned_user_id: null,
+    })
+    .select("id")
+    .single();
+  if (error || !data?.id) return { ok: false, error: error?.message ?? "Insert failed." };
+  leadId = String(data.id);
+  await activityInsert(admin, "os_lead", leadId, "sheets_sync", "Lead imported from spreadsheet");
+  return { ok: true, leadId, created: true };
+}
+
+export async function upsertOsLeadsFromSheetRows(
+  admin: SupabaseClient,
+  settings: IntegrationSettingsSnapshot,
+  rows: Record<string, unknown>[]
+): Promise<{ created: number; updated: number; skipped: number; errors: string[] }> {
+  const map = mergeSheetsColumnMap(settings.integration_sheets_column_map);
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+  const errors: string[] = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || typeof row !== "object" || Object.keys(row).length === 0) {
+      skipped++;
+      continue;
+    }
+    const result = await upsertOsLeadFromSheetRow(admin, settings, row, map);
+    if (result.ok) {
+      if (result.created) created++;
+      else updated++;
+    } else if (result.skipped) {
+      skipped++;
+    } else {
+      errors.push(`Row ${i + 2}: ${result.error}`);
+    }
+  }
+
+  return { created, updated, skipped, errors };
+}
+
+export async function handleSheetsWebhook(body: unknown): Promise<{ status: number; json: Record<string, unknown> }> {
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { status: 503, json: { ok: false, error: "Server not configured." } };
+  }
+  const settings = await loadIntegrationSettings(admin);
+  if (!settings?.integration_sheets_enabled) {
+    return { status: 403, json: { ok: false, error: "Sheets integration disabled." } };
+  }
+  const parsed = body as SheetsWebhookBody;
+
+  if (Array.isArray(parsed?.rows) && parsed.rows.length > 0) {
+    const MAX = 500;
+    const slice = parsed.rows.slice(0, MAX);
+    const stats = await upsertOsLeadsFromSheetRows(admin, settings, slice);
+    return {
+      status: 200,
+      json: {
+        ok: true,
+        bulk: true,
+        processed: slice.length,
+        ...stats,
+        truncated: parsed.rows.length > MAX,
+      },
+    };
+  }
+
+  const row = parsed?.row && typeof parsed.row === "object" ? (parsed.row as Record<string, unknown>) : null;
+  if (!row || Object.keys(row).length === 0) {
+    return { status: 400, json: { ok: false, error: "Missing row or rows array." } };
+  }
+
+  const result = await upsertOsLeadFromSheetRow(admin, settings, row);
+  if (!result.ok) {
+    if (result.skipped) return { status: 400, json: { ok: false, error: "Row has no name, email, or phone." } };
+    return { status: 500, json: { ok: false, error: result.error } };
+  }
+  return { status: 200, json: { ok: true, leadId: result.leadId, created: result.created } };
 }
 
 export type CalendlyParsed = {

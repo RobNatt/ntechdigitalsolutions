@@ -6,6 +6,7 @@ import { deleteLeadAction, moveLeadStatusAction } from "@/app/dashboard/leads/ac
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
+import { LeadSpreadsheetSync } from "@/components/os/leads/LeadSpreadsheetSync";
 import { LeadWorkModal } from "@/components/os/leads/LeadWorkModal";
 
 const LEAD_MIME = "application/x-os-lead-id";
@@ -23,6 +24,8 @@ type LeadsCrmClientProps = {
   commonTags?: string[];
   leadsFetchError?: string | null;
   migrationPending?: boolean;
+  sheetsIntegrationEnabled?: boolean;
+  settingsIntegrationsUrl?: string;
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -51,6 +54,8 @@ export function LeadsCrmClient({
   commonTags = [],
   leadsFetchError = null,
   migrationPending = false,
+  sheetsIntegrationEnabled = false,
+  settingsIntegrationsUrl = "/dashboard/settings",
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -165,6 +170,14 @@ export function LeadsCrmClient({
             enable follow-up tracking, documents, and the new pipeline stages.
           </p>
         </div>
+      ) : null}
+
+      {isInternal ? (
+        <LeadSpreadsheetSync
+          brandColor={brandColor}
+          settingsUrl={settingsIntegrationsUrl}
+          sheetsEnabled={sheetsIntegrationEnabled}
+        />
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">

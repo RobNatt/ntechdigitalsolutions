@@ -80,6 +80,8 @@ export default async function LeadsPage() {
       commonTags={commonTags}
       leadsFetchError={leadsFetchError}
       migrationPending={migrationPending}
+      sheetsIntegrationEnabled={Boolean(session.settings.integration_sheets_enabled)}
+      settingsIntegrationsUrl="/dashboard/settings"
     />
   );
 }
