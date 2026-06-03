@@ -15,6 +15,7 @@ import type {
   OsLeadEventRow,
   OsLeadTouchpointRow,
 } from "@/lib/os/leads-workflow-types";
+import { isMissingSchemaError } from "@/lib/os/fetch-os-leads-list";
 import { mapOsLeadRow } from "@/lib/os/map-os-lead";
 import type { ActionResult } from "./actions";
 
@@ -146,15 +147,29 @@ export async function getLeadWorkspaceAction(leadId: string): Promise<ActionResu
       .limit(20),
   ]);
 
-  if (leadRes.error || !leadRes.data) return { ok: false, error: leadRes.error?.message ?? "Lead not found." };
-  const stage = String(leadRes.data.status ?? "");
-  await ensureChecklistRows(supabase, leadId, stage);
+  let leadRow = leadRes.data as Record<string, unknown> | null;
+  if (leadRes.error) {
+    if (!isMissingSchemaError(leadRes.error.message)) {
+      return { ok: false, error: leadRes.error.message };
+    }
+    const legacyLead = await supabase.from("os_leads").select("status").eq("id", leadId).maybeSingle();
+    if (legacyLead.error || !legacyLead.data) {
+      return { ok: false, error: legacyLead.error?.message ?? "Lead not found." };
+    }
+    leadRow = legacyLead.data as Record<string, unknown>;
+  }
+  if (!leadRow) return { ok: false, error: "Lead not found." };
 
-  const { data: checklistAfter } = await supabase
-    .from("os_lead_checklist")
-    .select("*")
-    .eq("lead_id", leadId)
-    .order("stage");
+  const stage = String(leadRow.status ?? "");
+  if (!checkRes.error) {
+    await ensureChecklistRows(supabase, leadId, stage);
+  }
+
+  let checklistAfter = checkRes.data;
+  if (!checkRes.error) {
+    const refreshed = await supabase.from("os_lead_checklist").select("*").eq("lead_id", leadId).order("stage");
+    if (!refreshed.error) checklistAfter = refreshed.data;
+  }
 
   const docs: OsLeadDocumentRow[] = [];
   for (const row of docRes.data ?? []) {
@@ -170,12 +185,10 @@ export async function getLeadWorkspaceAction(leadId: string): Promise<ActionResu
       documents: docs,
       checklist: (checklistAfter ?? checkRes.data ?? []).map((r) => mapCheck(r as Record<string, unknown>)),
       events: (eventRes.data ?? []).map((r) => mapEvent(r as Record<string, unknown>)),
-      next_follow_up_at:
-        leadRes.data.next_follow_up_at != null ? String(leadRes.data.next_follow_up_at) : null,
-      last_touch_at: leadRes.data.last_touch_at != null ? String(leadRes.data.last_touch_at) : null,
-      linkedin_url: leadRes.data.linkedin_url != null ? String(leadRes.data.linkedin_url) : null,
-      pipeline_notes:
-        leadRes.data.pipeline_notes != null ? String(leadRes.data.pipeline_notes) : null,
+      next_follow_up_at: leadRow.next_follow_up_at != null ? String(leadRow.next_follow_up_at) : null,
+      last_touch_at: leadRow.last_touch_at != null ? String(leadRow.last_touch_at) : null,
+      linkedin_url: leadRow.linkedin_url != null ? String(leadRow.linkedin_url) : null,
+      pipeline_notes: leadRow.pipeline_notes != null ? String(leadRow.pipeline_notes) : null,
     },
   };
 }

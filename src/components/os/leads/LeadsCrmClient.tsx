@@ -21,6 +21,8 @@ type LeadsCrmClientProps = {
   kpiNew7d: number;
   kpiUncontacted: number;
   commonTags?: string[];
+  leadsFetchError?: string | null;
+  migrationPending?: boolean;
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -47,6 +49,8 @@ export function LeadsCrmClient({
   kpiNew7d,
   kpiUncontacted,
   commonTags = [],
+  leadsFetchError = null,
+  migrationPending = false,
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -136,6 +140,32 @@ export function LeadsCrmClient({
           </button>
         ) : null}
       </header>
+
+      {leadsFetchError ? (
+        <div
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200"
+          role="alert"
+        >
+          <p className="font-semibold">Could not load leads</p>
+          <p className="mt-1 text-red-800 dark:text-red-300">{leadsFetchError}</p>
+          <p className="mt-2 text-xs text-red-700 dark:text-red-400">
+            Your leads are usually still in the database. Apply migration{" "}
+            <code className="rounded bg-red-100 px-1 dark:bg-red-900">035_os_lead_workflow.sql</code> in Supabase, or
+            run <code className="rounded bg-red-100 px-1 dark:bg-red-900">supabase db push</code>.
+          </p>
+        </div>
+      ) : null}
+
+      {migrationPending && !leadsFetchError ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+          <p className="font-semibold">Database update recommended</p>
+          <p className="mt-1 text-amber-900 dark:text-amber-200">
+            Leads are loading in compatibility mode. Run migration{" "}
+            <code className="rounded bg-amber-100 px-1 dark:bg-amber-900">035_os_lead_workflow</code> in Supabase to
+            enable follow-up tracking, documents, and the new pipeline stages.
+          </p>
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">

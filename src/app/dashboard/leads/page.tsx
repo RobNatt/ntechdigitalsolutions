@@ -1,18 +1,15 @@
 import { LeadsCrmClient } from "@/components/os/leads/LeadsCrmClient";
 import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
+import { fetchOsLeadsList, mergeLeadPipelineStages } from "@/lib/os/fetch-os-leads-list";
 import { loadDashboardPage } from "@/lib/os/load-dashboard-page";
-import { mapOsLeadRow } from "@/lib/os/map-os-lead";
 import type { AssigneeOption } from "@/lib/os/leads-types";
 import { createClient } from "@/lib/supabase/server";
-
-const LEAD_LIST_COLUMNS =
-  "id, lead_name, business_name, email, phone, source, status, temperature, tags, assigned_user_id, linked_client_id, next_follow_up_at, last_touch_at, linkedin_url, pipeline_notes, created_at, updated_at";
 
 export default async function LeadsPage() {
   const session = await loadDashboardPage();
   const supabase = await createClient();
 
-  const stages =
+  const settingsStages =
     session.settings.enum_defaults?.lead_stages ?? DEFAULT_OS_SETTINGS.enum_defaults!.lead_stages;
   const temps =
     session.settings.enum_defaults?.lead_temperatures ??
@@ -24,12 +21,6 @@ export default async function LeadsPage() {
   const since = new Date();
   since.setDate(since.getDate() - 7);
   const sinceIso = since.toISOString();
-
-  const leadsQuery = supabase
-    .from("os_leads")
-    .select(LEAD_LIST_COLUMNS)
-    .order("created_at", { ascending: false })
-    .limit(500);
 
   const count7dQuery = supabase
     .from("os_leads")
@@ -45,17 +36,21 @@ export default async function LeadsPage() {
     ? supabase.from("profiles").select("id, full_name, email, os_role").limit(400)
     : Promise.resolve({ data: null, error: null });
 
-  const [leadsRes, c7Res, cuRes, assigneesRes] = await Promise.all([
-    leadsQuery,
+  const [leadsFetch, c7Res, cuRes, assigneesRes] = await Promise.all([
+    fetchOsLeadsList(supabase),
     count7dQuery,
     countUncontactedQuery,
     assigneesQuery,
   ]);
 
-  if (leadsRes.error) {
-    console.warn("os_leads fetch:", leadsRes.error.message);
+  const leads = leadsFetch.leads;
+  const stages = mergeLeadPipelineStages(settingsStages, leads);
+  const leadsFetchError = leadsFetch.error;
+  const migrationPending = leadsFetch.usedLegacyColumns;
+
+  if (leadsFetchError) {
+    console.warn("os_leads fetch:", leadsFetchError);
   }
-  const leads = (leadsRes.data ?? []).map((r) => mapOsLeadRow(r as Record<string, unknown>));
 
   let assignees: AssigneeOption[] = [];
   if (session.isInternal && assigneesRes.data && !assigneesRes.error) {
@@ -83,6 +78,8 @@ export default async function LeadsPage() {
       kpiNew7d={c7Res.count ?? 0}
       kpiUncontacted={cuRes.count ?? 0}
       commonTags={commonTags}
+      leadsFetchError={leadsFetchError}
+      migrationPending={migrationPending}
     />
   );
 }
