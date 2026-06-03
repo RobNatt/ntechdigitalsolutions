@@ -2,20 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import {
-  checkLeadDuplicatesAction,
-  convertLeadToClientAction,
-  convertLeadToProjectAction,
-  createLeadAction,
-  deleteLeadAction,
-  getLeadActivityAction,
-  moveLeadStatusAction,
-  updateLeadAction,
-  type LeadUpsertPayload,
-} from "@/app/dashboard/leads/actions";
-import { formatTagsForInput, isValidEmail, mergeTagIntoTagsInput, normalizePhoneDigits } from "@/lib/os/lead-utils";
-import type { AssigneeOption, OsActivityRow, OsLeadRow } from "@/lib/os/leads-types";
+import { deleteLeadAction, moveLeadStatusAction } from "@/app/dashboard/leads/actions";
+import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
+import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
+import { LeadWorkModal } from "@/components/os/leads/LeadWorkModal";
 
 const LEAD_MIME = "application/x-os-lead-id";
 
@@ -283,7 +274,7 @@ export function LeadsCrmClient({
                         className="font-medium text-sky-700 hover:underline dark:text-sky-400"
                         onClick={() => setModal({ mode: "detail", lead })}
                       >
-                        Edit
+                        Open
                       </button>
                       {isInternal ? (
                         <button
@@ -315,10 +306,8 @@ export function LeadsCrmClient({
         </div>
       )}
 
-      {modal.mode !== "closed" ? (
-        <LeadModal
-          mode={modal.mode === "create" ? "create" : "edit"}
-          activeLead={modal.mode === "create" ? null : modal.lead}
+      {modal.mode === "create" ? (
+        <LeadCreateModal
           leadStages={leadStages}
           leadTemperatures={leadTemperatures}
           assignees={assignees}
@@ -330,10 +319,29 @@ export function LeadsCrmClient({
             setModal({ mode: "closed" });
             refresh();
           }}
+        />
+      ) : null}
+      {modal.mode === "detail" ? (
+        <LeadWorkModal
+          lead={modal.lead}
+          leadStages={leadStages}
+          leadTemperatures={leadTemperatures}
+          assignees={assignees}
+          isInternal={isInternal}
+          brandColor={brandColor}
+          commonTags={commonTags}
+          onClose={() => setModal({ mode: "closed" })}
+          onSaved={() => {
+            refresh();
+          }}
           onDeleted={(deletedId) => {
             setLeads((p) => p.filter((x) => x.id !== deletedId));
             setModal({ mode: "closed" });
             refresh();
+          }}
+          onLeadUpdated={(updated) => {
+            setLeads((p) => p.map((x) => (x.id === updated.id ? updated : x)));
+            setModal((m) => (m.mode === "detail" && m.lead.id === updated.id ? { mode: "detail", lead: updated } : m));
           }}
         />
       ) : null}
@@ -395,8 +403,14 @@ function PipelineColumn({
               e.dataTransfer.effectAllowed = "move";
             }}
             onClick={() => onCardClick(lead)}
-            className="rounded-lg border border-neutral-200 bg-white p-3 text-left shadow-sm transition hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-950 dark:hover:border-neutral-600"
+            className="relative rounded-lg border border-neutral-200 bg-white p-3 text-left shadow-sm transition hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-950 dark:hover:border-neutral-600"
           >
+            {lead.next_follow_up_at && new Date(lead.next_follow_up_at).getTime() < Date.now() ? (
+              <span
+                className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"
+                title="Follow-up overdue"
+              />
+            ) : null}
             <p className="font-medium text-neutral-900 dark:text-white">{cardTitle(lead)}</p>
             {cardSub(lead) ? (
               <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">{cardSub(lead)}</p>
@@ -421,470 +435,5 @@ function PipelineColumn({
         ))}
       </div>
     </div>
-  );
-}
-
-function LeadModal({
-  mode,
-  activeLead,
-  leadStages,
-  leadTemperatures,
-  assignees,
-  isInternal,
-  brandColor,
-  commonTags,
-  onClose,
-  onSaved,
-  onDeleted,
-}: {
-  mode: "create" | "edit";
-  activeLead: OsLeadRow | null;
-  leadStages: string[];
-  leadTemperatures: string[];
-  assignees: AssigneeOption[];
-  isInternal: boolean;
-  brandColor: string;
-  commonTags: string[];
-  onClose: () => void;
-  onSaved: () => void;
-  onDeleted: (deletedId: string) => void;
-}) {
-  const active = activeLead;
-  const [form, setForm] = useState<LeadUpsertPayload>(() =>
-    active
-      ? {
-          lead_name: active.lead_name,
-          business_name: active.business_name,
-          email: active.email,
-          phone: active.phone,
-          source: active.source,
-          status: active.status,
-          temperature: active.temperature,
-          tags: formatTagsForInput(active.tags),
-          assigned_user_id: active.assigned_user_id,
-        }
-      : {
-          lead_name: "",
-          business_name: "",
-          email: null,
-          phone: null,
-          source: null,
-          status: leadStages[0] ?? "New",
-          temperature: leadTemperatures[0] ?? "Cold",
-          tags: "",
-          assigned_user_id: null,
-        }
-  );
-  const [dupWarn, setDupWarn] = useState<string | null>(null);
-  const [activity, setActivity] = useState<OsActivityRow[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-  const [gmailConnected, setGmailConnected] = useState<boolean>(false);
-  const [gmailAddress, setGmailAddress] = useState<string>("");
-  const [followupSubject, setFollowupSubject] = useState<string>("");
-  const [followupBody, setFollowupBody] = useState<string>("");
-  const [followupNote, setFollowupNote] = useState<string | null>(null);
-  const [generatingDraft, setGeneratingDraft] = useState(false);
-  const [sendingFollowup, setSendingFollowup] = useState(false);
-
-  useEffect(() => {
-    if (mode === "edit" && active?.id) {
-      void getLeadActivityAction(active.id).then((r) => {
-        if (r.ok && r.data) setActivity(r.data.items);
-      });
-    }
-  }, [mode, active?.id]);
-
-  useEffect(() => {
-    if (mode !== "edit" || !active) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/gmail/status", { cache: "no-store" });
-        const data = (await res.json()) as { connected?: boolean; gmailAddress?: string };
-        if (cancelled) return;
-        setGmailConnected(data.connected === true);
-        setGmailAddress(typeof data.gmailAddress === "string" ? data.gmailAddress : "");
-      } catch {
-        if (cancelled) return;
-        setGmailConnected(false);
-        setGmailAddress("");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [mode, active?.id]);
-
-  async function checkDup() {
-    if (!form.email?.trim() && !normalizePhoneDigits(form.phone)) {
-      setDupWarn(null);
-      return;
-    }
-    const r = await checkLeadDuplicatesAction(form.email, form.phone, active?.id ?? null);
-    if (!r.ok) return;
-    const parts: string[] = [];
-    if (r.data?.emailMatch) parts.push("email");
-    if (r.data?.phoneMatch) parts.push("phone");
-    setDupWarn(parts.length ? `Another lead already uses this ${parts.join(" and ")}.` : null);
-  }
-
-  async function submit() {
-    setErr(null);
-    if (form.email?.trim() && !isValidEmail(form.email.trim())) {
-      setErr("Enter a valid email or leave email blank.");
-      return;
-    }
-    setBusy(true);
-    try {
-      if (mode === "create") {
-        const r = await createLeadAction(form);
-        if (!r.ok) setErr(r.error);
-        else onSaved();
-      } else if (active) {
-        const r = await updateLeadAction(active.id, form);
-        if (!r.ok) setErr(r.error);
-        else onSaved();
-      }
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function generateFollowupDraft() {
-    if (!active) return;
-    setGeneratingDraft(true);
-    setFollowupNote(null);
-    try {
-      const res = await fetch("/api/dashboard-assistant/lead-followup-draft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          leadName: active.lead_name,
-          businessName: active.business_name,
-          email: active.email,
-          source: active.source,
-          status: active.status,
-          temperature: active.temperature,
-          objective: "book a short strategy call",
-        }),
-      });
-      const data = (await res.json()) as { subject?: string; body?: string; error?: string };
-      if (!res.ok) {
-        setFollowupNote(data.error || "Could not generate a draft right now.");
-        return;
-      }
-      setFollowupSubject(data.subject || "");
-      setFollowupBody(data.body || "");
-      setFollowupNote("Draft generated. Review and send when ready.");
-    } catch {
-      setFollowupNote("Could not generate a draft right now.");
-    } finally {
-      setGeneratingDraft(false);
-    }
-  }
-
-  async function sendFollowupEmail() {
-    if (!active?.email) return;
-    if (!followupSubject.trim() || !followupBody.trim()) {
-      setFollowupNote("Add a subject and message before sending.");
-      return;
-    }
-    setSendingFollowup(true);
-    setFollowupNote(null);
-    try {
-      const res = await fetch("/api/gmail/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: active.email,
-          subject: followupSubject.trim(),
-          body: followupBody.trim(),
-        }),
-      });
-      const data = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        setFollowupNote(data.error || "Failed to send follow-up email.");
-        return;
-      }
-      setFollowupNote(`Sent from ${gmailAddress || "connected inbox"} to ${active.email}.`);
-    } catch {
-      setFollowupNote("Failed to send follow-up email.");
-    } finally {
-      setSendingFollowup(false);
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 p-4 sm:items-center" role="dialog">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-neutral-950">
-        <div className="flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-            {mode === "create" ? "Add lead" : "Lead details"}
-          </h2>
-          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200">
-            ✕
-          </button>
-        </div>
-
-        {err ? <p className="mt-3 text-sm text-red-600">{err}</p> : null}
-        {dupWarn ? <p className="mt-2 text-sm text-amber-700 dark:text-amber-400">{dupWarn}</p> : null}
-
-        <div className="mt-4 space-y-3">
-          <Field label="Lead name">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.lead_name}
-              onChange={(e) => setForm((f) => ({ ...f, lead_name: e.target.value }))}
-            />
-          </Field>
-          <Field label="Business name">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.business_name}
-              onChange={(e) => setForm((f) => ({ ...f, business_name: e.target.value }))}
-            />
-          </Field>
-          <Field label="Email">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.email ?? ""}
-              onBlur={() => void checkDup()}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value || null }))}
-            />
-          </Field>
-          <Field label="Phone">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.phone ?? ""}
-              onBlur={() => void checkDup()}
-              onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value || null }))}
-            />
-          </Field>
-          <Field label="Source">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.source ?? ""}
-              onChange={(e) => setForm((f) => ({ ...f, source: e.target.value || null }))}
-            />
-          </Field>
-          <Field label="Status">
-            <select
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.status}
-              onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-            >
-              {leadStages.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Temperature">
-            <select
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.temperature}
-              onChange={(e) => setForm((f) => ({ ...f, temperature: e.target.value }))}
-            >
-              {leadTemperatures.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Tags (comma-separated)">
-            <input
-              className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-              value={form.tags}
-              onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
-            />
-          </Field>
-          {commonTags.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              <span className="w-full text-[10px] font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                Quick tags
-              </span>
-              {commonTags.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className="rounded-full border border-neutral-200 px-2 py-0.5 text-[11px] text-neutral-700 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                  onClick={() =>
-                    setForm((f) => ({ ...f, tags: mergeTagIntoTagsInput(f.tags, t) }))
-                  }
-                >
-                  +{t}
-                </button>
-              ))}
-            </div>
-          ) : null}
-          {isInternal ? (
-            <Field label="Assigned user">
-              <select
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={form.assigned_user_id ?? ""}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, assigned_user_id: e.target.value || null }))
-                }
-              >
-                <option value="">—</option>
-                {assignees.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          ) : null}
-        </div>
-
-        {mode === "edit" && active && isInternal ? (
-          <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-            <button
-              type="button"
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium dark:border-neutral-600"
-              disabled={busy}
-              onClick={async () => {
-                setBusy(true);
-                const r = await convertLeadToClientAction(active.id);
-                setBusy(false);
-                if (!r.ok) setErr(r.error);
-                else onSaved();
-              }}
-            >
-              Convert to client
-            </button>
-            <button
-              type="button"
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium dark:border-neutral-600"
-              disabled={busy}
-              onClick={async () => {
-                setBusy(true);
-                const r = await convertLeadToProjectAction(active.id);
-                setBusy(false);
-                if (!r.ok) setErr(r.error);
-                else onSaved();
-              }}
-            >
-              Convert to project
-            </button>
-            <button
-              type="button"
-              className="ml-auto rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
-              disabled={busy}
-              onClick={async () => {
-                if (!confirm("Delete this lead? This cannot be undone.")) return;
-                setErr(null);
-                setBusy(true);
-                const r = await deleteLeadAction(active.id);
-                setBusy(false);
-                if (!r.ok) setErr(r.error);
-                else onDeleted(active.id);
-              }}
-            >
-              Delete lead
-            </button>
-          </div>
-        ) : null}
-
-        {mode === "edit" && active ? (
-          <div className="mt-6 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-            <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">AI follow-up</p>
-            {!active.email ? (
-              <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-                Add an email on this lead to generate and send follow-ups.
-              </p>
-            ) : !gmailConnected ? (
-              <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
-                Gmail not connected for this user. Connect {`hello@ntechdigital.solutions`} in dashboard settings,
-                then reopen this lead.
-              </p>
-            ) : (
-              <div className="mt-3 space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void generateFollowupDraft()}
-                    disabled={generatingDraft || sendingFollowup}
-                    className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-800 transition hover:bg-neutral-100 disabled:opacity-60 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
-                  >
-                    {generatingDraft ? "Generating…" : "Generate AI draft"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void sendFollowupEmail()}
-                    disabled={generatingDraft || sendingFollowup || !followupSubject.trim() || !followupBody.trim()}
-                    className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition disabled:opacity-60"
-                    style={{ backgroundColor: brandColor }}
-                  >
-                    {sendingFollowup ? "Sending…" : "Send follow-up email"}
-                  </button>
-                </div>
-                <Field label="Email subject">
-                  <input
-                    className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                    value={followupSubject}
-                    onChange={(e) => setFollowupSubject(e.target.value)}
-                    placeholder="Quick follow-up from NTech"
-                  />
-                </Field>
-                <Field label="Email body">
-                  <textarea
-                    className="mt-1 min-h-[140px] w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                    value={followupBody}
-                    onChange={(e) => setFollowupBody(e.target.value)}
-                    placeholder="Generate a draft, then edit before sending."
-                  />
-                </Field>
-                {followupNote ? (
-                  <p className="text-xs text-neutral-600 dark:text-neutral-300">{followupNote}</p>
-                ) : null}
-              </div>
-            )}
-          </div>
-        ) : null}
-
-        {mode === "edit" && activity.length > 0 ? (
-          <div className="mt-6 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-            <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Recent activity</p>
-            <ul className="mt-2 max-h-40 space-y-2 overflow-y-auto text-xs text-neutral-600 dark:text-neutral-400">
-              {activity.map((a) => (
-                <li key={a.id}>
-                  <span className="font-medium text-neutral-700 dark:text-neutral-300">{a.action}</span>
-                  {a.message ? <span> — {a.message}</span> : null}
-                  <span className="text-neutral-400"> · {new Date(a.created_at).toLocaleString()}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="rounded-lg px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300">
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void submit()}
-            className="rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-            style={{ backgroundColor: brandColor }}
-          >
-            {busy ? "Saving…" : mode === "create" ? "Create" : "Save"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
-      {label}
-      {children}
-    </label>
   );
 }

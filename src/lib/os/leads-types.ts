@@ -10,6 +10,10 @@ export type OsLeadRow = {
   tags: string[] | null;
   assigned_user_id: string | null;
   linked_client_id: string | null;
+  next_follow_up_at: string | null;
+  last_touch_at: string | null;
+  linkedin_url: string | null;
+  pipeline_notes: string | null;
   created_at: string;
   updated_at: string;
 };

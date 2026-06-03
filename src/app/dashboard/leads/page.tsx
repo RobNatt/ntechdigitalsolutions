@@ -6,7 +6,7 @@ import type { AssigneeOption } from "@/lib/os/leads-types";
 import { createClient } from "@/lib/supabase/server";
 
 const LEAD_LIST_COLUMNS =
-  "id, lead_name, business_name, email, phone, source, status, temperature, tags, assigned_user_id, linked_client_id, created_at, updated_at";
+  "id, lead_name, business_name, email, phone, source, status, temperature, tags, assigned_user_id, linked_client_id, next_follow_up_at, last_touch_at, linkedin_url, pipeline_notes, created_at, updated_at";
 
 export default async function LeadsPage() {
   const session = await loadDashboardPage();

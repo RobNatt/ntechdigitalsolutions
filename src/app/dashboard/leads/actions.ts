@@ -122,6 +122,7 @@ export type LeadUpsertPayload = {
   temperature: string;
   tags: string;
   assigned_user_id: string | null;
+  linkedin_url?: string | null;
 };
 
 export async function createLeadAction(payload: LeadUpsertPayload): Promise<ActionResult<{ id: string }>> {
@@ -142,6 +143,7 @@ export async function createLeadAction(payload: LeadUpsertPayload): Promise<Acti
     temperature: payload.temperature.trim() || "Cold",
     tags,
     assigned_user_id: payload.assigned_user_id || null,
+    linkedin_url: payload.linkedin_url?.trim() || null,
   };
   const { data, error } = await supabase.from("os_leads").insert(row).select("id").single();
   if (error || !data?.id) return { ok: false, error: error?.message ?? "Insert failed." };
@@ -172,6 +174,7 @@ export async function updateLeadAction(leadId: string, payload: LeadUpsertPayloa
   };
   if (session.isInternal) {
     updates.assigned_user_id = payload.assigned_user_id || null;
+    updates.linkedin_url = payload.linkedin_url?.trim() || null;
   }
   const { error } = await supabase.from("os_leads").update(updates).eq("id", leadId);
   if (error) return { ok: false, error: error.message };

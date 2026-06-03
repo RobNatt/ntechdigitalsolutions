@@ -13,7 +13,15 @@ export const DEFAULT_OS_SETTINGS: Omit<OsSettingsRow, "id"> & { id: string } = {
   enable_sops: true,
   uncontacted_stage: "New",
   enum_defaults: {
-    lead_stages: ["New", "Contacted", "Booked", "Showed", "Qualified"],
+    lead_stages: [
+      "New",
+      "Contacted",
+      "Discovery Call",
+      "Research",
+      "Proposal Meeting",
+      "Won",
+      "Lost",
+    ],
     project_stages: ["Onboarding", "Development", "In Review", "Live"],
     lead_temperatures: ["Cold", "Warm", "Hot"],
     /** Preset tag labels for quick selection on leads (Settings-managed). */

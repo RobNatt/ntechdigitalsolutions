@@ -14,6 +14,10 @@ export function mapOsLeadRow(row: Record<string, unknown>): OsLeadRow {
     tags: Array.isArray(tags) ? (tags as string[]) : [],
     assigned_user_id: row.assigned_user_id != null ? String(row.assigned_user_id) : null,
     linked_client_id: row.linked_client_id != null ? String(row.linked_client_id) : null,
+    next_follow_up_at: row.next_follow_up_at != null ? String(row.next_follow_up_at) : null,
+    last_touch_at: row.last_touch_at != null ? String(row.last_touch_at) : null,
+    linkedin_url: row.linkedin_url != null ? String(row.linkedin_url) : null,
+    pipeline_notes: row.pipeline_notes != null ? String(row.pipeline_notes) : null,
     created_at: String(row.created_at ?? ""),
     updated_at: String(row.updated_at ?? ""),
   };
