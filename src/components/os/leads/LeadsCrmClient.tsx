@@ -70,6 +70,13 @@ export function LeadsCrmClient({
     router.refresh();
   }, [router]);
 
+  const handleLeadUpdated = useCallback((updated: OsLeadRow) => {
+    setLeads((p) => p.map((x) => (x.id === updated.id ? updated : x)));
+    setModal((m) =>
+      m.mode === "detail" && m.lead.id === updated.id ? { mode: "detail", lead: updated } : m
+    );
+  }, []);
+
   const sources = useMemo(() => {
     const s = new Set<string>();
     for (const l of leads) {
@@ -382,10 +389,7 @@ export function LeadsCrmClient({
             setModal({ mode: "closed" });
             refresh();
           }}
-          onLeadUpdated={(updated) => {
-            setLeads((p) => p.map((x) => (x.id === updated.id ? updated : x)));
-            setModal((m) => (m.mode === "detail" && m.lead.id === updated.id ? { mode: "detail", lead: updated } : m));
-          }}
+          onLeadUpdated={handleLeadUpdated}
         />
       ) : null}
     </div>

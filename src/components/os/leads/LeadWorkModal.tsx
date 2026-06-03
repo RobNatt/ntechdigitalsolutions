@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   checkLeadDuplicatesAction,
   convertLeadToClientAction,
@@ -71,6 +71,18 @@ function defaultMeetingRange(): { start: string; end: string } {
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
+function phoneTelHref(phone: string | null | undefined): string | null {
+  const digits = normalizePhoneDigits(phone);
+  if (digits.length < 10) return null;
+  return `tel:+${digits}`;
+}
+
+function smsHref(phone: string | null | undefined): string | null {
+  const digits = normalizePhoneDigits(phone);
+  if (digits.length < 10) return null;
+  return `sms:+${digits}`;
+}
+
 export function LeadWorkModal({
   lead: initialLead,
   leadStages,
@@ -94,11 +106,16 @@ export function LeadWorkModal({
   onClose: () => void;
   onSaved: () => void;
   onDeleted: (id: string) => void;
-  onLeadUpdated: (lead: OsLeadRow) => void;
+  onLeadUpdated?: (lead: OsLeadRow) => void;
 }) {
+  const leadId = initialLead.id;
+  const onLeadUpdatedRef = useRef(onLeadUpdated);
+  onLeadUpdatedRef.current = onLeadUpdated;
+
   const [lead, setLead] = useState(initialLead);
   const [workspace, setWorkspace] = useState<LeadWorkspaceData | null>(null);
   const [loadingWs, setLoadingWs] = useState(true);
+  const notesDirtyRef = useRef(false);
   const [showEdit, setShowEdit] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -139,24 +156,36 @@ export function LeadWorkModal({
     return workspace.checklist.filter((c) => c.stage === lead.status);
   }, [workspace, lead.status]);
 
-  const reloadWorkspace = useCallback(async () => {
-    setLoadingWs(true);
-    const r = await getLeadWorkspaceAction(lead.id);
-    setLoadingWs(false);
-    if (r.ok && r.data) {
-      setWorkspace(r.data);
-      if (!notesDirty) setPipelineNotes(r.data.pipeline_notes ?? "");
-    }
-    const row = await refreshLeadRowAction(lead.id);
-    if (row.ok && row.data) {
-      setLead(row.data.lead);
-      onLeadUpdated(row.data.lead);
-    }
-  }, [lead.id, notesDirty, onLeadUpdated]);
+  const reloadWorkspace = useCallback(
+    async (options?: { background?: boolean }) => {
+      if (!options?.background) setLoadingWs(true);
+      try {
+        const r = await getLeadWorkspaceAction(leadId);
+        if (r.ok && r.data) {
+          setWorkspace(r.data);
+          if (!notesDirtyRef.current) setPipelineNotes(r.data.pipeline_notes ?? "");
+        } else if (!r.ok) setErr(r.error);
+        const row = await refreshLeadRowAction(leadId);
+        if (row.ok && row.data) {
+          setLead(row.data.lead);
+          onLeadUpdatedRef.current?.(row.data.lead);
+        }
+      } finally {
+        setLoadingWs(false);
+      }
+    },
+    [leadId]
+  );
 
   useEffect(() => {
+    setLead(initialLead);
+    setWorkspace(null);
+    setNotesDirty(false);
+    notesDirtyRef.current = false;
+    setErr(null);
     void reloadWorkspace();
-  }, [reloadWorkspace]);
+    // Only re-fetch when opening a different lead (not when parent syncs the same row).
+  }, [leadId, reloadWorkspace]);
 
   useEffect(() => {
     setTouchNextAt(toDatetimeLocalValue(defaultNextFollowUpAt(lead.temperature)));
@@ -191,7 +220,7 @@ export function LeadWorkModal({
       }
       setTouchNotes("");
       setTouchMoveStage("");
-      await reloadWorkspace();
+      await reloadWorkspace({ background: true });
     } finally {
       setBusy(false);
     }
@@ -204,7 +233,7 @@ export function LeadWorkModal({
     if (!r.ok) setErr(r.error);
     else {
       setNotesDirty(false);
-      await reloadWorkspace();
+      await reloadWorkspace({ background: true });
     }
   }
 
@@ -221,9 +250,13 @@ export function LeadWorkModal({
     else {
       setShowEdit(false);
       onSaved();
-      await reloadWorkspace();
+      await reloadWorkspace({ background: true });
     }
   }
+
+  const telHref = phoneTelHref(lead.phone);
+  const smsLink = smsHref(lead.phone);
+  const linkedIn = lead.linkedin_url?.trim() || workspace?.linkedin_url?.trim() || null;
 
   const nextDueIso = workspace?.next_follow_up_at ?? lead.next_follow_up_at;
   const isOverdue = nextDueIso ? new Date(nextDueIso).getTime() < Date.now() : false;
@@ -260,6 +293,98 @@ export function LeadWorkModal({
         </div>
 
         {err ? <p className="mt-3 text-sm text-red-600">{err}</p> : null}
+
+        {/* Contact methods — always visible for logging outreach */}
+        <div className="mt-4 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">Contact</p>
+          <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
+            <div className="flex items-start gap-2">
+              <span className="w-14 shrink-0 text-xs text-neutral-500">Phone</span>
+              {lead.phone ? (
+                <div className="min-w-0">
+                  <a href={telHref ?? undefined} className="font-medium text-sky-700 hover:underline dark:text-sky-400">
+                    {lead.phone}
+                  </a>
+                </div>
+              ) : (
+                <span className="text-neutral-400">—</span>
+              )}
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-14 shrink-0 text-xs text-neutral-500">Email</span>
+              {lead.email ? (
+                <a
+                  href={`mailto:${lead.email}`}
+                  className="min-w-0 break-all font-medium text-sky-700 hover:underline dark:text-sky-400"
+                >
+                  {lead.email}
+                </a>
+              ) : (
+                <span className="text-neutral-400">—</span>
+              )}
+            </div>
+            <div className="flex items-start gap-2 sm:col-span-2">
+              <span className="w-14 shrink-0 text-xs text-neutral-500">LinkedIn</span>
+              {linkedIn ? (
+                <a
+                  href={linkedIn.startsWith("http") ? linkedIn : `https://${linkedIn}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="min-w-0 break-all font-medium text-sky-700 hover:underline dark:text-sky-400"
+                >
+                  {linkedIn.replace(/^https?:\/\//, "")}
+                </a>
+              ) : (
+                <span className="text-neutral-400">—</span>
+              )}
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {telHref ? (
+              <a
+                href={telHref}
+                onClick={() => setTouchChannel("call")}
+                className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Call
+              </a>
+            ) : null}
+            {smsLink ? (
+              <a
+                href={smsLink}
+                onClick={() => setTouchChannel("sms")}
+                className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Text
+              </a>
+            ) : null}
+            {lead.email ? (
+              <a
+                href={`mailto:${lead.email}`}
+                onClick={() => setTouchChannel("email")}
+                className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Email
+              </a>
+            ) : null}
+            {linkedIn ? (
+              <a
+                href={linkedIn.startsWith("http") ? linkedIn : `https://${linkedIn}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setTouchChannel("linkedin")}
+                className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                LinkedIn
+              </a>
+            ) : null}
+            {!lead.phone && !lead.email && !linkedIn ? (
+              <p className="text-xs text-amber-700 dark:text-amber-400">
+                Add phone, email, or LinkedIn under Edit lead details to use quick contact actions.
+              </p>
+            ) : null}
+          </div>
+        </div>
 
         {/* Snapshot */}
         <div className="mt-4 grid gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm dark:border-neutral-800 dark:bg-neutral-900/60 sm:grid-cols-2">
@@ -307,7 +432,7 @@ export function LeadWorkModal({
                   const r = await moveLeadStatusAction(lead.id, s);
                   setBusy(false);
                   if (!r.ok) setErr(r.error);
-                  else await reloadWorkspace();
+                  else await reloadWorkspace({ background: true });
                 }}
                 className={cn(
                   "rounded-lg border px-2.5 py-1 text-xs font-medium transition",
@@ -327,20 +452,28 @@ export function LeadWorkModal({
         <section className="mt-6 rounded-xl border-2 border-dashed border-neutral-300 p-4 dark:border-neutral-700">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Log follow-up</h3>
           <p className="mt-1 text-xs text-neutral-500">How did you reach out? What happened? When is the next touch?</p>
+          <div className="mt-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">Outreach type</p>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {TOUCH_CHANNELS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setTouchChannel(c)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-1 text-xs font-medium transition",
+                    touchChannel === c
+                      ? "border-transparent text-white"
+                      : "border-neutral-300 text-neutral-700 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                  )}
+                  style={touchChannel === c ? { backgroundColor: brandColor } : undefined}
+                >
+                  {touchChannelLabel(c)}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <Field label="Outreach type">
-              <select
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={touchChannel}
-                onChange={(e) => setTouchChannel(e.target.value)}
-              >
-                {TOUCH_CHANNELS.map((c) => (
-                  <option key={c} value={c}>
-                    {touchChannelLabel(c)}
-                  </option>
-                ))}
-              </select>
-            </Field>
             <Field label="Outcome">
               <select
                 className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
@@ -438,7 +571,7 @@ export function LeadWorkModal({
                       const r = await updateLeadMeetingStatusAction(lead.id, ev.id, e.target.value);
                       setBusy(false);
                       if (!r.ok) setErr(r.error);
-                      else await reloadWorkspace();
+                      else await reloadWorkspace({ background: true });
                     }}
                   >
                     {EVENT_MEETING_STATUSES.map((s) => (
@@ -502,7 +635,7 @@ export function LeadWorkModal({
               });
               setBusy(false);
               if (!r.ok) setErr(r.error);
-              else await reloadWorkspace();
+              else await reloadWorkspace({ background: true });
             }}
           >
             Schedule meeting
@@ -528,7 +661,7 @@ export function LeadWorkModal({
                       const r = await toggleLeadChecklistAction(lead.id, item.id, e.target.checked);
                       setBusy(false);
                       if (!r.ok) setErr(r.error);
-                      else await reloadWorkspace();
+                      else await reloadWorkspace({ background: true });
                     }}
                   />
                   <span className={item.completed_at ? "text-neutral-500 line-through" : "text-neutral-800 dark:text-neutral-200"}>
@@ -550,6 +683,7 @@ export function LeadWorkModal({
               onChange={(e) => {
                 setPipelineNotes(e.target.value);
                 setNotesDirty(true);
+                notesDirtyRef.current = true;
               }}
             />
           </Field>
@@ -601,7 +735,7 @@ export function LeadWorkModal({
                           const r = await deleteLeadDocumentAction(lead.id, doc.id);
                           setBusy(false);
                           if (!r.ok) setErr(r.error);
-                          else await reloadWorkspace();
+                          else await reloadWorkspace({ background: true });
                         }}
                       >
                         Delete
@@ -625,7 +759,7 @@ export function LeadWorkModal({
               if (!r.ok) setErr(r.error);
               else {
                 e.currentTarget.reset();
-                await reloadWorkspace();
+                await reloadWorkspace({ background: true });
               }
             }}
           >
