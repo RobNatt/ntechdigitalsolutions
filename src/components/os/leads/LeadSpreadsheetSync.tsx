@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
 import { importSpreadsheetToOsLeadsAction } from "@/app/dashboard/leads/sheets-import-actions";
 
 export function LeadSpreadsheetSync({
@@ -13,6 +14,8 @@ export function LeadSpreadsheetSync({
   settingsUrl: string;
   sheetsEnabled: boolean;
 }) {
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -43,6 +46,7 @@ export function LeadSpreadsheetSync({
               in Settings (defaults: Name, Business, Email, Phone, Source, Tags, Temperature).
             </p>
             <form
+              ref={formRef}
               className="mt-3 flex flex-wrap items-center gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -61,10 +65,12 @@ export function LeadSpreadsheetSync({
                     `${d.updated} updated`,
                     d.skipped ? `${d.skipped} skipped` : null,
                   ].filter(Boolean);
-                  setMessage(`Import complete: ${parts.join(", ")}.`);
-                  if (d.warnings.length) setMessage((m) => `${m} ${d.warnings[0]}`);
+                  let msg = `Import complete: ${parts.join(", ")}.`;
+                  if (d.warnings.length) msg = `${msg} ${d.warnings[0]}`;
+                  setMessage(msg);
                   if (d.errors.length) setErr(d.errors.join(" "));
-                  e.currentTarget.reset();
+                  formRef.current?.reset();
+                  router.refresh();
                 });
               }}
             >
