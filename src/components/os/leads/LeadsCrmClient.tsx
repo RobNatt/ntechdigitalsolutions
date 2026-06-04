@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { deleteLeadAction, moveLeadPipelineAction } from "@/app/dashboard/leads/actions";
+import { deleteLeadAction, moveLeadStatusAction } from "@/app/dashboard/leads/actions";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
@@ -34,25 +34,43 @@ function cardTitle(lead: OsLeadRow): string {
   return lead.business_name?.trim() || "Lead";
 }
 
-/** Hot → Warm → Cold, then any custom temperatures from settings. */
+const TEMP_ORDER = ["Hot", "Warm", "Cold"] as const;
+
 function orderedTemperatures(leadTemperatures: string[]): string[] {
-  const preferred = ["Hot", "Warm", "Cold"];
   const out: string[] = [];
-  for (const p of preferred) {
+  for (const p of TEMP_ORDER) {
     const match = leadTemperatures.find((t) => t.toLowerCase() === p.toLowerCase());
     if (match) out.push(match);
   }
   for (const t of leadTemperatures) {
     if (!out.some((x) => x.toLowerCase() === t.toLowerCase())) out.push(t);
   }
-  return out.length ? out : ["Cold", "Warm", "Hot"];
+  return out.length ? out : [...TEMP_ORDER];
 }
 
-function tempLaneClass(temp: string): string {
-  const t = temp.toLowerCase();
-  if (t === "hot") return "bg-red-50/80 dark:bg-red-950/30";
-  if (t === "warm") return "bg-amber-50/80 dark:bg-amber-950/25";
-  return "bg-sky-50/60 dark:bg-sky-950/20";
+/** Hot = light red, Warm = orange, Cold = light blue */
+function leadCardTempClass(temperature: string): string {
+  const t = temperature.trim().toLowerCase();
+  if (t === "hot") {
+    return "border-red-200 bg-red-100 hover:border-red-300 dark:border-red-900/60 dark:bg-red-950/50 dark:hover:border-red-800";
+  }
+  if (t === "warm") {
+    return "border-orange-200 bg-orange-100 hover:border-orange-300 dark:border-orange-900/60 dark:bg-orange-950/45 dark:hover:border-orange-800";
+  }
+  return "border-sky-200 bg-sky-100 hover:border-sky-300 dark:border-sky-900/60 dark:bg-sky-950/45 dark:hover:border-sky-800";
+}
+
+function groupLeadsByTemperature(leads: OsLeadRow[], tempLanes: string[]): Map<string, OsLeadRow[]> {
+  const m = new Map<string, OsLeadRow[]>();
+  for (const t of tempLanes) m.set(t, []);
+  const fallback = tempLanes.find((t) => t.toLowerCase() === "cold") ?? tempLanes[0] ?? "Cold";
+  for (const l of leads) {
+    const key =
+      tempLanes.find((t) => t.toLowerCase() === (l.temperature ?? "").trim().toLowerCase()) ?? fallback;
+    if (!m.has(key)) m.set(key, []);
+    m.get(key)!.push(l);
+  }
+  return m;
 }
 
 export function LeadsCrmClient({
@@ -138,39 +156,30 @@ export function LeadsCrmClient({
     return m;
   }, [leads, leadStages]);
 
-  function onDropToPipeline(leadId: string, stage: string, temperature?: string) {
+  function onDropToStage(leadId: string, stage: string) {
     startTransition(async () => {
-      const res = await moveLeadPipelineAction(leadId, stage, temperature);
+      const res = await moveLeadStatusAction(leadId, stage);
       if (res.ok) {
-        setLeads((prev) =>
-          prev.map((x) =>
-            x.id === leadId
-              ? { ...x, status: stage, temperature: temperature ?? x.temperature }
-              : x
-          )
-        );
+        setLeads((prev) => prev.map((x) => (x.id === leadId ? { ...x, status: stage } : x)));
         refresh();
       }
     });
   }
 
   return (
-    <div className="flex min-h-0 flex-col gap-2">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h1 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">Leads CRM</h1>
-          <span className="text-xs text-neutral-500 dark:text-neutral-400">
-            7d: <strong className="text-neutral-800 dark:text-neutral-200">{kpiNew7d}</strong>
-            <span className="mx-1.5">·</span>
-            {uncontactedStage}:{" "}
-            <strong className="text-neutral-800 dark:text-neutral-200">{kpiUncontacted}</strong>
-          </span>
+    <div className="space-y-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Leads CRM</h1>
+          <p className="mt-1 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+            Manage your sales pipeline and convert leads to projects
+          </p>
         </div>
         {isInternal ? (
           <button
             type="button"
             onClick={() => setModal({ mode: "create" })}
-            className="inline-flex shrink-0 items-center justify-center rounded-md px-3 py-1.5 text-xs font-semibold text-white"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
             style={{ backgroundColor: brandColor }}
           >
             Add Lead
@@ -180,7 +189,7 @@ export function LeadsCrmClient({
 
       {leadsFetchError ? (
         <div
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200"
           role="alert"
         >
           <p className="font-semibold">Could not load leads</p>
@@ -194,7 +203,7 @@ export function LeadsCrmClient({
       ) : null}
 
       {migrationPending && !leadsFetchError ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
           <p className="font-semibold">Database update recommended</p>
           <p className="mt-1 text-amber-900 dark:text-amber-200">
             Leads are loading in compatibility mode. Run migration{" "}
@@ -212,6 +221,34 @@ export function LeadsCrmClient({
         />
       ) : null}
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">New leads (7d)</p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums text-neutral-900 dark:text-white">{kpiNew7d}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            Uncontacted ({uncontactedStage})
+          </p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums text-neutral-900 dark:text-white">
+            {kpiUncontacted}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-600 dark:text-neutral-400">
+        <span className="font-medium uppercase tracking-wide text-neutral-500">Temperature</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-100 px-2 py-0.5 dark:border-red-900/60 dark:bg-red-950/50">
+          Hot
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-100 px-2 py-0.5 dark:border-orange-900/60 dark:bg-orange-950/45">
+          Warm
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-100 px-2 py-0.5 dark:border-sky-900/60 dark:bg-sky-950/45">
+          Cold
+        </span>
+      </div>
+
       <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800">
         {(["pipeline", "table"] as const).map((t) => (
           <button
@@ -219,7 +256,7 @@ export function LeadsCrmClient({
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "-mb-px border-b-2 px-3 py-1.5 text-xs font-medium transition",
+              "-mb-px border-b-2 px-4 py-2 text-sm font-medium transition",
               tab === t
                 ? "border-current text-neutral-900 dark:text-white"
                 : "border-transparent text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
@@ -234,20 +271,19 @@ export function LeadsCrmClient({
       {tab === "pipeline" ? (
         <div
           className={cn(
-            "min-h-0 flex-1 space-y-1.5 overflow-y-auto pb-2 pr-1",
+            "flex gap-3 overflow-x-auto pb-2",
             isPending && "pointer-events-none opacity-70"
           )}
-          style={{ maxHeight: "calc(100vh - 11rem)" }}
         >
           {leadStages.map((stage) => (
-            <PipelineStageRow
+            <PipelineColumn
               key={stage}
               stage={stage}
               leads={leadsByStatus.get(stage) ?? []}
               tempLanes={tempLanes}
               brandColor={brandColor}
               onCardClick={(lead) => setModal({ mode: "detail", lead })}
-              onDropLead={(id, temp) => onDropToPipeline(id, stage, temp)}
+              onDropLead={(id) => onDropToStage(id, stage)}
             />
           ))}
         </div>
@@ -408,20 +444,7 @@ export function LeadsCrmClient({
   );
 }
 
-function groupLeadsByTemperature(leads: OsLeadRow[], tempLanes: string[]): Map<string, OsLeadRow[]> {
-  const m = new Map<string, OsLeadRow[]>();
-  for (const t of tempLanes) m.set(t, []);
-  const fallback = tempLanes[0] ?? "Cold";
-  for (const l of leads) {
-    const key =
-      tempLanes.find((t) => t.toLowerCase() === (l.temperature ?? "").trim().toLowerCase()) ?? fallback;
-    if (!m.has(key)) m.set(key, []);
-    m.get(key)!.push(l);
-  }
-  return m;
-}
-
-function PipelineStageRow({
+function PipelineColumn({
   stage,
   leads,
   tempLanes,
@@ -434,57 +457,18 @@ function PipelineStageRow({
   tempLanes: string[];
   brandColor: string;
   onCardClick: (l: OsLeadRow) => void;
-  onDropLead: (leadId: string, temperature: string) => void;
-}) {
-  const byTemp = groupLeadsByTemperature(leads, tempLanes);
-
-  return (
-    <section className="rounded-lg border border-neutral-200 bg-neutral-50/80 dark:border-neutral-800 dark:bg-neutral-900/50">
-      <div
-        className="flex items-center justify-between border-b border-neutral-200 px-2 py-1 dark:border-neutral-800"
-        style={{ borderLeftWidth: 3, borderLeftColor: brandColor }}
-      >
-        <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-100">{stage}</span>
-        <span className="text-[10px] tabular-nums text-neutral-500">{leads.length}</span>
-      </div>
-      <div
-        className="grid gap-px p-px"
-        style={{ gridTemplateColumns: `repeat(${tempLanes.length}, minmax(0, 1fr))` }}
-      >
-        {tempLanes.map((temp) => (
-          <TemperatureLane
-            key={temp}
-            temperature={temp}
-            leads={byTemp.get(temp) ?? []}
-            onCardClick={onCardClick}
-            onDropLead={(id) => onDropLead(id, temp)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function TemperatureLane({
-  temperature,
-  leads,
-  onCardClick,
-  onDropLead,
-}: {
-  temperature: string;
-  leads: OsLeadRow[];
-  onCardClick: (l: OsLeadRow) => void;
   onDropLead: (leadId: string) => void;
 }) {
   const [dragOver, setDragOver] = useState(false);
+  const byTemp = groupLeadsByTemperature(leads, tempLanes);
 
   return (
     <div
       className={cn(
-        "flex min-h-[2.5rem] flex-col rounded-sm",
-        tempLaneClass(temperature),
-        dragOver && "ring-2 ring-inset ring-sky-400 dark:ring-sky-500"
+        "flex w-56 shrink-0 flex-col rounded-xl border bg-neutral-50 dark:bg-neutral-900/80",
+        dragOver ? "border-dashed border-2" : "border-neutral-200 dark:border-neutral-800"
       )}
+      style={dragOver ? { borderColor: brandColor } : undefined}
       onDragOver={(e) => {
         e.preventDefault();
         setDragOver(true);
@@ -497,22 +481,38 @@ function TemperatureLane({
         if (id) onDropLead(id);
       }}
     >
-      <div className="flex items-center justify-between border-b border-neutral-200/60 px-1.5 py-0.5 dark:border-neutral-700/60">
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-400">
-          {temperature}
+      <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
+        <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{stage}</span>
+        <span
+          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          style={{ backgroundColor: brandColor }}
+        >
+          {leads.length}
         </span>
-        <span className="text-[10px] tabular-nums text-neutral-400">{leads.length}</span>
       </div>
-      <div className="flex flex-col gap-px p-0.5">
-        {leads.map((lead) => (
-          <LeadNameCard key={lead.id} lead={lead} onCardClick={onCardClick} />
-        ))}
+      <div className="flex max-h-[min(70vh,32rem)] flex-col gap-3 overflow-y-auto p-2">
+        {tempLanes.map((temp) => {
+          const list = byTemp.get(temp) ?? [];
+          if (list.length === 0) return null;
+          return (
+            <div key={temp}>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                {temp}
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {list.map((lead) => (
+                  <LeadPipelineCard key={lead.id} lead={lead} onCardClick={onCardClick} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function LeadNameCard({
+function LeadPipelineCard({
   lead,
   onCardClick,
 }: {
@@ -533,12 +533,12 @@ function LeadNameCard({
       onClick={() => onCardClick(lead)}
       title={cardTitle(lead)}
       className={cn(
-        "flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-[11px] leading-tight transition",
-        "border border-transparent bg-white/90 hover:border-neutral-300 dark:bg-neutral-950/90 dark:hover:border-neutral-600",
-        overdue && "border-l-2 border-l-red-500 pl-0.5"
+        "w-full rounded-lg border px-2.5 py-2 text-left text-sm shadow-sm transition",
+        leadCardTempClass(lead.temperature),
+        overdue && "ring-2 ring-red-500 ring-offset-1 dark:ring-offset-neutral-950"
       )}
     >
-      <span className="min-w-0 flex-1 truncate font-medium text-neutral-900 dark:text-neutral-100">
+      <span className="block truncate font-medium text-neutral-900 dark:text-neutral-100">
         {cardTitle(lead)}
       </span>
     </button>
