@@ -98,16 +98,32 @@ export async function checkLeadDuplicatesAction(
 }
 
 export async function moveLeadStatusAction(leadId: string, newStatus: string): Promise<ActionResult> {
+  return moveLeadPipelineAction(leadId, newStatus);
+}
+
+export async function moveLeadPipelineAction(
+  leadId: string,
+  newStatus: string,
+  newTemperature?: string | null
+): Promise<ActionResult> {
   const session = await getOsSession();
   if (!session?.userId) return { ok: false, error: "Not signed in." };
   const supabase = await createClient();
   const access = await assertLeadAccess(supabase, session, leadId);
   if (!access.ok) return { ok: false, error: access.error };
-  const prev = access.lead.status;
-  if (prev === newStatus) return { ok: true };
-  const { error } = await supabase.from("os_leads").update({ status: newStatus }).eq("id", leadId);
+  const prevStatus = access.lead.status;
+  const prevTemp = access.lead.temperature;
+  const temp = newTemperature?.trim() || prevTemp;
+  if (prevStatus === newStatus && prevTemp === temp) return { ok: true };
+  const { error } = await supabase
+    .from("os_leads")
+    .update({ status: newStatus, temperature: temp })
+    .eq("id", leadId);
   if (error) return { ok: false, error: error.message };
-  await logLeadActivity(supabase, leadId, "status_changed", `Status: ${prev} → ${newStatus}`);
+  const parts: string[] = [];
+  if (prevStatus !== newStatus) parts.push(`Status: ${prevStatus} → ${newStatus}`);
+  if (prevTemp !== temp) parts.push(`Temp: ${prevTemp} → ${temp}`);
+  await logLeadActivity(supabase, leadId, "pipeline_moved", parts.join(" · ") || "Pipeline updated");
   revalidatePath("/dashboard/leads");
   return { ok: true };
 }
