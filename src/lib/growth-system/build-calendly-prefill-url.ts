@@ -6,14 +6,17 @@ import { GROWTH_SYSTEM_CALENDLY_EVENT_URL } from "@/constants/growth-system-offe
  */
 export function buildCalendlyPrefillUrl(params: {
   fullName: string;
-  email: string;
+  email?: string;
   baseUrl?: string;
+  /** Passed as utm_content for lead attribution in Calendly / CRM webhook matching. */
+  utmContent?: string;
 }): string {
   const base = (params.baseUrl ?? GROWTH_SYSTEM_CALENDLY_EVENT_URL).replace(/\/$/, "");
   const u = new URL(base);
   const name = params.fullName.trim();
-  const email = params.email.trim().toLowerCase();
+  const email = params.email?.trim().toLowerCase() ?? "";
   if (name) u.searchParams.set("name", name);
   if (email) u.searchParams.set("email", email);
+  if (params.utmContent?.trim()) u.searchParams.set("utm_content", params.utmContent.trim());
   return u.toString();
 }

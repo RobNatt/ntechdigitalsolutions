@@ -11,6 +11,7 @@ import {
   SHEET_LEAD_FIELD_KEYS,
   type SheetLeadFieldKey,
 } from "@/lib/integrations/webhook-handlers";
+import { DEFAULT_CALENDLY_EVENT_URL } from "@/constants/scheduling";
 import type { OsSettingsRow } from "@/lib/os/types";
 
 const FIELD_LABELS: Record<SheetLeadFieldKey, string> = {
@@ -66,6 +67,8 @@ export function IntegrationsSection({
   const [calOn, setCalOn] = useState(settings.integration_calendly_enabled);
   const [gcalOn, setGcalOn] = useState(settings.integration_google_calendar_enabled);
   const [bookedStage, setBookedStage] = useState(settings.integration_calendly_booked_stage);
+  const [calDiscoveryUrl, setCalDiscoveryUrl] = useState(settings.integration_calendly_discovery_url ?? "");
+  const [calProposalUrl, setCalProposalUrl] = useState(settings.integration_calendly_proposal_url ?? "");
   const [calendarId, setCalendarId] = useState(settings.integration_google_calendar_id ?? "");
   const [oauthConnected, setOauthConnected] = useState(settings.integration_google_oauth_connected);
   const [colMap, setColMap] = useState<Record<SheetLeadFieldKey, string>>(() =>
@@ -85,6 +88,8 @@ export function IntegrationsSection({
     setCalOn(settings.integration_calendly_enabled);
     setGcalOn(settings.integration_google_calendar_enabled);
     setBookedStage(settings.integration_calendly_booked_stage);
+    setCalDiscoveryUrl(settings.integration_calendly_discovery_url ?? "");
+    setCalProposalUrl(settings.integration_calendly_proposal_url ?? "");
     setCalendarId(settings.integration_google_calendar_id ?? "");
     setOauthConnected(settings.integration_google_oauth_connected);
     setColMap(mergeSheetsColumnMap(settings.integration_sheets_column_map));
@@ -98,6 +103,8 @@ export function IntegrationsSection({
         integration_calendly_enabled: calOn,
         integration_google_calendar_enabled: gcalOn,
         integration_calendly_booked_stage: bookedStage,
+        integration_calendly_discovery_url: calDiscoveryUrl || null,
+        integration_calendly_proposal_url: calProposalUrl || null,
         integration_google_calendar_id: calendarId || null,
         integration_google_oauth_connected: oauthConnected,
         integration_sheets_column_map: { ...colMap },
@@ -112,6 +119,8 @@ export function IntegrationsSection({
     calOn,
     gcalOn,
     bookedStage,
+    calDiscoveryUrl,
+    calProposalUrl,
     calendarId,
     oauthConnected,
     colMap,
@@ -314,6 +323,35 @@ function syncAllRowsFromActiveSheet() {
         <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-neutral-800 dark:text-neutral-200">
           {appsScriptSample}
         </pre>
+      </div>
+
+      <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Calendly booking links (outgoing)</h3>
+        <p className="mt-1 text-xs text-neutral-500">
+          Used when you book a meeting from a lead in the CRM. Paste the full event URL from Calendly (Share → Add to
+          website). Leave blank to use <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">NEXT_PUBLIC_CALENDLY_EVENT_URL</code>{" "}
+          or the default discovery event.
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
+            Discovery call event URL
+            <input
+              value={calDiscoveryUrl}
+              onChange={(e) => setCalDiscoveryUrl(e.target.value)}
+              placeholder={DEFAULT_CALENDLY_EVENT_URL}
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
+            />
+          </label>
+          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
+            Proposal meeting event URL (optional)
+            <input
+              value={calProposalUrl}
+              onChange={(e) => setCalProposalUrl(e.target.value)}
+              placeholder="Falls back to discovery URL"
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
+            />
+          </label>
+        </div>
       </div>
 
       <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">

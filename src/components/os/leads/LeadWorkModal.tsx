@@ -31,6 +31,13 @@ import {
   formatFollowUpDue,
   touchChannelLabel,
 } from "@/lib/os/lead-workflow";
+import { CalendlyBookButton } from "@/components/scheduling/CalendlyBookButton";
+import {
+  buildLeadCalendlyBookingUrl,
+  calendlyEventLabelForLead,
+  leadCalendlyInviteeName,
+  type OsCalendlyBookingUrls,
+} from "@/lib/os/calendly-booking";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import type { LeadWorkspaceData } from "@/lib/os/leads-workflow-types";
 import { cn } from "@/lib/utils";
@@ -91,6 +98,7 @@ export function LeadWorkModal({
   isInternal,
   brandColor,
   commonTags,
+  calendlyUrls,
   onClose,
   onSaved,
   onDeleted,
@@ -103,6 +111,7 @@ export function LeadWorkModal({
   isInternal: boolean;
   brandColor: string;
   commonTags: string[];
+  calendlyUrls: OsCalendlyBookingUrls;
   onClose: () => void;
   onSaved: () => void;
   onDeleted: (id: string) => void;
@@ -133,6 +142,13 @@ export function LeadWorkModal({
   const [meetingStart, setMeetingStart] = useState("");
   const [meetingEnd, setMeetingEnd] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
+  const [showManualMeeting, setShowManualMeeting] = useState(false);
+
+  const calendlyBookingUrl = useMemo(
+    () => buildLeadCalendlyBookingUrl(lead, calendlyUrls),
+    [lead, calendlyUrls]
+  );
+  const calendlyInviteeName = useMemo(() => leadCalendlyInviteeName(lead), [lead]);
 
   const [form, setForm] = useState<LeadUpsertPayload>(() => ({
     lead_name: lead.lead_name,
@@ -586,60 +602,115 @@ export function LeadWorkModal({
           ) : (
             <p className="mt-2 text-xs text-neutral-500">No meetings scheduled for this lead.</p>
           )}
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            <Field label="Meeting title">
-              <input
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={meetingTitle}
-                onChange={(e) => setMeetingTitle(e.target.value)}
-              />
-            </Field>
-            <Field label="Meeting link (optional)">
-              <input
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={meetingLink}
-                onChange={(e) => setMeetingLink(e.target.value)}
-                placeholder="Zoom / Meet URL"
-              />
-            </Field>
-            <Field label="Starts">
-              <input
-                type="datetime-local"
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={meetingStart}
-                onChange={(e) => setMeetingStart(e.target.value)}
-              />
-            </Field>
-            <Field label="Ends">
-              <input
-                type="datetime-local"
-                className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={meetingEnd}
-                onChange={(e) => setMeetingEnd(e.target.value)}
-              />
-            </Field>
-          </div>
-          <button
-            type="button"
-            disabled={busy || !meetingStart || !meetingEnd}
-            className="mt-2 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold dark:border-neutral-600"
-            onClick={async () => {
-              setBusy(true);
-              const r = await createLeadMeetingAction(lead.id, {
-                title: meetingTitle,
-                date_start: fromDatetimeLocalValue(meetingStart),
-                date_end: fromDatetimeLocalValue(meetingEnd),
-                event_type: lead.status.includes("Proposal") ? "Meeting" : "Call",
-                status: "Confirmed",
-                meeting_link: meetingLink || null,
-              });
-              setBusy(false);
-              if (!r.ok) setErr(r.error);
-              else await reloadWorkspace({ background: true });
-            }}
-          >
-            Schedule meeting
-          </button>
+          {isInternal ? (
+            <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/60">
+              <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                Book {calendlyEventLabelForLead(lead.status).toLowerCase()}
+              </p>
+              <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                Opens Calendly with{" "}
+                {calendlyInviteeName ? (
+                  <span className="font-medium text-neutral-800 dark:text-neutral-200">{calendlyInviteeName}</span>
+                ) : (
+                  "the lead"
+                )}
+                {lead.email ? (
+                  <>
+                    {" "}
+                    · <span className="font-medium text-neutral-800 dark:text-neutral-200">{lead.email}</span>
+                  </>
+                ) : (
+                  " — add an email under Edit lead details for prefill"
+                )}
+                . Enable Calendly webhook sync in Settings to auto-create the meeting here after booking.
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <CalendlyBookButton
+                  url={calendlyBookingUrl}
+                  label="Book with Calendly"
+                  brandColor={brandColor}
+                  disabled={busy}
+                />
+                <a
+                  href={calendlyBookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-sky-700 hover:underline dark:text-sky-400"
+                >
+                  Open in new tab
+                </a>
+              </div>
+            </div>
+          ) : null}
+
+          {isInternal ? (
+            <button
+              type="button"
+              className="mt-3 text-xs font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
+              onClick={() => setShowManualMeeting((v) => !v)}
+            >
+              {showManualMeeting ? "Hide manual scheduling" : "Add meeting manually instead"}
+            </button>
+          ) : null}
+
+          {isInternal && showManualMeeting ? (
+            <>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Field label="Meeting title">
+                  <input
+                    className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
+                    value={meetingTitle}
+                    onChange={(e) => setMeetingTitle(e.target.value)}
+                  />
+                </Field>
+                <Field label="Meeting link (optional)">
+                  <input
+                    className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
+                    value={meetingLink}
+                    onChange={(e) => setMeetingLink(e.target.value)}
+                    placeholder="Zoom / Meet URL"
+                  />
+                </Field>
+                <Field label="Starts">
+                  <input
+                    type="datetime-local"
+                    className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
+                    value={meetingStart}
+                    onChange={(e) => setMeetingStart(e.target.value)}
+                  />
+                </Field>
+                <Field label="Ends">
+                  <input
+                    type="datetime-local"
+                    className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
+                    value={meetingEnd}
+                    onChange={(e) => setMeetingEnd(e.target.value)}
+                  />
+                </Field>
+              </div>
+              <button
+                type="button"
+                disabled={busy || !meetingStart || !meetingEnd}
+                className="mt-2 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold dark:border-neutral-600"
+                onClick={async () => {
+                  setBusy(true);
+                  const r = await createLeadMeetingAction(lead.id, {
+                    title: meetingTitle,
+                    date_start: fromDatetimeLocalValue(meetingStart),
+                    date_end: fromDatetimeLocalValue(meetingEnd),
+                    event_type: lead.status.includes("Proposal") ? "Meeting" : "Call",
+                    status: "Confirmed",
+                    meeting_link: meetingLink || null,
+                  });
+                  setBusy(false);
+                  if (!r.ok) setErr(r.error);
+                  else await reloadWorkspace({ background: true });
+                }}
+              >
+                Save manual meeting
+              </button>
+            </>
+          ) : null}
         </section>
 
         {/* Stage checklist */}

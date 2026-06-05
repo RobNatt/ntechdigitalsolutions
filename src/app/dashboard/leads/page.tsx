@@ -1,4 +1,5 @@
 import { LeadsCrmClient } from "@/components/os/leads/LeadsCrmClient";
+import { resolveOsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
 import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
 import { fetchOsLeadsList, isMissingSchemaError, mergeLeadPipelineStages } from "@/lib/os/fetch-os-leads-list";
 import { rolloverMissedFollowUps } from "@/lib/os/rollover-missed-follow-ups";
@@ -90,6 +91,7 @@ export default async function LeadsPage() {
       migrationPending={migrationPending}
       sheetsIntegrationEnabled={Boolean(session.settings.integration_sheets_enabled)}
       settingsIntegrationsUrl="/dashboard/settings"
+      calendlyUrls={resolveOsCalendlyBookingUrls(session.settings)}
     />
   );
 }

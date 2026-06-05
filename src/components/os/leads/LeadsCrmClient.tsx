@@ -8,6 +8,7 @@ import {
   buildFollowUpScheduleDays,
   type FollowUpDayKey,
 } from "@/lib/os/follow-up-schedule";
+import type { OsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
@@ -31,6 +32,7 @@ type LeadsCrmClientProps = {
   migrationPending?: boolean;
   sheetsIntegrationEnabled?: boolean;
   settingsIntegrationsUrl?: string;
+  calendlyUrls: OsCalendlyBookingUrls;
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -93,6 +95,7 @@ export function LeadsCrmClient({
   migrationPending = false,
   sheetsIntegrationEnabled = false,
   settingsIntegrationsUrl = "/dashboard/settings",
+  calendlyUrls,
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -478,6 +481,7 @@ export function LeadsCrmClient({
           isInternal={isInternal}
           brandColor={brandColor}
           commonTags={commonTags}
+          calendlyUrls={calendlyUrls}
           onClose={() => setModal({ mode: "closed" })}
           onSaved={() => {
             refresh();

@@ -37,6 +37,8 @@ export const DEFAULT_OS_SETTINGS: Omit<OsSettingsRow, "id"> & { id: string } = {
   integration_webhook_secret: null,
   integration_sheets_column_map: {},
   integration_calendly_booked_stage: "Booked",
+  integration_calendly_discovery_url: null,
+  integration_calendly_proposal_url: null,
   integration_google_calendar_id: null,
   integration_google_oauth_connected: false,
 };

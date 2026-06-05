@@ -23,6 +23,9 @@ export type OsSettingsRow = {
   integration_sheets_column_map: Record<string, string> | null;
   /** Lead pipeline stage applied when a Calendly booking is synced. */
   integration_calendly_booked_stage: string;
+  /** Calendly event URLs for booking from the leads CRM. */
+  integration_calendly_discovery_url: string | null;
+  integration_calendly_proposal_url: string | null;
   /** Target Google Calendar ID (placeholder until OAuth). */
   integration_google_calendar_id: string | null;
   integration_google_oauth_connected: boolean;

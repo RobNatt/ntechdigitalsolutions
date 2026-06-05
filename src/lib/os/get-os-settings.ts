@@ -61,6 +61,15 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
     integration_calendly_booked_stage: String(
       row.integration_calendly_booked_stage ?? DEFAULT_OS_SETTINGS.integration_calendly_booked_stage
     ),
+    integration_calendly_discovery_url:
+      row.integration_calendly_discovery_url != null &&
+      String(row.integration_calendly_discovery_url).trim()
+        ? String(row.integration_calendly_discovery_url).trim()
+        : null,
+    integration_calendly_proposal_url:
+      row.integration_calendly_proposal_url != null && String(row.integration_calendly_proposal_url).trim()
+        ? String(row.integration_calendly_proposal_url).trim()
+        : null,
     integration_google_calendar_id:
       row.integration_google_calendar_id != null ? String(row.integration_google_calendar_id) : null,
     integration_google_oauth_connected: Boolean(row.integration_google_oauth_connected ?? false),
