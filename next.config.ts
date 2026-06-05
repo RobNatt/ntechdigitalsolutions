@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   experimental: {
     optimizePackageImports: ["lucide-react", "@tabler/icons-react", "framer-motion", "motion"],
+    serverActions: {
+      bodySizeLimit: "20mb",
+    },
   },
   async redirects() {
     return [

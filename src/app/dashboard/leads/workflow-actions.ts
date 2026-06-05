@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getOsSession } from "@/lib/os/get-os-settings";
 import {
@@ -21,6 +22,30 @@ import type { ActionResult } from "./actions";
 
 const BUCKET = "os-lead-documents";
 const MAX_BYTES = 20 * 1024 * 1024;
+
+function storageBucketHint(errorMessage: string): string {
+  const m = errorMessage.toLowerCase();
+  if (m.includes("bucket") && (m.includes("not found") || m.includes("does not exist"))) {
+    return `${errorMessage} Apply migration 035_os_lead_workflow.sql in Supabase (creates the os-lead-documents bucket).`;
+  }
+  return errorMessage;
+}
+
+async function signedLeadDocumentUrl(
+  storagePath: string,
+  fileName: string
+): Promise<{ url: string | null; error: string | null }> {
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, 3600, {
+      download: fileName,
+    });
+    if (error) return { url: null, error: storageBucketHint(error.message) };
+    return { url: data?.signedUrl ?? null, error: null };
+  } catch {
+    return { url: null, error: "Server configuration missing (service role) for document download." };
+  }
+}
 
 async function requireInternalLead(
   leadId: string
@@ -173,9 +198,11 @@ export async function getLeadWorkspaceAction(leadId: string): Promise<ActionResu
 
   const docs: OsLeadDocumentRow[] = [];
   for (const row of docRes.data ?? []) {
-    const path = String((row as { storage_path: string }).storage_path);
-    const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
-    docs.push(mapDoc(row as Record<string, unknown>, signed?.signedUrl ?? null));
+    const rec = row as Record<string, unknown>;
+    const path = String(rec.storage_path);
+    const fileName = String(rec.file_name ?? "document");
+    const signed = await signedLeadDocumentUrl(path, fileName);
+    docs.push(mapDoc(rec, signed.url));
   }
 
   return {
@@ -344,11 +371,23 @@ export async function uploadLeadDocumentAction(formData: FormData): Promise<Acti
   const safeName = file.name.replace(/[^\w.\-()+ ]/g, "_").slice(0, 180);
   const storagePath = `${leadId}/${Date.now()}-${safeName}`;
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const { error: upErr } = await supabase.storage.from(BUCKET).upload(storagePath, bytes, {
-    contentType: file.type || "application/octet-stream",
-    upsert: false,
-  });
-  if (upErr) return { ok: false, error: upErr.message };
+
+  let upErr: { message: string } | null = null;
+  try {
+    const admin = createAdminClient();
+    const up = await admin.storage.from(BUCKET).upload(storagePath, bytes, {
+      contentType: file.type || "application/octet-stream",
+      upsert: false,
+    });
+    upErr = up.error;
+  } catch {
+    const up = await supabase.storage.from(BUCKET).upload(storagePath, bytes, {
+      contentType: file.type || "application/octet-stream",
+      upsert: false,
+    });
+    upErr = up.error;
+  }
+  if (upErr) return { ok: false, error: storageBucketHint(upErr.message) };
 
   const { data, error } = await supabase
     .from("os_lead_documents")
@@ -368,6 +407,30 @@ export async function uploadLeadDocumentAction(formData: FormData): Promise<Acti
 
   revalidatePath("/dashboard/leads");
   return { ok: true, data: { id: String(data.id) } };
+}
+
+export async function getLeadDocumentDownloadUrlAction(
+  leadId: string,
+  documentId: string
+): Promise<ActionResult<{ url: string }>> {
+  const access = await requireInternalLead(leadId);
+  if (!access.ok) return { ok: false, error: access.error };
+
+  const { data: doc, error } = await access.supabase
+    .from("os_lead_documents")
+    .select("storage_path, file_name")
+    .eq("id", documentId)
+    .eq("lead_id", leadId)
+    .maybeSingle();
+
+  if (error) return { ok: false, error: error.message };
+  if (!doc) return { ok: false, error: "Document not found." };
+
+  const signed = await signedLeadDocumentUrl(String(doc.storage_path), String(doc.file_name ?? "document"));
+  if (signed.error) return { ok: false, error: signed.error };
+  if (!signed.url) return { ok: false, error: "Could not generate download link." };
+
+  return { ok: true, data: { url: signed.url } };
 }
 
 export async function deleteLeadDocumentAction(leadId: string, documentId: string): Promise<ActionResult> {

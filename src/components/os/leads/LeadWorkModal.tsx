@@ -13,6 +13,7 @@ import {
 import {
   createLeadMeetingAction,
   deleteLeadDocumentAction,
+  getLeadDocumentDownloadUrlAction,
   getLeadWorkspaceAction,
   logLeadTouchAction,
   refreshLeadRowAction,
@@ -143,6 +144,9 @@ export function LeadWorkModal({
   const [meetingEnd, setMeetingEnd] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
   const [showManualMeeting, setShowManualMeeting] = useState(false);
+  const docUploadFormRef = useRef<HTMLFormElement>(null);
+  const [docFileName, setDocFileName] = useState("");
+  const [docUploadMsg, setDocUploadMsg] = useState<string | null>(null);
 
   const calendlyBookingUrl = useMemo(
     () => buildLeadCalendlyBookingUrl(lead, calendlyUrls),
@@ -785,16 +789,31 @@ export function LeadWorkModal({
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    {doc.download_url ? (
-                      <a
-                        href={doc.download_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs font-semibold text-sky-700 dark:text-sky-400"
-                      >
-                        Open
-                      </a>
-                    ) : null}
+                    <button
+                      type="button"
+                      disabled={busy}
+                      className="text-xs font-semibold text-sky-700 hover:underline disabled:opacity-50 dark:text-sky-400"
+                      onClick={async () => {
+                        setErr(null);
+                        setBusy(true);
+                        const r = await getLeadDocumentDownloadUrlAction(lead.id, doc.id);
+                        setBusy(false);
+                        if (!r.ok || !r.data?.url) {
+                          setErr(r.ok ? "Could not generate download link." : r.error);
+                          return;
+                        }
+                        const a = document.createElement("a");
+                        a.href = r.data.url;
+                        a.download = doc.file_name;
+                        a.rel = "noopener noreferrer";
+                        a.target = "_blank";
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                      }}
+                    >
+                      Download
+                    </button>
                     {isInternal ? (
                       <button
                         type="button"
@@ -817,30 +836,56 @@ export function LeadWorkModal({
               ))}
             </ul>
           ) : null}
+          {docUploadMsg ? (
+            <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">{docUploadMsg}</p>
+          ) : null}
           <form
+            ref={docUploadFormRef}
             className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end"
-            onSubmit={async (e) => {
+            encType="multipart/form-data"
+            onSubmit={(e) => {
               e.preventDefault();
-              const fd = new FormData(e.currentTarget);
+              setErr(null);
+              setDocUploadMsg(null);
+              const form = docUploadFormRef.current;
+              if (!form) return;
+              const fd = new FormData(form);
               fd.set("leadId", lead.id);
               fd.set("stage", lead.status);
               setBusy(true);
-              const r = await uploadLeadDocumentAction(fd);
-              setBusy(false);
-              if (!r.ok) setErr(r.error);
-              else {
-                e.currentTarget.reset();
+              void (async () => {
+                const r = await uploadLeadDocumentAction(fd);
+                setBusy(false);
+                if (!r.ok) {
+                  setErr(r.error);
+                  return;
+                }
+                setDocFileName("");
+                docUploadFormRef.current?.reset();
+                setDocUploadMsg("Document uploaded.");
                 await reloadWorkspace({ background: true });
-              }
+              })();
             }}
           >
-            <input type="file" name="file" className="text-xs" required />
+            <label className="flex min-w-0 flex-1 cursor-pointer flex-col gap-1 text-xs text-neutral-600 dark:text-neutral-400">
+              <span className="font-medium">Choose file</span>
+              <input
+                type="file"
+                name="file"
+                className="text-xs file:mr-2 file:rounded file:border-0 file:bg-neutral-200 file:px-2 file:py-1 file:text-xs dark:file:bg-neutral-700"
+                required
+                onChange={(e) => setDocFileName(e.target.files?.[0]?.name ?? "")}
+              />
+              {docFileName ? (
+                <span className="truncate text-neutral-500 dark:text-neutral-400">Selected: {docFileName}</span>
+              ) : null}
+            </label>
             <button
               type="submit"
               disabled={busy}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold dark:border-neutral-600"
+              className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold disabled:opacity-50 dark:border-neutral-600"
             >
-              Upload document
+              {busy ? "Uploading…" : "Upload document"}
             </button>
           </form>
         </section>
