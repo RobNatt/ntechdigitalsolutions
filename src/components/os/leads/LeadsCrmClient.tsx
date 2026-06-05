@@ -293,7 +293,8 @@ export function LeadsCrmClient({
                     Follow-up schedule
                   </h2>
                   <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
-                    Today through the next two days. Missed today roll to tomorrow automatically.
+                    Leads without a follow-up are prompted for today. Missed or untouched follow-ups roll to tomorrow
+                    automatically.
                   </p>
                 </div>
                 <span className="text-xs text-neutral-500 dark:text-neutral-400">

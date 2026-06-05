@@ -2,7 +2,7 @@ import { LeadsCrmClient } from "@/components/os/leads/LeadsCrmClient";
 import { resolveOsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
 import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
 import { fetchOsLeadsList, isMissingSchemaError, mergeLeadPipelineStages } from "@/lib/os/fetch-os-leads-list";
-import { rolloverMissedFollowUps } from "@/lib/os/rollover-missed-follow-ups";
+import { maintainFollowUpSchedule } from "@/lib/os/rollover-missed-follow-ups";
 import { loadDashboardPage } from "@/lib/os/load-dashboard-page";
 import type { AssigneeOption } from "@/lib/os/leads-types";
 import { createClient } from "@/lib/supabase/server";
@@ -38,11 +38,12 @@ export default async function LeadsPage() {
     ? supabase.from("profiles").select("id, full_name, email, os_role").limit(400)
     : Promise.resolve({ data: null, error: null });
 
-  const rolloverRes = await rolloverMissedFollowUps(supabase, {
+  const followUpMaintain = await maintainFollowUpSchedule(supabase, {
     terminalStages: settingsStages.filter((s) => /^(won|lost)$/i.test(s)),
+    timeZone: session.settings.timezone,
   });
-  if (rolloverRes.error && !isMissingSchemaError(rolloverRes.error)) {
-    console.warn("follow-up rollover:", rolloverRes.error);
+  if (followUpMaintain.error && !isMissingSchemaError(followUpMaintain.error)) {
+    console.warn("follow-up schedule maintain:", followUpMaintain.error);
   }
 
   const [leadsFetch, c7Res, cuRes, assigneesRes] = await Promise.all([
