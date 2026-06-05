@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteLeadAction, moveLeadStatusAction } from "@/app/dashboard/leads/actions";
+import {
+  bucketLeadsForFollowUpSchedule,
+  buildFollowUpScheduleDays,
+  type FollowUpDayKey,
+} from "@/lib/os/follow-up-schedule";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
@@ -156,6 +161,13 @@ export function LeadsCrmClient({
     return m;
   }, [leads, leadStages]);
 
+  const followUpScheduleDays = useMemo(() => buildFollowUpScheduleDays(), []);
+  const followUpByDay = useMemo(() => bucketLeadsForFollowUpSchedule(leads), [leads]);
+  const followUpTotal = useMemo(
+    () => followUpScheduleDays.reduce((n, d) => n + (followUpByDay.get(d.key)?.length ?? 0), 0),
+    [followUpScheduleDays, followUpByDay]
+  );
+
   function onDropToStage(leadId: string, stage: string) {
     startTransition(async () => {
       const res = await moveLeadStatusAction(leadId, stage);
@@ -269,23 +281,61 @@ export function LeadsCrmClient({
       </div>
 
       {tab === "pipeline" ? (
-        <div
-          className={cn(
-            "flex gap-3 overflow-x-auto pb-2",
-            isPending && "pointer-events-none opacity-70"
-          )}
-        >
-          {leadStages.map((stage) => (
-            <PipelineColumn
-              key={stage}
-              stage={stage}
-              leads={leadsByStatus.get(stage) ?? []}
-              tempLanes={tempLanes}
-              brandColor={brandColor}
-              onCardClick={(lead) => setModal({ mode: "detail", lead })}
-              onDropLead={(id) => onDropToStage(id, stage)}
-            />
-          ))}
+        <div className="space-y-8">
+          {!migrationPending ? (
+            <section className="space-y-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-700 dark:text-neutral-300">
+                    Follow-up schedule
+                  </h2>
+                  <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+                    Today through the next two days. Missed today roll to tomorrow automatically.
+                  </p>
+                </div>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {followUpTotal} scheduled
+                </span>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {followUpScheduleDays.map((day) => (
+                  <FollowUpDayColumn
+                    key={day.key}
+                    label={day.label}
+                    dayKey={day.key}
+                    leads={followUpByDay.get(day.key) ?? []}
+                    tempLanes={tempLanes}
+                    brandColor={brandColor}
+                    onCardClick={(lead) => setModal({ mode: "detail", lead })}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="space-y-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-700 dark:text-neutral-300">
+              Pipeline
+            </h2>
+            <div
+              className={cn(
+                "flex gap-3 overflow-x-auto pb-2",
+                isPending && "pointer-events-none opacity-70"
+              )}
+            >
+              {leadStages.map((stage) => (
+                <PipelineColumn
+                  key={stage}
+                  stage={stage}
+                  leads={leadsByStatus.get(stage) ?? []}
+                  tempLanes={tempLanes}
+                  brandColor={brandColor}
+                  onCardClick={(lead) => setModal({ mode: "detail", lead })}
+                  onDropLead={(id) => onDropToStage(id, stage)}
+                />
+              ))}
+            </div>
+          </section>
         </div>
       ) : (
         <div className="space-y-4">
@@ -444,6 +494,128 @@ export function LeadsCrmClient({
   );
 }
 
+function TemperatureGroupedColumn({
+  title,
+  leads,
+  tempLanes,
+  brandColor,
+  onCardClick,
+  draggableCards = true,
+  emptyMessage,
+  className,
+  dragDrop,
+}: {
+  title: string;
+  leads: OsLeadRow[];
+  tempLanes: string[];
+  brandColor: string;
+  onCardClick: (l: OsLeadRow) => void;
+  draggableCards?: boolean;
+  emptyMessage?: string;
+  className?: string;
+  dragDrop?: { onDropLead: (leadId: string) => void };
+}) {
+  const [dragOver, setDragOver] = useState(false);
+  const byTemp = groupLeadsByTemperature(leads, tempLanes);
+  const hasLeads = leads.length > 0;
+
+  return (
+    <div
+      className={cn(
+        "flex w-56 shrink-0 flex-col rounded-xl border bg-neutral-50 dark:bg-neutral-900/80",
+        dragDrop && dragOver ? "border-dashed border-2" : "border-neutral-200 dark:border-neutral-800",
+        className
+      )}
+      style={dragDrop && dragOver ? { borderColor: brandColor } : undefined}
+      onDragOver={
+        dragDrop
+          ? (e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }
+          : undefined
+      }
+      onDragLeave={dragDrop ? () => setDragOver(false) : undefined}
+      onDrop={
+        dragDrop
+          ? (e) => {
+              e.preventDefault();
+              setDragOver(false);
+              const id = e.dataTransfer.getData(LEAD_MIME);
+              if (id) dragDrop.onDropLead(id);
+            }
+          : undefined
+      }
+    >
+      <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
+        <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{title}</span>
+        <span
+          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          style={{ backgroundColor: brandColor }}
+        >
+          {leads.length}
+        </span>
+      </div>
+      <div className="flex max-h-[min(70vh,32rem)] flex-col gap-3 overflow-y-auto p-2">
+        {!hasLeads && emptyMessage ? (
+          <p className="px-1 py-4 text-center text-xs text-neutral-500 dark:text-neutral-400">{emptyMessage}</p>
+        ) : null}
+        {tempLanes.map((temp) => {
+          const list = byTemp.get(temp) ?? [];
+          if (list.length === 0) return null;
+          return (
+            <div key={temp}>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                {temp}
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {list.map((lead) => (
+                  <LeadPipelineCard
+                    key={lead.id}
+                    lead={lead}
+                    onCardClick={onCardClick}
+                    draggable={draggableCards}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FollowUpDayColumn({
+  label,
+  dayKey,
+  leads,
+  tempLanes,
+  brandColor,
+  onCardClick,
+}: {
+  label: string;
+  dayKey: FollowUpDayKey;
+  leads: OsLeadRow[];
+  tempLanes: string[];
+  brandColor: string;
+  onCardClick: (l: OsLeadRow) => void;
+}) {
+  return (
+    <TemperatureGroupedColumn
+      title={label}
+      leads={leads}
+      tempLanes={tempLanes}
+      brandColor={brandColor}
+      onCardClick={onCardClick}
+      draggableCards={false}
+      emptyMessage={
+        dayKey === "tomorrow" ? "No follow-ups — rolled missed items appear here" : "No follow-ups scheduled"
+      }
+    />
+  );
+}
+
 function PipelineColumn({
   stage,
   leads,
@@ -459,65 +631,26 @@ function PipelineColumn({
   onCardClick: (l: OsLeadRow) => void;
   onDropLead: (leadId: string) => void;
 }) {
-  const [dragOver, setDragOver] = useState(false);
-  const byTemp = groupLeadsByTemperature(leads, tempLanes);
-
   return (
-    <div
-      className={cn(
-        "flex w-56 shrink-0 flex-col rounded-xl border bg-neutral-50 dark:bg-neutral-900/80",
-        dragOver ? "border-dashed border-2" : "border-neutral-200 dark:border-neutral-800"
-      )}
-      style={dragOver ? { borderColor: brandColor } : undefined}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragOver(true);
-      }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragOver(false);
-        const id = e.dataTransfer.getData(LEAD_MIME);
-        if (id) onDropLead(id);
-      }}
-    >
-      <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
-        <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{stage}</span>
-        <span
-          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
-          style={{ backgroundColor: brandColor }}
-        >
-          {leads.length}
-        </span>
-      </div>
-      <div className="flex max-h-[min(70vh,32rem)] flex-col gap-3 overflow-y-auto p-2">
-        {tempLanes.map((temp) => {
-          const list = byTemp.get(temp) ?? [];
-          if (list.length === 0) return null;
-          return (
-            <div key={temp}>
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                {temp}
-              </p>
-              <div className="flex flex-col gap-1.5">
-                {list.map((lead) => (
-                  <LeadPipelineCard key={lead.id} lead={lead} onCardClick={onCardClick} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <TemperatureGroupedColumn
+      title={stage}
+      leads={leads}
+      tempLanes={tempLanes}
+      brandColor={brandColor}
+      onCardClick={onCardClick}
+      dragDrop={{ onDropLead }}
+    />
   );
 }
 
 function LeadPipelineCard({
   lead,
   onCardClick,
+  draggable = true,
 }: {
   lead: OsLeadRow;
   onCardClick: (l: OsLeadRow) => void;
+  draggable?: boolean;
 }) {
   const overdue =
     lead.next_follow_up_at && new Date(lead.next_follow_up_at).getTime() < Date.now();
@@ -525,11 +658,15 @@ function LeadPipelineCard({
   return (
     <button
       type="button"
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData(LEAD_MIME, lead.id);
-        e.dataTransfer.effectAllowed = "move";
-      }}
+      draggable={draggable}
+      onDragStart={
+        draggable
+          ? (e) => {
+              e.dataTransfer.setData(LEAD_MIME, lead.id);
+              e.dataTransfer.effectAllowed = "move";
+            }
+          : undefined
+      }
       onClick={() => onCardClick(lead)}
       title={cardTitle(lead)}
       className={cn(
