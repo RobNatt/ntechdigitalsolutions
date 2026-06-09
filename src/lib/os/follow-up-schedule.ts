@@ -82,27 +82,73 @@ export function todayDefaultFollowUpAt(timeZone: string, now = new Date()): Date
   return now;
 }
 
-/** Next calendar day in org TZ at the original follow-up clock time. */
+/** `YYYY-MM-DD` calendar day for an instant in org TZ. */
+export function zonedDayKey(timeZone: string, date: Date): string {
+  const z = getZonedComponents(date, timeZone);
+  return `${z.year}-${String(z.month).padStart(2, "0")}-${String(z.day).padStart(2, "0")}`;
+}
+
+export function addZonedCalendarDays(timeZone: string, year: number, month: number, day: number, add: number) {
+  const probe = new Date(Date.UTC(year, month - 1, day + add));
+  return getZonedComponents(probe, timeZone);
+}
+
+/** Start of a calendar day in org TZ (as UTC instant). */
+export function startOfZonedDay(timeZone: string, year: number, month: number, day: number): Date {
+  return zonedDateTimeToUtc(timeZone, year, month, day, 0, 0);
+}
+
+/** Follow-up due date is strictly before today's calendar day in org TZ. */
+export function isFollowUpDueBeforeToday(
+  nextFollowUpAt: string,
+  timeZone: string,
+  now = new Date()
+): boolean {
+  const due = new Date(nextFollowUpAt);
+  if (Number.isNaN(due.getTime())) return false;
+  return zonedDayKey(timeZone, due) < zonedDayKey(timeZone, now);
+}
+
+/** Move an incomplete past-day follow-up onto today (same clock time in org TZ). */
+export function bumpedFollowUpToToday(original: Date, timeZone: string, now = new Date()): Date {
+  const zNow = getZonedComponents(now, timeZone);
+  const zOrig = getZonedComponents(original, timeZone);
+  return zonedDateTimeToUtc(timeZone, zNow.year, zNow.month, zNow.day, zOrig.hour, zOrig.minute);
+}
+
+/** @deprecated Use bumpedFollowUpToToday — rolls only happen when a new calendar day starts. */
 export function bumpedFollowUpToTomorrow(original: Date, timeZone: string, now = new Date()): Date {
   const zNow = getZonedComponents(now, timeZone);
   const zOrig = getZonedComponents(original, timeZone);
-  const nextDayProbe = new Date(Date.UTC(zNow.year, zNow.month - 1, zNow.day + 1));
-  const zNext = getZonedComponents(nextDayProbe, timeZone);
+  const zNext = addZonedCalendarDays(timeZone, zNow.year, zNow.month, zNow.day, 1);
   return zonedDateTimeToUtc(timeZone, zNext.year, zNext.month, zNext.day, zOrig.hour, zOrig.minute);
 }
 
-export function buildFollowUpScheduleDays(now = new Date()): FollowUpScheduleDay[] {
-  const today = startOfLocalDay(now);
-  const tomorrow = addLocalDays(today, 1);
-  const dayAfter = addLocalDays(today, 2);
+export function buildFollowUpScheduleDays(timeZone = "UTC", now = new Date()): FollowUpScheduleDay[] {
+  const z = getZonedComponents(now, timeZone);
+  const zTomorrow = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 1);
+  const zDayAfter = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 2);
 
-  const fmt = (d: Date) =>
-    d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  const today = startOfZonedDay(timeZone, z.year, z.month, z.day);
+  const tomorrow = startOfZonedDay(timeZone, zTomorrow.year, zTomorrow.month, zTomorrow.day);
+  const dayAfter = startOfZonedDay(timeZone, zDayAfter.year, zDayAfter.month, zDayAfter.day);
+
+  const fmt = (y: number, m: number, d: number) =>
+    new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      timeZone,
+    });
 
   return [
-    { key: "today", label: `Today · ${fmt(today)}`, date: today },
-    { key: "tomorrow", label: `Tomorrow · ${fmt(tomorrow)}`, date: tomorrow },
-    { key: "dayAfter", label: fmt(dayAfter), date: dayAfter },
+    { key: "today", label: `Today · ${fmt(z.year, z.month, z.day)}`, date: today },
+    {
+      key: "tomorrow",
+      label: `Tomorrow · ${fmt(zTomorrow.year, zTomorrow.month, zTomorrow.day)}`,
+      date: tomorrow,
+    },
+    { key: "dayAfter", label: fmt(zDayAfter.year, zDayAfter.month, zDayAfter.day), date: dayAfter },
   ];
 }
 
@@ -127,24 +173,52 @@ export function isFollowUpIncomplete(
   return touch.getTime() < due.getTime();
 }
 
+/** Incomplete follow-up from a prior calendar day — roll onto today's schedule. */
+export function shouldRollIncompleteFollowUp(
+  nextFollowUpAt: string,
+  lastTouchAt: string | null | undefined,
+  timeZone: string,
+  now = new Date()
+): boolean {
+  if (!isFollowUpIncomplete(nextFollowUpAt, lastTouchAt, now)) return false;
+  return isFollowUpDueBeforeToday(nextFollowUpAt, timeZone, now);
+}
+
 /**
- * Bucket leads into today / tomorrow / day-after columns.
- * Unscheduled active leads appear under today. Incomplete overdue follow-ups appear under tomorrow.
+ * Bucket leads by the calendar day of next_follow_up_at (org TZ).
+ * Due today stays on Today all day (even if the clock time passed). Past incomplete days roll into Today.
  */
 export function bucketLeadsForFollowUpSchedule(
   leads: OsLeadRow[],
-  now = new Date()
+  options?: { now?: Date; timeZone?: string }
 ): Map<FollowUpDayKey, OsLeadRow[]> {
+  const now = options?.now ?? new Date();
+  const timeZone = options?.timeZone?.trim() || "UTC";
+
   const buckets = new Map<FollowUpDayKey, OsLeadRow[]>([
     ["today", []],
     ["tomorrow", []],
     ["dayAfter", []],
   ]);
 
-  const todayStart = startOfLocalDay(now);
-  const tomorrowStart = addLocalDays(todayStart, 1);
-  const dayAfterStart = addLocalDays(todayStart, 2);
-  const windowEnd = addLocalDays(todayStart, 3);
+  const z = getZonedComponents(now, timeZone);
+  const zTomorrow = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 1);
+  const zDayAfter = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 2);
+  const zWindowEnd = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 3);
+
+  const todayKey = zonedDayKey(timeZone, now);
+  const tomorrowKey = zonedDayKey(
+    timeZone,
+    startOfZonedDay(timeZone, zTomorrow.year, zTomorrow.month, zTomorrow.day)
+  );
+  const dayAfterKey = zonedDayKey(
+    timeZone,
+    startOfZonedDay(timeZone, zDayAfter.year, zDayAfter.month, zDayAfter.day)
+  );
+  const windowEndKey = zonedDayKey(
+    timeZone,
+    startOfZonedDay(timeZone, zWindowEnd.year, zWindowEnd.month, zWindowEnd.day)
+  );
 
   for (const lead of leads) {
     if (isTerminalLeadStage(lead.status)) continue;
@@ -160,15 +234,18 @@ export function bucketLeadsForFollowUpSchedule(
       continue;
     }
 
+    const dueKey = zonedDayKey(timeZone, at);
     let key: FollowUpDayKey | null = null;
 
-    if (isFollowUpIncomplete(lead.next_follow_up_at, lead.last_touch_at, now)) {
-      key = "tomorrow";
-    } else if (at >= todayStart && at < tomorrowStart) {
+    if (dueKey < todayKey) {
       key = "today";
-    } else if (at >= tomorrowStart && at < dayAfterStart) {
+    } else if (dueKey === todayKey) {
+      key = "today";
+    } else if (dueKey === tomorrowKey) {
       key = "tomorrow";
-    } else if (at >= dayAfterStart && at < windowEnd) {
+    } else if (dueKey === dayAfterKey) {
+      key = "dayAfter";
+    } else if (dueKey >= dayAfterKey && dueKey < windowEndKey) {
       key = "dayAfter";
     }
 

@@ -93,6 +93,7 @@ export default async function LeadsPage() {
       sheetsIntegrationEnabled={Boolean(session.settings.integration_sheets_enabled)}
       settingsIntegrationsUrl="/dashboard/settings"
       calendlyUrls={resolveOsCalendlyBookingUrls(session.settings)}
+      timezone={session.settings.timezone}
     />
   );
 }

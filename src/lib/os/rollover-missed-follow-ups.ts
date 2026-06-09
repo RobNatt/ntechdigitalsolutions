@@ -1,9 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isMissingSchemaError } from "@/lib/os/fetch-os-leads-list";
 import {
-  bumpedFollowUpToTomorrow,
-  isFollowUpIncomplete,
+  bumpedFollowUpToToday,
   isTerminalLeadStage,
+  shouldRollIncompleteFollowUp,
   todayDefaultFollowUpAt,
 } from "@/lib/os/follow-up-schedule";
 
@@ -16,7 +16,7 @@ export type MaintainFollowUpScheduleResult = {
 /**
  * Keeps the 3-day follow-up schedule actionable:
  * 1. Leads with no follow-up date → schedule for today (9am org TZ, or now).
- * 2. Incomplete overdue follow-ups → bump to tomorrow so they stay visible.
+ * 2. Incomplete follow-ups from prior calendar days → bump onto today (not same-day overdue).
  */
 export async function maintainFollowUpSchedule(
   supabase: SupabaseClient,
@@ -76,9 +76,9 @@ export async function maintainFollowUpSchedule(
 
     const nextAt = row.next_follow_up_at != null ? String(row.next_follow_up_at) : null;
     const lastTouch = row.last_touch_at != null ? String(row.last_touch_at) : null;
-    if (!nextAt || !isFollowUpIncomplete(nextAt, lastTouch, now)) continue;
+    if (!nextAt || !shouldRollIncompleteFollowUp(nextAt, lastTouch, timeZone, now)) continue;
 
-    const bumped = bumpedFollowUpToTomorrow(new Date(nextAt), timeZone, now).toISOString();
+    const bumped = bumpedFollowUpToToday(new Date(nextAt), timeZone, now).toISOString();
     const { error: updateError } = await supabase
       .from("os_leads")
       .update({ next_follow_up_at: bumped })

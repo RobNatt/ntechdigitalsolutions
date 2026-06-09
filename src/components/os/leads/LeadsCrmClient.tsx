@@ -33,6 +33,7 @@ type LeadsCrmClientProps = {
   sheetsIntegrationEnabled?: boolean;
   settingsIntegrationsUrl?: string;
   calendlyUrls: OsCalendlyBookingUrls;
+  timezone: string;
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -96,6 +97,7 @@ export function LeadsCrmClient({
   sheetsIntegrationEnabled = false,
   settingsIntegrationsUrl = "/dashboard/settings",
   calendlyUrls,
+  timezone,
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -164,8 +166,11 @@ export function LeadsCrmClient({
     return m;
   }, [leads, leadStages]);
 
-  const followUpScheduleDays = useMemo(() => buildFollowUpScheduleDays(), []);
-  const followUpByDay = useMemo(() => bucketLeadsForFollowUpSchedule(leads), [leads]);
+  const followUpScheduleDays = useMemo(() => buildFollowUpScheduleDays(timezone), [timezone]);
+  const followUpByDay = useMemo(
+    () => bucketLeadsForFollowUpSchedule(leads, { timeZone: timezone }),
+    [leads, timezone]
+  );
   const followUpTotal = useMemo(
     () => followUpScheduleDays.reduce((n, d) => n + (followUpByDay.get(d.key)?.length ?? 0), 0),
     [followUpScheduleDays, followUpByDay]
@@ -293,8 +298,8 @@ export function LeadsCrmClient({
                     Follow-up schedule
                   </h2>
                   <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
-                    Leads without a follow-up are prompted for today. Missed or untouched follow-ups roll to tomorrow
-                    automatically.
+                    Today&apos;s follow-ups stay on Today all day. Unscheduled leads are prompted for today; incomplete
+                    follow-ups from prior days roll forward when a new day starts.
                   </p>
                 </div>
                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -615,7 +620,7 @@ function FollowUpDayColumn({
       onCardClick={onCardClick}
       draggableCards={false}
       emptyMessage={
-        dayKey === "tomorrow" ? "No follow-ups — rolled missed items appear here" : "No follow-ups scheduled"
+        dayKey === "tomorrow" ? "No follow-ups scheduled for tomorrow" : "No follow-ups scheduled"
       }
     />
   );
