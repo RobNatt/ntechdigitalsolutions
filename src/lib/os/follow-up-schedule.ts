@@ -88,9 +88,23 @@ export function zonedDayKey(timeZone: string, date: Date): string {
   return `${z.year}-${String(z.month).padStart(2, "0")}-${String(z.day).padStart(2, "0")}`;
 }
 
+/** Add calendar days in org TZ (noon anchor avoids DST midnight edge cases). */
 export function addZonedCalendarDays(timeZone: string, year: number, month: number, day: number, add: number) {
-  const probe = new Date(Date.UTC(year, month - 1, day + add));
-  return getZonedComponents(probe, timeZone);
+  const instant = zonedDateTimeToUtc(timeZone, year, month, day + add, 12, 0);
+  return getZonedComponents(instant, timeZone);
+}
+
+export function formatZonedDayLabel(timeZone: string, year: number, month: number, day: number): string {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone,
+  }).format(zonedDateTimeToUtc(timeZone, year, month, day, 12, 0));
+}
+
+function zonedDayKeyFromParts(year: number, month: number, day: number): string {
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 /** Start of a calendar day in org TZ (as UTC instant). */
@@ -133,22 +147,22 @@ export function buildFollowUpScheduleDays(timeZone = "UTC", now = new Date()): F
   const tomorrow = startOfZonedDay(timeZone, zTomorrow.year, zTomorrow.month, zTomorrow.day);
   const dayAfter = startOfZonedDay(timeZone, zDayAfter.year, zDayAfter.month, zDayAfter.day);
 
-  const fmt = (y: number, m: number, d: number) =>
-    new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      timeZone,
-    });
-
   return [
-    { key: "today", label: `Today · ${fmt(z.year, z.month, z.day)}`, date: today },
+    {
+      key: "today",
+      label: `Today · ${formatZonedDayLabel(timeZone, z.year, z.month, z.day)}`,
+      date: today,
+    },
     {
       key: "tomorrow",
-      label: `Tomorrow · ${fmt(zTomorrow.year, zTomorrow.month, zTomorrow.day)}`,
+      label: `Tomorrow · ${formatZonedDayLabel(timeZone, zTomorrow.year, zTomorrow.month, zTomorrow.day)}`,
       date: tomorrow,
     },
-    { key: "dayAfter", label: fmt(zDayAfter.year, zDayAfter.month, zDayAfter.day), date: dayAfter },
+    {
+      key: "dayAfter",
+      label: formatZonedDayLabel(timeZone, zDayAfter.year, zDayAfter.month, zDayAfter.day),
+      date: dayAfter,
+    },
   ];
 }
 
@@ -207,18 +221,9 @@ export function bucketLeadsForFollowUpSchedule(
   const zWindowEnd = addZonedCalendarDays(timeZone, z.year, z.month, z.day, 3);
 
   const todayKey = zonedDayKey(timeZone, now);
-  const tomorrowKey = zonedDayKey(
-    timeZone,
-    startOfZonedDay(timeZone, zTomorrow.year, zTomorrow.month, zTomorrow.day)
-  );
-  const dayAfterKey = zonedDayKey(
-    timeZone,
-    startOfZonedDay(timeZone, zDayAfter.year, zDayAfter.month, zDayAfter.day)
-  );
-  const windowEndKey = zonedDayKey(
-    timeZone,
-    startOfZonedDay(timeZone, zWindowEnd.year, zWindowEnd.month, zWindowEnd.day)
-  );
+  const tomorrowKey = zonedDayKeyFromParts(zTomorrow.year, zTomorrow.month, zTomorrow.day);
+  const dayAfterKey = zonedDayKeyFromParts(zDayAfter.year, zDayAfter.month, zDayAfter.day);
+  const windowEndKey = zonedDayKeyFromParts(zWindowEnd.year, zWindowEnd.month, zWindowEnd.day);
 
   for (const lead of leads) {
     if (isTerminalLeadStage(lead.status)) continue;
