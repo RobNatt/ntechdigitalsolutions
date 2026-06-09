@@ -7,13 +7,13 @@ import { getZonedComponents, zonedDayKey } from "@/lib/os/follow-up-schedule";
 import { getOsSession } from "@/lib/os/get-os-settings";
 import { logOsActivity } from "@/lib/os/log-os-activity";
 import {
-  computeLeadsFollowUpBlock,
-  countLeadsInScheduleBucket,
+  computeLeadsFollowUpBlockAtTime,
+  countLeadsScheduledOnDay,
   dayBoundsUtc,
   isLeadsFollowUpBatchEvent,
   LEADS_FOLLOW_UP_EVENT_TYPE,
   LEADS_FOLLOW_UP_EVENT_TITLE_PREFIX,
-  type LeadsFollowUpPeriod,
+  parseTimeHHmm,
 } from "@/lib/os/leads-follow-up-calendar";
 import { formatYmdInTimeZone } from "@/lib/os/os-revenue-range";
 import type { ActionResult } from "./actions";
@@ -65,23 +65,24 @@ export async function findLeadsFollowUpBlockForDay(
   };
 }
 
-export async function syncLeadsFollowUpBlockAction(payload: {
-  period: LeadsFollowUpPeriod;
-  dayYmd?: string;
-}): Promise<ActionResult<LeadsFollowUpBlockSnapshot>> {
-  const session = await getOsSession();
-  if (!session?.userId) return { ok: false, error: "Not signed in." };
-  if (!session.isInternal) return { ok: false, error: "Only team members can sync follow-up blocks." };
+async function upsertLeadsFollowUpBlock(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  timeZone: string,
+  dayYmd: string,
+  startTime: string,
+  leadCount: number
+): Promise<ActionResult<LeadsFollowUpBlockSnapshot>> {
+  const parsed = parseTimeHHmm(startTime);
+  if (!parsed) return { ok: false, error: "Enter a valid start time (HH:MM)." };
 
-  const timeZone = session.settings.timezone;
-  const dayYmd = payload.dayYmd?.trim() || formatYmdInTimeZone(new Date(), timeZone);
-  const supabase = await createClient();
-
-  const leadsFetch = await fetchOsLeadsList(supabase);
-  if (leadsFetch.error) return { ok: false, error: leadsFetch.error };
-
-  const leadCount = countLeadsInScheduleBucket(leadsFetch.leads, "today", timeZone);
-  const block = computeLeadsFollowUpBlock(leadCount, dayYmd, timeZone, payload.period);
+  const block = computeLeadsFollowUpBlockAtTime(
+    leadCount,
+    dayYmd,
+    timeZone,
+    parsed.hour,
+    parsed.minute
+  );
   if (!block) {
     return { ok: false, error: "No leads scheduled for follow-up on that day." };
   }
@@ -125,7 +126,7 @@ export async function syncLeadsFollowUpBlockAction(payload: {
       meeting_link: null,
       related_lead_id: null,
       related_client_id: null,
-      created_by_user_id: session.userId,
+      created_by_user_id: userId,
     })
     .select("id")
     .single();
@@ -148,7 +149,65 @@ export async function syncLeadsFollowUpBlockAction(payload: {
   };
 }
 
-/** Refresh duration on an existing today's block when lead count changes. */
+/** Add or update today's follow-up block at a custom start time. */
+export async function syncLeadsFollowUpBlockAction(payload: {
+  startTime: string;
+  dayYmd?: string;
+}): Promise<ActionResult<LeadsFollowUpBlockSnapshot>> {
+  const session = await getOsSession();
+  if (!session?.userId) return { ok: false, error: "Not signed in." };
+  if (!session.isInternal) return { ok: false, error: "Only team members can sync follow-up blocks." };
+
+  const timeZone = session.settings.timezone;
+  const dayYmd = payload.dayYmd?.trim() || formatYmdInTimeZone(new Date(), timeZone);
+  const supabase = await createClient();
+
+  const leadsFetch = await fetchOsLeadsList(supabase);
+  if (leadsFetch.error) return { ok: false, error: leadsFetch.error };
+
+  const leadCount = countLeadsScheduledOnDay(leadsFetch.leads, dayYmd, timeZone);
+  return upsertLeadsFollowUpBlock(
+    supabase,
+    session.userId,
+    timeZone,
+    dayYmd,
+    payload.startTime,
+    leadCount
+  );
+}
+
+/** Schedule or update a follow-up block on a future (or any) date with custom start time. */
+export async function scheduleFutureLeadsFollowUpBlockAction(payload: {
+  dayYmd: string;
+  startTime: string;
+}): Promise<ActionResult<LeadsFollowUpBlockSnapshot>> {
+  const session = await getOsSession();
+  if (!session?.userId) return { ok: false, error: "Not signed in." };
+  if (!session.isInternal) return { ok: false, error: "Only team members can schedule follow-up blocks." };
+
+  const dayYmd = payload.dayYmd?.trim();
+  if (!dayYmd || !/^\d{4}-\d{2}-\d{2}$/.test(dayYmd)) {
+    return { ok: false, error: "Choose a valid date." };
+  }
+
+  const timeZone = session.settings.timezone;
+  const supabase = await createClient();
+
+  const leadsFetch = await fetchOsLeadsList(supabase);
+  if (leadsFetch.error) return { ok: false, error: leadsFetch.error };
+
+  const leadCount = countLeadsScheduledOnDay(leadsFetch.leads, dayYmd, timeZone);
+  return upsertLeadsFollowUpBlock(
+    supabase,
+    session.userId,
+    timeZone,
+    dayYmd,
+    payload.startTime,
+    leadCount
+  );
+}
+
+/** Refresh duration on an existing today's block; preserves its start time. */
 export async function refreshLeadsFollowUpBlockIfPresent(
   supabase: Awaited<ReturnType<typeof createClient>>,
   timeZone: string,
@@ -158,17 +217,18 @@ export async function refreshLeadsFollowUpBlockIfPresent(
   const existing = await findLeadsFollowUpBlockForDay(supabase, timeZone, dayYmd);
   if (!existing) return;
 
-  const leadCount = countLeadsInScheduleBucket(leads as import("@/lib/os/leads-types").OsLeadRow[], "today", timeZone);
+  const leadCount = countLeadsScheduledOnDay(
+    leads as import("@/lib/os/leads-types").OsLeadRow[],
+    dayYmd,
+    timeZone
+  );
   if (leadCount <= 0) return;
 
   const start = new Date(existing.date_start);
   const dayYmdForBlock = zonedDayKey(timeZone, start);
-  const { hour } = getZonedComponents(start, timeZone);
-  let period: LeadsFollowUpPeriod = "morning";
-  if (hour >= 16) period = "evening";
-  else if (hour >= 12) period = "afternoon";
+  const { hour, minute } = getZonedComponents(start, timeZone);
 
-  const block = computeLeadsFollowUpBlock(leadCount, dayYmdForBlock, timeZone, period);
+  const block = computeLeadsFollowUpBlockAtTime(leadCount, dayYmdForBlock, timeZone, hour, minute);
   if (!block) return;
 
   await supabase
