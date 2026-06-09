@@ -1,5 +1,10 @@
+import {
+  findLeadsFollowUpBlockForDay,
+  refreshLeadsFollowUpBlockIfPresent,
+} from "@/app/dashboard/leads/follow-up-calendar-actions";
 import { LeadsCrmClient } from "@/components/os/leads/LeadsCrmClient";
 import { resolveOsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
+import { formatYmdInTimeZone } from "@/lib/os/os-revenue-range";
 import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
 import { fetchOsLeadsList, isMissingSchemaError, mergeLeadPipelineStages } from "@/lib/os/fetch-os-leads-list";
 import { maintainFollowUpSchedule } from "@/lib/os/rollover-missed-follow-ups";
@@ -62,6 +67,16 @@ export default async function LeadsPage() {
     console.warn("os_leads fetch:", leadsFetchError);
   }
 
+  if (session.isInternal && !leadsFetchError && !migrationPending) {
+    await refreshLeadsFollowUpBlockIfPresent(supabase, session.settings.timezone, leads);
+  }
+
+  const todayYmd = formatYmdInTimeZone(new Date(), session.settings.timezone);
+  const followUpBlockToday =
+    session.isInternal && !migrationPending
+      ? await findLeadsFollowUpBlockForDay(supabase, session.settings.timezone, todayYmd)
+      : null;
+
   let assignees: AssigneeOption[] = [];
   if (session.isInternal && assigneesRes.data && !assigneesRes.error) {
     const profs = assigneesRes.data as unknown[];
@@ -94,6 +109,8 @@ export default async function LeadsPage() {
       settingsIntegrationsUrl="/dashboard/settings"
       calendlyUrls={resolveOsCalendlyBookingUrls(session.settings)}
       timezone={session.settings.timezone}
+      todayYmd={todayYmd}
+      followUpBlockToday={followUpBlockToday}
     />
   );
 }

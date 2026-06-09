@@ -290,6 +290,7 @@ export async function logLeadTouchAction(
   });
 
   revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard/calendar");
   return { ok: true, data: { touchpointId: String(touch.id) } };
 }
 

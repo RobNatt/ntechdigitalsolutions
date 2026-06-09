@@ -39,6 +39,10 @@ import {
   leadCalendlyInviteeName,
   type OsCalendlyBookingUrls,
 } from "@/lib/os/calendly-booking";
+import {
+  defaultNextFollowUpDateValue,
+  followUpAtFromDateOnly,
+} from "@/lib/os/leads-follow-up-calendar";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import type { LeadWorkspaceData } from "@/lib/os/leads-workflow-types";
 import { cn } from "@/lib/utils";
@@ -100,6 +104,7 @@ export function LeadWorkModal({
   brandColor,
   commonTags,
   calendlyUrls,
+  timezone,
   onClose,
   onSaved,
   onDeleted,
@@ -113,6 +118,7 @@ export function LeadWorkModal({
   brandColor: string;
   commonTags: string[];
   calendlyUrls: OsCalendlyBookingUrls;
+  timezone: string;
   onClose: () => void;
   onSaved: () => void;
   onDeleted: (id: string) => void;
@@ -133,7 +139,7 @@ export function LeadWorkModal({
   const [touchChannel, setTouchChannel] = useState<string>("call");
   const [touchOutcome, setTouchOutcome] = useState<string>("connected");
   const [touchNotes, setTouchNotes] = useState("");
-  const [touchNextAt, setTouchNextAt] = useState("");
+  const [touchNextDate, setTouchNextDate] = useState("");
   const [touchMoveStage, setTouchMoveStage] = useState("");
 
   const [pipelineNotes, setPipelineNotes] = useState("");
@@ -208,8 +214,8 @@ export function LeadWorkModal({
   }, [leadId, reloadWorkspace]);
 
   useEffect(() => {
-    setTouchNextAt(toDatetimeLocalValue(defaultNextFollowUpAt(lead.temperature)));
-  }, [lead.temperature, lead.id]);
+    setTouchNextDate(defaultNextFollowUpDateValue(lead.temperature, timezone));
+  }, [lead.temperature, lead.id, timezone]);
 
   useEffect(() => {
     const { start, end } = defaultMeetingRange();
@@ -231,7 +237,7 @@ export function LeadWorkModal({
         channel: touchChannel,
         outcome: touchOutcome,
         notes: touchNotes.trim() || null,
-        next_follow_up_at: touchNextAt ? fromDatetimeLocalValue(touchNextAt) : null,
+        next_follow_up_at: touchNextDate ? followUpAtFromDateOnly(touchNextDate, timezone) : null,
         move_to_stage: touchMoveStage || null,
       });
       if (!r.ok) {
@@ -471,7 +477,10 @@ export function LeadWorkModal({
         {/* Log follow-up — primary action */}
         <section className="mt-6 rounded-xl border-2 border-dashed border-neutral-300 p-4 dark:border-neutral-700">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Log follow-up</h3>
-          <p className="mt-1 text-xs text-neutral-500">How did you reach out? What happened? When is the next touch?</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            How did you reach out? Pick the next follow-up <strong>date</strong> only — use the daily Leads follow-up
+            block on your calendar for timing.
+          </p>
           <div className="mt-3">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">Outreach type</p>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -517,12 +526,12 @@ export function LeadWorkModal({
             />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label={`Next follow-up (suggested: +${cadenceDays}d)`}>
+            <Field label={`Next follow-up date (+${cadenceDays}d suggested)`}>
               <input
-                type="datetime-local"
+                type="date"
                 className="mt-1 w-full rounded border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 dark:bg-neutral-900"
-                value={touchNextAt}
-                onChange={(e) => setTouchNextAt(e.target.value)}
+                value={touchNextDate}
+                onChange={(e) => setTouchNextDate(e.target.value)}
               />
             </Field>
             <Field label="Move to stage (optional)">
@@ -976,7 +985,7 @@ export function LeadWorkModal({
                   value={form.temperature}
                   onChange={(e) => {
                     setForm((f) => ({ ...f, temperature: e.target.value }));
-                    setTouchNextAt(toDatetimeLocalValue(defaultNextFollowUpAt(e.target.value)));
+                    setTouchNextDate(defaultNextFollowUpDateValue(e.target.value, timezone));
                   }}
                 >
                   {leadTemperatures.map((s) => (

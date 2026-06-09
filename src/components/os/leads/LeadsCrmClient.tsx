@@ -11,7 +11,9 @@ import {
 import type { OsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
+import type { LeadsFollowUpBlockSnapshot } from "@/app/dashboard/leads/follow-up-calendar-actions";
 import { LeadCreateModal } from "@/components/os/leads/LeadCreateModal";
+import { LeadsFollowUpBlockPrompt } from "@/components/os/leads/LeadsFollowUpBlockPrompt";
 import { LeadSpreadsheetSync } from "@/components/os/leads/LeadSpreadsheetSync";
 import { LeadWorkModal } from "@/components/os/leads/LeadWorkModal";
 
@@ -34,6 +36,8 @@ type LeadsCrmClientProps = {
   settingsIntegrationsUrl?: string;
   calendlyUrls: OsCalendlyBookingUrls;
   timezone: string;
+  todayYmd: string;
+  followUpBlockToday: LeadsFollowUpBlockSnapshot;
 };
 
 function cardTitle(lead: OsLeadRow): string {
@@ -98,6 +102,8 @@ export function LeadsCrmClient({
   settingsIntegrationsUrl = "/dashboard/settings",
   calendlyUrls,
   timezone,
+  todayYmd,
+  followUpBlockToday,
 }: LeadsCrmClientProps) {
   const router = useRouter();
   const [tab, setTab] = useState<"pipeline" | "table">("pipeline");
@@ -175,6 +181,7 @@ export function LeadsCrmClient({
     () => followUpScheduleDays.reduce((n, d) => n + (followUpByDay.get(d.key)?.length ?? 0), 0),
     [followUpScheduleDays, followUpByDay]
   );
+  const todayFollowUpCount = followUpByDay.get("today")?.length ?? 0;
 
   function onDropToStage(leadId: string, stage: string) {
     startTransition(async () => {
@@ -292,6 +299,15 @@ export function LeadsCrmClient({
         <div className="space-y-8">
           {!migrationPending ? (
             <section className="space-y-3">
+              {isInternal ? (
+                <LeadsFollowUpBlockPrompt
+                  todayLeadCount={todayFollowUpCount}
+                  todayYmd={todayYmd}
+                  timeZone={timezone}
+                  brandColor={brandColor}
+                  initialBlock={followUpBlockToday}
+                />
+              ) : null}
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-700 dark:text-neutral-300">
@@ -488,6 +504,7 @@ export function LeadsCrmClient({
           brandColor={brandColor}
           commonTags={commonTags}
           calendlyUrls={calendlyUrls}
+          timezone={timezone}
           onClose={() => setModal({ mode: "closed" })}
           onSaved={() => {
             refresh();

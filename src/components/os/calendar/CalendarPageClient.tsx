@@ -8,6 +8,7 @@ import {
   updateEventAction,
   type EventUpsertPayload,
 } from "@/app/dashboard/calendar/actions";
+import { isLeadsFollowUpBatchEvent } from "@/lib/os/leads-follow-up-calendar";
 import { formatYmdInTimeZone } from "@/lib/os/os-revenue-range";
 import type { LeadPickRow, OsClientRow, OsEventRow } from "@/lib/os/os-entity-types";
 import { cn } from "@/lib/utils";
@@ -95,7 +96,7 @@ export function CalendarPageClient({
 }: CalendarPageClientProps) {
   const router = useRouter();
   const [events, setEvents] = useState(initialEvents);
-  const [view, setView] = useState<"day" | "week" | "month">("month");
+  const [view, setView] = useState<"day" | "week" | "month">("week");
   const [cursorY, setCursorY] = useState(() => {
     const s = formatYmdInTimeZone(new Date(), timeZone);
     const [y] = s.split("-").map(Number);
@@ -135,12 +136,15 @@ export function CalendarPageClient({
 
   const weekRange = useMemo(() => weekRangeContaining(anchorYmd), [anchorYmd]);
 
-  const weekEvents = useMemo(() => {
-    return events.filter((e) => {
-      const ymd = formatYmdInTimeZone(new Date(e.date_start), timeZone);
-      return ymd >= weekRange.from && ymd <= weekRange.to;
-    });
-  }, [events, timeZone, weekRange.from, weekRange.to]);
+  const weekDayYmds = useMemo(() => {
+    const out: string[] = [];
+    let cur = weekRange.from;
+    for (let i = 0; i < 7; i++) {
+      out.push(cur);
+      cur = addDaysYmd(cur, 1);
+    }
+    return out;
+  }, [weekRange.from]);
 
   const dayEvents = useMemo(() => {
     return events.filter((e) => formatYmdInTimeZone(new Date(e.date_start), timeZone) === anchorYmd);
@@ -223,6 +227,21 @@ export function CalendarPageClient({
     } else setCursorM((m) => m + 1);
   }
 
+  function prevWeek() {
+    setAnchorYmd((d) => addDaysYmd(d, -7));
+  }
+
+  function nextWeek() {
+    setAnchorYmd((d) => addDaysYmd(d, 7));
+  }
+
+  function eventChipClass(ev: OsEventRow): string {
+    if (isLeadsFollowUpBatchEvent(ev)) {
+      return "bg-sky-100 text-sky-900 hover:bg-sky-200 dark:bg-sky-950 dark:text-sky-100 dark:hover:bg-sky-900";
+    }
+    return "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700";
+  }
+
   const monthTitle = `${cursorY}-${pad2(cursorM)}`;
 
   return (
@@ -273,6 +292,19 @@ export function CalendarPageClient({
             </button>
           </div>
         ) : null}
+        {view === "week" ? (
+          <div className="ml-auto flex items-center gap-2">
+            <button type="button" className="rounded border px-2 py-1 text-sm" onClick={prevWeek}>
+              ←
+            </button>
+            <span className="text-sm font-semibold tabular-nums text-neutral-800 dark:text-neutral-100">
+              {weekRange.from} → {weekRange.to}
+            </span>
+            <button type="button" className="rounded border px-2 py-1 text-sm" onClick={nextWeek}>
+              →
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {view === "month" ? (
@@ -306,7 +338,10 @@ export function CalendarPageClient({
                             key={ev.id}
                             type="button"
                             onClick={() => openEdit(ev)}
-                            className="block w-full truncate rounded bg-neutral-100 px-1 py-0.5 text-left text-[10px] font-medium text-neutral-800 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700"
+                            className={cn(
+                              "block w-full truncate rounded px-1 py-0.5 text-left text-[10px] font-medium",
+                              eventChipClass(ev)
+                            )}
                           >
                             {ev.title || "Event"}
                           </button>
@@ -325,35 +360,60 @@ export function CalendarPageClient({
       ) : null}
 
       {view === "week" ? (
-        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Week {weekRange.from} → {weekRange.to} (browser-local week boundaries)
-          </p>
-          <ul className="mt-4 space-y-2">
-            {weekEvents.length === 0 ? (
-              <li className="text-sm text-neutral-500">No events this week.</li>
-            ) : (
-              weekEvents.map((ev) => (
-                <li key={ev.id}>
-                  <button
-                    type="button"
-                    onClick={() => openEdit(ev)}
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-left text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-950"
-                  >
-                    <span className="font-medium text-neutral-900 dark:text-white">{ev.title || "Event"}</span>
-                    <span className="mt-0.5 block text-xs text-neutral-500">
-                      {formatYmdInTimeZone(new Date(ev.date_start), timeZone)}{" "}
-                      {new Date(ev.date_start).toLocaleTimeString(undefined, {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        timeZone,
-                      })}
-                    </span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
+        <div className="rounded-xl border border-neutral-200 bg-white p-3 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="grid grid-cols-7 gap-px bg-neutral-200 dark:bg-neutral-800">
+            {weekDayYmds.map((ymd, idx) => {
+              const cellEvents = eventsByYmd.get(ymd) ?? [];
+              const [, mm, dd] = ymd.split("-");
+              const isToday = ymd === formatYmdInTimeZone(new Date(), timeZone);
+              return (
+                <div
+                  key={ymd}
+                  className={cn(
+                    "min-h-[10rem] bg-white p-2 dark:bg-neutral-900",
+                    isToday && "ring-2 ring-inset ring-sky-400/60 dark:ring-sky-600/50"
+                  )}
+                >
+                  <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-200">
+                    {WEEKDAYS[idx]} {Number(mm)}/{Number(dd)}
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {cellEvents.length === 0 ? (
+                      <p className="text-[10px] text-neutral-400">—</p>
+                    ) : (
+                      cellEvents.map((ev) => (
+                        <button
+                          key={ev.id}
+                          type="button"
+                          onClick={() => openEdit(ev)}
+                          className={cn(
+                            "block w-full rounded px-1.5 py-1 text-left text-[10px] font-medium",
+                            eventChipClass(ev)
+                          )}
+                        >
+                          <span className="block truncate">{ev.title || "Event"}</span>
+                          <span className="block text-[9px] opacity-80">
+                            {new Date(ev.date_start).toLocaleTimeString(undefined, {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              timeZone,
+                            })}
+                            {ev.date_end
+                              ? ` – ${new Date(ev.date_end).toLocaleTimeString(undefined, {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                  timeZone,
+                                })}`
+                              : ""}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ) : null}
 
@@ -377,7 +437,10 @@ export function CalendarPageClient({
                   <button
                     type="button"
                     onClick={() => openEdit(ev)}
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-left text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-950"
+                    className={cn(
+                      "w-full rounded-lg border border-neutral-200 px-3 py-2 text-left text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-950",
+                      isLeadsFollowUpBatchEvent(ev) && "border-sky-200 bg-sky-50 dark:border-sky-900 dark:bg-sky-950/40"
+                    )}
                   >
                     <span className="font-medium text-neutral-900 dark:text-white">{ev.title || "Event"}</span>
                     <span className="mt-0.5 block text-xs text-neutral-500">
