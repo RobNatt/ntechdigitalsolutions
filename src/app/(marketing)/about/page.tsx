@@ -56,7 +56,7 @@ const FAQ_SECTIONS: FaqGroup[] = [
       },
       {
         q: "Do you have case studies yet?",
-        a: "We're onboarding our first five case-study clients now. Results will be published on /case-studies as they land — real call volume, lead follow-up, and review numbers, not projections.",
+        a: "We're onboarding our first five case-study clients now. Results will be published here as they land — real call volume, lead follow-up, and review numbers, not projections.",
       },
       {
         q: "Can you guarantee results?",

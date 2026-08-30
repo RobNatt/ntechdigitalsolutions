@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
-import { GhlCalendarEmbed } from "@/components/marketing/GhlCalendarEmbed";
+import { BookingCalendarEmbed } from "@/components/marketing/BookingCalendarEmbed";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const bookDesc =
@@ -20,7 +20,7 @@ export default function BookCallPage() {
       subtitle="Pick a time that works. We'll walk through what's leaking leads in your business today and what the infrastructure system would look like for you."
       cta="compact"
     >
-      <GhlCalendarEmbed />
+      <BookingCalendarEmbed />
     </MarketingPageShell>
   );
 }

@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 import { HOME_FAQ_ITEMS } from "@/constants/home-faq";
 
 export function HomeFaq() {
-  const reduceMotion = useReducedMotion();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -15,17 +13,7 @@ export function HomeFaq() {
       aria-labelledby="home-faq-heading"
     >
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          {...(reduceMotion
-            ? {}
-            : {
-                initial: { opacity: 0, y: 20 },
-                whileInView: { opacity: 1, y: 0 },
-                viewport: { once: true, amount: 0.25 },
-                transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
-              })}
-          className="mx-auto max-w-2xl text-center"
-        >
+        <div className="mx-auto max-w-2xl text-center">
           <h2
             id="home-faq-heading"
             className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl dark:text-white"
@@ -36,7 +24,7 @@ export function HomeFaq() {
             Answers about the AI receptionist, lead automation, social media management, and review
             automation system.
           </p>
-        </motion.div>
+        </div>
 
         <div className="mt-12 space-y-3 md:mt-14">
           {HOME_FAQ_ITEMS.map((item, index) => {
@@ -45,16 +33,8 @@ export function HomeFaq() {
             const buttonId = `home-faq-button-${index}`;
 
             return (
-              <motion.div
+              <div
                 key={item.question}
-                {...(reduceMotion
-                  ? {}
-                  : {
-                      initial: { opacity: 0, y: 12 },
-                      whileInView: { opacity: 1, y: 0 },
-                      viewport: { once: true, amount: 0.2 },
-                      transition: { duration: 0.35, delay: index * 0.04 },
-                    })}
                 className="overflow-hidden rounded-2xl border border-neutral-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors duration-200 hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-neutral-700"
               >
                 <h3>
@@ -94,7 +74,7 @@ export function HomeFaq() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

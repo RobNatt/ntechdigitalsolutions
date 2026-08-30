@@ -1,20 +1,20 @@
 import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL, SITE_GHL_CALENDAR_URL } from "@/constants/site";
+import { getCalendlyEventUrl } from "@/constants/scheduling";
 import { TrackedPhoneLink } from "@/components/marketing/TrackedPhoneLink";
 
 /**
- * Embeds the GHL booking calendar when NEXT_PUBLIC_GHL_CALENDAR_URL is set. Falls back to a
- * phone/email CTA so /book-call never breaks pre-launch while the real link is pending.
+ * Booking calendar for /book-call. Prefers GHL (`NEXT_PUBLIC_GHL_CALENDAR_URL`), then a real
+ * Calendly link (`NEXT_PUBLIC_CALENDLY_EVENT_URL`) — never the old hardcoded Calendly default,
+ * which is dead. Falls back to a phone/email CTA when neither is configured, so the page never
+ * points visitors at a broken booking link.
  */
-export function GhlCalendarEmbed() {
-  if (SITE_GHL_CALENDAR_URL) {
+export function BookingCalendarEmbed() {
+  const src = SITE_GHL_CALENDAR_URL ?? getCalendlyEventUrl();
+
+  if (src) {
     return (
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <iframe
-          src={SITE_GHL_CALENDAR_URL}
-          title="Book a call"
-          className="h-[720px] w-full border-0"
-          loading="lazy"
-        />
+        <iframe src={src} title="Book a call" className="h-[720px] w-full border-0" loading="lazy" />
       </div>
     );
   }

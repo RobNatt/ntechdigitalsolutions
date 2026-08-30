@@ -3,6 +3,9 @@ import { Bot, Globe2, MessageSquareText, Share2, Star } from "lucide-react";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { ServiceTopicJsonLd } from "@/components/marketing/ServiceTopicJsonLd";
 import { FaqSection } from "@/components/marketing/FaqSection";
+import { VideoPlaceholder } from "@/components/marketing/VideoPlaceholder";
+import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
+import { ReviewRoutingDemo } from "@/components/marketing/demos/ReviewRoutingDemo";
 import { buildFaqJsonLd, canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { SITE_SERVICE_AREAS } from "@/constants/site";
 
@@ -160,6 +163,44 @@ export default function InfrastructurePage() {
                   </li>
                 ))}
               </ul>
+
+              {component.id === "review-automation" ? (
+                <div className="mt-6">
+                  <ReviewRoutingDemo />
+                </div>
+              ) : null}
+
+              {component.id === "lead-automation" ? (
+                <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50/80 p-5 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+                    Try it — this form is live
+                  </p>
+                  <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    Fill this out with your own info and you&apos;ll get a real confirmation email.
+                  </p>
+                  <div className="mt-4">
+                    <MarketingInquiryForm analyticsSurface="infrastructure_demo" />
+                  </div>
+                </div>
+              ) : null}
+
+              {component.id === "ai-receptionist" ? (
+                <div className="mt-6">
+                  <VideoPlaceholder
+                    title="AI Receptionist walkthrough"
+                    description="Video explainer — coming soon"
+                  />
+                </div>
+              ) : null}
+
+              {component.id === "social-media" ? (
+                <div className="mt-6">
+                  <VideoPlaceholder
+                    title="Social media management walkthrough"
+                    description="Video explainer — coming soon"
+                  />
+                </div>
+              ) : null}
             </section>
           );
         })}

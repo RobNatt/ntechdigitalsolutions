@@ -6,7 +6,6 @@ const CORE_ROUTES = [
   "",
   "/infrastructure",
   "/pricing",
-  "/case-studies",
   "/about",
   "/contact",
   "/book-call",

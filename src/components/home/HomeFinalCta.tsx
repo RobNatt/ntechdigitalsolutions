@@ -44,17 +44,7 @@ export function HomeFinalCta() {
       </div>
 
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          {...(reduceMotion
-            ? {}
-            : {
-                initial: { opacity: 0, y: 22 },
-                whileInView: { opacity: 1, y: 0 },
-                viewport: { once: true, amount: 0.35 },
-                transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
-              })}
-          className="text-center"
-        >
+        <div className="text-center">
           <h2
             id="final-cta-heading"
             className="text-balance text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-[2.75rem] lg:leading-[1.12]"
@@ -68,7 +58,7 @@ export function HomeFinalCta() {
           </p>
 
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-            <ScheduleCtaLink className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-8 py-3.5 text-center text-sm font-semibold text-slate-900 shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_12px_40px_-8px_rgba(59,130,246,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">
+            <ScheduleCtaLink className="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-600 px-8 py-3.5 text-center text-sm font-semibold text-white shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-[0_0_0_1px_rgba(16,185,129,0.25),0_12px_40px_-8px_rgba(16,185,129,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400">
               Book a Call
             </ScheduleCtaLink>
             <Link
@@ -88,7 +78,7 @@ export function HomeFinalCta() {
               </li>
             ))}
           </ul>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

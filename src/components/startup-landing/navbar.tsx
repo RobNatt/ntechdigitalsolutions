@@ -36,14 +36,13 @@ function trackNavCta(href: string) {
   }
 }
 
-/** Past this offset the bar becomes a floating glass pill. */
+/** Past this scroll offset the header gains a solid background + shadow. */
 const SCROLL_PILL_THRESHOLD = 72;
 
 export const Navbar = () => {
   const navItems = [
     { name: "Infrastructure", link: "/infrastructure" },
     { name: "Pricing", link: "/pricing" },
-    { name: "Case Studies", link: "/case-studies" },
     { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
     { name: "Book a Call", link: PRIMARY_NAV_HREF },
@@ -63,10 +62,13 @@ export const Navbar = () => {
   });
 
   return (
-    <motion.div className="w-full fixed top-0 inset-x-0 z-50">
+    // will-change promotes the header to its own compositor layer so it stays visually
+    // pinned during fast/momentum scroll instead of lagging a frame behind (the "duplicate
+    // header" artifact reported on the live site).
+    <div className="w-full fixed top-0 inset-x-0 z-50 [will-change:transform] [transform:translateZ(0)]">
       <DesktopNav visible={visible} navItems={navItems} />
       <MobileNav visible={visible} navItems={navItems} />
-    </motion.div>
+    </div>
   );
 };
 
@@ -74,20 +76,13 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <motion.div
+    <div
       onMouseLeave={() => setHovered(null)}
-      animate={{ y: visible ? 14 : 0 }}
-      transition={{
-        type: "spring",
-        stiffness: 220,
-        damping: 30,
-      }}
       className={cn(
-        "relative z-[60] mx-auto hidden flex-row items-center justify-between gap-6 transition-[width,background-color,box-shadow,border-color,backdrop-filter] duration-300 ease-out lg:flex lg:gap-10",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between gap-6 border-b px-4 py-3 transition-[background-color,box-shadow,border-color] duration-200 ease-out lg:flex lg:gap-10",
         visible
-          ? "w-[min(94vw,72rem)] max-w-[min(94vw,72rem)] rounded-full border border-neutral-200/75 bg-white/90 py-3 pl-5 pr-4 shadow-[0_12px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-neutral-700/80 dark:bg-neutral-950/90"
-          : "w-full max-w-7xl border-transparent bg-transparent py-2.5 shadow-none backdrop-blur-none dark:bg-transparent",
-        "px-4",
+          ? "border-neutral-200/75 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.08)] dark:border-neutral-800 dark:bg-neutral-950"
+          : "border-transparent bg-transparent shadow-none",
       )}
     >
       <div className="relative z-20 min-w-0 shrink-0">
@@ -135,7 +130,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
           Login
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -144,21 +139,12 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
 
   return (
     <>
-      <motion.div
-        animate={{
-          y: visible ? 14 : 0,
-          borderRadius: open ? 12 : 9999,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 220,
-          damping: 30,
-        }}
+      <div
         className={cn(
-          "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1.5rem)] flex-col items-center bg-transparent px-0 py-2 transition-[width,background-color,box-shadow,border-color,backdrop-filter] duration-300 ease-out lg:hidden",
+          "relative z-50 flex w-full flex-col items-center border-b px-4 py-2.5 transition-[background-color,box-shadow,border-color] duration-200 ease-out lg:hidden",
           visible
-            ? "w-[min(94vw,40rem)] max-w-[min(94vw,40rem)] border border-neutral-200/75 bg-white/90 px-3 py-2.5 shadow-[0_12px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-neutral-700/80 dark:bg-neutral-950/90"
-            : "border-transparent shadow-none backdrop-blur-none",
+            ? "border-neutral-200/75 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.08)] dark:border-neutral-800 dark:bg-neutral-950"
+            : "border-transparent bg-transparent shadow-none",
         )}
       >
         <div className="flex flex-row justify-between items-center w-full">
@@ -224,7 +210,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </>
   );
 };

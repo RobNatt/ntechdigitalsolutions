@@ -14,7 +14,7 @@ export function Footer() {
   const explore = [
     { title: "Infrastructure", href: "/infrastructure" },
     { title: "Pricing", href: "/pricing" },
-    { title: "Case Studies", href: "/case-studies" },
+    { title: "Blog", href: "/blog" },
     { title: "Book a call", href: CONSTANTS.BOOK_CALL_PATH },
   ];
 
