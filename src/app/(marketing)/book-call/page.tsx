@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
-import { BookCallForm } from "@/components/marketing/BookCallForm";
+import { GhlCalendarEmbed } from "@/components/marketing/GhlCalendarEmbed";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const bookDesc =
-  "Book a strategy call with N-Tech. Available starting next day with focused business-hour windows.";
+  "Book a call with N-Tech Digital Solutions to see how the infrastructure system — website, AI receptionist, lead automation, social media management, and review automation — fits your business.";
 
 export const metadata: Metadata = {
   title: "Book a Call | N-Tech Digital Solutions",
@@ -13,21 +13,14 @@ export const metadata: Metadata = {
   openGraph: ogForPath("/book-call", "Book a Call | N-Tech Digital Solutions", bookDesc),
 };
 
-type BookCallPageProps = {
-  searchParams: Promise<{ plan?: string }>;
-};
-
-export default async function BookCallPage({ searchParams }: BookCallPageProps) {
-  const sp = await searchParams;
-  const plan = typeof sp.plan === "string" && sp.plan.trim() ? sp.plan.trim() : "";
-
+export default function BookCallPage() {
   return (
     <MarketingPageShell
-      title="Book a strategy call"
-      subtitle="Pick a time that works for you. We start availability next day: Mon-Fri 8am-6pm, Sat/Sun 2pm-4pm."
+      title="Book a call"
+      subtitle="Pick a time that works. We'll walk through what's leaking leads in your business today and what the infrastructure system would look like for you."
       cta="compact"
     >
-      <BookCallForm initialPlan={plan} />
+      <GhlCalendarEmbed />
     </MarketingPageShell>
   );
 }

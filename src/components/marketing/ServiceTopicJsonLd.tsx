@@ -8,7 +8,7 @@ type ServiceTopicJsonLdProps = {
 };
 
 /**
- * Service + BreadcrumbList for topic/service deep-dive pages (national framing).
+ * Service + BreadcrumbList JSON-LD for each of the 5 infrastructure components on /infrastructure.
  */
 export function ServiceTopicJsonLd({
   path,
@@ -26,7 +26,7 @@ export function ServiceTopicJsonLd({
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${base}/` },
-          { "@type": "ListItem", position: 2, name: "Services", item: `${base}/services` },
+          { "@type": "ListItem", position: 2, name: "Infrastructure", item: `${base}/infrastructure` },
           { "@type": "ListItem", position: 3, name, item: url },
         ],
       },

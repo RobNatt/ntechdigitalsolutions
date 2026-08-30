@@ -11,11 +11,11 @@ export function Footer() {
     { title: "Terms of Service", href: "/terms-and-conditions" },
   ];
 
-  const signups = [
-    { title: "Growth System", href: "/growthsystem" },
-    { title: "Sign up", href: "/signup" },
-    { title: "Login", href: "/login" },
-    { title: "Book a demo", href: CONSTANTS.CONTACT_PATH },
+  const explore = [
+    { title: "Infrastructure", href: "/infrastructure" },
+    { title: "Pricing", href: "/pricing" },
+    { title: "Case Studies", href: "/case-studies" },
+    { title: "Book a call", href: CONSTANTS.BOOK_CALL_PATH },
   ];
 
   return (
@@ -84,19 +84,19 @@ export function Footer() {
 
             <div className="flex flex-col justify-center space-y-4">
               <p className="font-bold text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                Register
+                Explore
               </p>
               <ul className="list-none space-y-4 text-neutral-600 transition-colors hover:text-text-neutral-800 dark:text-neutral-300">
-                {signups.map((auth, idx) => (
-                  <li key={"auth" + idx} className="list-none">
+                {explore.map((link, idx) => (
+                  <li key={"explore" + idx} className="list-none">
                     <Link
                       className={cn(
                         "transition-colors hover:text-text-neutral-800",
-                        auth.href === "/growthsystem" && "btn-primary inline-flex w-fit"
+                        link.href === CONSTANTS.BOOK_CALL_PATH && "btn-primary inline-flex w-fit"
                       )}
-                      href={auth.href}
+                      href={link.href}
                     >
-                      {auth.title}
+                      {link.title}
                     </Link>
                   </li>
                 ))}

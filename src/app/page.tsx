@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
 import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
 import { HomeBrandHub } from "@/components/home/HomeBrandHub";
 import { Footer } from "@/components/startup-landing/footer";
 import { Navbar } from "@/components/startup-landing/navbar";
 import { HOME_FAQ_ITEMS } from "@/constants/home-faq";
+import { buildFaqJsonLd } from "@/lib/seo-metadata";
 import {
   SITE_BUSINESS_PHONE,
   SITE_CONTACT_EMAIL,
@@ -14,9 +14,9 @@ import {
 
 /** Swap to `/og-image.jpg` after adding a 1200×630 image under `public/`. */
 const OG_IMAGE_PATH = "/ntech-official-logo.png";
-const HOME_TITLE = "Website Design Company | Website Development | NTech";
+const HOME_TITLE = "AI Receptionist, Lead Automation & Reviews | N-Tech Digital Solutions";
 const HOME_DESCRIPTION =
-  "NTech Digital Solutions is a website design company delivering website development, conversion-focused websites, targeted advertising, and lead tracking dashboards.";
+  "N-Tech installs one connected system for local service businesses: website, AI receptionist, lead automation, social media management, and Google review automation.";
 
 export const metadata: Metadata = {
   title: {
@@ -24,15 +24,14 @@ export const metadata: Metadata = {
   },
   description: HOME_DESCRIPTION,
   keywords: [
-    "website designer near me",
-    "website design company",
-    "website development company",
-    "web design services",
-    "professional website development",
-    "conversion-focused website design",
-    "business website development",
-    "website development services",
-    "local website design agency",
+    "AI receptionist for small business",
+    "missed call text back",
+    "lead follow-up automation",
+    "local business CRM automation",
+    "Google review automation",
+    "social media lead generation",
+    "Nebraska digital infrastructure",
+    "Omaha AI receptionist",
   ],
   authors: [{ name: "N-Tech Digital Solutions" }],
   robots: { index: true, follow: true },
@@ -56,10 +55,9 @@ export const metadata: Metadata = {
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": "LocalBusiness",
   name: "N-Tech Digital Solutions",
-  description:
-    "Website design, lead capture, funnels, SEO, and paid traffic for service businesses that want more qualified buyers.",
+  description: HOME_DESCRIPTION,
   url: SITE_URL,
   ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
   email: SITE_CONTACT_EMAIL,
@@ -69,13 +67,18 @@ const localBusinessJsonLd = {
     addressRegion: "NE",
     addressCountry: "US",
   },
-  areaServed: [{ "@type": "Country", name: "United States" }, SITE_SERVICE_AREAS],
+  areaServed: [
+    { "@type": "City", name: "Omaha" },
+    { "@type": "City", name: "Lincoln" },
+    { "@type": "State", name: "Nebraska" },
+    SITE_SERVICE_AREAS,
+  ],
   serviceType: [
-    "Lead Generation",
+    "AI Receptionist",
+    "Lead Automation",
+    "Social Media Management",
+    "Google Review Automation",
     "Web Design",
-    "SEO",
-    "Paid Ads",
-    "Marketing Automation",
   ],
   priceRange: "$$",
 };
@@ -108,15 +111,7 @@ const organizationJsonLd = {
 
 const faqJsonLd = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: HOME_FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
+  ...buildFaqJsonLd(HOME_FAQ_ITEMS.map((item) => ({ q: item.question, a: item.answer }))),
 };
 
 export default function HomePage() {
@@ -146,7 +141,6 @@ export default function HomePage() {
         <HomeBrandHub />
       </main>
       <Footer />
-      <ChatWidgetLazy />
     </>
   );
 }

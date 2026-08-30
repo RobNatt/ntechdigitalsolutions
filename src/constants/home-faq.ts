@@ -5,43 +5,43 @@ export type HomeFaqItem = {
 
 export const HOME_FAQ_ITEMS: readonly HomeFaqItem[] = [
   {
-    question: "What exactly does NTech provide?",
+    question: "What exactly does N-Tech provide?",
     answer:
-      "We build connected growth systems that combine conversion-focused websites, targeted advertising, and lead tracking dashboards to help businesses generate and manage more qualified leads.",
+      "One connected infrastructure system for local service businesses: a website with a lead form and Call Now button, an AI receptionist that answers and books calls, lead-form automation with instant CRM entry and follow-up, Facebook/Instagram management, and Google review automation — all under one flat monthly retainer.",
   },
   {
-    question: "Why combine websites, ads, and dashboards together?",
+    question: "How do I stop missing calls from customers?",
     answer:
-      "Most businesses use disconnected tools that make it difficult to track performance and optimize growth. Our systems are designed to work together so traffic, conversion, and lead tracking remain connected.",
+      "An AI receptionist answers every call your team can't take — nights, weekends, or busy periods — attempts to book the appointment, and logs the caller's details in your CRM automatically, so no call goes untracked.",
   },
   {
-    question: "Do you work with specific industries?",
+    question: "How do I get more 5-star Google reviews?",
     answer:
-      "We primarily work with service-based businesses and companies looking to improve lead generation, visibility, and operational efficiency through modern digital systems.",
+      "Review automation routes 5-star experiences to post publicly on Google, while anything below 5 stars is intercepted as private feedback first — protecting your public rating while surfacing real complaints you can act on.",
   },
   {
-    question: "How long does a project usually take?",
+    question: "Do I need all five components, or can I start with one?",
     answer:
-      "Project timelines vary depending on scope, but most website and system builds are completed within a few weeks.",
+      "The system is built as one connected infrastructure, so our primary offer bundles all five. If budget is a blocker, ask about a smaller starting scope with fewer components.",
   },
   {
-    question: "Do you offer ongoing support?",
+    question: "What businesses is this built for?",
     answer:
-      "Yes. We offer ongoing support, optimization, reporting, and growth-focused improvements depending on the needs of the business.",
+      "Local service businesses that lose money to missed calls, slow lead follow-up, and inconsistent reviews. We're launching focused on the Omaha metro and Lincoln, Nebraska.",
   },
   {
-    question: "Will I be able to track leads and performance?",
+    question: "How much does it cost to automate a small business's marketing?",
     answer:
-      "Yes. Our dashboards provide visibility into lead activity, campaign performance, and customer engagement in one centralized location.",
+      "We're running a limited case-study pricing phase right now to get honest results from real businesses before standard rates take effect. Book a call for the number that applies to your business.",
   },
   {
-    question: "Do I need all three services to work with you?",
+    question: "Do you manage paid ads too?",
     answer:
-      "Not necessarily. However, businesses typically see stronger results when websites, advertising, and tracking systems are connected strategically.",
+      "Not as part of the core system. Ad management and spend are a separate add-on we typically discuss after onboarding, once the infrastructure exists to actually convert the traffic ads generate.",
   },
   {
     question: "How do we get started?",
     answer:
-      "Start by scheduling a strategy call. We'll learn more about your business, current systems, and growth goals to determine whether we're a strong fit.",
+      "Book a call. We'll walk through what's leaking leads in your business today and show you what the infrastructure system would look like for you.",
   },
 ] as const;

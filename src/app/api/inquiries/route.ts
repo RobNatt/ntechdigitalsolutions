@@ -1,11 +1,11 @@
+import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import {
   sendInquiryAutoReply,
   sendInquiryNotification,
   sendInquirySmsFollowUp,
 } from "@/lib/email";
-import { mirrorFunnelLeadToOsLeads } from "@/lib/os/mirror-funnel-lead";
+import { pushLeadToGhl } from "@/lib/integrations/ghl-client";
 import { recordInquirySubmit } from "@/lib/analytics/record-inquiry";
 import { scoreInquiryLead } from "@/lib/inquiries/lead-qualifier";
 
@@ -120,8 +120,7 @@ export async function POST(request: Request) {
     consumeRateLimit(ip);
 
     const companyId = process.env.DEFAULT_COMPANY_ID;
-    const nowIso = new Date().toISOString();
-    const fullName = name || email || phone || "Unknown Lead";
+    const leadId = randomUUID();
     const leadScore = scoreInquiryLead({
       phone,
       company,
@@ -130,112 +129,23 @@ export async function POST(request: Request) {
       message,
       sourcePage,
     });
-    const details: Record<string, unknown> = {
+
+    const ghlResult = await pushLeadToGhl({
+      name,
+      email,
+      phone,
+      company,
       message,
-      ...(company ? { company } : {}),
-      ...(planInterest ? { plan_interest: planInterest } : {}),
-      ...(budget ? { budget_range: budget } : {}),
-      ...(sourcePage ? { source_page: sourcePage } : {}),
-      lead_score: leadScore.score,
-      lead_temperature: leadScore.temperature,
-    };
-
-    let leadId: string | undefined;
-    try {
-      const supabase = createAdminClient();
-      const { data: owner } = await supabase
-        .from("profiles")
-        .select("id, role")
-        .in("role", ["ceo", "admin"])
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-
-      const commonPayload: Record<string, unknown> = {
-        ...(companyId ? { company_id: companyId } : {}),
-        ...(owner?.id ? { user_id: owner.id } : {}),
-        source: "website_inquiry",
-        name,
-        full_name: fullName,
-        email,
-        phone: phone || "",
-        phone_number: phone || "",
-        address: "N/A",
-        details,
-        stage: "submitted",
-        stage_updated_at: nowIso,
-        updated_at: nowIso,
-      };
-
-      const attempts: Record<string, unknown>[] = [
-        { ...commonPayload, lead_type: "inquiry" },
-        { ...commonPayload, lead_type: "homeowner" },
-        {
-          ...(companyId ? { company_id: companyId } : {}),
-          source: "website_inquiry",
-          lead_type: "homeowner",
-          name,
-          full_name: fullName,
-          email,
-          phone: phone || "",
-          phone_number: phone || "",
-          address: "N/A",
-          details,
-        },
-      ];
-
-      let lastErrorMessage = "Unknown lead insert error.";
-      for (const insertPayload of attempts) {
-        const { data: inserted, error } = await supabase
-          .from("leads")
-          .insert(insertPayload)
-          .select("id")
-          .maybeSingle();
-        if (!error && inserted?.id) {
-          leadId = inserted.id;
-          break;
-        }
-        if (error) {
-          lastErrorMessage = error.message;
-          console.warn("Inquiry lead insert attempt failed:", error.message);
-        }
+      source: "website_inquiry",
+      tags: ["website", "inquiry", leadScore.temperature],
+    });
+    if (!ghlResult.ok) {
+      if (ghlResult.skipped) {
+        console.warn("Inquiry GHL push skipped: GHL_API_KEY/GHL_LOCATION_ID not set.");
+      } else {
+        console.error("Inquiry GHL push failed:", ghlResult.error);
       }
-
-      if (!leadId) {
-        console.error("Inquiry lead insert exhausted attempts:", lastErrorMessage);
-        return NextResponse.json(
-          { error: "Could not save your inquiry lead. Please try again." },
-          { status: 500 }
-        );
-      }
-
-      await mirrorFunnelLeadToOsLeads(supabase, {
-        name,
-        businessName: company,
-        email,
-        phone,
-        source: "website_inquiry",
-        assignedUserId: owner?.id ?? null,
-        temperature:
-          leadScore.temperature === "hot"
-            ? "Hot"
-            : leadScore.temperature === "warm"
-              ? "Warm"
-              : "Cold",
-        tags: ["Funnel", "Inquiry"],
-      });
-    } catch (e) {
-      console.error("Inquiry Supabase error:", e);
-      return NextResponse.json(
-        { error: "Could not save your inquiry lead. Please try again." },
-        { status: 500 }
-      );
-    }
-    if (!leadId) {
-      return NextResponse.json(
-        { error: "Could not save your inquiry lead. Please try again." },
-        { status: 500 }
-      );
+      // Do not block lead capture on GHL push failures — email notification below is the fallback.
     }
 
     try {

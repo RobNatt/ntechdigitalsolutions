@@ -1,13 +1,12 @@
-import { OsPageFrame } from "@/components/os/OsPageFrame";
+import { CommandCenterClient } from "@/components/os/command-center/CommandCenterClient";
+import { fetchCommandCenterSnapshot } from "@/lib/os/fetch-command-center";
 import { loadDashboardPage } from "@/lib/os/load-dashboard-page";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardHomePage() {
   const session = await loadDashboardPage();
-  return (
-    <OsPageFrame
-      title="Dashboard"
-      description="Operating system overview. Lists, charts, and automations will land in later prompts."
-      brandColor={session.settings.brand_color}
-    />
-  );
+  const supabase = await createClient();
+  const snapshot = await fetchCommandCenterSnapshot(supabase, session);
+
+  return <CommandCenterClient snapshot={snapshot} />;
 }

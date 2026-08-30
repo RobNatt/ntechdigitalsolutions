@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { FaqSection, type FaqGroup } from "@/components/marketing/FaqSection";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
-import { SITE_URL } from "@/constants/site";
+import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL, SITE_URL } from "@/constants/site";
 
 const aboutDesc =
-  "N-Tech Digital Solutions builds websites, lead systems, and automation for businesses that want measurable growth.";
+  "N-Tech Digital Solutions builds the connected infrastructure — website, AI receptionist, lead automation, social media management, and review automation — that stops local service businesses from leaking leads.";
 
 export const metadata: Metadata = {
   title: "About | N-Tech Digital Solutions",
@@ -15,129 +16,72 @@ export const metadata: Metadata = {
   openGraph: ogForPath("/about", "About | N-Tech Digital Solutions", aboutDesc),
 };
 
-const FAQ_SECTIONS = [
+const FAQ_SECTIONS: FaqGroup[] = [
   {
-    title: "Services and capability",
+    title: "The system",
     items: [
       {
-        q: "What's the difference between SEO and GEO?",
-        a: "SEO (Search Engine Optimization) improves visibility on traditional search engines like Google and Bing through technical health, keyword targeting, and content strategy. GEO (Generative Engine Optimization) improves how often your content is cited or summarized by AI tools like ChatGPT, Perplexity, and AI Overviews. SEO gets clicks. GEO gets citations.",
+        q: "What does N-Tech actually build?",
+        a: "One connected infrastructure system for local service businesses: a website with a lead form and Call Now button, an AI receptionist that answers and books calls, lead-form automation that pushes submissions into a CRM with instant follow-up, Facebook/Instagram management, and Google review automation.",
       },
       {
-        q: "Do I need all three services or can I pick just one?",
-        a: "You can start with one service. The system works best when website, search visibility, and automation work together, but we recommend based on your stage and goals, not maximum scope.",
+        q: "Why call it 'infrastructure' instead of a website or marketing service?",
+        a: "Because the website is one piece, not the whole thing. Most businesses already have a website — what they're missing is what happens after someone calls, fills out a form, comments on a post, or leaves a review. That's the infrastructure layer.",
       },
       {
-        q: "What platforms do you build websites on?",
-        a: "We build with Webflow, WordPress, Shopify, and custom code (HTML, CSS, JavaScript, React) based on your requirements and performance goals.",
-      },
-      {
-        q: "Will my website be mobile-friendly and fast?",
-        a: "Yes. We build responsive sites and optimize performance using Core Web Vitals best practices, optimized media, caching, and CDN delivery.",
-      },
-      {
-        q: "What automations do you actually set up?",
-        a: "Common automations include lead capture to CRM, appointment booking workflows, review requests, lead notifications, monthly reporting, and abandoned inquiry follow-up.",
+        q: "Do you manage paid ads too?",
+        a: "Not as part of the core system. Ad management and ad spend are a separate add-on we typically bring up after onboarding, since ads convert far better once the infrastructure exists to actually catch and follow up on the leads they generate.",
       },
     ],
   },
   {
-    title: "Results, timelines, and outcomes",
+    title: "Pricing and commitment",
     items: [
       {
-        q: "How long does SEO take to show results?",
-        a: "Many businesses see measurable movement in 3-6 months, with stronger compounding gains over 6-12 months depending on competition, content consistency, and baseline site health.",
+        q: "How is pricing structured?",
+        a: "One flat monthly retainer covers the whole system — no separate build fee. We're intentionally running a limited case-study pricing phase to get honest results from real businesses before rates move up. See /pricing to book a call for your number.",
       },
       {
-        q: "Can you guarantee first-page rankings?",
-        a: "No. Rankings are controlled by search engines, so guarantees are not realistic. We focus on proven execution and transparent reporting.",
-      },
-      {
-        q: "How will I know if GEO optimization is working?",
-        a: "We track AI-answer visibility, citation frequency, branded search growth, and direct traffic/lead trends.",
-      },
-      {
-        q: "What kind of ROI should I expect?",
-        a: "ROI varies by industry and offer value. We establish a baseline during onboarding and track performance against your business KPIs.",
-      },
-      {
-        q: "How long does it take to build my website?",
-        a: "Most websites take 4-8 weeks. More complex builds can take 10-16 weeks depending on scope and content readiness.",
+        q: "Is there a contract, and what happens if I want to cancel?",
+        a: "We keep terms simple and will walk you through them on a call before you commit. The goal is a system you see results from, not a contract you feel stuck in.",
       },
     ],
   },
   {
-    title: "Engagement, ownership, and support",
+    title: "Fit and results",
+    items: [
+      {
+        q: "What kind of businesses is this built for?",
+        a: "Local service businesses — the kind that lose money to missed calls, slow follow-up, and inconsistent reviews. We're launching focused on the Omaha metro and Lincoln, Nebraska, with the same system built to expand city by city.",
+      },
+      {
+        q: "Do you have case studies yet?",
+        a: "We're onboarding our first five case-study clients now. Results will be published on /case-studies as they land — real call volume, lead follow-up, and review numbers, not projections.",
+      },
+      {
+        q: "Can you guarantee results?",
+        a: "No legitimate operator guarantees leads or revenue. What we commit to is installing and running the system correctly — answering calls, following up on leads within minutes, and managing your review pipeline — and being transparent about what's working.",
+      },
+    ],
+  },
+  {
+    title: "Getting started",
     items: [
       {
         q: "What do you need from me to get started?",
-        a: "Typically: brand assets, current content, example references, domain/hosting access, and clarity on goals/audience. We guide onboarding so nothing is missed.",
+        a: "Access to your current website/domain (if you have one), your Google Business Profile, and your Facebook/Instagram accounts. We handle setup and configuration from there and walk you through the system before it goes live.",
       },
       {
-        q: "Will I own my website and content?",
-        a: "Yes. You own your website, content, domain, and data. Everything is transferred to accounts you control.",
+        q: "Will I own my website, data, and accounts?",
+        a: "Yes. Your website, domain, CRM data, and social accounts stay yours. Nothing is locked behind our agency if you ever decide to leave.",
       },
       {
-        q: "Can I update the site myself after it's built?",
-        a: "Yes. We build with maintainability in mind and provide launch training so your team can edit text, images, and basic content.",
-      },
-      {
-        q: "Who do I contact if something breaks?",
-        a: "You get a dedicated support path. Retainer clients receive priority support, and post-launch packages are available for project-only builds.",
-      },
-      {
-        q: "Are you a solo freelancer or an agency?",
-        a: "We are a boutique agency with specialists in web, SEO/GEO strategy, and automation.",
+        q: "Who do I talk to if something breaks?",
+        a: "You get a direct line to our team, not a ticket queue. Retainer clients get priority response on anything affecting call answering, lead capture, or booking.",
       },
     ],
   },
-  {
-    title: "Pricing and commercials",
-    items: [
-      {
-        q: "How much does this cost?",
-        a: "Typical ranges: website builds $2,500-$15,000+, SEO/GEO retainers $750-$2,500/month, automation setups $500-$3,000+. Final pricing depends on scope.",
-      },
-      {
-        q: "Is it a one-time fee or monthly retainer?",
-        a: "Website projects are usually one-time. SEO/GEO is typically ongoing. Automations can be one-time, ongoing, or hybrid.",
-      },
-      {
-        q: "What's included vs. what costs extra?",
-        a: "Core scope usually includes discovery, design, development, QA, launch, and short post-launch support. Add-ons can include copywriting, media, software subscriptions, paid ads, and ongoing growth operations.",
-      },
-      {
-        q: "Do you require long-term contracts?",
-        a: "SEO/GEO commonly starts with a 3-month minimum so meaningful data can accrue, then moves month-to-month.",
-      },
-      {
-        q: "What happens if I want to cancel?",
-        a: "After any initial term, cancellation is typically 30 days written notice and assets/access are handed over cleanly.",
-      },
-    ],
-  },
-  {
-    title: "Fit and proof",
-    items: [
-      {
-        q: "Do you work with businesses in my industry?",
-        a: "We support home services, healthcare, legal, real estate, e-commerce, hospitality, and professional services, then tailor strategy to your market.",
-      },
-      {
-        q: "Can I see examples of past work?",
-        a: "Yes. We share relevant examples during discovery so you can evaluate fit.",
-      },
-      {
-        q: "Do you have case studies or client results?",
-        a: "Yes. We share case studies that focus on traffic growth, ranking movement, lead volume, and automation efficiency.",
-      },
-      {
-        q: "Do you work with local businesses or nationally?",
-        a: "Both. Strategy and targeting are adjusted for local/regional versus national reach.",
-      },
-    ],
-  },
-] as const;
+];
 
 const faqMainEntity = FAQ_SECTIONS.flatMap((section) =>
   section.items.map((item) => ({
@@ -158,11 +102,13 @@ const ABOUT_STRUCTURED_DATA = {
       mainEntity: faqMainEntity,
     },
     {
-      "@type": "Organization",
+      "@type": "LocalBusiness",
       "@id": `${aboutPageUrl}#organization`,
       name: "N-Tech Digital Solutions",
       url: SITE_URL.replace(/\/$/, ""),
       description: aboutDesc,
+      email: SITE_CONTACT_EMAIL,
+      ...(SITE_BUSINESS_PHONE ? { telephone: SITE_BUSINESS_PHONE } : {}),
       founder: { "@id": `${aboutPageUrl}#founder` },
       address: {
         "@type": "PostalAddress",
@@ -170,6 +116,12 @@ const ABOUT_STRUCTURED_DATA = {
         addressRegion: "NE",
         addressCountry: "US",
       },
+      areaServed: [
+        { "@type": "City", name: "Omaha" },
+        { "@type": "City", name: "Lincoln" },
+        { "@type": "State", name: "Nebraska" },
+      ],
+      priceRange: "$$",
     },
     {
       "@type": "Person",
@@ -178,12 +130,13 @@ const ABOUT_STRUCTURED_DATA = {
       jobTitle: "Founder & Principal",
       worksFor: { "@id": `${aboutPageUrl}#organization` },
       description:
-        "Founder of N-Tech Digital Solutions. Works directly with clients on websites, SEO and search visibility, marketing automation, and lead systems that connect growth to day-to-day operations.",
+        "Founder of N-Tech Digital Solutions. Builds the website, AI receptionist, lead automation, social media, and review systems that connect a local business's marketing directly to booked appointments.",
       knowsAbout: [
+        "AI receptionists",
+        "Lead automation and CRM",
         "Web design",
-        "Search engine optimization",
-        "Marketing automation",
-        "Lead generation",
+        "Social media automation",
+        "Reputation management",
       ],
     },
   ],
@@ -193,19 +146,21 @@ export default function AboutPage() {
   return (
     <MarketingPageShell
       title="About"
-      subtitle="We&apos;re a small team obsessed with systems: clear messaging, fast sites, and pipelines that don&apos;t depend on heroics."
+      subtitle="We install one connected system so local service businesses stop losing customers to missed calls, slow follow-up, and inconsistent reviews."
     >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ABOUT_STRUCTURED_DATA) }}
       />
       <p>
-        Based in Omaha, we work with local and regional businesses that are ready to invest in a web
-        presence and lead flow that compounds — not one-off pages that sit still after launch.
+        Based in Omaha, we work with local service businesses across the Omaha metro and Lincoln,
+        Nebraska that are tired of leaving money on the table — the missed call that never got returned,
+        the lead that went cold waiting on a follow-up, the great review that never got asked for.
       </p>
       <p>
-        Our projects usually combine design, engineering, and light process design so your team
-        actually uses what we ship.
+        Instead of selling a website, then separately pitching leads, then separately pitching social
+        media, we install one system where each piece feeds the next: a call becomes a booked
+        appointment, a form fill becomes a followed-up lead, a happy customer becomes a public review.
       </p>
       <p>
         Curious if we&apos;re a fit?{" "}
@@ -217,10 +172,10 @@ export default function AboutPage() {
         </Link>{" "}
         or{" "}
         <Link
-          href="/services"
+          href="/infrastructure"
           className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
         >
-          browse services
+          see how the system works
         </Link>
         .
       </p>
@@ -239,11 +194,10 @@ export default function AboutPage() {
           Robert Nattrass
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Robert leads N-Tech Digital Solutions from Omaha, Nebraska. He works hands-on with
-          clients on strategy and delivery: lead-ready websites, SEO and GEO visibility, CRM and
-          automation, and the operational handoffs that make marketing spend traceable to
-          conversations and revenue. The focus is always the same — fewer broken handoffs, clearer
-          messaging, and systems your team can run after launch.
+          Robert leads N-Tech Digital Solutions from Omaha, Nebraska. He works hands-on with clients
+          to install and run the infrastructure system — website, AI receptionist, lead automation,
+          social media management, and review automation — and to make sure it&apos;s actually
+          converting calls and clicks into booked appointments, not just sitting there.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           Prefer to talk it through?{" "}
@@ -261,39 +215,11 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section id="faq" className="pt-6">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Frequently asked questions</h2>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-          Grouped by service, delivery, pricing, and fit so you can quickly find what matters.
-        </p>
-        <div className="mt-5 space-y-5">
-          {FAQ_SECTIONS.map((section) => (
-            <div
-              key={section.title}
-              className="rounded-xl border border-neutral-200 bg-white/70 p-4 dark:border-neutral-800 dark:bg-neutral-950/50"
-            >
-              <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                {section.title}
-              </h3>
-              <div className="mt-3 space-y-2">
-                {section.items.map((item) => (
-                  <details
-                    key={item.q}
-                    className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900/40"
-                  >
-                    <summary className="cursor-pointer list-none text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                      {item.q}
-                    </summary>
-                    <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                      {item.a}
-                    </p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection
+        heading="Frequently asked questions"
+        intro="Grouped by system, pricing, fit, and getting started."
+        groups={FAQ_SECTIONS}
+      />
     </MarketingPageShell>
   );
 }

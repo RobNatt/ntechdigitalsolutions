@@ -2,14 +2,13 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { CONSTANTS } from "@/constants/links";
-import { GROWTH_SYSTEM_FUNNEL_PATH } from "@/constants/growth-system-offer";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 
 const TRUST_CHIPS = [
-  "Conversion-focused websites",
-  "Targeted advertising",
-  "Lead tracking dashboards",
-  "Transparent reporting",
+  "AI receptionist",
+  "Lead automation + CRM",
+  "Social media management",
+  "Google review automation",
 ] as const;
 
 export function HomeFinalCta() {
@@ -60,26 +59,23 @@ export function HomeFinalCta() {
             id="final-cta-heading"
             className="text-balance text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-[2.75rem] lg:leading-[1.12]"
           >
-            Build a Marketing System That Actually Works Together
+            Stop Losing Customers to Missed Calls and Slow Follow-Up
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-slate-400 md:text-lg">
-            Most businesses rely on disconnected tools that create wasted traffic, missed leads, and unclear
-            performance. We combine conversion-focused websites, targeted advertising, and lead tracking dashboards into
-            one connected growth system, serving businesses locally and nationwide.
+            Most local businesses rely on disconnected tools — a website here, a CRM there, no one
+            watching reviews. We install one connected system: website, AI receptionist, lead
+            automation, social media management, and review automation, under one flat monthly retainer.
           </p>
 
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+            <ScheduleCtaLink className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-8 py-3.5 text-center text-sm font-semibold text-slate-900 shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_12px_40px_-8px_rgba(59,130,246,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">
+              Book a Call
+            </ScheduleCtaLink>
             <Link
-              href={CONSTANTS.STRATEGY_QUALIFICATION_PATH}
-              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-8 py-3.5 text-center text-sm font-semibold text-slate-900 shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_12px_40px_-8px_rgba(59,130,246,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
-            >
-              Schedule a Strategy Call
-            </Link>
-            <Link
-              href={GROWTH_SYSTEM_FUNNEL_PATH}
+              href="/infrastructure"
               className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-600/90 bg-slate-900/40 px-8 py-3.5 text-center text-sm font-semibold text-slate-200 backdrop-blur-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:border-slate-500 hover:bg-slate-800/60 hover:text-white hover:shadow-[0_0_24px_-4px_rgba(59,130,246,0.25)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
             >
-              View Growth Systems
+              See the System
             </Link>
           </div>
 

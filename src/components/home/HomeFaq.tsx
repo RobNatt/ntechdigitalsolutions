@@ -33,7 +33,8 @@ export function HomeFaq() {
             Frequently Asked Questions
           </h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            Answers about our website design company process, website development services, and growth systems.
+            Answers about the AI receptionist, lead automation, social media management, and review
+            automation system.
           </p>
         </motion.div>
 

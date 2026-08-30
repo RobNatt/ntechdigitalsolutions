@@ -1,31 +1,28 @@
-import { AppWindow, Check, ChevronDown, ChevronRight, LayoutDashboard, Megaphone } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, PhoneCall, Share2, Workflow } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
-import { GROWTH_SYSTEM_FUNNEL_PATH } from "@/constants/growth-system-offer";
-
-const funnel = GROWTH_SYSTEM_FUNNEL_PATH;
 
 const ICON_WRAP =
   "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400";
 
 const CARDS = [
   {
-    title: "Conversion Websites",
-    description: "Modern websites designed to turn traffic into qualified leads.",
-    bullets: ["Built for conversion", "Mobile optimized", "Fast & professional"],
-    icon: AppWindow,
+    title: "Never miss a lead",
+    description: "Your website's Call Now button routes straight to an AI receptionist that answers, books, and logs every call.",
+    bullets: ["Website + lead form", "AI receptionist answers calls", "Books appointments automatically"],
+    icon: PhoneCall,
   },
   {
-    title: "Targeted Advertising",
-    description: "Strategic ad campaigns built to attract high-intent customers.",
-    bullets: ["Google & Meta ads", "Local targeting", "Conversion optimization"],
-    icon: Megaphone,
+    title: "Follow up automatically",
+    description: "Every form submission hits your CRM instantly and gets an SMS/email follow-up within minutes, not days.",
+    bullets: ["Instant CRM entry", "Automatic contact confirmation", "AI follow-up on unconfirmed leads"],
+    icon: Workflow,
   },
   {
-    title: "Lead Dashboards",
-    description: "Track leads, monitor performance, and organize customer activity in one place.",
-    bullets: ["Live reporting", "Lead management", "Performance tracking"],
-    icon: LayoutDashboard,
+    title: "Look credible everywhere",
+    description: "Social media management and automated review routing keep your online presence active and your rating high.",
+    bullets: ["Facebook + Instagram management", "Engagement-to-lead automation", "5-star reviews go public, the rest stay private"],
+    icon: Share2,
   },
 ] as const;
 
@@ -63,11 +60,11 @@ export function HomeCoreServices() {
             id="core-services-heading"
             className="text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-[2.5rem] lg:leading-tight dark:text-white"
           >
-            Website Development Services Built as One Growth System
+            One system. Every leak, covered.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            A website design company framework with three connected systems that drive traffic, convert visitors, and
-            track growth.
+            Website, AI receptionist, lead automation, social media, and reviews — five components that
+            work together so leads stop falling through the cracks.
           </p>
         </div>
 
@@ -110,40 +107,19 @@ export function HomeCoreServices() {
         </div>
 
         <p className="mx-auto mt-16 max-w-xl text-center text-sm text-neutral-500 dark:text-neutral-400 md:mt-20">
-          Explore{" "}
+          See the full breakdown of all five components on the{" "}
           <Link
-            href="/services/websites-and-leads"
+            href="/infrastructure"
             className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
           >
-            website development services
-          </Link>
-          ,{" "}
-          <Link
-            href={funnel}
-            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
-          >
-            targeted advertising
-          </Link>
-          , and{" "}
-          <Link
-            href="/services/automation-and-crm"
-            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
-          >
-            lead tracking dashboards
-          </Link>
-          . See how it fits together on the{" "}
-          <Link
-            href={funnel}
-            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
-          >
-            Growth System
+            Infrastructure
           </Link>{" "}
-          page, or explore{" "}
+          page, or head straight to{" "}
           <Link
-            href="/services"
+            href="/pricing"
             className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
           >
-            Services
+            Pricing
           </Link>
           .
         </p>

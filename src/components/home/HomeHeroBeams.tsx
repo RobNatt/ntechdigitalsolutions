@@ -5,17 +5,17 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import Balancer from "react-wrap-balancer";
-import { CONSTANTS } from "@/constants/links";
+import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
 import { cn } from "@/lib/utils";
 
-const VIEW_WORK_PATH = "/#case-studies-heading";
+const VIEW_WORK_PATH = "/infrastructure";
 
 const HERO_TRUST_POINTS = [
-  "Fast turnaround",
-  "SEO-focused builds",
-  "AI-powered automation",
-  "Omaha-based / US-based",
-  "Trusted by local businesses",
+  "AI receptionist included",
+  "CRM + lead automation",
+  "Social media managed",
+  "Nebraska-based",
+  "One flat monthly retainer",
 ] as const;
 
 export function HomeHeroBeams() {
@@ -75,28 +75,25 @@ export function HomeHeroBeams() {
         N-Tech Digital Solutions
       </p>
       <h1 className="relative z-50 mx-auto mt-2 mb-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-balance text-neutral-900 md:text-5xl lg:text-6xl dark:text-white">
-        <Balancer>Conversion-Focused Website Design &amp; Growth Systems</Balancer>
+        <Balancer>Stop Leaking Leads to Missed Calls and Slow Follow-Up</Balancer>
       </h1>
       <p className="relative z-50 mx-auto mt-4 max-w-2xl px-4 text-center text-base/relaxed text-gray-600 md:text-lg dark:text-neutral-300">
-        A modern website development company approach: conversion-focused website development, targeted advertising,
-        and lead tracking dashboards in one connected system.
+        One connected system for local service businesses: website, AI receptionist, lead automation,
+        social media management, and Google review automation — all under one flat monthly retainer.
       </p>
       <div
         id="offer-path"
         className="relative z-50 mt-8 mb-5 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap"
       >
-        <Link
-          href={CONSTANTS.STRATEGY_QUALIFICATION_PATH}
-          className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-56"
-        >
-          Book a Strategy Call
+        <ScheduleCtaLink className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-56">
+          Book a Call
           <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-        </Link>
+        </ScheduleCtaLink>
         <Link
           href={VIEW_WORK_PATH}
           className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-sky-800 bg-white px-4 py-2 text-sm font-semibold leading-6 text-sky-950 no-underline transition hover:-translate-y-0.5 dark:border-sky-500 dark:bg-neutral-900 dark:text-sky-100 sm:w-56"
         >
-          View Our Work
+          See the System
         </Link>
       </div>
 

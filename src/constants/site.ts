@@ -28,3 +28,13 @@ export function siteTelHref(): string | null {
   if (!SITE_BUSINESS_PHONE) return null;
   return `tel:${SITE_BUSINESS_PHONE.replace(/\s/g, "")}`;
 }
+
+/**
+ * GHL calendar embed URL for `/book-call` — only set when you have a real GoHighLevel
+ * calendar link (`NEXT_PUBLIC_GHL_CALENDAR_URL`). No default placeholder; the embed
+ * falls back to a phone/email CTA when this is null.
+ */
+export const SITE_GHL_CALENDAR_URL: string | null = (() => {
+  const raw = process.env.NEXT_PUBLIC_GHL_CALENDAR_URL?.trim();
+  return raw && raw.length > 0 ? raw : null;
+})();

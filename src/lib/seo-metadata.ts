@@ -22,3 +22,17 @@ export function ogForPath(
     type: "website",
   };
 }
+
+export type FaqItem = { q: string; a: string };
+
+/** `FAQPage` JSON-LD node for a flat list of Q&A pairs — embed in a page's `@graph` array. */
+export function buildFaqJsonLd(items: readonly FaqItem[]) {
+  return {
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export const Logo = () => {
+export const Logo = ({ compact = false }: { compact?: boolean }) => {
   return (
     <Link
       href="/"
@@ -16,9 +16,11 @@ export const Logo = () => {
         className="h-9 w-auto max-h-10 object-contain md:h-10"
         priority
       />
-      <span className="font-medium text-black dark:text-white">
-        N-Tech Digital Solutions
-      </span>
+      {!compact ? (
+        <span className="font-medium text-black dark:text-white">
+          N-Tech Digital Solutions
+        </span>
+      ) : null}
     </Link>
   );
 };

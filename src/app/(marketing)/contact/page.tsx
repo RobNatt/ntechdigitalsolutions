@@ -6,7 +6,7 @@ import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const contactDesc =
-  "Reach N-Tech Digital Solutions for project inquiries, partnerships, and support — Omaha and remote-friendly.";
+  "Reach N-Tech Digital Solutions about missed calls, slow lead follow-up, or getting more Google reviews — Omaha metro and Lincoln, NE.";
 
 export const metadata: Metadata = {
   title: "Contact | N-Tech Digital Solutions",
@@ -27,7 +27,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   return (
     <MarketingPageShell
       title="Contact"
-      subtitle="Tell us what you&apos;re trying to fix — traffic, leads, follow-up, or all of the above. We&apos;ll respond with next steps."
+      subtitle="Tell us what's leaking — missed calls, slow follow-up, inconsistent reviews, or all three. We&apos;ll respond with next steps."
       cta="compact"
     >
       <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">

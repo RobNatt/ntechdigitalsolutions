@@ -14,7 +14,6 @@ import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
-import { GROWTH_SYSTEM_FUNNEL_PATH } from "@/constants/growth-system-offer";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 
 interface NavbarProps {
@@ -25,8 +24,11 @@ interface NavbarProps {
   visible: boolean;
 }
 
+/** Primary CTA link — highlighted in the nav. */
+const PRIMARY_NAV_HREF = CONSTANTS.BOOK_CALL_PATH;
+
 function trackNavCta(href: string) {
-  if (href === "/contact" || href === GROWTH_SYSTEM_FUNNEL_PATH) {
+  if (href === "/contact" || href === PRIMARY_NAV_HREF) {
     trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
       placement: "nav",
       href,
@@ -39,9 +41,12 @@ const SCROLL_PILL_THRESHOLD = 72;
 
 export const Navbar = () => {
   const navItems = [
-    { name: "Growth System", link: GROWTH_SYSTEM_FUNNEL_PATH },
+    { name: "Infrastructure", link: "/infrastructure" },
+    { name: "Pricing", link: "/pricing" },
+    { name: "Case Studies", link: "/case-studies" },
+    { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
-    { name: "Contact", link: "/contact" },
+    { name: "Book a Call", link: PRIMARY_NAV_HREF },
   ];
 
   /** Page scroll — do not pass `target: navbarRef`: a fixed header’s target scroll offset barely moves, so shrink never triggered. */
@@ -86,7 +91,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
       )}
     >
       <div className="relative z-20 min-w-0 shrink-0">
-        <Logo />
+        <Logo compact={visible} />
       </div>
 
       <div className="pointer-events-none absolute inset-0 hidden items-center justify-center lg:flex">
@@ -100,7 +105,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
               onClick={() => trackNavCta(navItem.link)}
               className={cn(
                 "relative px-4 py-2 text-xs text-neutral-700 sm:px-5 lg:px-6 lg:text-sm dark:text-neutral-200",
-                (navItem.link === "/contact" || navItem.link === GROWTH_SYSTEM_FUNNEL_PATH) &&
+                (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
                   "btn-primary",
               )}
               key={`link=${idx}`}
@@ -191,7 +196,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   }}
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
-                    (navItem.link === "/contact" || navItem.link === GROWTH_SYSTEM_FUNNEL_PATH) &&
+                    (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
                       "btn-primary"
                   )}
                 >

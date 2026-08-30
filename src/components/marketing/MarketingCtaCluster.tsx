@@ -56,16 +56,16 @@ export function MarketingCtaCluster({
           </a>
         ) : null}
         <Link
-          href="/growthsystem"
+          href={CONSTANTS.BOOK_CALL_PATH}
           onClick={() =>
             trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.CTA_CLICK, {
               placement: "marketing_cta_cluster",
-              cta: "growth_system",
+              cta: "book_call",
             })
           }
           className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-4 py-2.5 text-sm font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
         >
-          Growth System
+          Book a call
         </Link>
       </div>
 

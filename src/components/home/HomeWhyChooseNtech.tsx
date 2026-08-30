@@ -5,28 +5,28 @@ import { Check } from "lucide-react";
 
 const FEATURES = [
   {
-    title: "Built for Conversion",
-    description: "Every website is designed to turn visitors into measurable business opportunities.",
+    title: "Every Call Gets Answered",
+    description: "The AI receptionist picks up what your team can't — nights, weekends, and busy hours included.",
   },
   {
-    title: "Traffic With Intent",
-    description: "Targeted advertising campaigns focused on attracting qualified customers.",
+    title: "Leads Followed Up in Minutes",
+    description: "Form submissions and calls hit your CRM instantly, with automatic follow-up before the lead goes cold.",
   },
   {
-    title: "Clear Performance Tracking",
-    description: "Monitor leads, campaigns, and customer activity through live dashboards.",
+    title: "Social Presence That Converts",
+    description: "Facebook and Instagram management with automation that turns engagement into real leads.",
   },
   {
-    title: "Fast & Modern Systems",
-    description: "Clean, responsive experiences optimized for speed and usability.",
+    title: "Your Rating, Protected",
+    description: "5-star experiences go public. Everything else is caught privately, before it becomes a review.",
   },
   {
-    title: "Data-Driven Decisions",
-    description: "Real insights that help improve marketing performance over time.",
+    title: "One Flat Monthly Retainer",
+    description: "No separate build fee, no juggling five vendors — one system, one bill.",
   },
   {
-    title: "Simple & Scalable",
-    description: "Lean systems designed to grow without unnecessary complexity.",
+    title: "Built to Scale With You",
+    description: "The same infrastructure that works for one location is built to expand as you grow.",
   },
 ] as const;
 
@@ -44,14 +44,15 @@ export function HomeWhyChooseNtech() {
             id="why-choose-heading"
             className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl dark:text-white"
           >
-            Why Businesses Choose Our Website Development Company
+            Why Local Businesses Choose N-Tech
           </h2>
           <p className="mt-5 text-base leading-relaxed text-neutral-600 md:text-lg dark:text-neutral-400">
-            Built to create measurable growth through connected website development services and digital systems.
+            Most agencies sell you a website and leave the rest to hope. We install the infrastructure
+            that catches and converts every lead the website generates.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-            Conversion-focused sites, targeted ads, and live lead views are wired as one flow—so you can
-            see what drove what, without juggling disconnected tools.
+            Website, AI receptionist, lead automation, social media, and reviews — wired as one system,
+            not five disconnected tools.
           </p>
         </header>
 
