@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bot, Globe2, MessageSquareText, Share2, Star } from "lucide-react";
+import { Bot, CheckCircle2, Globe2, Heart, MessageSquareText, Share2, Star } from "lucide-react";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { ServiceTopicJsonLd } from "@/components/marketing/ServiceTopicJsonLd";
 import { FaqSection } from "@/components/marketing/FaqSection";
@@ -129,7 +129,7 @@ export default function InfrastructurePage() {
             <section
               key={component.id}
               id={component.id}
-              className="scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
+              className="group scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm transition duration-300 hover:border-sky-200 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/50 dark:hover:border-sky-900/60 sm:p-8"
               aria-labelledby={`${component.id}-heading`}
             >
               <ServiceTopicJsonLd
@@ -139,9 +139,40 @@ export default function InfrastructurePage() {
                 serviceType={component.serviceType}
               />
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-300">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
+                <div className="relative flex h-10 w-10 shrink-0">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sky-700 transition duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-300">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  {component.id === "ai-receptionist" ? (
+                    <CheckCircle2
+                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 rounded-full bg-white text-emerald-600 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-950"
+                      aria-hidden
+                    />
+                  ) : null}
+                  {component.id === "social-media" ? (
+                    <Heart
+                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 fill-transparent text-rose-400 opacity-0 transition duration-300 group-hover:scale-100 group-hover:fill-rose-400 group-hover:opacity-100"
+                      aria-hidden
+                    />
+                  ) : null}
+                  {component.id === "review-automation" ? (
+                    <span className="absolute -right-2 -top-2 flex gap-0.5" aria-hidden>
+                      {[0, 1, 2].map((i) => (
+                        <Star
+                          key={i}
+                          className="h-3 w-3 fill-neutral-300 text-neutral-300 transition-all duration-300 dark:fill-neutral-700 dark:text-neutral-700 group-hover:fill-amber-400 group-hover:text-amber-400"
+                          style={{ transitionDelay: `${i * 120}ms` }}
+                        />
+                      ))}
+                    </span>
+                  ) : null}
+                  {component.id === "lead-automation" || component.id === "website" ? (
+                    <span
+                      className="absolute inset-0 rounded-lg border-2 border-sky-400 opacity-0 transition-all duration-500 group-hover:scale-150 group-hover:opacity-0 group-hover:[transition-timing-function:ease-out]"
+                      aria-hidden
+                    />
+                  ) : null}
+                </div>
                 <h2
                   id={`${component.id}-heading`}
                   className="text-xl font-semibold text-neutral-900 dark:text-white"

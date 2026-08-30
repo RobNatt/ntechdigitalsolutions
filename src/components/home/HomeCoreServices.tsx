@@ -1,24 +1,28 @@
-import { Check, ChevronDown, ChevronRight, PhoneCall, Share2, Workflow } from "lucide-react";
+import { Check, CheckCircle2, ChevronDown, ChevronRight, PhoneCall, Share2, Star, Workflow } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
+import { cn } from "@/lib/utils";
 
 const ICON_WRAP =
   "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400";
 
 const CARDS = [
   {
+    id: "answer",
     title: "Never miss a lead",
     description: "Your website's Call Now button routes straight to an AI receptionist that answers, books, and logs every call.",
     bullets: ["Website + lead form", "AI receptionist answers calls", "Books appointments automatically"],
     icon: PhoneCall,
   },
   {
+    id: "follow-up",
     title: "Follow up automatically",
     description: "Every form submission hits your CRM instantly and gets an SMS/email follow-up within minutes, not days.",
     bullets: ["Instant CRM entry", "Automatic contact confirmation", "AI follow-up on unconfirmed leads"],
     icon: Workflow,
   },
   {
+    id: "reputation",
     title: "Look credible everywhere",
     description: "Social media management and automated review routing keep your online presence active and your rating high.",
     bullets: ["Facebook + Instagram management", "Engagement-to-lead automation", "5-star reviews go public, the rest stay private"],
@@ -74,10 +78,37 @@ export function HomeCoreServices() {
               <Fragment key={card.title}>
                 {index > 0 ? <FlowConnector /> : null}
                 <article className="group relative flex min-w-0 flex-1 flex-col rounded-xl border border-neutral-200/90 bg-white p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition duration-300 ease-out hover:-translate-y-1 hover:border-blue-200/90 hover:shadow-[0_16px_48px_-16px_rgba(37,99,235,0.14),0_4px_20px_-4px_rgba(15,23,42,0.08)] md:max-w-none lg:p-9 dark:border-neutral-800 dark:bg-neutral-900/80 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:hover:border-blue-500/40 dark:hover:shadow-[0_16px_48px_-16px_rgba(59,130,246,0.18)]">
-                  <div
-                    className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${ICON_WRAP} transition duration-300 group-hover:scale-[1.04]`}
-                  >
-                    <card.icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                  <div className="relative inline-flex h-12 w-12 shrink-0">
+                    <div
+                      className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${ICON_WRAP} transition duration-300 group-hover:-rotate-6 group-hover:scale-[1.06]`}
+                    >
+                      <card.icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                    </div>
+                    {card.id === "answer" ? (
+                      <CheckCircle2
+                        className="absolute -right-1.5 -top-1.5 h-5 w-5 scale-50 rounded-full bg-white text-emerald-600 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-900"
+                        aria-hidden
+                      />
+                    ) : null}
+                    {card.id === "follow-up" ? (
+                      <span className="absolute left-1/2 top-full mt-1.5 h-0.5 w-10 -translate-x-1/2 overflow-hidden rounded-full bg-blue-100 dark:bg-blue-950/60" aria-hidden>
+                        <span className="block h-full w-2.5 -translate-x-full rounded-full bg-blue-500 transition-transform duration-700 ease-out group-hover:translate-x-[2.75rem]" />
+                      </span>
+                    ) : null}
+                    {card.id === "reputation" ? (
+                      <span className="absolute -right-2 -top-2 flex gap-0.5" aria-hidden>
+                        {[0, 1, 2].map((i) => (
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-3 w-3 fill-neutral-300 text-neutral-300 transition-all duration-300 dark:fill-neutral-700 dark:text-neutral-700",
+                              "group-hover:fill-amber-400 group-hover:text-amber-400",
+                            )}
+                            style={{ transitionDelay: `${i * 120}ms` }}
+                          />
+                        ))}
+                      </span>
+                    ) : null}
                   </div>
                   <h3 className="mt-6 text-lg font-medium tracking-tight text-neutral-900 dark:text-white">
                     {card.title}

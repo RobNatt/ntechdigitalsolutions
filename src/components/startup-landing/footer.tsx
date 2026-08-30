@@ -23,7 +23,7 @@ export function Footer() {
       <div className="relative mx-auto max-w-7xl md:px-8">
         <p
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-neutral-50 to-neutral-200 bg-clip-text px-2 text-center text-3xl font-bold uppercase leading-tight text-transparent sm:text-5xl md:text-7xl lg:text-9xl dark:from-neutral-950 dark:to-neutral-800"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-neutral-200 to-neutral-300 bg-clip-text px-2 text-center text-3xl font-bold uppercase leading-tight text-transparent sm:text-5xl md:text-7xl lg:text-9xl dark:from-neutral-800 dark:to-neutral-700"
         >
           N-Tech Digital Solutions
         </p>
