@@ -60,7 +60,7 @@ export default function PricingPage() {
       />
 
       <div className="rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 dark:text-white">
           The complete system
         </p>
         <h2 className="mt-2 text-xl font-semibold text-neutral-900 dark:text-white">
@@ -69,7 +69,7 @@ export default function PricingPage() {
         <ul className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
           {INCLUDED.map((line) => (
             <li key={line} className="flex gap-2.5">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden />
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900 dark:text-white" aria-hidden />
               <span>{line}</span>
             </li>
           ))}
@@ -97,12 +97,12 @@ export default function PricingPage() {
           give you the real number and show you exactly what it covers for your business.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <ScheduleCtaLink className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+          <ScheduleCtaLink className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
             Book a call to see pricing
           </ScheduleCtaLink>
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
           >
             Ask a question first
           </Link>

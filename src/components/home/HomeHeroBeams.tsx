@@ -31,7 +31,7 @@ export function HomeHeroBeams() {
     >
       <BackgroundGrids />
 
-      <p className="relative z-50 mx-auto mb-2 max-w-4xl text-center text-xs font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-400">
+      <p className="relative z-50 mx-auto mb-2 max-w-4xl text-center text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
         N-Tech Digital Solutions
       </p>
       <h1 className="relative z-50 mx-auto mt-2 mb-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-balance text-neutral-900 md:text-5xl lg:text-6xl dark:text-white">
@@ -48,13 +48,13 @@ export function HomeHeroBeams() {
         id="offer-path"
         className="relative z-50 mt-8 mb-5 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap"
       >
-        <ScheduleCtaLink className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-56">
+        <ScheduleCtaLink className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 sm:w-56">
           Book a Call
           <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
         </ScheduleCtaLink>
         <Link
           href={VIEW_WORK_PATH}
-          className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-sky-800 bg-white px-4 py-2 text-sm font-semibold leading-6 text-sky-950 no-underline transition hover:-translate-y-0.5 dark:border-sky-500 dark:bg-neutral-900 dark:text-sky-100 sm:w-56"
+          className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-4 py-2 text-sm font-semibold leading-6 text-neutral-900 no-underline transition hover:-translate-y-0.5 dark:border-neutral-100 dark:bg-neutral-900 dark:text-neutral-100 sm:w-56"
         >
           See the System
         </Link>
@@ -91,7 +91,7 @@ export function HomeHeroBeams() {
                 )}
               >
                 <Check
-                  className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                  className="h-3.5 w-3.5 shrink-0 text-neutral-900 dark:text-white"
                   strokeWidth={2.5}
                   aria-hidden
                 />
@@ -142,13 +142,13 @@ const HeroLoadInPreview = () => {
           stroke="currentColor"
           strokeWidth="2"
           strokeDasharray="60"
-          className="hero-loadin-line text-sky-500"
+          className="hero-loadin-line text-neutral-900 dark:text-white"
         />
       </svg>
       <span className="relative flex h-9 w-9 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-700 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
         <Bot className="h-4 w-4" />
         <CheckCircle2
-          className="hero-loadin-badge absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full bg-white text-emerald-600 opacity-0 dark:bg-neutral-950"
+          className="hero-loadin-badge absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full bg-white text-neutral-900 opacity-0 dark:bg-neutral-950 dark:text-white"
         />
       </span>
     </div>

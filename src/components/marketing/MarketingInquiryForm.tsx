@@ -100,18 +100,18 @@ export function MarketingInquiryForm({
     return (
       <div
         className={cn(
-          "rounded-xl border border-emerald-200 bg-emerald-50/90 p-6 text-center dark:border-emerald-900/50 dark:bg-emerald-950/40",
+          "rounded-xl border border-neutral-900 bg-neutral-50 p-6 text-center dark:border-neutral-100 dark:bg-neutral-900/40",
           className
         )}
       >
-        <p className="text-lg font-semibold text-emerald-950 dark:text-emerald-100">Thanks — we got it.</p>
-        <p className="mt-2 text-sm text-emerald-900/90 dark:text-emerald-200/90">
+        <p className="text-lg font-semibold text-neutral-900 dark:text-white">Thanks — we got it.</p>
+        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
           We&apos;ll follow up by email shortly.
         </p>
         <button
           type="button"
           onClick={() => setDone(false)}
-          className="mt-4 text-sm font-semibold text-emerald-800 underline underline-offset-4 hover:text-emerald-950 dark:text-emerald-300 dark:hover:text-emerald-100"
+          className="mt-4 text-sm font-semibold text-neutral-900 underline underline-offset-4 hover:text-neutral-600 dark:text-neutral-100 dark:hover:text-neutral-300"
         >
           Send another message
         </button>
@@ -140,7 +140,7 @@ export function MarketingInquiryForm({
       noValidate
     >
       {planInterest ? (
-        <p className="rounded-lg border border-sky-200 bg-sky-50/90 px-3 py-2 text-sm text-sky-950 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-100">
+        <p className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-100">
           <span className="font-semibold">Package interest:</span>{" "}
           <span className="capitalize">{planInterest.replace(/-/g, " ")}</span>
         </p>
@@ -238,7 +238,7 @@ export function MarketingInquiryForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+        className="w-full rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
       >
         {submitting ? "Sending…" : "Send message"}
       </button>

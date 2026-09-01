@@ -92,7 +92,8 @@ export function Footer() {
                     <Link
                       className={cn(
                         "transition-colors hover:text-text-neutral-800",
-                        link.href === CONSTANTS.BOOK_CALL_PATH && "btn-primary inline-flex w-fit"
+                        link.href === CONSTANTS.BOOK_CALL_PATH &&
+                          "inline-flex w-fit rounded-full bg-neutral-900 px-4 py-1.5 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900"
                       )}
                       href={link.href}
                     >

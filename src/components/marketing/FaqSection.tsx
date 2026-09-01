@@ -16,7 +16,7 @@ function FaqList({ items }: { items: readonly FaqItem[] }) {
       {items.map((item) => (
         <details
           key={item.q}
-          className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 transition-colors duration-200 hover:border-sky-200 hover:bg-white dark:border-neutral-700 dark:bg-neutral-900/40 dark:hover:border-sky-900/60 dark:hover:bg-neutral-900/70"
+          className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 transition-colors duration-200 hover:border-neutral-400 hover:bg-white dark:border-neutral-700 dark:bg-neutral-900/40 dark:hover:border-neutral-500 dark:hover:bg-neutral-900/70"
         >
           <summary className="cursor-pointer list-none text-sm font-semibold text-neutral-900 dark:text-neutral-100">
             {item.q}

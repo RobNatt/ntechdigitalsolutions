@@ -36,7 +36,7 @@ export function MarketingCtaCluster({
                 cta: "contact_form",
               })
             }
-            className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+            className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
           >
             Contact form
           </Link>
@@ -50,7 +50,7 @@ export function MarketingCtaCluster({
                 cta: "call",
               })
             }
-            className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
           >
             Call {SITE_BUSINESS_PHONE}
           </a>
@@ -63,7 +63,7 @@ export function MarketingCtaCluster({
               cta: "book_call",
             })
           }
-          className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-50 px-4 py-2.5 text-sm font-semibold text-sky-950 transition hover:bg-sky-100 dark:bg-sky-950/40 dark:text-sky-100 dark:hover:bg-sky-900/50"
+          className="inline-flex items-center justify-center rounded-full border border-neutral-900 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-100 dark:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-900"
         >
           Book a call
         </Link>
@@ -73,7 +73,7 @@ export function MarketingCtaCluster({
         <span className="font-medium text-neutral-800 dark:text-neutral-200">Email: </span>
         <a
           href={`mailto:${SITE_CONTACT_EMAIL}`}
-          className="font-medium text-sky-800 underline decoration-sky-400/60 underline-offset-2 hover:decoration-sky-700 dark:text-sky-300 dark:hover:decoration-sky-200"
+          className="font-medium text-neutral-900 underline decoration-neutral-400 underline-offset-2 hover:decoration-neutral-900 dark:text-neutral-100 dark:decoration-neutral-600 dark:hover:decoration-neutral-200"
         >
           {SITE_CONTACT_EMAIL}
         </a>

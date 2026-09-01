@@ -129,7 +129,7 @@ export default function InfrastructurePage() {
             <section
               key={component.id}
               id={component.id}
-              className="group scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm transition duration-300 hover:border-sky-200 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/50 dark:hover:border-sky-900/60 sm:p-8"
+              className="group scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm transition duration-300 hover:border-neutral-400 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/50 dark:hover:border-neutral-600 sm:p-8"
               aria-labelledby={`${component.id}-heading`}
             >
               <ServiceTopicJsonLd
@@ -140,12 +140,12 @@ export default function InfrastructurePage() {
               />
               <div className="flex items-center gap-3">
                 <div className="relative flex h-10 w-10 shrink-0">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sky-700 transition duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-100 text-neutral-900 transition duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   {component.id === "ai-receptionist" ? (
                     <CheckCircle2
-                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 rounded-full bg-white text-emerald-600 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-950"
+                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 rounded-full bg-white text-neutral-900 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-950 dark:text-white"
                       aria-hidden
                     />
                   ) : null}
@@ -168,7 +168,7 @@ export default function InfrastructurePage() {
                   ) : null}
                   {component.id === "lead-automation" || component.id === "website" ? (
                     <span
-                      className="absolute inset-0 rounded-lg border-2 border-sky-400 opacity-0 transition-all duration-500 group-hover:scale-150 group-hover:opacity-0 group-hover:[transition-timing-function:ease-out]"
+                      className="absolute inset-0 rounded-lg border-2 border-neutral-900 opacity-0 transition-all duration-500 group-hover:scale-150 group-hover:opacity-0 group-hover:[transition-timing-function:ease-out] dark:border-white"
                       aria-hidden
                     />
                   ) : null}
@@ -187,7 +187,7 @@ export default function InfrastructurePage() {
                 {component.bullets.map((line) => (
                   <li key={line} className="flex gap-2.5">
                     <span
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900 dark:bg-white"
                       aria-hidden
                     />
                     <span>{line}</span>
@@ -203,7 +203,7 @@ export default function InfrastructurePage() {
 
               {component.id === "lead-automation" ? (
                 <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50/80 p-5 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
                     Try it — this form is live
                   </p>
                   <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">

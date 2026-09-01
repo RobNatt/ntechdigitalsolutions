@@ -52,7 +52,7 @@ export function HomeFaq() {
                     <span
                       aria-hidden
                       className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-neutral-50 text-neutral-500 transition-all duration-300 dark:border-neutral-700 dark:bg-neutral-800/70 dark:text-neutral-300 ${
-                        isOpen ? "rotate-180 border-sky-200 text-sky-600 dark:border-sky-800 dark:text-sky-400" : ""
+                        isOpen ? "rotate-180 border-neutral-900 text-neutral-900 dark:border-white dark:text-white" : ""
                       }`}
                     >
                       <ChevronDown className="h-4 w-4" />

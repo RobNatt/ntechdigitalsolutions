@@ -85,7 +85,7 @@ export default async function BlogPage() {
                 <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 sm:mt-4">
                   {blogListExcerpt(post)}
                 </p>
-                <span className="mt-3 inline-block text-xs font-semibold text-sky-700 dark:text-sky-400 sm:mt-4">
+                <span className="mt-3 inline-block text-xs font-semibold text-neutral-900 dark:text-white sm:mt-4">
                   Read full article
                 </span>
               </Link>

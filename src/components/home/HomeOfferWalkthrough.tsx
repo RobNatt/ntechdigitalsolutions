@@ -35,7 +35,7 @@ const BLOCKS: Block[] = [
     why: "A lead form nobody follows up on is a to-do list, not a system. This is why every submission triggers a real confirmation within seconds instead of sitting in an inbox.",
     render: () => (
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
           Try it — this form is live
         </p>
         <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
@@ -98,7 +98,7 @@ export function HomeOfferWalkthrough() {
                   aria-expanded={isOpen}
                   className="flex w-full items-center gap-4 px-5 py-5 text-left sm:px-6"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-300">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-100 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -109,7 +109,7 @@ export function HomeOfferWalkthrough() {
                       {block.why}
                     </span>
                   </span>
-                  <span className="flex shrink-0 items-center gap-2 text-xs font-semibold text-sky-700 dark:text-sky-400">
+                  <span className="flex shrink-0 items-center gap-2 text-xs font-semibold text-neutral-900 dark:text-white">
                     {block.ctaLabel}
                     <ChevronDown
                       className={cn("h-4 w-4 transition-transform duration-200", isOpen && "rotate-180")}

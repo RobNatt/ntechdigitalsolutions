@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
 const ICON_WRAP =
-  "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400";
+  "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white";
 
 const CARDS = [
   {
@@ -37,14 +37,14 @@ function FlowConnector() {
       aria-hidden="true"
     >
       <div className="flex flex-col items-center md:hidden">
-        <div className="h-8 w-px bg-gradient-to-b from-transparent via-blue-200/80 to-transparent dark:via-blue-800/45" />
-        <div className="my-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-100/90 bg-blue-50/80 text-blue-600 shadow-sm dark:border-blue-900/60 dark:bg-blue-950/50 dark:text-blue-400">
+        <div className="h-8 w-px bg-gradient-to-b from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
+        <div className="my-1 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
           <ChevronDown className="h-4 w-4" strokeWidth={2} />
         </div>
-        <div className="h-8 w-px bg-gradient-to-b from-transparent via-blue-200/80 to-transparent dark:via-blue-800/45" />
+        <div className="h-8 w-px bg-gradient-to-b from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
       </div>
       <div className="hidden h-full flex-col items-center justify-center md:flex">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-100/90 bg-white text-blue-600 shadow-sm ring-4 ring-[#f8f9fb] dark:border-blue-900/60 dark:bg-neutral-900 dark:text-blue-400 dark:ring-neutral-950">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-sm ring-4 ring-[#f8f9fb] dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:ring-neutral-950">
           <ChevronRight className="h-4 w-4" strokeWidth={2} />
         </div>
       </div>
@@ -62,7 +62,7 @@ export function HomeCoreServices() {
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="core-services-heading"
-            className="text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-[2.5rem] lg:leading-tight dark:text-white"
+            className="text-3xl font-medium tracking-tight text-neutral-900 md:text-4xl lg:text-[2.5rem] lg:leading-tight dark:text-white"
           >
             One system. Every leak, covered.
           </h2>
@@ -77,7 +77,7 @@ export function HomeCoreServices() {
             {CARDS.map((card, index) => (
               <Fragment key={card.title}>
                 {index > 0 ? <FlowConnector /> : null}
-                <article className="group relative flex min-w-0 flex-1 flex-col rounded-xl border border-neutral-200/90 bg-white p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition duration-300 ease-out hover:-translate-y-1 hover:border-blue-200/90 hover:shadow-[0_16px_48px_-16px_rgba(37,99,235,0.14),0_4px_20px_-4px_rgba(15,23,42,0.08)] md:max-w-none lg:p-9 dark:border-neutral-800 dark:bg-neutral-900/80 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:hover:border-blue-500/40 dark:hover:shadow-[0_16px_48px_-16px_rgba(59,130,246,0.18)]">
+                <article className="group relative flex min-w-0 flex-1 flex-col rounded-xl border border-neutral-200/90 bg-white p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition duration-300 ease-out hover:-translate-y-1 hover:border-neutral-300 hover:shadow-[0_16px_48px_-16px_rgba(15,23,42,0.14),0_4px_20px_-4px_rgba(15,23,42,0.08)] md:max-w-none lg:p-9 dark:border-neutral-800 dark:bg-neutral-900/80 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:hover:border-neutral-600">
                   <div className="relative inline-flex h-12 w-12 shrink-0">
                     <div
                       className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${ICON_WRAP} transition duration-300 group-hover:-rotate-6 group-hover:scale-[1.06]`}
@@ -86,13 +86,13 @@ export function HomeCoreServices() {
                     </div>
                     {card.id === "answer" ? (
                       <CheckCircle2
-                        className="absolute -right-1.5 -top-1.5 h-5 w-5 scale-50 rounded-full bg-white text-emerald-600 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-900"
+                        className="absolute -right-1.5 -top-1.5 h-5 w-5 scale-50 rounded-full bg-white text-neutral-900 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-900 dark:text-white"
                         aria-hidden
                       />
                     ) : null}
                     {card.id === "follow-up" ? (
-                      <span className="absolute left-1/2 top-full mt-1.5 h-0.5 w-10 -translate-x-1/2 overflow-hidden rounded-full bg-blue-100 dark:bg-blue-950/60" aria-hidden>
-                        <span className="block h-full w-2.5 -translate-x-full rounded-full bg-blue-500 transition-transform duration-700 ease-out group-hover:translate-x-[2.75rem]" />
+                      <span className="absolute left-1/2 top-full mt-1.5 h-0.5 w-10 -translate-x-1/2 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700" aria-hidden>
+                        <span className="block h-full w-2.5 -translate-x-full rounded-full bg-neutral-900 transition-transform duration-700 ease-out group-hover:translate-x-[2.75rem] dark:bg-white" />
                       </span>
                     ) : null}
                     {card.id === "reputation" ? (
@@ -123,7 +123,7 @@ export function HomeCoreServices() {
                         className="flex items-start gap-2.5 text-sm text-neutral-600 dark:text-neutral-400"
                       >
                         <Check
-                          className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-400"
+                          className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-900 dark:text-white"
                           strokeWidth={2.5}
                           aria-hidden
                         />
@@ -141,14 +141,14 @@ export function HomeCoreServices() {
           See the full breakdown of all five components on the{" "}
           <Link
             href="/infrastructure"
-            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
+            className="font-medium text-neutral-900 underline decoration-neutral-400 underline-offset-2 transition hover:text-neutral-600 dark:text-white dark:decoration-neutral-600 dark:hover:text-neutral-300"
           >
             Infrastructure
           </Link>{" "}
           page, or head straight to{" "}
           <Link
             href="/pricing"
-            className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:text-blue-300"
+            className="font-medium text-neutral-900 underline decoration-neutral-400 underline-offset-2 transition hover:text-neutral-600 dark:text-white dark:decoration-neutral-600 dark:hover:text-neutral-300"
           >
             Pricing
           </Link>

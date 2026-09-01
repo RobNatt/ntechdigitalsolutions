@@ -201,13 +201,13 @@ export default function AboutPage() {
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           Prefer to talk it through?{" "}
-          <ScheduleCtaLink className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+          <ScheduleCtaLink className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white">
             Book a call
           </ScheduleCtaLink>{" "}
           or{" "}
           <Link
             href="/contact"
-            className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+            className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white"
           >
             send a message
           </Link>

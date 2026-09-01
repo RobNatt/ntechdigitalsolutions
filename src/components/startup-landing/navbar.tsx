@@ -101,7 +101,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
               className={cn(
                 "relative px-4 py-2 text-xs text-neutral-700 sm:px-5 lg:px-6 lg:text-sm dark:text-neutral-200",
                 (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
-                  "btn-primary",
+                  "!ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
               )}
               key={`link=${idx}`}
               href={navItem.link}
@@ -183,7 +183,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
                   className={cn(
                     "relative text-neutral-600 dark:text-neutral-300",
                     (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
-                      "btn-primary"
+                      "rounded-full bg-neutral-900 px-4 py-2 !text-white dark:bg-white dark:!text-neutral-900"
                   )}
                 >
                   <motion.span className="block">{navItem.name} </motion.span>

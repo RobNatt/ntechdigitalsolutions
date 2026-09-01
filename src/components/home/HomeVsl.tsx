@@ -5,7 +5,7 @@ export function HomeVsl() {
     <section className="border-t border-neutral-200/70 bg-white py-16 dark:border-neutral-800 dark:bg-neutral-950 md:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-400">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
             Watch first
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900 md:text-3xl dark:text-white">

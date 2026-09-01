@@ -188,21 +188,21 @@ export function HomeScrollStory() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden border-t border-slate-800/80 bg-[#0f172a]"
+      className="relative overflow-hidden border-t border-neutral-800 bg-black"
     >
       <div className="flex h-screen flex-col items-center justify-center px-4">
-        <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.14em] text-sky-400">
+        <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
           One connected system
         </p>
         <h2 className="mb-14 text-center text-2xl font-semibold tracking-tight text-white md:text-3xl">
           Watch a lead move through the system,{" "}
-          <span className="text-sky-400">LIVE</span>
+          <span className="text-white">LIVE</span>
         </h2>
 
         <div className="relative h-[420px] w-full max-w-5xl">
           {/* Beat 0: intro person */}
           <div className="story-intro absolute inset-0 flex items-center justify-center">
-            <span className="flex h-24 w-24 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-sky-400">
+            <span className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-white">
               <User className="h-12 w-12" strokeWidth={1.5} />
             </span>
           </div>
@@ -228,30 +228,30 @@ export function HomeScrollStory() {
                     <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
                     <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
                   </div>
-                  <div className="mt-2 h-8 w-full rounded bg-sky-100 dark:bg-sky-950" />
+                  <div className="mt-2 h-8 w-full rounded bg-neutral-200 dark:bg-neutral-800" />
                   <div className="h-2 w-4/5 rounded bg-neutral-200 dark:bg-neutral-800" />
                   <div className="h-2 w-3/5 rounded bg-neutral-200 dark:bg-neutral-800" />
-                  <div className="mt-2 h-6 w-full rounded-full bg-emerald-500" />
+                  <div className="mt-2 h-6 w-full rounded-full bg-neutral-900 dark:bg-white" />
                 </div>
 
                 <div className="scene-a-form absolute inset-0 flex flex-col gap-2 p-2.5 opacity-0">
                   <div className="h-2 w-1/2 rounded bg-neutral-300 dark:bg-neutral-700" />
                   <div className="h-5 w-full overflow-hidden rounded border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900">
-                    <div className="form-fill-bar h-full w-full origin-left scale-x-0 bg-sky-200 dark:bg-sky-900" />
+                    <div className="form-fill-bar h-full w-full origin-left scale-x-0 bg-neutral-400 dark:bg-neutral-500" />
                   </div>
                   <div className="h-5 w-full rounded border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900" />
-                  <div className="mt-1 h-6 w-full rounded-full bg-emerald-500" />
+                  <div className="mt-1 h-6 w-full rounded-full bg-neutral-900 dark:bg-white" />
                 </div>
 
                 <div className="relative flex h-full w-full items-center justify-center">
                   <div className="notif-email absolute top-6 flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 text-[10px] font-medium text-neutral-800 shadow-md opacity-0">
-                    <Mail className="h-3 w-3 text-sky-600" /> New email
+                    <Mail className="h-3 w-3 text-neutral-700" /> New email
                   </div>
                   <div className="notif-text absolute top-6 flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 text-[10px] font-medium text-neutral-800 shadow-md opacity-0">
-                    <MessageSquareText className="h-3 w-3 text-emerald-600" /> New text
+                    <MessageSquareText className="h-3 w-3 text-neutral-700" /> New text
                   </div>
                   <div className="notif-call absolute top-6 flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 text-[10px] font-medium text-neutral-800 shadow-md opacity-0">
-                    <Phone className="h-3 w-3 text-rose-600" /> Incoming call
+                    <Phone className="h-3 w-3 text-neutral-700" /> Incoming call
                   </div>
                 </div>
               </PhoneFrame>
@@ -265,15 +265,15 @@ export function HomeScrollStory() {
               from this employee.
             </p>
             <div className="flex items-center gap-10">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full border border-sky-800 bg-sky-950 text-sky-400">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-white">
                 <Bot className="h-8 w-8" strokeWidth={1.5} />
               </span>
               <div className="flex gap-1.5" aria-hidden>
-                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-sky-400 opacity-0" />
-                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-sky-400 opacity-0" />
-                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-sky-400 opacity-0" />
+                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-white opacity-0" />
+                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-white opacity-0" />
+                <span className="ai-pulse h-1.5 w-1.5 rounded-full bg-white opacity-0" />
               </div>
-              <span className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-neutral-300">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300">
                 <User className="h-8 w-8" strokeWidth={1.5} />
               </span>
             </div>
@@ -284,9 +284,9 @@ export function HomeScrollStory() {
             <p className="caption-calendar max-w-lg text-center text-lg leading-relaxed text-white opacity-0">
               Booked straight onto the calendar — no back-and-forth required.
             </p>
-            <div className="relative flex h-32 w-48 flex-col items-center justify-center rounded-2xl border border-slate-700 bg-slate-900">
-              <Calendar className="h-10 w-10 text-slate-500" strokeWidth={1.25} />
-              <div className="calendar-badge absolute -bottom-4 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg">
+            <div className="relative flex h-32 w-48 flex-col items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-900">
+              <Calendar className="h-10 w-10 text-neutral-500" strokeWidth={1.25} />
+              <div className="calendar-badge absolute -bottom-4 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black opacity-0 shadow-lg">
                 <CalendarCheck className="h-3.5 w-3.5" /> Confirmed
               </div>
             </div>
@@ -325,14 +325,14 @@ export function HomeScrollStory() {
             </p>
             <div className="relative flex h-20 items-center justify-center">
               <div className="reviews-people flex items-center gap-4">
-                <span className="reviews-person-left flex h-14 w-14 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-neutral-300">
+                <span className="reviews-person-left flex h-14 w-14 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300">
                   <User className="h-7 w-7" strokeWidth={1.5} />
                 </span>
-                <span className="reviews-person-right flex h-14 w-14 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-neutral-300">
+                <span className="reviews-person-right flex h-14 w-14 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300">
                   <User className="h-7 w-7" strokeWidth={1.5} />
                 </span>
               </div>
-              <span className="reviews-handshake absolute flex h-14 w-14 items-center justify-center rounded-full border border-emerald-700 bg-emerald-950 text-emerald-400 opacity-0">
+              <span className="reviews-handshake absolute flex h-14 w-14 items-center justify-center rounded-full border border-neutral-300 bg-white text-black opacity-0">
                 <Handshake className="h-7 w-7" strokeWidth={1.5} />
               </span>
               <div className="absolute -top-9 flex gap-1">
@@ -359,9 +359,9 @@ function StaticStoryFallback() {
     "Our review automation gets you more 5-star reviews, and helps your business thrive by reaching out to every customer you've completed work for.",
   ];
   return (
-    <section className="border-t border-slate-800/80 bg-[#0f172a] py-20">
+    <section className="border-t border-neutral-800 bg-black py-20">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-sky-400">
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
           One connected system
         </p>
         <h2 className="mt-2 text-center text-2xl font-semibold tracking-tight text-white md:text-3xl">
@@ -369,8 +369,8 @@ function StaticStoryFallback() {
         </h2>
         <ol className="mt-10 space-y-6">
           {beats.map((text, i) => (
-            <li key={text} className="flex gap-4 text-base leading-relaxed text-slate-300">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-sky-800 text-xs font-semibold text-sky-400">
+            <li key={text} className="flex gap-4 text-base leading-relaxed text-neutral-300">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neutral-700 text-xs font-semibold text-white">
                 {i + 1}
               </span>
               {text}
