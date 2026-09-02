@@ -48,7 +48,6 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
       return merged;
     })(),
     integration_sheets_enabled: Boolean(row.integration_sheets_enabled ?? false),
-    integration_calendly_enabled: Boolean(row.integration_calendly_enabled ?? false),
     integration_google_calendar_enabled: Boolean(row.integration_google_calendar_enabled ?? false),
     integration_webhook_secret:
       row.integration_webhook_secret != null && String(row.integration_webhook_secret).trim()
@@ -58,18 +57,10 @@ function mapSettingsRow(row: Record<string, unknown> | null): OsSettingsRow {
       row.integration_sheets_column_map && typeof row.integration_sheets_column_map === "object"
         ? (row.integration_sheets_column_map as Record<string, string>)
         : {},
-    integration_calendly_booked_stage: String(
-      row.integration_calendly_booked_stage ?? DEFAULT_OS_SETTINGS.integration_calendly_booked_stage
-    ),
-    integration_calendly_discovery_url:
-      row.integration_calendly_discovery_url != null &&
-      String(row.integration_calendly_discovery_url).trim()
-        ? String(row.integration_calendly_discovery_url).trim()
-        : null,
-    integration_calendly_proposal_url:
-      row.integration_calendly_proposal_url != null && String(row.integration_calendly_proposal_url).trim()
-        ? String(row.integration_calendly_proposal_url).trim()
-        : null,
+    integration_ghl_discovery_booking_id:
+      row.integration_ghl_discovery_booking_id != null ? String(row.integration_ghl_discovery_booking_id) : null,
+    integration_ghl_proposal_booking_id:
+      row.integration_ghl_proposal_booking_id != null ? String(row.integration_ghl_proposal_booking_id) : null,
     integration_google_calendar_id:
       row.integration_google_calendar_id != null ? String(row.integration_google_calendar_id) : null,
     integration_google_oauth_connected: Boolean(row.integration_google_oauth_connected ?? false),
