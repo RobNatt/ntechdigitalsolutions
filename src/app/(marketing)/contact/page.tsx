@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { PageShell } from "@/components/ntech/PageShell";
+import { ChannelChip } from "@/components/ntech/primitives";
 import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
-import { TrackedPhoneLink } from "@/components/marketing/TrackedPhoneLink";
-import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL } from "@/constants/site";
+import { ReceptionistDemoCta } from "@/components/ntech/ReceptionistDemoCta";
+import { SITE_CONTACT_EMAIL, SITE_SERVICE_AREAS } from "@/constants/site";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const contactDesc =
@@ -21,49 +22,59 @@ type ContactPageProps = {
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const sp = await searchParams;
-  const planInterest =
-    typeof sp.plan === "string" && sp.plan.trim() ? sp.plan.trim() : undefined;
+  const planInterest = typeof sp.plan === "string" && sp.plan.trim() ? sp.plan.trim() : undefined;
 
   return (
-    <MarketingPageShell
-      title="Contact"
-      subtitle="Tell us what's leaking — missed calls, slow follow-up, inconsistent reviews, or all three. We&apos;ll respond with next steps."
-      cta="compact"
+    <PageShell
+      eyebrow="Contact"
+      title="Tell us which row never completed."
+      lede="Missed calls, slow follow-up, inconsistent reviews, or all three. Send it over and we'll reply by email with what we'd do about it."
+      close="none"
     >
-      <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Send a message</h2>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-          Same details we used to collect on our intake form: your name, email, company (optional),
-          phone (optional), and what you need. We email our team immediately and reply to you by email.
-        </p>
-        <div className="mt-6">
-          <MarketingInquiryForm planInterest={planInterest} />
-        </div>
-      </div>
-      <div className="space-y-3 pt-4">
-        <p>
-          <span className="font-semibold text-neutral-900 dark:text-white">Email: </span>
-          <a
-            href={`mailto:${SITE_CONTACT_EMAIL}`}
-            className="text-neutral-700 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-neutral-300 dark:hover:decoration-white"
-          >
-            {SITE_CONTACT_EMAIL}
-          </a>
-        </p>
-        {SITE_BUSINESS_PHONE ? (
-          <p>
-            <span className="font-semibold text-neutral-900 dark:text-white">Phone: </span>
-            <TrackedPhoneLink
-              phone={SITE_BUSINESS_PHONE}
-              className="text-neutral-700 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-neutral-300 dark:hover:decoration-white"
-            />
+      <div className="grid gap-8 lg:grid-cols-[1fr_16rem]">
+        <div className="rounded-xl border border-rule bg-white p-5 shadow-[0_1px_2px_rgba(14,35,64,0.04)] sm:p-7">
+          <h2 className="type-heading text-[1.25rem] text-ink">Send a message</h2>
+          <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-ink">
+            This form runs on the same lead automation we install for clients: it emails our team
+            immediately and sends you a confirmation. You are not waiting on someone to check an
+            inbox.
           </p>
-        ) : null}
-        <p className="text-neutral-600 dark:text-neutral-400">
-          <span className="font-semibold text-neutral-900 dark:text-white">Location: </span>
-          Omaha, Nebraska — serving clients locally and remotely.
-        </p>
+          <div className="mt-6">
+            <MarketingInquiryForm planInterest={planInterest} />
+          </div>
+        </div>
+
+        <aside className="space-y-6">
+          <div>
+            <p className="type-data text-[0.75rem] uppercase text-muted-ink">Email</p>
+            <a
+              href={`mailto:${SITE_CONTACT_EMAIL}`}
+              className="mt-2 block text-[0.9375rem] text-ink underline underline-offset-4"
+            >
+              {SITE_CONTACT_EMAIL}
+            </a>
+          </div>
+
+          <div>
+            <p className="type-data text-[0.75rem] uppercase text-muted-ink">Call the receptionist</p>
+            <p className="mt-2 text-[0.875rem] leading-relaxed text-muted-ink">
+              It is the same one we install. Calling it is the fastest way to hear what it does.
+            </p>
+            <div className="mt-3">
+              <ReceptionistDemoCta />
+            </div>
+          </div>
+
+          <div>
+            <p className="type-data text-[0.75rem] uppercase text-muted-ink">Where we work</p>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink">{SITE_SERVICE_AREAS}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <ChannelChip tone="muted">Omaha, NE</ChannelChip>
+              <ChannelChip tone="muted">Lincoln, NE</ChannelChip>
+            </div>
+          </div>
+        </aside>
       </div>
-    </MarketingPageShell>
+    </PageShell>
   );
 }

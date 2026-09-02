@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { DeferredAnalyticsRoot } from "@/components/analytics/DeferredAnalyticsRoot";
@@ -9,7 +9,13 @@ import { ThemeProvider } from "@/context/providers";
 
 const GA_MEASUREMENT_ID = "G-9BWR9R2696";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -17,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "N-Tech Digital Solutions — websites, lead generation, and automation for your business.",
   icons: {
-    icon: [{ url: "/ntech-official-logo.png", type: "image/png" }],
+    icon: [{ url: "/ntech-mark.png", type: "image/png" }],
     apple: [{ url: "/ntech-official-logo.png", type: "image/png" }],
   },
 };
@@ -30,7 +36,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn(inter.variable, inter.className, "min-h-screen bg-background antialiased")}
+        className={cn(
+          inter.variable,
+          geist.variable,
+          geistMono.variable,
+          inter.className,
+          "min-h-screen bg-background antialiased"
+        )}
       >
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}

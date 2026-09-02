@@ -1,5 +1,5 @@
-import { Footer } from "@/components/startup-landing/footer";
-import { Navbar } from "@/components/startup-landing/navbar";
+import { SiteFooter } from "@/components/ntech/SiteFooter";
+import { SiteNav } from "@/components/ntech/SiteNav";
 
 export default function MarketingLayout({
   children,
@@ -8,9 +8,9 @@ export default function MarketingLayout({
 }>) {
   return (
     <>
-      <Navbar />
-      <div className="min-h-[calc(100vh-12rem)] pt-20 lg:pt-24">{children}</div>
-      <Footer />
+      <SiteNav />
+      <div className="min-h-[calc(100vh-16rem)]">{children}</div>
+      <SiteFooter />
     </>
   );
 }

@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
-import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveLazy";
-import { HomeBrandHub } from "@/components/home/HomeBrandHub";
-import { Footer } from "@/components/startup-landing/footer";
-import { Navbar } from "@/components/startup-landing/navbar";
+import { SiteFooter } from "@/components/ntech/SiteFooter";
+import { SiteNav } from "@/components/ntech/SiteNav";
+import { Circuit } from "@/components/ntech/home/Circuit";
+import { Close } from "@/components/ntech/home/Close";
+import { Configurator } from "@/components/ntech/home/Configurator";
+import { Cost } from "@/components/ntech/home/Cost";
+import { Faq } from "@/components/ntech/home/Faq";
+import { Hero } from "@/components/ntech/home/Hero";
+import { Leaks } from "@/components/ntech/home/Leaks";
+import { LiveProof } from "@/components/ntech/home/LiveProof";
+import { Specifics } from "@/components/ntech/home/Specifics";
 import { HOME_FAQ_ITEMS } from "@/constants/home-faq";
 import { buildFaqJsonLd } from "@/lib/seo-metadata";
 import {
@@ -12,16 +19,14 @@ import {
   SITE_URL,
 } from "@/constants/site";
 
-/** Swap to `/og-image.jpg` after adding a 1200×630 image under `public/`. */
 const OG_IMAGE_PATH = "/ntech-official-logo.png";
-const HOME_TITLE = "AI Receptionist, Lead Automation & Reviews | N-Tech Digital Solutions";
+const HOME_TITLE =
+  "AI Receptionist, Lead Automation & Reviews | N-Tech Digital Solutions";
 const HOME_DESCRIPTION =
-  "N-Tech installs one connected system for local service businesses: website, AI receptionist, lead automation, social media management, and Google review automation.";
+  "N-Tech installs one connected system for local service businesses in the Omaha metro and Lincoln, NE: website, AI receptionist, lead automation, social media management, and Google review automation. One flat monthly retainer.";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: HOME_TITLE,
-  },
+  title: { absolute: HOME_TITLE },
   description: HOME_DESCRIPTION,
   keywords: [
     "AI receptionist for small business",
@@ -117,30 +122,31 @@ const faqJsonLd = {
 export default function HomePage() {
   return (
     <>
-      <CursorReactiveLazy />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(localBusinessJsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationJsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqJsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <Navbar />
-      <main>
-        <HomeBrandHub />
+      <SiteNav />
+      <main id="main" className="bg-field">
+        <Hero />
+        <Specifics />
+        <Leaks />
+        <Configurator />
+        <Circuit />
+        <LiveProof />
+        <Cost />
+        <Faq />
+        <Close />
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

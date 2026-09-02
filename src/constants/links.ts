@@ -1,13 +1,10 @@
 export const CONSTANTS = {
   LOGIN_LINK: "/login",
-  /** Public contact + inquiry form (replaces external lead agent app). */
+  /** Public contact + inquiry form. */
   CONTACT_PATH: "/contact",
+  /** The single booking path. GoHighLevel only — the Cal.com and Calendly
+   *  marketing CTAs were removed so visitors are not offered three calendars. */
   BOOK_CALL_PATH: "/book-call",
-  /** Homepage “Schedule a Strategy Call” → qualify before Calendly. */
-  STRATEGY_QUALIFICATION_PATH: "/strategy-call",
-  CALCOM_NAMESPACE: "chat-with-manu-demo",
-  CALCOM_BRAND_COLOR: "#000000",
-  CALCOM_HIDE_EVENT_TYPE_DETAILS: false,
-  CALCOM_LAYOUT: "month_view",
-  CALCOM_LINK: "manu-arora-vesr9s/chat-with-manu-demo",
+  /** Post-booking confirmation: the VSL and the only page that may show a price. */
+  BOOKED_PATH: "/booked",
 };

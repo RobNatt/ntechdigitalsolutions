@@ -409,3 +409,105 @@
     opacity: 1;
   }
 }
+
+/* ============================================================
+   N-Tech marketing design system
+   Palette derived from the N-Tech logo (navy → cyan circuit N).
+   Roles: ink · muted · field · action · current.
+   The dashboard/OS app keeps the shadcn tokens above; these are
+   additive and scoped to the marketing surface by class usage.
+   ============================================================ */
+
+@theme {
+  --color-ink: #0e2340;
+  --color-muted-ink: #7e8896;
+  --color-field: #fbfaf8;
+  --color-action: #1e6fb8;
+  --color-live: #28c4d9;
+
+  /* Hairline rule: ink at 10%. Not a sixth palette value. */
+  --color-rule: color-mix(in srgb, #0e2340 10%, transparent);
+  --color-rule-strong: color-mix(in srgb, #0e2340 18%, transparent);
+  --color-field-sunken: color-mix(in srgb, #0e2340 3.5%, #fbfaf8);
+
+  --font-display: var(--font-geist), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-data: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Major third (1.25) from a 16px body. */
+  --text-step--1: 0.8rem;
+  --text-step-0: 1rem;
+  --text-step-1: 1.25rem;
+  --text-step-2: 1.5625rem;
+  --text-step-3: 1.953rem;
+  --text-step-4: 2.441rem;
+  --text-step-5: 3.052rem;
+  --text-step-6: 4.25rem;
+}
+
+@layer utilities {
+  /* Display type: tight tracking, per the Slot B screenshots. */
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+  }
+  .type-heading {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .type-data {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* The current: a cyan head travelling the activity-row gutter. */
+  .current-rail {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-live) 0%,
+      var(--color-live) var(--current-progress, 0%),
+      transparent var(--current-progress, 0%),
+      transparent 100%
+    );
+  }
+}
+
+@keyframes ntech-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ntech-node-arrive {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ntech-current-travel {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

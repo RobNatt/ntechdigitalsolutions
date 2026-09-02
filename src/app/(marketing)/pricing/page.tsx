@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check } from "lucide-react";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
-import { FaqSection } from "@/components/marketing/FaqSection";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
+import { Check, Minus } from "lucide-react";
+import { PageShell } from "@/components/ntech/PageShell";
+import { ctaPrimary, ctaSecondary } from "@/components/ntech/primitives";
 import { buildFaqJsonLd, canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const pricingDesc =
@@ -22,6 +21,11 @@ const INCLUDED = [
   "Lead-form automation: instant CRM entry + confirmation follow-up",
   "Facebook + Instagram management, with engagement-to-lead automation",
   "Google review automation — 5-star public, everything else private feedback",
+] as const;
+
+const EXCLUDED = [
+  "Paid ad management and ad spend — a separate add-on, raised after onboarding once the infrastructure exists to convert the traffic",
+  "A guarantee of leads or revenue — no legitimate operator offers one, and we don't",
 ] as const;
 
 const FAQ_ITEMS = [
@@ -45,75 +49,105 @@ const FAQ_ITEMS = [
     q: "Is paid ad spend included?",
     a: "No. Ad management and ad spend are a separate add-on we typically discuss after onboarding, once the infrastructure is in place to actually convert the traffic ads send.",
   },
+  {
+    q: "Is there a contract, and what happens if I want to cancel?",
+    a: "We keep terms simple and will walk you through them on a call before you commit. The goal is a system you see results from, not a contract you feel stuck in.",
+  },
 ] as const;
 
 export default function PricingPage() {
   return (
-    <MarketingPageShell
+    <PageShell
+      eyebrow="Pricing"
       title="One retainer. Every leak, covered."
-      subtitle="We don't sell website design, or lead gen, or social posting separately. It's one flat monthly system — because a website without follow-up, or leads without a receptionist, still leaks money."
-      cta="none"
+      lede="We don't sell website design, or lead gen, or social posting separately. It's one flat monthly system — because a website without follow-up, or leads without a receptionist, still leaks money."
     >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqJsonLd(FAQ_ITEMS)) }}
       />
 
-      <div className="rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 dark:text-white">
-          The complete system
-        </p>
-        <h2 className="mt-2 text-xl font-semibold text-neutral-900 dark:text-white">
+      <div className="rounded-xl border border-rule bg-white p-5 shadow-[0_1px_2px_rgba(14,35,64,0.04)] sm:p-7">
+        <p className="type-data text-[0.75rem] uppercase text-muted-ink">The complete system</p>
+        <h2 className="type-heading mt-3 text-[var(--text-step-2)] text-ink">
           Everything below, one monthly retainer.
         </h2>
-        <ul className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
+
+        <ul className="mt-6 space-y-3">
           {INCLUDED.map((line) => (
-            <li key={line} className="flex gap-2.5">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900 dark:text-white" aria-hidden />
+            <li key={line} className="flex gap-3 text-[0.9375rem] leading-relaxed text-ink">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-live" aria-hidden />
               <span>{line}</span>
             </li>
           ))}
         </ul>
-        <p className="mt-5 text-sm text-neutral-600 dark:text-neutral-400">
+
+        <p className="type-data mt-8 text-[0.75rem] uppercase text-muted-ink">Not included</p>
+        <ul className="mt-3 space-y-3">
+          {EXCLUDED.map((line) => (
+            <li key={line} className="flex gap-3 text-[0.9375rem] leading-relaxed text-muted-ink">
+              <Minus className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-7 border-t border-rule pt-6 text-[0.9375rem] leading-relaxed text-muted-ink">
           Read the full breakdown of each component on{" "}
           <Link
             href="/infrastructure"
-            className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
+            className="font-semibold text-ink underline underline-offset-4"
           >
             the infrastructure page
           </Link>
-          . Paid ad spend and ad management are a separate add-on, pitched after onboarding.
+          .
         </p>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-neutral-200 bg-neutral-50/90 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/60 sm:p-8">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-          Why we&apos;re not posting a number here
+      <div className="mt-8 border-l-2 border-live bg-white py-6 pl-5 pr-5 sm:pl-7 sm:pr-7">
+        <h2 className="type-heading text-[1.25rem] text-ink">
+          Why there is no number on this page
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-          We could charge per component plus a build fee. We&apos;re choosing not to right now, because
-          we need honest results from real businesses first. We&apos;re running a limited case-study
-          phase — once we have five, pricing moves up for everyone after. Book a call and we&apos;ll
-          give you the real number and show you exactly what it covers for your business.
+        <p className="mt-4 text-[1rem] leading-relaxed text-muted-ink">
+          We could charge per component plus a build fee. We&apos;re choosing not to right now,
+          because we need honest results from real businesses first. We&apos;re running a limited
+          case-study phase — once we have five, pricing moves up for everyone after. Book a call and
+          we&apos;ll give you the real number and show you exactly what it covers for your business.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <ScheduleCtaLink className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
-            Book a call to see pricing
-          </ScheduleCtaLink>
-          <Link
-            href="/contact"
-            className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
-          >
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <Link href="/book-call" className={ctaPrimary}>
+            Book With Us
+          </Link>
+          <Link href="/contact" className={ctaSecondary}>
             Ask a question first
           </Link>
         </div>
       </div>
 
-      <FaqSection
-        heading="Pricing FAQ"
-        intro="What to expect before you book a call."
-        items={FAQ_ITEMS}
-      />
-    </MarketingPageShell>
+      <section aria-labelledby="pricing-faq" className="mt-14 border-t border-rule pt-12">
+        <h2 id="pricing-faq" className="type-heading text-[var(--text-step-2)] text-ink">
+          Pricing FAQ
+        </h2>
+        <p className="mt-3 text-[1rem] text-muted-ink">What to expect before you book a call.</p>
+        <div className="mt-6 rounded-xl border border-rule bg-white px-4 sm:px-6">
+          {FAQ_ITEMS.map((item, i) => (
+            <details
+              key={item.q}
+              className="group border-b border-rule last:border-b-0 [&_summary::-webkit-details-marker]:hidden"
+            >
+              <summary className="flex cursor-pointer list-none items-start gap-3 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action">
+                <span className="type-data mt-0.5 shrink-0 text-[0.75rem] text-muted-ink tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="type-heading flex-1 text-[1rem] text-ink">{item.q}</span>
+              </summary>
+              <p className="pb-5 text-[0.9375rem] leading-relaxed text-muted-ink sm:pl-[2.5rem]">
+                {item.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </PageShell>
   );
 }

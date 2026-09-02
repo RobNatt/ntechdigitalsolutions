@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { PageShell } from "@/components/ntech/PageShell";
 import { canonicalUrl } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
@@ -13,33 +13,40 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <MarketingPageShell
-      title="Sign up"
-      subtitle="Client accounts are provisioned after we kick off your project or grant access to a workspace. Use this page as the public entry point while backend registration is wired up."
+    <PageShell
+      eyebrow="Sign up"
+      title="Client accounts are provisioned after kickoff."
+      lede="We create your workspace once your system is being installed, so there is nothing to register for yet."
+      close="none"
     >
-      <p>
-        For now, the fastest way to get started is our{" "}
-        <Link
-          href="/contact"
-          className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
-        >
-          contact
-        </Link>{" "}
-        flow or the structured lead form linked from there.
-      </p>
-      <p>
-        Already invited?{" "}
-        <Link
-          href="/login"
-          className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
-        >
-          Log in
-        </Link>{" "}
-        instead.
-      </p>
-      <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50/80 p-6 text-sm text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900/40 dark:text-neutral-400">
-        Placeholder: drop in Supabase auth sign-up, magic link, or your SSO flow when ready.
+      <div className="space-y-5 text-[1.0625rem] leading-relaxed text-ink">
+        <p>
+          The fastest way to get started is to{" "}
+          <Link href="/book-call" className="font-semibold underline underline-offset-4">
+            book a call
+          </Link>{" "}
+          or{" "}
+          <Link href="/contact" className="font-semibold underline underline-offset-4">
+            send us a message
+          </Link>
+          .
+        </p>
+        <p className="text-muted-ink">
+          Already invited?{" "}
+          <Link href="/login" className="font-semibold text-ink underline underline-offset-4">
+            Log in
+          </Link>{" "}
+          instead.
+        </p>
       </div>
-    </MarketingPageShell>
+
+      <div className="mt-10 rounded-xl border border-dashed border-rule-strong bg-white p-6">
+        <p className="type-data text-[0.75rem] uppercase text-muted-ink">Handoff</p>
+        <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink">
+          TODO(client): wire self-serve registration here (Supabase auth sign-up or magic link) if
+          client accounts ever become self-provisioned. Page is noindex until then.
+        </p>
+      </div>
+    </PageShell>
   );
 }

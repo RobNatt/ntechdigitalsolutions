@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { PageShell } from "@/components/ntech/PageShell";
 import { formatBlogDate, renderBlogPostBody, type BlogPostPublic } from "@/lib/blog/format";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
@@ -71,22 +71,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <MarketingPageShell title={post.title} subtitle={formatBlogDate(post.published_at)} cta="compact">
+    <PageShell eyebrow={formatBlogDate(post.published_at)} title={post.title}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-      <article className="prose-blog max-w-none text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
+      <article className="prose-blog max-w-none text-[1.0625rem] leading-relaxed text-ink">
         {renderBlogPostBody(post.content)}
       </article>
-      <p className="pt-8 text-sm">
+      <p className="mt-12 border-t border-rule pt-8">
         <Link
           href="/blog"
-          className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
+          className="type-data text-[0.8125rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
         >
-          ← Back to the blog
+          <span aria-hidden className="text-live">←</span> Back to the blog
         </Link>
       </p>
-    </MarketingPageShell>
+    </PageShell>
   );
 }

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
-import { FaqSection, type FaqGroup } from "@/components/marketing/FaqSection";
+import { PageShell } from "@/components/ntech/PageShell";
+import { ChannelChip } from "@/components/ntech/primitives";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { SITE_BUSINESS_PHONE, SITE_CONTACT_EMAIL, SITE_URL } from "@/constants/site";
 
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: ogForPath("/about", "About | N-Tech Digital Solutions", aboutDesc),
 };
 
-const FAQ_SECTIONS: FaqGroup[] = [
+const FAQ_SECTIONS = [
   {
     title: "The system",
     items: [
@@ -39,7 +38,7 @@ const FAQ_SECTIONS: FaqGroup[] = [
     items: [
       {
         q: "How is pricing structured?",
-        a: "One flat monthly retainer covers the whole system — no separate build fee. We're intentionally running a limited case-study pricing phase to get honest results from real businesses before rates move up. See /pricing to book a call for your number.",
+        a: "One flat monthly retainer covers the whole system — no separate build fee. We're intentionally running a limited case-study pricing phase to get honest results from real businesses before rates move up. See the pricing page to book a call for your number.",
       },
       {
         q: "Is there a contract, and what happens if I want to cancel?",
@@ -81,15 +80,7 @@ const FAQ_SECTIONS: FaqGroup[] = [
       },
     ],
   },
-];
-
-const faqMainEntity = FAQ_SECTIONS.flatMap((section) =>
-  section.items.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  }))
-);
+] as const;
 
 const aboutPageUrl = `${SITE_URL.replace(/\/$/, "")}/about`;
 
@@ -99,7 +90,13 @@ const ABOUT_STRUCTURED_DATA = {
     {
       "@type": "FAQPage",
       "@id": `${aboutPageUrl}#faq`,
-      mainEntity: faqMainEntity,
+      mainEntity: FAQ_SECTIONS.flatMap((section) =>
+        section.items.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: { "@type": "Answer", text: item.a },
+        }))
+      ),
     },
     {
       "@type": "LocalBusiness",
@@ -144,82 +141,90 @@ const ABOUT_STRUCTURED_DATA = {
 
 export default function AboutPage() {
   return (
-    <MarketingPageShell
-      title="About"
-      subtitle="We install one connected system so local service businesses stop losing customers to missed calls, slow follow-up, and inconsistent reviews."
+    <PageShell
+      eyebrow="About"
+      title="We install the part that runs after the lead already found you."
+      lede="One connected system so local service businesses stop losing customers to missed calls, slow follow-up, and inconsistent reviews."
     >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ABOUT_STRUCTURED_DATA) }}
       />
-      <p>
-        Based in Omaha, we work with local service businesses across the Omaha metro and Lincoln,
-        Nebraska that are tired of leaving money on the table — the missed call that never got returned,
-        the lead that went cold waiting on a follow-up, the great review that never got asked for.
-      </p>
-      <p>
-        Instead of selling a website, then separately pitching leads, then separately pitching social
-        media, we install one system where each piece feeds the next: a call becomes a booked
-        appointment, a form fill becomes a followed-up lead, a happy customer becomes a public review.
-      </p>
-      <p>
-        Curious if we&apos;re a fit?{" "}
-        <Link
-          href="/contact"
-          className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
-        >
-          Contact us
-        </Link>{" "}
-        or{" "}
-        <Link
-          href="/infrastructure"
-          className="font-semibold text-neutral-900 underline decoration-neutral-400 underline-offset-4 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white"
-        >
-          see how the system works
-        </Link>
-        .
-      </p>
+
+      <div className="space-y-5 text-[1.0625rem] leading-relaxed text-ink">
+        <p>
+          Based in Omaha, we work with local service businesses across the Omaha metro and Lincoln,
+          Nebraska that are tired of leaving money on the table — the missed call that never got
+          returned, the lead that went cold waiting on a follow-up, the great review that never got
+          asked for.
+        </p>
+        <p>
+          Instead of selling a website, then separately pitching leads, then separately pitching
+          social media, we install one system where each piece feeds the next: a call becomes a
+          booked appointment, a form fill becomes a followed-up lead, a happy customer becomes a
+          public review.
+        </p>
+      </div>
 
       <section
-        className="rounded-2xl border border-neutral-200 bg-white/80 p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-6"
+        className="mt-12 border-l-2 border-live bg-white py-6 pl-5 pr-5 sm:pl-7 sm:pr-7"
         aria-labelledby="founder-heading"
       >
-        <h2
-          id="founder-heading"
-          className="text-lg font-semibold text-neutral-900 dark:text-white"
-        >
-          Founder &amp; principal
-        </h2>
-        <p className="mt-1 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+        <p className="type-data text-[0.75rem] uppercase text-muted-ink">Founder &amp; principal</p>
+        <h2 id="founder-heading" className="type-heading mt-3 text-[1.25rem] text-ink">
           Robert Nattrass
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+        </h2>
+        <p className="mt-4 text-[1rem] leading-relaxed text-muted-ink">
           Robert leads N-Tech Digital Solutions from Omaha, Nebraska. He works hands-on with clients
           to install and run the infrastructure system — website, AI receptionist, lead automation,
           social media management, and review automation — and to make sure it&apos;s actually
           converting calls and clicks into booked appointments, not just sitting there.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+        <p className="type-data mt-5 flex flex-wrap items-center gap-2 text-[0.75rem] text-muted-ink">
+          <ChannelChip tone="muted">Handoff</ChannelChip>
+          TODO(client): year N-Tech was founded, and a headshot for this section.
+        </p>
+        <p className="mt-5 text-[0.9375rem] text-muted-ink">
           Prefer to talk it through?{" "}
-          <ScheduleCtaLink className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white">
+          <Link href="/book-call" className="font-semibold text-ink underline underline-offset-4">
             Book a call
-          </ScheduleCtaLink>{" "}
+          </Link>{" "}
           or{" "}
-          <Link
-            href="/contact"
-            className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white"
-          >
+          <Link href="/contact" className="font-semibold text-ink underline underline-offset-4">
             send a message
           </Link>
           .
         </p>
       </section>
 
-      <FaqSection
-        heading="Frequently asked questions"
-        intro="Grouped by system, pricing, fit, and getting started."
-        groups={FAQ_SECTIONS}
-      />
-    </MarketingPageShell>
+      <section aria-labelledby="about-faq" className="mt-14 border-t border-rule pt-12">
+        <h2 id="about-faq" className="type-heading text-[var(--text-step-2)] text-ink">
+          Frequently asked questions
+        </h2>
+        <div className="mt-8 space-y-10">
+          {FAQ_SECTIONS.map((section) => (
+            <div key={section.title}>
+              <p className="type-data text-[0.75rem] uppercase text-muted-ink">{section.title}</p>
+              <div className="mt-3 rounded-xl border border-rule bg-white px-4 sm:px-6">
+                {section.items.map((item) => (
+                  <details
+                    key={item.q}
+                    className="group border-b border-rule last:border-b-0 [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start gap-3 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action">
+                      <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-live" />
+                      <span className="type-heading flex-1 text-[1rem] text-ink">{item.q}</span>
+                    </summary>
+                    <p className="pb-5 pl-4 text-[0.9375rem] leading-relaxed text-muted-ink">
+                      {item.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </PageShell>
   );
 }

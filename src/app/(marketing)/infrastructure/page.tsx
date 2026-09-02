@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Bot, CheckCircle2, Globe2, Heart, MessageSquareText, Share2, Star } from "lucide-react";
-import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import Link from "next/link";
+import { Bot, Globe2, MessageSquareText, Share2, Star } from "lucide-react";
+import { PageShell } from "@/components/ntech/PageShell";
+import {
+  ActivityLog,
+  ActivityRow,
+  ChannelChip,
+  type RowChannel,
+} from "@/components/ntech/primitives";
 import { ServiceTopicJsonLd } from "@/components/marketing/ServiceTopicJsonLd";
-import { FaqSection } from "@/components/marketing/FaqSection";
-import { VideoPlaceholder } from "@/components/marketing/VideoPlaceholder";
-import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
-import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { ReviewRoutingDemo } from "@/components/marketing/demos/ReviewRoutingDemo";
 import { buildFaqJsonLd, canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { SITE_SERVICE_AREAS } from "@/constants/site";
@@ -17,10 +20,26 @@ export const metadata: Metadata = {
   title: "Infrastructure | N-Tech Digital Solutions",
   description: infrastructureDesc,
   alternates: { canonical: canonicalUrl("/infrastructure") },
-  openGraph: ogForPath("/infrastructure", "Infrastructure | N-Tech Digital Solutions", infrastructureDesc),
+  openGraph: ogForPath(
+    "/infrastructure",
+    "Infrastructure | N-Tech Digital Solutions",
+    infrastructureDesc
+  ),
 };
 
-const COMPONENTS = [
+type Component = {
+  id: string;
+  icon: typeof Globe2;
+  name: string;
+  serviceType: string;
+  description: string;
+  bullets: readonly string[];
+  /** What this component actually writes into the log. */
+  rows: readonly { stamp: string; channel: RowChannel; action: string; outcome: string }[];
+  next?: { href: string; label: string };
+};
+
+const COMPONENTS: readonly Component[] = [
   {
     id: "website",
     icon: Globe2,
@@ -33,6 +52,11 @@ const COMPONENTS = [
       "Call Now button routes straight to your AI receptionist",
       "Built for speed and mobile, so it doesn't lose visitors before they act",
     ],
+    rows: [
+      { stamp: "6:18 PM", channel: "form", action: "Visitor lands on a service page", outcome: "Lead form in view" },
+      { stamp: "6:19 PM", channel: "call", action: "Taps Call Now", outcome: "Routed to receptionist" },
+    ],
+    next: { href: "#ai-receptionist", label: "What answers that call" },
   },
   {
     id: "ai-receptionist",
@@ -46,6 +70,11 @@ const COMPONENTS = [
       "Attempts to book the appointment on the call, not after",
       "Every caller's details land in your CRM automatically",
     ],
+    rows: [
+      { stamp: "7:42 PM", channel: "call", action: "Incoming call, nobody free", outcome: "Answered" },
+      { stamp: "7:44 PM", channel: "calendar", action: "Appointment offered and taken", outcome: "Booked Tue 9:00 AM" },
+    ],
+    next: { href: "#lead-automation", label: "What happens to a form instead" },
   },
   {
     id: "lead-automation",
@@ -59,6 +88,11 @@ const COMPONENTS = [
       "Automatic SMS/email confirms the lead is reachable",
       "AI receptionist follow-up kicks in once contact info is confirmed",
     ],
+    rows: [
+      { stamp: "9:15 AM", channel: "form", action: "Form submitted", outcome: "Saved to CRM" },
+      { stamp: "9:15 AM", channel: "crm", action: "Confirmation SMS and email sent", outcome: "Delivered" },
+    ],
+    next: { href: "#social-media", label: "Where else leads arrive" },
   },
   {
     id: "social-media",
@@ -72,6 +106,11 @@ const COMPONENTS = [
       "Automated outreach (DM/CTA) to anyone who engages with a post",
       "Engaged followers get funneled straight into the same lead pipeline",
     ],
+    rows: [
+      { stamp: "1:03 PM", channel: "social", action: "Comment on a post", outcome: "Auto-reply sent" },
+      { stamp: "1:04 PM", channel: "crm", action: "Commenter added to pipeline", outcome: "Saved to CRM" },
+    ],
+    next: { href: "#review-automation", label: "What happens after the job" },
   },
   {
     id: "review-automation",
@@ -85,8 +124,12 @@ const COMPONENTS = [
       "Anything less is caught privately as feedback, not a public review",
       "Protects your rating while surfacing real complaints you can act on",
     ],
+    rows: [
+      { stamp: "5:30 PM", channel: "review", action: "Job marked complete, request sent", outcome: "5 stars" },
+      { stamp: "5:41 PM", channel: "review", action: "Rating below 5 intercepted", outcome: "Private feedback" },
+    ],
   },
-] as const;
+];
 
 const FAQ_ITEMS = [
   {
@@ -113,155 +156,142 @@ const FAQ_ITEMS = [
 
 export default function InfrastructurePage() {
   return (
-    <MarketingPageShell
+    <PageShell
+      eyebrow="The system"
       title="One connected system, not five separate vendors."
-      subtitle={`Every component below talks to the others. A missed call becomes a booked appointment. A social comment becomes a lead. A 5-star moment becomes a public review. Built for local service businesses across ${SITE_SERVICE_AREAS}`}
-      maxWidthClass="max-w-4xl"
+      lede={`Every component below writes into the same log. A missed call becomes a booked appointment. A social comment becomes a lead. A finished job becomes a public review. Built for local service businesses across ${SITE_SERVICE_AREAS}`}
+      width="max-w-5xl"
     >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqJsonLd(FAQ_ITEMS)) }}
       />
 
-      <div className="space-y-10">
-        {COMPONENTS.map((component) => {
-          const Icon = component.icon;
-          return (
-            <section
-              key={component.id}
-              id={component.id}
-              className="group scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm transition duration-300 hover:border-neutral-400 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/50 dark:hover:border-neutral-600 sm:p-8"
-              aria-labelledby={`${component.id}-heading`}
-            >
-              <ServiceTopicJsonLd
-                path={`/infrastructure#${component.id}`}
-                name={component.name}
-                description={component.description}
-                serviceType={component.serviceType}
-              />
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-10 w-10 shrink-0">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-100 text-neutral-900 transition duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  {component.id === "ai-receptionist" ? (
-                    <CheckCircle2
-                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 rounded-full bg-white text-neutral-900 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 dark:bg-neutral-950 dark:text-white"
-                      aria-hidden
-                    />
-                  ) : null}
-                  {component.id === "social-media" ? (
-                    <Heart
-                      className="absolute -right-1.5 -top-1.5 h-4 w-4 scale-50 fill-transparent text-rose-400 opacity-0 transition duration-300 group-hover:scale-100 group-hover:fill-rose-400 group-hover:opacity-100"
-                      aria-hidden
-                    />
-                  ) : null}
-                  {component.id === "review-automation" ? (
-                    <span className="absolute -right-2 -top-2 flex gap-0.5" aria-hidden>
-                      {[0, 1, 2].map((i) => (
-                        <Star
-                          key={i}
-                          className="h-3 w-3 fill-neutral-300 text-neutral-300 transition-all duration-300 dark:fill-neutral-700 dark:text-neutral-700 group-hover:fill-amber-400 group-hover:text-amber-400"
-                          style={{ transitionDelay: `${i * 120}ms` }}
-                        />
-                      ))}
-                    </span>
-                  ) : null}
-                  {component.id === "lead-automation" || component.id === "website" ? (
-                    <span
-                      className="absolute inset-0 rounded-lg border-2 border-neutral-900 opacity-0 transition-all duration-500 group-hover:scale-150 group-hover:opacity-0 group-hover:[transition-timing-function:ease-out] dark:border-white"
-                      aria-hidden
-                    />
-                  ) : null}
-                </div>
-                <h2
-                  id={`${component.id}-heading`}
-                  className="text-xl font-semibold text-neutral-900 dark:text-white"
+      <div className="lg:grid lg:grid-cols-[13rem_1fr] lg:gap-12">
+        {/* Wayfinding rail — the log's index. */}
+        <nav aria-label="Components" className="mb-10 lg:sticky lg:top-24 lg:mb-0 lg:self-start">
+          <p className="type-data text-[0.75rem] uppercase text-muted-ink">Five components</p>
+          <ol className="mt-4 space-y-0.5">
+            {COMPONENTS.map((component, i) => (
+              <li key={component.id}>
+                <a
+                  href={`#${component.id}`}
+                  className="type-data flex items-baseline gap-2.5 rounded py-1.5 text-[0.8125rem] text-muted-ink transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
                 >
+                  <span className="text-live tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                   {component.name}
-                </h2>
-              </div>
-              <p className="mt-4 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
-                {component.description}
-              </p>
-              <ul className="mt-5 space-y-2.5 text-sm text-neutral-700 dark:text-neutral-300">
-                {component.bullets.map((line) => (
-                  <li key={line} className="flex gap-2.5">
-                    <span
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900 dark:bg-white"
-                      aria-hidden
-                    />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
 
-              {component.id === "review-automation" ? (
-                <div className="mt-6">
-                  <ReviewRoutingDemo />
+        <div className="space-y-16">
+          {COMPONENTS.map((component, i) => {
+            const Icon = component.icon;
+            return (
+              <section
+                key={component.id}
+                id={component.id}
+                className="scroll-mt-24"
+                aria-labelledby={`${component.id}-heading`}
+              >
+                <ServiceTopicJsonLd
+                  path={`/infrastructure#${component.id}`}
+                  name={component.name}
+                  description={component.description}
+                  serviceType={component.serviceType}
+                />
+
+                <div className="flex items-center gap-3">
+                  <span className="type-data text-[0.75rem] text-live tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Icon className="h-5 w-5 text-ink" aria-hidden />
+                  <h2
+                    id={`${component.id}-heading`}
+                    className="type-heading text-[var(--text-step-2)] text-ink"
+                  >
+                    {component.name}
+                  </h2>
                 </div>
-              ) : null}
 
-              {component.id === "lead-automation" ? (
-                <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50/80 p-5 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
-                    Try it — this form is live
-                  </p>
-                  <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    Fill this out with your own info and you&apos;ll get a real confirmation email.
-                  </p>
-                  <div className="mt-4">
-                    <MarketingInquiryForm analyticsSurface="infrastructure_demo" />
+                <p className="mt-5 max-w-2xl text-[1.0625rem] leading-relaxed text-ink">
+                  {component.description}
+                </p>
+
+                <ul className="mt-6 space-y-2.5">
+                  {component.bullets.map((line) => (
+                    <li
+                      key={line}
+                      className="flex gap-3 text-[0.9375rem] leading-relaxed text-muted-ink"
+                    >
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-live" aria-hidden />
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="type-data mt-8 text-[0.75rem] uppercase text-muted-ink">
+                  What it writes into the log
+                </p>
+                <ActivityLog label={`${component.name} output`} className="mt-3">
+                  {component.rows.map((row) => (
+                    <ActivityRow key={row.action} {...row} state="done" />
+                  ))}
+                </ActivityLog>
+
+                {component.id === "review-automation" ? (
+                  <div className="mt-8">
+                    <ReviewRoutingDemo />
                   </div>
-                </div>
-              ) : null}
+                ) : null}
 
-              {component.id === "ai-receptionist" ? (
-                <div className="mt-6">
-                  <VideoPlaceholder
-                    title="AI Receptionist walkthrough"
-                    description="Video explainer — coming soon"
-                  />
-                </div>
-              ) : null}
+                {component.next ? (
+                  <p className="mt-8">
+                    <Link
+                      href={component.next.href}
+                      className="type-data inline-flex items-center gap-2 text-[0.8125rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+                    >
+                      <span aria-hidden className="text-live">
+                        ↓
+                      </span>
+                      {component.next.label}
+                    </Link>
+                  </p>
+                ) : null}
+              </section>
+            );
+          })}
 
-              {component.id === "social-media" ? (
-                <div className="mt-6">
-                  <VideoPlaceholder
-                    title="Social media management walkthrough"
-                    description="Video explainer — coming soon"
-                  />
-                </div>
-              ) : null}
-            </section>
-          );
-        })}
+          <section aria-labelledby="infra-faq" className="border-t border-rule pt-12">
+            <h2 id="infra-faq" className="type-heading text-[var(--text-step-2)] text-ink">
+              Infrastructure FAQ
+            </h2>
+            <div className="mt-6 rounded-xl border border-rule bg-white px-4 sm:px-6">
+              {FAQ_ITEMS.map((item, i) => (
+                <details
+                  key={item.q}
+                  className="group border-b border-rule last:border-b-0 [&_summary::-webkit-details-marker]:hidden"
+                >
+                  <summary className="flex cursor-pointer list-none items-start gap-3 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action">
+                    <span className="type-data mt-0.5 shrink-0 text-[0.75rem] text-muted-ink tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="type-heading flex-1 text-[1rem] text-ink">{item.q}</span>
+                    <ChannelChip tone="muted" className="mt-0.5 group-open:hidden">
+                      Open
+                    </ChannelChip>
+                  </summary>
+                  <p className="pb-5 text-[0.9375rem] leading-relaxed text-muted-ink sm:pl-[2.5rem]">
+                    {item.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
-
-      <FaqSection
-        heading="Infrastructure FAQ"
-        intro="Common questions about how the five components fit together."
-        items={FAQ_ITEMS}
-      />
-
-      <section
-        id="get-started"
-        className="mt-10 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
-        aria-labelledby="get-started-heading"
-      >
-        <div className="text-center">
-          <h2 id="get-started-heading" className="text-2xl font-semibold text-neutral-900 dark:text-white">
-            Ready to get started?
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-            Tell us about your business and we&apos;ll follow up to walk through what the system looks
-            like for you.
-          </p>
-        </div>
-        <div className="mx-auto mt-8 max-w-xl">
-          <GhlIntakeFlow analyticsSurface="infrastructure" />
-        </div>
-      </section>
-    </MarketingPageShell>
+    </PageShell>
   );
 }

@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Metadata } from "next";
-import { Navbar } from "@/components/startup-landing/navbar";
+import { SiteNav } from "@/components/ntech/SiteNav";
+import { SiteFooter } from "@/components/ntech/SiteFooter";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const termsDesc =
@@ -25,19 +26,20 @@ export default async function TermsAndConditionsPage() {
 
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-slate-50 pt-20 lg:pt-24">
-        <section className="mx-auto max-w-4xl px-6 py-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-10">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+      <SiteNav />
+      <main id="main" className="bg-field">
+        <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+          <div className="rounded-xl border border-rule bg-white p-6 sm:p-9">
+            <h1 className="type-display text-[2rem] text-ink sm:text-[2.5rem]">
               Terms and Conditions
             </h1>
-            <pre className="mt-6 whitespace-pre-wrap break-words font-sans text-sm leading-7 text-slate-800 md:text-base">
+            <pre className="mt-7 whitespace-pre-wrap break-words font-sans text-[0.9375rem] leading-7 text-muted-ink">
               {content}
             </pre>
           </div>
         </section>
       </main>
+      <SiteFooter />
     </>
   );
 }
