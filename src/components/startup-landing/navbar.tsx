@@ -45,7 +45,7 @@ export const Navbar = () => {
     { name: "Pricing", link: "/pricing" },
     { name: "Blog", link: "/blog" },
     { name: "About", link: "/about" },
-    { name: "Book a Call", link: PRIMARY_NAV_HREF },
+    { name: "Get More Info", link: PRIMARY_NAV_HREF },
   ];
 
   /** Page scroll — do not pass `target: navbarRef`: a fixed header’s target scroll offset barely moves, so shrink never triggered. */
