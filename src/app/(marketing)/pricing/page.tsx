@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { FaqSection } from "@/components/marketing/FaqSection";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
+import { GetMoreInfoButton } from "@/components/scheduling/GetMoreInfoButton";
+import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { buildFaqJsonLd, canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 
 const pricingDesc =
@@ -97,9 +98,9 @@ export default function PricingPage() {
           give you the real number and show you exactly what it covers for your business.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <ScheduleCtaLink className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
-            Book a call to see pricing
-          </ScheduleCtaLink>
+          <GetMoreInfoButton className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+            Get more info
+          </GetMoreInfoButton>
           <Link
             href="/contact"
             className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
@@ -114,6 +115,25 @@ export default function PricingPage() {
         intro="What to expect before you book a call."
         items={FAQ_ITEMS}
       />
+
+      <section
+        id="intake-form"
+        className="mt-10 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
+        aria-labelledby="intake-heading"
+      >
+        <div className="text-center">
+          <h2 id="intake-heading" className="text-2xl font-semibold text-neutral-900 dark:text-white">
+            Tell us about your business
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            We'll follow up to walk through your current workflow and what the full system would look
+            like for you.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 max-w-xl">
+          <GhlIntakeFlow analyticsSurface="pricing" />
+        </div>
+      </section>
     </MarketingPageShell>
   );
 }

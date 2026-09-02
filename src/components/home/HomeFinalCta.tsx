@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
+import { GetMoreInfoButton } from "@/components/scheduling/GetMoreInfoButton";
 
 const TRUST_CHIPS = [
   "AI receptionist",
@@ -58,9 +58,9 @@ export function HomeFinalCta() {
           </p>
 
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-            <ScheduleCtaLink className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-8 py-3.5 text-center text-sm font-semibold text-black shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-              Book a Call
-            </ScheduleCtaLink>
+            <GetMoreInfoButton className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-8 py-3.5 text-center text-sm font-semibold text-black shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+              Get More Info
+            </GetMoreInfoButton>
             <Link
               href="/infrastructure"
               className="inline-flex min-h-12 items-center justify-center rounded-full border border-neutral-600 bg-neutral-900/40 px-8 py-3.5 text-center text-sm font-semibold text-neutral-200 backdrop-blur-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:border-neutral-400 hover:bg-neutral-800/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400"

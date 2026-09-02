@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useReducedMotion } from "framer-motion";
 import { ArrowRight, Bot, Check, CheckCircle2, PhoneCall } from "lucide-react";
 import Balancer from "react-wrap-balancer";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
+import { GetMoreInfoButton } from "@/components/scheduling/GetMoreInfoButton";
 import { cn } from "@/lib/utils";
 
 const VIEW_WORK_PATH = "/infrastructure";
@@ -48,10 +48,10 @@ export function HomeHeroBeams() {
         id="offer-path"
         className="relative z-50 mt-8 mb-5 flex w-full max-w-xl flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:flex-wrap"
       >
-        <ScheduleCtaLink className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 sm:w-56">
-          Book a Call
+        <GetMoreInfoButton className="group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-center text-sm font-semibold leading-6 text-white no-underline shadow-sm transition hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 sm:w-56">
+          Get More Info
           <ArrowRight className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-        </ScheduleCtaLink>
+        </GetMoreInfoButton>
         <Link
           href={VIEW_WORK_PATH}
           className="shadow-input group relative z-20 flex h-11 w-full cursor-pointer items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-4 py-2 text-sm font-semibold leading-6 text-neutral-900 no-underline transition hover:-translate-y-0.5 dark:border-neutral-100 dark:bg-neutral-900 dark:text-neutral-100 sm:w-56"

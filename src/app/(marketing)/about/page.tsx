@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ScheduleCtaLink } from "@/components/scheduling/ScheduleCtaLink";
+import { GetMoreInfoButton } from "@/components/scheduling/GetMoreInfoButton";
+import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
 import { FaqSection, type FaqGroup } from "@/components/marketing/FaqSection";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
@@ -201,9 +202,9 @@ export default function AboutPage() {
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           Prefer to talk it through?{" "}
-          <ScheduleCtaLink className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white">
-            Book a call
-          </ScheduleCtaLink>{" "}
+          <GetMoreInfoButton className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-white">
+            Get more info
+          </GetMoreInfoButton>{" "}
           or{" "}
           <Link
             href="/contact"
@@ -220,6 +221,25 @@ export default function AboutPage() {
         intro="Grouped by system, pricing, fit, and getting started."
         groups={FAQ_SECTIONS}
       />
+
+      <section
+        id="intake-form"
+        className="mt-10 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
+        aria-labelledby="about-intake-heading"
+      >
+        <div className="text-center">
+          <h2 id="about-intake-heading" className="text-2xl font-semibold text-neutral-900 dark:text-white">
+            Ready to talk?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Tell us about your business and we'll follow up to walk through what the system looks
+            like for you.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 max-w-xl">
+          <GhlIntakeFlow analyticsSurface="about" />
+        </div>
+      </section>
     </MarketingPageShell>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { blogListExcerpt, formatBlogDate, type BlogPostPublic } from "@/lib/blog/format";
 import { MarketingPageShell } from "@/components/marketing/marketing-page-shell";
+import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { releaseDueScheduledBlogPosts } from "@/lib/dashboard/release-scheduled-blog-posts";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canonicalUrl, ogForPath } from "@/lib/seo-metadata";
@@ -93,6 +94,24 @@ export default async function BlogPage() {
           ))}
         </ul>
       )}
+
+      <section
+        id="intake-form"
+        className="mt-12 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:mt-14 sm:p-8"
+        aria-labelledby="blog-intake-heading"
+      >
+        <div className="text-center">
+          <h2 id="blog-intake-heading" className="text-2xl font-semibold text-neutral-900 dark:text-white">
+            Ready to talk through your business?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            We'll follow up to walk through what the infrastructure system would look like for you.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 max-w-xl">
+          <GhlIntakeFlow analyticsSurface="blog" />
+        </div>
+      </section>
     </MarketingPageShell>
   );
 }

@@ -245,7 +245,7 @@ export default function InfrastructurePage() {
       />
 
       <section
-        id="get-started"
+        id="intake-form"
         className="mt-10 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
         aria-labelledby="get-started-heading"
       >
