@@ -33,6 +33,7 @@ export function HomeLeadForm() {
 
   return (
     <section
+      id="intake-form"
       className="border-t border-neutral-200/70 bg-white py-20 md:py-28 dark:border-neutral-800 dark:bg-neutral-950"
       aria-labelledby="home-lead-form-heading"
     >
