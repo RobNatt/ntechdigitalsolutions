@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./button";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
+import { GetMoreInfoButton } from "@/components/scheduling/GetMoreInfoButton";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { CONSTANTS } from "@/constants/links";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
@@ -93,27 +94,50 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         aria-label="Main"
         className="flex min-w-0 flex-1 flex-row items-center justify-center gap-1 text-sm font-medium xl:gap-2"
       >
-        {navItems.map((navItem, idx: number) => (
-          <Link
-            onMouseEnter={() => setHovered(idx)}
-            onClick={() => trackNavCta(navItem.link)}
-            className={cn(
-              "relative whitespace-nowrap px-3 py-2 text-xs text-neutral-700 xl:px-4 xl:text-sm dark:text-neutral-200",
-              (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
-                "!ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
-            )}
-            key={`link=${idx}`}
-            href={navItem.link}
-          >
-            {hovered === idx && (
-              <motion.div
-                layoutId="hovered"
-                className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
-              />
-            )}
-            <span className="relative z-20">{navItem.name}</span>
-          </Link>
-        ))}
+        {navItems.map((navItem, idx: number) => {
+          const isGetMoreInfo = navItem.link === PRIMARY_NAV_HREF;
+          if (isGetMoreInfo) {
+            return (
+              <GetMoreInfoButton
+                key={`link=${idx}`}
+                onMouseEnter={() => setHovered(idx)}
+                onClick={() => trackNavCta(navItem.link)}
+                className={cn(
+                  "relative whitespace-nowrap px-3 py-2 text-xs text-neutral-700 xl:px-4 xl:text-sm dark:text-neutral-200 !ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
+                )}
+              >
+                {hovered === idx && (
+                  <motion.div
+                    layoutId="hovered"
+                    className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
+                  />
+                )}
+                <span className="relative z-20">{navItem.name}</span>
+              </GetMoreInfoButton>
+            );
+          }
+          return (
+            <Link
+              onMouseEnter={() => setHovered(idx)}
+              onClick={() => trackNavCta(navItem.link)}
+              className={cn(
+                "relative whitespace-nowrap px-3 py-2 text-xs text-neutral-700 xl:px-4 xl:text-sm dark:text-neutral-200",
+                navItem.link === "/contact" &&
+                  "!ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
+              )}
+              key={`link=${idx}`}
+              href={navItem.link}
+            >
+              {hovered === idx && (
+                <motion.div
+                  layoutId="hovered"
+                  className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
+                />
+              )}
+              <span className="relative z-20">{navItem.name}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="relative z-20 flex shrink-0 items-center gap-3 md:gap-4">
@@ -170,23 +194,42 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
               exit={{ opacity: 0 }}
               className="flex rounded-lg absolute top-16 bg-white dark:bg-neutral-950 inset-x-0 z-50 flex-col items-start justify-start gap-6 w-full px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]"
             >
-              {navItems.map((navItem, idx: number) => (
-                <Link
-                  key={`link=${idx}`}
-                  href={navItem.link}
-                  onClick={() => {
-                    trackNavCta(navItem.link);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    "relative text-neutral-600 dark:text-neutral-300",
-                    (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
-                      "rounded-full bg-neutral-900 px-4 py-2 !text-white dark:bg-white dark:!text-neutral-900"
-                  )}
-                >
-                  <motion.span className="block">{navItem.name} </motion.span>
-                </Link>
-              ))}
+              {navItems.map((navItem, idx: number) => {
+                const isGetMoreInfo = navItem.link === PRIMARY_NAV_HREF;
+                if (isGetMoreInfo) {
+                  return (
+                    <GetMoreInfoButton
+                      key={`link=${idx}`}
+                      onClick={() => {
+                        trackNavCta(navItem.link);
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "relative text-neutral-600 dark:text-neutral-300 rounded-full bg-neutral-900 px-4 py-2 !text-white dark:bg-white dark:!text-neutral-900"
+                      )}
+                    >
+                      <motion.span className="block">{navItem.name} </motion.span>
+                    </GetMoreInfoButton>
+                  );
+                }
+                return (
+                  <Link
+                    key={`link=${idx}`}
+                    href={navItem.link}
+                    onClick={() => {
+                      trackNavCta(navItem.link);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      "relative text-neutral-600 dark:text-neutral-300",
+                      navItem.link === "/contact" &&
+                        "rounded-full bg-neutral-900 px-4 py-2 !text-white dark:bg-white dark:!text-neutral-900"
+                    )}
+                  >
+                    <motion.span className="block">{navItem.name} </motion.span>
+                  </Link>
+                );
+              })}
               <Button
                 as={Link}
                 onClick={() => setOpen(false)}

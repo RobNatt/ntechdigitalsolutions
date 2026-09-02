@@ -3,7 +3,6 @@ import { CursorReactiveLazy } from "@/components/cursor-reactive/CursorReactiveL
 import { HomeBrandHub } from "@/components/home/HomeBrandHub";
 import { Footer } from "@/components/startup-landing/footer";
 import { Navbar } from "@/components/startup-landing/navbar";
-import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { HOME_FAQ_ITEMS } from "@/constants/home-faq";
 import { buildFaqJsonLd } from "@/lib/seo-metadata";
 import {
@@ -141,11 +140,6 @@ export default function HomePage() {
       <main>
         <HomeBrandHub />
       </main>
-      <section id="intake-form" className="bg-white px-4 py-16 dark:bg-neutral-950 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl">
-          <GhlIntakeFlow analyticsSurface="home" />
-        </div>
-      </section>
       <Footer />
     </>
   );
