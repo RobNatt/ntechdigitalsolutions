@@ -145,7 +145,7 @@ export function Configurator() {
         </div>
 
         <div className="mt-8 flex flex-col gap-3 border-t border-rule pt-6 sm:flex-row sm:items-center">
-          <Link href={href} className={ctaPrimary}>
+          <Link href={href} aria-label={`${label} — jump to that part of the system`} className={ctaPrimary}>
             {label}
           </Link>
           <Link href="/book-call" className={ctaSecondary}>

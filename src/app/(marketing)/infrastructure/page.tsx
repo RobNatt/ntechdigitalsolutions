@@ -176,9 +176,9 @@ export default function InfrastructurePage() {
               <li key={component.id}>
                 <a
                   href={`#${component.id}`}
-                  className="type-data flex items-baseline gap-2.5 rounded py-1.5 text-[0.8125rem] text-muted-ink transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+                  className="type-data flex min-h-11 items-center gap-2.5 rounded text-[0.8125rem] text-muted-ink transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
                 >
-                  <span className="text-live tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-muted-ink tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                   {component.name}
                 </a>
               </li>
@@ -204,7 +204,7 @@ export default function InfrastructurePage() {
                 />
 
                 <div className="flex items-center gap-3">
-                  <span className="type-data text-[0.75rem] text-live tabular-nums">
+                  <span className="type-data text-[0.75rem] text-muted-ink tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <Icon className="h-5 w-5 text-ink" aria-hidden />
@@ -253,7 +253,7 @@ export default function InfrastructurePage() {
                       href={component.next.href}
                       className="type-data inline-flex items-center gap-2 text-[0.8125rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
                     >
-                      <span aria-hidden className="text-live">
+                      <span aria-hidden className="text-muted-ink">
                         ↓
                       </span>
                       {component.next.label}

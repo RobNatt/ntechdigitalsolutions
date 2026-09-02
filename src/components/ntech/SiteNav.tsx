@@ -43,7 +43,7 @@ export function SiteNav() {
       <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2.5 rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-action"
+          className="flex min-h-11 items-center gap-2.5 rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-action"
         >
           <Image
             src="/ntech-mark.png"
@@ -64,9 +64,10 @@ export function SiteNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={item.href === "/blog" ? false : undefined}
               aria-current={pathname === item.href ? "page" : undefined}
               className={cn(
-                "rounded px-3 py-2 text-[0.875rem] text-muted-ink transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action",
+                "flex min-h-11 items-center rounded px-3 text-[0.875rem] text-muted-ink transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action",
                 pathname === item.href && "text-ink"
               )}
             >
@@ -105,6 +106,7 @@ export function SiteNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={item.href === "/blog" ? false : undefined}
                 aria-current={pathname === item.href ? "page" : undefined}
                 onClick={() => setOpen(false)}
                 className="border-b border-rule py-3.5 text-[1rem] text-ink"

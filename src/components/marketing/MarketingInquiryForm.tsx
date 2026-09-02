@@ -1,29 +1,23 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ActivityLog, ActivityRow, ctaPrimary } from "@/components/ntech/primitives";
 import { ANALYTICS_CUSTOM_EVENTS } from "@/constants/analytics-events";
 import { readAnalyticsClientIds } from "@/lib/analytics/read-client-ids";
 import { trackClientAnalyticsEvent } from "@/lib/analytics/track-client-event";
 import { cn } from "@/lib/utils";
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400";
+  "mt-1.5 min-h-11 w-full rounded-lg border border-rule-strong bg-white px-3.5 py-2.5 text-[0.9375rem] text-ink focus:border-action focus:outline-2 focus:outline-offset-0 focus:outline-action";
 
-const BUDGET_RANGE_OPTIONS = [
-  { value: "", label: "Prefer not to say" },
-  { value: "Under $2,500", label: "Under $2,500" },
-  { value: "$2,500 – $7,500", label: "$2,500 – $7,500" },
-  { value: "$7,500 – $15,000", label: "$7,500 – $15,000" },
-  { value: "$15,000+", label: "$15,000+" },
-  { value: "Not sure yet", label: "Not sure yet — let’s talk" },
-] as const;
+const labelClass = "block text-[0.875rem] font-medium text-ink";
+
+type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
 
 type MarketingInquiryFormProps = {
   /** From URL ?plan= (pricing CTAs) */
   planInterest?: string;
   className?: string;
-  /** Optional budget range (e.g. home discovery form). */
-  showBudget?: boolean;
   /** Passed to analytics as `surface` (default: contact). */
   analyticsSurface?: string;
 };
@@ -31,7 +25,6 @@ type MarketingInquiryFormProps = {
 export function MarketingInquiryForm({
   planInterest,
   className,
-  showBudget = false,
   analyticsSurface = "contact",
 }: MarketingInquiryFormProps) {
   const formStartedRef = useRef(false);
@@ -39,20 +32,40 @@ export function MarketingInquiryForm({
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
-  const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
+
+  function validate(): FieldErrors {
+    const errors: FieldErrors = {};
+    if (!name.trim()) errors.name = "We need a name so we know who we're replying to.";
+    if (!email.trim()) errors.email = "We reply by email, so we need an address.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      errors.email = "That address is missing an @ or a domain — check it and try again.";
+    if (!message.trim())
+      errors.message = "Tell us what's going wrong, even in one line. It's what we read first.";
+    return errors;
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setFormError(null);
+
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const first = document.getElementById(`inquiry-${Object.keys(errors)[0]}`);
+      first?.focus();
+      return;
+    }
+
     setSubmitting(true);
     try {
       const sourcePage =
         typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : "";
-      const analyticsIds = readAnalyticsClientIds();
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -63,60 +76,39 @@ export function MarketingInquiryForm({
           phone,
           message,
           ...(planInterest ? { plan: planInterest } : {}),
-          ...(showBudget && budget.trim() ? { budget: budget.trim() } : {}),
           sourcePage,
-          ...analyticsIds,
+          ...readAnalyticsClientIds(),
         }),
       });
       const data = (await res.json()) as { error?: string; hint?: string };
       if (!res.ok) {
-        const hint = data.hint ? ` ${data.hint}` : "";
-        setError((data.error || "Could not send.") + hint);
+        setFormError(
+          `${data.error || "That didn't send — nothing was lost, your message is still below."}${
+            data.hint ? ` ${data.hint}` : ""
+          }`
+        );
         return;
       }
+      setSentTo(email);
       setDone(true);
       trackClientAnalyticsEvent(ANALYTICS_CUSTOM_EVENTS.INFO_SUBMIT, {
         surface: analyticsSurface,
         status: "submitted",
         ...(planInterest ? { plan: planInterest } : {}),
       });
-      trackClientAnalyticsEvent("inquiry_submit", {
-        surface: analyticsSurface,
-      });
+      trackClientAnalyticsEvent("inquiry_submit", { surface: analyticsSurface });
       setName("");
       setEmail("");
       setCompany("");
       setPhone("");
-      setBudget("");
       setMessage("");
     } catch {
-      setError("Network error. Please try again.");
+      setFormError(
+        "Your connection dropped before that sent. Nothing was lost — press send again in a moment."
+      );
     } finally {
       setSubmitting(false);
     }
-  }
-
-  if (done) {
-    return (
-      <div
-        className={cn(
-          "rounded-xl border border-neutral-900 bg-neutral-50 p-6 text-center dark:border-neutral-100 dark:bg-neutral-900/40",
-          className
-        )}
-      >
-        <p className="text-lg font-semibold text-neutral-900 dark:text-white">Thanks — we got it.</p>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
-          We&apos;ll follow up by email shortly.
-        </p>
-        <button
-          type="button"
-          onClick={() => setDone(false)}
-          className="mt-4 text-sm font-semibold text-neutral-900 underline underline-offset-4 hover:text-neutral-600 dark:text-neutral-100 dark:hover:text-neutral-300"
-        >
-          Send another message
-        </button>
-      </div>
-    );
   }
 
   function onFormFocusCapture() {
@@ -132,113 +124,160 @@ export function MarketingInquiryForm({
     });
   }
 
+  if (done) {
+    return (
+      <div className={cn("", className)} aria-live="polite">
+        <ActivityLog label="Your message, as the system logged it">
+          <ActivityRow
+            stamp={new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+            channel="form"
+            action="Message received"
+            outcome="Saved to CRM"
+            state="done"
+          />
+          <ActivityRow
+            stamp={new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+            channel="crm"
+            action="Confirmation sent"
+            outcome={sentTo}
+            state="done"
+          />
+        </ActivityLog>
+        <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted-ink">
+          A confirmation is on its way to {sentTo}. We read these ourselves and reply by email —
+          usually the same day.
+        </p>
+        <button
+          type="button"
+          onClick={() => setDone(false)}
+          className="type-data mt-4 text-[0.75rem] text-ink underline underline-offset-4 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+        >
+          Send another message
+        </button>
+      </div>
+    );
+  }
+
+  function fieldError(key: keyof FieldErrors) {
+    const error = fieldErrors[key];
+    if (!error) return null;
+    return (
+      <p id={`inquiry-${key}-error`} className="mt-2 text-[0.8125rem] leading-snug text-ink">
+        <span aria-hidden className="mr-1.5 text-[#B4232B]">
+          ▲
+        </span>
+        {error}
+      </p>
+    );
+  }
+
   return (
     <form
       onFocusCapture={onFormFocusCapture}
       onSubmit={(e) => void onSubmit(e)}
-      className={cn("space-y-4", className)}
+      className={cn("", className)}
       noValidate
     >
       {planInterest ? (
-        <p className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-100">
-          <span className="font-semibold">Package interest:</span>{" "}
+        <p className="mb-5 rounded-lg border border-rule-strong bg-field-sunken px-3.5 py-2.5 text-[0.875rem] text-ink">
+          <span className="font-semibold">Interested in:</span>{" "}
           <span className="capitalize">{planInterest.replace(/-/g, " ")}</span>
         </p>
       ) : null}
 
-      <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-        Name <span className="text-red-600 dark:text-red-400">*</span>
-        <input
-          className={inputClass}
-          name="name"
-          required
-          autoComplete="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={200}
-        />
+      <p className="type-data mb-5 text-[0.75rem] text-muted-ink">
+        Everything is required except where marked optional.
+      </p>
+
+      <label className={labelClass} htmlFor="inquiry-name">
+        Your name
       </label>
+      <input
+        id="inquiry-name"
+        name="name"
+        className={inputClass}
+        autoComplete="name"
+        maxLength={200}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        aria-invalid={Boolean(fieldErrors.name)}
+        aria-describedby={fieldErrors.name ? "inquiry-name-error" : undefined}
+      />
+      {fieldError("name")}
 
-      <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-        Email <span className="text-red-600 dark:text-red-400">*</span>
-        <input
-          className={inputClass}
-          type="email"
-          name="email"
-          required
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          maxLength={320}
-        />
+      <label className={cn(labelClass, "mt-5")} htmlFor="inquiry-email">
+        Email
       </label>
+      <input
+        id="inquiry-email"
+        name="email"
+        type="email"
+        className={inputClass}
+        autoComplete="email"
+        maxLength={320}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        aria-invalid={Boolean(fieldErrors.email)}
+        aria-describedby={fieldErrors.email ? "inquiry-email-error" : undefined}
+      />
+      {fieldError("email")}
 
-      <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-        Company
-        <input
-          className={inputClass}
-          name="company"
-          autoComplete="organization"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          maxLength={200}
-        />
+      <label className={cn(labelClass, "mt-5")} htmlFor="inquiry-company">
+        Business name <span className="font-normal text-muted-ink">(optional)</span>
       </label>
+      <input
+        id="inquiry-company"
+        name="company"
+        className={inputClass}
+        autoComplete="organization"
+        maxLength={200}
+        value={company}
+        onChange={(e) => setCompany(e.target.value)}
+      />
 
-      <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-        Phone
-        <input
-          className={inputClass}
-          type="tel"
-          name="phone"
-          autoComplete="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          maxLength={40}
-        />
+      <label className={cn(labelClass, "mt-5")} htmlFor="inquiry-phone">
+        Phone <span className="font-normal text-muted-ink">(optional)</span>
       </label>
+      <input
+        id="inquiry-phone"
+        name="phone"
+        type="tel"
+        className={inputClass}
+        autoComplete="tel"
+        maxLength={40}
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+      />
 
-      {showBudget ? (
-        <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-          Project budget
-          <select
-            className={cn(inputClass, "cursor-pointer")}
-            name="budget"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-          >
-            {BUDGET_RANGE_OPTIONS.map((o) => (
-              <option key={o.value || "unspecified"} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
-
-      <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-        How can we help? <span className="text-red-600 dark:text-red-400">*</span>
-        <textarea
-          className={cn(inputClass, "min-h-[120px] resize-y")}
-          name="message"
-          required
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          maxLength={8000}
-          rows={5}
-        />
+      <label className={cn(labelClass, "mt-5")} htmlFor="inquiry-message">
+        What&apos;s leaking — missed calls, follow-up, reviews?
       </label>
+      <textarea
+        id="inquiry-message"
+        name="message"
+        rows={4}
+        className={cn(inputClass, "min-h-28 resize-y")}
+        maxLength={8000}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        aria-invalid={Boolean(fieldErrors.message)}
+        aria-describedby={fieldErrors.message ? "inquiry-message-error" : undefined}
+      />
+      {fieldError("message")}
 
-      {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-100">
-          {error}
+      {formError ? (
+        <p
+          role="alert"
+          className="mt-5 rounded-lg border border-rule-strong bg-field-sunken px-3.5 py-3 text-[0.875rem] leading-relaxed text-ink"
+        >
+          {formError}
         </p>
       ) : null}
 
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+        className={cn(ctaPrimary, "mt-6 w-full disabled:opacity-60")}
       >
         {submitting ? "Sending…" : "Send message"}
       </button>

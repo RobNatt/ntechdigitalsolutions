@@ -57,7 +57,11 @@ export function Hero() {
         </p>
 
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link href="/infrastructure" className={ctaPrimary}>
+          <Link
+            href="/infrastructure"
+            aria-label="Learn More about the five connected systems"
+            className={ctaPrimary}
+          >
             Learn More
           </Link>
           <ReceptionistDemoCta />

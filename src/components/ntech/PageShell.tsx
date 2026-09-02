@@ -45,7 +45,11 @@ export function PageShell({
               <Link href="/book-call" className={ctaPrimary}>
                 Book With Us
               </Link>
-              <Link href="/infrastructure" className={ctaSecondary}>
+              <Link
+                href="/infrastructure"
+                aria-label="Learn More about what the system includes"
+                className={ctaSecondary}
+              >
                 Learn More
               </Link>
             </OutcomeBlock>

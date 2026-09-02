@@ -14,19 +14,27 @@ type BlogPostPageProps = {
 };
 
 async function fetchPublishedPost(slug: string): Promise<BlogPostPublic | null> {
-  const admin = createAdminClient();
-  const { data, error } = await admin
-    .from("dashboard_blog_posts")
-    .select("id, title, slug, excerpt, content, published_at")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .lte("published_at", new Date().toISOString())
-    .maybeSingle();
-  if (error) {
-    console.error("blog [slug] page:", error.message);
+  // createAdminClient() throws when Supabase env is missing, which turned an
+  // unknown slug into a 500 instead of a 404. The index page already guards
+  // this; the post page has to as well.
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from("dashboard_blog_posts")
+      .select("id, title, slug, excerpt, content, published_at")
+      .eq("slug", slug)
+      .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
+      .maybeSingle();
+    if (error) {
+      console.error("blog [slug] page:", error.message);
+      return null;
+    }
+    return (data as BlogPostPublic | null) ?? null;
+  } catch (e) {
+    console.error("blog [slug] page:", e);
     return null;
   }
-  return (data as BlogPostPublic | null) ?? null;
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
@@ -84,7 +92,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           href="/blog"
           className="type-data text-[0.8125rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
         >
-          <span aria-hidden className="text-live">←</span> Back to the blog
+          <span aria-hidden className="text-muted-ink">←</span> Back to the blog
         </Link>
       </p>
     </PageShell>

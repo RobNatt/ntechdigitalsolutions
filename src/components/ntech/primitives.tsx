@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 /* ============================================================
@@ -111,7 +110,6 @@ export function ActivityRow({
         /* Each row is its own grid, so the channel column is a FIXED width — an
          auto column would size per row and the log would not line up. */
       "grid grid-cols-[auto_1fr] items-start gap-x-3 gap-y-1 border-b border-rule py-3 last:border-b-0 sm:grid-cols-[5.25rem_6rem_1fr_auto] sm:items-center sm:gap-x-4",
-        state === "failed" && "opacity-60",
         className
       )}
       style={
@@ -265,7 +263,7 @@ export function Section({
       <div className={cn("mx-auto w-full px-4 sm:px-6", width, bleed ? "py-0" : "py-14 sm:py-20")}>
         {eyebrow ? (
           <p className="type-data mb-6 flex items-center gap-2.5 text-[0.75rem] uppercase text-muted-ink">
-            {index ? <span className="text-live">{index}</span> : null}
+            {index ? <span className="text-muted-ink">{index}</span> : null}
             {eyebrow}
           </p>
         ) : null}
@@ -294,22 +292,5 @@ export function SectionHeading({
       {children}
       {trailing ? <span className="text-muted-ink"> {trailing}</span> : null}
     </h2>
-  );
-}
-
-/** Primary CTA — "Learn More". Kept in one place so the label never drifts. */
-export function LearnMoreLink({
-  href = "/infrastructure",
-  label = "Learn More",
-  className,
-}: {
-  href?: string;
-  label?: string;
-  className?: string;
-}) {
-  return (
-    <Link href={href} className={cn(ctaPrimary, className)}>
-      {label}
-    </Link>
   );
 }

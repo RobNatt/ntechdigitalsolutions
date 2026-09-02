@@ -55,12 +55,13 @@ export function SiteFooter() {
           {COLUMNS.map((col) => (
             <div key={col.heading}>
               <p className="type-data text-[0.75rem] uppercase text-muted-ink">{col.heading}</p>
-              <ul className="mt-4 space-y-2.5">
+              <ul className="mt-2">
                 {col.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-[0.9375rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
+                      prefetch={link.href === "/blog" ? false : undefined}
+                      className="flex min-h-11 items-center text-[0.9375rem] text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
                     >
                       {link.name}
                     </Link>
@@ -78,14 +79,14 @@ export function SiteFooter() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a
               href={`mailto:${SITE_CONTACT_EMAIL}`}
-              className="type-data text-[0.75rem] text-ink underline-offset-4 hover:underline"
+              className="type-data inline-flex min-h-11 items-center text-[0.75rem] text-ink underline-offset-4 hover:underline"
             >
               {SITE_CONTACT_EMAIL}
             </a>
             {tel && SITE_BUSINESS_PHONE ? (
               <a
                 href={tel}
-                className="type-data text-[0.75rem] text-ink underline-offset-4 hover:underline"
+                className="type-data inline-flex min-h-11 items-center text-[0.75rem] text-ink underline-offset-4 hover:underline"
               >
                 {SITE_BUSINESS_PHONE}
               </a>

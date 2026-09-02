@@ -148,10 +148,13 @@ export function Circuit() {
 
                 <p className="type-heading mt-3 text-[1rem] text-ink">{stage.name}</p>
 
+                {/* Pending state is carried by the node, border and chip — not by
+                    dimming the text, which drops it below AA before the current
+                    arrives (and Lighthouse reads the page in exactly that state). */}
                 <p
                   className={cn(
-                    "type-data mt-3 text-[0.75rem] leading-relaxed transition-opacity duration-500",
-                    reached ? "text-ink opacity-100" : "text-muted-ink opacity-50"
+                    "type-data mt-3 text-[0.75rem] leading-relaxed transition-colors duration-500",
+                    reached ? "text-ink" : "text-muted-ink"
                   )}
                 >
                   {stage.output}
@@ -168,7 +171,11 @@ export function Circuit() {
       </p>
 
       <div className="mt-8">
-        <Link href="/infrastructure" className={ctaPrimary}>
+        <Link
+          href="/infrastructure"
+          aria-label="Learn More about how each system hands off to the next"
+          className={ctaPrimary}
+        >
           Learn More
         </Link>
       </div>

@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
  * with their own address in them.
  */
 const inputClass =
-  "mt-1.5 min-h-11 w-full rounded-lg border border-rule-strong bg-white px-3.5 py-2.5 text-[0.9375rem] text-ink placeholder:text-muted-ink/70 focus:border-action focus:outline-2 focus:outline-offset-0 focus:outline-action";
+  "mt-1.5 min-h-11 w-full rounded-lg border border-rule-strong bg-white px-3.5 py-2.5 text-[0.9375rem] text-ink focus:border-action focus:outline-2 focus:outline-offset-0 focus:outline-action";
 
 function stamp(): string {
   return new Date().toLocaleTimeString("en-US", {
