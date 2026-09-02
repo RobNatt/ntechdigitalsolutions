@@ -663,7 +663,7 @@ export function LeadWorkModal({
               ) : (
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
                   GHL calendar booking is not configured. Set up GHL booking IDs in{" "}
-                  <a href={settingsIntegrationsUrl} className="font-medium text-sky-700 hover:underline dark:text-sky-400">
+                  <a href="/dashboard/settings" className="font-medium text-sky-700 hover:underline dark:text-sky-400">
                     Settings → Integrations
                   </a>
                   .
