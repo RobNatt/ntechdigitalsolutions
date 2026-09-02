@@ -11,7 +11,6 @@ import {
   SHEET_LEAD_FIELD_KEYS,
   type SheetLeadFieldKey,
 } from "@/lib/integrations/webhook-handlers";
-import { DEFAULT_CALENDLY_EVENT_URL } from "@/constants/scheduling";
 import type { OsSettingsRow } from "@/lib/os/types";
 
 const FIELD_LABELS: Record<SheetLeadFieldKey, string> = {
@@ -64,11 +63,7 @@ export function IntegrationsSection({
   const calendlyUrl = `${base}/api/webhooks/calendly`;
 
   const [sheetsOn, setSheetsOn] = useState(settings.integration_sheets_enabled);
-  const [calOn, setCalOn] = useState(settings.integration_calendly_enabled);
   const [gcalOn, setGcalOn] = useState(settings.integration_google_calendar_enabled);
-  const [bookedStage, setBookedStage] = useState(settings.integration_calendly_booked_stage);
-  const [calDiscoveryUrl, setCalDiscoveryUrl] = useState(settings.integration_calendly_discovery_url ?? "");
-  const [calProposalUrl, setCalProposalUrl] = useState(settings.integration_calendly_proposal_url ?? "");
   const [ghlDiscoveryId, setGhlDiscoveryId] = useState(settings.integration_ghl_discovery_booking_id ?? "");
   const [ghlProposalId, setGhlProposalId] = useState(settings.integration_ghl_proposal_booking_id ?? "");
   const [calendarId, setCalendarId] = useState(settings.integration_google_calendar_id ?? "");
@@ -87,11 +82,7 @@ export function IntegrationsSection({
 
   useEffect(() => {
     setSheetsOn(settings.integration_sheets_enabled);
-    setCalOn(settings.integration_calendly_enabled);
     setGcalOn(settings.integration_google_calendar_enabled);
-    setBookedStage(settings.integration_calendly_booked_stage);
-    setCalDiscoveryUrl(settings.integration_calendly_discovery_url ?? "");
-    setCalProposalUrl(settings.integration_calendly_proposal_url ?? "");
     setGhlDiscoveryId(settings.integration_ghl_discovery_booking_id ?? "");
     setGhlProposalId(settings.integration_ghl_proposal_booking_id ?? "");
     setCalendarId(settings.integration_google_calendar_id ?? "");
@@ -104,11 +95,7 @@ export function IntegrationsSection({
     startTransition(async () => {
       const r = await saveIntegrationSettingsAction({
         integration_sheets_enabled: sheetsOn,
-        integration_calendly_enabled: calOn,
         integration_google_calendar_enabled: gcalOn,
-        integration_calendly_booked_stage: bookedStage,
-        integration_calendly_discovery_url: calDiscoveryUrl || null,
-        integration_calendly_proposal_url: calProposalUrl || null,
         integration_ghl_discovery_booking_id: ghlDiscoveryId || null,
         integration_ghl_proposal_booking_id: ghlProposalId || null,
         integration_google_calendar_id: calendarId || null,
@@ -122,11 +109,7 @@ export function IntegrationsSection({
     });
   }, [
     sheetsOn,
-    calOn,
     gcalOn,
-    bookedStage,
-    calDiscoveryUrl,
-    calProposalUrl,
     ghlDiscoveryId,
     ghlProposalId,
     calendarId,
@@ -331,58 +314,6 @@ function syncAllRowsFromActiveSheet() {
         <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-neutral-800 dark:text-neutral-200">
           {appsScriptSample}
         </pre>
-      </div>
-
-      <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Calendly booking links (outgoing)</h3>
-        <p className="mt-1 text-xs text-neutral-500">
-          Used when you book a meeting from a lead in the CRM. Paste the full event URL from Calendly (Share → Add to
-          website). Leave blank to use <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">NEXT_PUBLIC_CALENDLY_EVENT_URL</code>{" "}
-          or the default discovery event.
-        </p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
-            Discovery call event URL
-            <input
-              value={calDiscoveryUrl}
-              onChange={(e) => setCalDiscoveryUrl(e.target.value)}
-              placeholder={DEFAULT_CALENDLY_EVENT_URL}
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
-            />
-          </label>
-          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
-            Proposal meeting event URL (optional)
-            <input
-              value={calProposalUrl}
-              onChange={(e) => setCalProposalUrl(e.target.value)}
-              placeholder="Falls back to discovery URL"
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
-            />
-          </label>
-        </div>
-      </div>
-
-      <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Calendly status mapping</h3>
-        <p className="mt-1 text-xs text-neutral-500">
-          When a booking webhook is processed, the lead moves to this pipeline stage (defaults to Booked).
-        </p>
-        <select
-          value={leadStages.includes(bookedStage) ? bookedStage : (leadStages[0] ?? "Booked")}
-          onChange={(e) => setBookedStage(e.target.value)}
-          className="mt-2 w-full max-w-md rounded-lg border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-600 dark:bg-neutral-950"
-        >
-          {leadStages.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-        <p className="mt-2 text-xs text-neutral-500">
-          Calendly sends varied JSON shapes. This endpoint tries common paths for invitee email, times, and meeting
-          links. For production, use a Calendly webhook subscription or a small relay that posts the minimal JSON your
-          agency prefers.
-        </p>
       </div>
 
       <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">

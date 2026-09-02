@@ -412,13 +412,9 @@ function normalizeCalendlyEventUrl(v: string | null | undefined): string | null 
 
 export async function saveIntegrationSettingsAction(payload: {
   integration_sheets_enabled: boolean;
-  integration_calendly_enabled: boolean;
   integration_google_calendar_enabled: boolean;
-  integration_calendly_booked_stage: string;
-  integration_calendly_discovery_url: string | null;
-  integration_calendly_proposal_url: string | null;
-  integration_ghl_discovery_booking_id?: string | null;
-  integration_ghl_proposal_booking_id?: string | null;
+  integration_ghl_discovery_booking_id: string | null;
+  integration_ghl_proposal_booking_id: string | null;
   integration_google_calendar_id: string | null;
   integration_google_oauth_connected: boolean;
   integration_sheets_column_map: Record<string, string>;
@@ -436,19 +432,12 @@ export async function saveIntegrationSettingsAction(payload: {
     cur && (cur as { integration_webhook_secret?: string | null }).integration_webhook_secret != null
       ? String((cur as { integration_webhook_secret?: string | null }).integration_webhook_secret).trim()
       : "";
-  if (
-    (payload.integration_sheets_enabled || payload.integration_calendly_enabled) &&
-    !secret
-  ) {
+  if (payload.integration_sheets_enabled && !secret) {
     secret = randomBytes(32).toString("hex");
   }
   const patch: Record<string, unknown> = {
     integration_sheets_enabled: payload.integration_sheets_enabled,
-    integration_calendly_enabled: payload.integration_calendly_enabled,
     integration_google_calendar_enabled: payload.integration_google_calendar_enabled,
-    integration_calendly_booked_stage: payload.integration_calendly_booked_stage.trim() || "Booked",
-    integration_calendly_discovery_url: normalizeCalendlyEventUrl(payload.integration_calendly_discovery_url),
-    integration_calendly_proposal_url: normalizeCalendlyEventUrl(payload.integration_calendly_proposal_url),
     integration_ghl_discovery_booking_id: payload.integration_ghl_discovery_booking_id?.trim() || null,
     integration_ghl_proposal_booking_id: payload.integration_ghl_proposal_booking_id?.trim() || null,
     integration_google_calendar_id: payload.integration_google_calendar_id?.trim() || null,
@@ -459,7 +448,7 @@ export async function saveIntegrationSettingsAction(payload: {
   return persistRow(
     supabase,
     patch,
-    `Integrations: sheets=${payload.integration_sheets_enabled}, calendly=${payload.integration_calendly_enabled}, gcal=${payload.integration_google_calendar_enabled}`
+    `Integrations: sheets=${payload.integration_sheets_enabled}, ghl_booking=${payload.integration_ghl_discovery_booking_id ? "enabled" : "disabled"}, gcal=${payload.integration_google_calendar_enabled}`
   );
 }
 

@@ -32,14 +32,7 @@ import {
   formatFollowUpDue,
   touchChannelLabel,
 } from "@/lib/os/lead-workflow";
-import { CalendlyBookButton } from "@/components/scheduling/CalendlyBookButton";
 import { GhlBookingButton } from "@/components/scheduling/GhlBookingButton";
-import {
-  buildLeadCalendlyBookingUrl,
-  calendlyEventLabelForLead,
-  leadCalendlyInviteeName,
-  type OsCalendlyBookingUrls,
-} from "@/lib/os/calendly-booking";
 import {
   buildGhlBookingUrl,
   ghlEventLabelForLead,
@@ -109,7 +102,6 @@ export function LeadWorkModal({
   isInternal,
   brandColor,
   commonTags,
-  calendlyUrls,
   ghlBookingConfig,
   timezone,
   onClose,
@@ -124,7 +116,6 @@ export function LeadWorkModal({
   isInternal: boolean;
   brandColor: string;
   commonTags: string[];
-  calendlyUrls: OsCalendlyBookingUrls;
   ghlBookingConfig: OsGhlBookingConfig | null;
   timezone: string;
   onClose: () => void;
@@ -163,21 +154,13 @@ export function LeadWorkModal({
   const [docUploadMsg, setDocUploadMsg] = useState<string | null>(null);
 
   const bookingUrl = useMemo(() => {
-    if (ghlBookingConfig) {
-      return buildGhlBookingUrl(lead, ghlBookingConfig);
-    }
-    return buildLeadCalendlyBookingUrl(lead, calendlyUrls);
-  }, [lead, calendlyUrls, ghlBookingConfig]);
+    if (!ghlBookingConfig) return "";
+    return buildGhlBookingUrl(lead, ghlBookingConfig);
+  }, [lead, ghlBookingConfig]);
 
   const bookingLabel = useMemo(() => {
-    if (ghlBookingConfig) {
-      return ghlEventLabelForLead(lead.status);
-    }
-    return calendlyEventLabelForLead(lead.status);
-  }, [lead.status, ghlBookingConfig]);
-
-  const useGhlBooking = ghlBookingConfig !== null;
-  const calendlyInviteeName = useMemo(() => leadCalendlyInviteeName(lead), [lead]);
+    return ghlEventLabelForLead(lead.status);
+  }, [lead.status]);
 
   const [form, setForm] = useState<LeadUpsertPayload>(() => ({
     lead_name: lead.lead_name,
@@ -636,51 +619,56 @@ export function LeadWorkModal({
           )}
           {isInternal ? (
             <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/60">
-              <p className="text-sm font-medium text-neutral-900 dark:text-white">
-                Book {bookingLabel.toLowerCase()}
-              </p>
-              <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-                {useGhlBooking ? "Opens GHL calendar" : "Opens Calendly"} with{" "}
-                {calendlyInviteeName ? (
-                  <span className="font-medium text-neutral-800 dark:text-neutral-200">{calendlyInviteeName}</span>
-                ) : (
-                  "the lead"
-                )}
-                {lead.email ? (
-                  <>
-                    {" "}
-                    · <span className="font-medium text-neutral-800 dark:text-neutral-200">{lead.email}</span>
-                  </>
-                ) : (
-                  " — add an email under Edit lead details for prefill"
-                )}
-                .
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                {useGhlBooking ? (
-                  <GhlBookingButton
-                    bookingUrl={bookingUrl}
-                    label={`Book ${bookingLabel.toLowerCase()}`}
-                    brandColor={brandColor}
-                    disabled={busy}
-                  />
-                ) : (
-                  <CalendlyBookButton
-                    url={bookingUrl}
-                    label="Book with Calendly"
-                    brandColor={brandColor}
-                    disabled={busy}
-                  />
-                )}
-                <a
-                  href={bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-medium text-sky-700 hover:underline dark:text-sky-400"
-                >
-                  Open in new tab
-                </a>
-              </div>
+              {ghlBookingConfig ? (
+                <>
+                  <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                    Book {bookingLabel.toLowerCase()}
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                    Opens GHL calendar with{" "}
+                    {lead.lead_name?.trim() || lead.business_name?.trim() ? (
+                      <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                        {lead.lead_name?.trim() || lead.business_name?.trim()}
+                      </span>
+                    ) : (
+                      "the lead"
+                    )}
+                    {lead.email ? (
+                      <>
+                        {" "}
+                        · <span className="font-medium text-neutral-800 dark:text-neutral-200">{lead.email}</span>
+                      </>
+                    ) : (
+                      " — add an email under Edit lead details for prefill"
+                    )}
+                    .
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <GhlBookingButton
+                      bookingUrl={bookingUrl}
+                      label={`Book ${bookingLabel.toLowerCase()}`}
+                      brandColor={brandColor}
+                      disabled={busy}
+                    />
+                    <a
+                      href={bookingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium text-sky-700 hover:underline dark:text-sky-400"
+                    >
+                      Open in new tab
+                    </a>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  GHL calendar booking is not configured. Set up GHL booking IDs in{" "}
+                  <a href={settingsIntegrationsUrl} className="font-medium text-sky-700 hover:underline dark:text-sky-400">
+                    Settings → Integrations
+                  </a>
+                  .
+                </p>
+              )}
             </div>
           ) : null}
 
