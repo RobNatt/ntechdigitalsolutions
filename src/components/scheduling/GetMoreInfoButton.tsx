@@ -25,8 +25,8 @@ export function GetMoreInfoButton({
   title,
   style,
 }: GetMoreInfoButtonProps) {
-  function handleClick() {
-    onClick?.();
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    onClick?.(e);
     const element = document.getElementById(formId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
