@@ -92,6 +92,12 @@ export type ActivityRowProps = {
   /** Index, used only to stagger the appear animation. */
   index?: number;
   animate?: boolean;
+  /**
+   * Keep the stacked layout regardless of viewport. The wide row keys off
+   * viewport breakpoints, so inside a narrow column it would still try to lay
+   * out four across and wrap every cell.
+   */
+  compact?: boolean;
 };
 
 export function ActivityRow({
@@ -103,6 +109,7 @@ export function ActivityRow({
   className,
   index = 0,
   animate = false,
+  compact = false,
 }: ActivityRowProps) {
   return (
     <li
@@ -126,20 +133,26 @@ export function ActivityRow({
         {stamp}
       </span>
 
-      <span className="col-start-2 row-start-1 sm:col-start-2 sm:justify-self-start">
+      <span className={cn("col-start-2 row-start-1", !compact && "sm:col-start-2 sm:justify-self-start")}>
         <ChannelChip tone={state === "failed" ? "muted" : "default"}>
           {CHANNEL_LABEL[channel]}
         </ChannelChip>
       </span>
 
-      <span className="col-span-2 col-start-1 row-start-2 text-[0.9375rem] leading-snug text-ink sm:col-span-1 sm:col-start-3 sm:row-start-1">
+      <span
+        className={cn(
+          "col-span-2 col-start-1 row-start-2 text-[0.9375rem] leading-snug text-ink",
+          !compact && "sm:col-span-1 sm:col-start-3 sm:row-start-1"
+        )}
+      >
         {action}
       </span>
 
       {outcome ? (
         <span
           className={cn(
-            "type-data col-span-2 col-start-1 row-start-3 text-[0.75rem] sm:col-span-1 sm:col-start-4 sm:row-start-1 sm:text-right",
+            "type-data col-span-2 col-start-1 row-start-3 text-[0.75rem]",
+            !compact && "sm:col-span-1 sm:col-start-4 sm:row-start-1 sm:text-right",
             state === "done" && "text-ink",
             state === "pending" && "text-muted-ink",
             state === "failed" && "text-muted-ink"
@@ -149,6 +162,22 @@ export function ActivityRow({
         </span>
       ) : null}
     </li>
+  );
+}
+
+/**
+ * Corner tick marks — taken from Slot C, which frames its panels this way.
+ * Reserved for the log, the motif's home, rather than applied to every card.
+ */
+function CornerTicks() {
+  const base = "pointer-events-none absolute h-2 w-2 border-muted-ink/40";
+  return (
+    <span aria-hidden>
+      <span className={cn(base, "-left-px -top-px border-l border-t")} />
+      <span className={cn(base, "-right-px -top-px border-r border-t")} />
+      <span className={cn(base, "-bottom-px -left-px border-b border-l")} />
+      <span className={cn(base, "-bottom-px -right-px border-b border-r")} />
+    </span>
   );
 }
 
@@ -165,16 +194,16 @@ export function ActivityLog({
   className?: string;
 }) {
   return (
-    <ul
-      aria-label={label}
-      {...(live ? { "aria-live": "polite" as const, "aria-atomic": false } : {})}
-      className={cn(
-        "rounded-xl border border-rule bg-white px-4 shadow-[0_1px_2px_rgba(14,35,64,0.04)] sm:px-5",
-        className
-      )}
-    >
-      {children}
-    </ul>
+    <div className={cn("relative", className)}>
+      <CornerTicks />
+      <ul
+        aria-label={label}
+        {...(live ? { "aria-live": "polite" as const, "aria-atomic": false } : {})}
+        className="rounded-xl border border-rule bg-white px-4 shadow-[0_1px_2px_rgba(14,35,64,0.04)] sm:px-5"
+      >
+        {children}
+      </ul>
+    </div>
   );
 }
 

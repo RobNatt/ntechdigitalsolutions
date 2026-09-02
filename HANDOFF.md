@@ -33,6 +33,12 @@ deliberate — nothing is faked, and no placeholder statistic appears anywhere.
   the only screen a visitor sits still on to watch video, and the only one where
   they have already committed. The sitewide theme toggle was removed from the
   marketing surface. (The `/dashboard` OS app keeps its own theming.)
+- **Slot C (authkit.com) is a dark site.** The Checkpoint 1 memo described it as
+  near-monochrome white — that was recalled, not fetched, and it was wrong. The
+  site is deliberately NOT flipped dark anyway: that reference sells to
+  developers at a desk, while this buyer is on a phone, outdoors, between jobs.
+  `/booked` is where C's actual register lives. The corner tick marks on the
+  activity log come from C's panel framing.
 - **Cyan `#28C4D9`** marks a state change and nothing else: a stage completing, a
   node arriving, an active border. It is never used for body text or decoration
   — it fails contrast as text on the light field.
@@ -62,9 +68,9 @@ Lighthouse, production build, mobile viewport:
 
 | Page | Perf | A11y | Best practices | SEO |
 |---|---|---|---|---|
-| `/` | 93 | 100 | 96 | 92 |
+| `/` | 94 | 100 | 96 | 92 |
 | `/infrastructure` | 94 | 100 | 96 | 100 |
-| `/pricing` | 96 | 100 | 96 | 92 |
+| `/pricing` | 95 | 100 | 96 | 92 |
 | `/about` | 95 | 100 | 96 | 92 |
 | `/booked` | 98 | 100 | 96 | 69 |
 | `/contact` | 88 | 100 | 96 | 100 |
