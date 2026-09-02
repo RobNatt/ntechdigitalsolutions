@@ -69,6 +69,8 @@ export function IntegrationsSection({
   const [bookedStage, setBookedStage] = useState(settings.integration_calendly_booked_stage);
   const [calDiscoveryUrl, setCalDiscoveryUrl] = useState(settings.integration_calendly_discovery_url ?? "");
   const [calProposalUrl, setCalProposalUrl] = useState(settings.integration_calendly_proposal_url ?? "");
+  const [ghlDiscoveryId, setGhlDiscoveryId] = useState(settings.integration_ghl_discovery_booking_id ?? "");
+  const [ghlProposalId, setGhlProposalId] = useState(settings.integration_ghl_proposal_booking_id ?? "");
   const [calendarId, setCalendarId] = useState(settings.integration_google_calendar_id ?? "");
   const [oauthConnected, setOauthConnected] = useState(settings.integration_google_oauth_connected);
   const [colMap, setColMap] = useState<Record<SheetLeadFieldKey, string>>(() =>
@@ -90,6 +92,8 @@ export function IntegrationsSection({
     setBookedStage(settings.integration_calendly_booked_stage);
     setCalDiscoveryUrl(settings.integration_calendly_discovery_url ?? "");
     setCalProposalUrl(settings.integration_calendly_proposal_url ?? "");
+    setGhlDiscoveryId(settings.integration_ghl_discovery_booking_id ?? "");
+    setGhlProposalId(settings.integration_ghl_proposal_booking_id ?? "");
     setCalendarId(settings.integration_google_calendar_id ?? "");
     setOauthConnected(settings.integration_google_oauth_connected);
     setColMap(mergeSheetsColumnMap(settings.integration_sheets_column_map));
@@ -105,6 +109,8 @@ export function IntegrationsSection({
         integration_calendly_booked_stage: bookedStage,
         integration_calendly_discovery_url: calDiscoveryUrl || null,
         integration_calendly_proposal_url: calProposalUrl || null,
+        integration_ghl_discovery_booking_id: ghlDiscoveryId || null,
+        integration_ghl_proposal_booking_id: ghlProposalId || null,
         integration_google_calendar_id: calendarId || null,
         integration_google_oauth_connected: oauthConnected,
         integration_sheets_column_map: { ...colMap },
@@ -121,6 +127,8 @@ export function IntegrationsSection({
     bookedStage,
     calDiscoveryUrl,
     calProposalUrl,
+    ghlDiscoveryId,
+    ghlProposalId,
     calendarId,
     oauthConnected,
     colMap,
@@ -375,6 +383,33 @@ function syncAllRowsFromActiveSheet() {
           links. For production, use a Calendly webhook subscription or a small relay that posts the minimal JSON your
           agency prefers.
         </p>
+      </div>
+
+      <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">GHL booking calendar (outgoing)</h3>
+        <p className="mt-1 text-xs text-neutral-500">
+          When configured, lead booking uses GHL calendar instead of Calendly. Paste the booking widget IDs from your GHL account.
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
+            Discovery call booking ID
+            <input
+              value={ghlDiscoveryId}
+              onChange={(e) => setGhlDiscoveryId(e.target.value)}
+              placeholder="e.g. 6LMDYsdQ50MGu1XW1oRR"
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
+            />
+          </label>
+          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400">
+            Proposal meeting booking ID (optional)
+            <input
+              value={ghlProposalId}
+              onChange={(e) => setGhlProposalId(e.target.value)}
+              placeholder="Falls back to discovery ID"
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-600 dark:bg-neutral-950"
+            />
+          </label>
+        </div>
       </div>
 
       <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">

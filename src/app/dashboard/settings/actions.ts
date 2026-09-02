@@ -417,6 +417,8 @@ export async function saveIntegrationSettingsAction(payload: {
   integration_calendly_booked_stage: string;
   integration_calendly_discovery_url: string | null;
   integration_calendly_proposal_url: string | null;
+  integration_ghl_discovery_booking_id?: string | null;
+  integration_ghl_proposal_booking_id?: string | null;
   integration_google_calendar_id: string | null;
   integration_google_oauth_connected: boolean;
   integration_sheets_column_map: Record<string, string>;
@@ -447,6 +449,8 @@ export async function saveIntegrationSettingsAction(payload: {
     integration_calendly_booked_stage: payload.integration_calendly_booked_stage.trim() || "Booked",
     integration_calendly_discovery_url: normalizeCalendlyEventUrl(payload.integration_calendly_discovery_url),
     integration_calendly_proposal_url: normalizeCalendlyEventUrl(payload.integration_calendly_proposal_url),
+    integration_ghl_discovery_booking_id: payload.integration_ghl_discovery_booking_id?.trim() || null,
+    integration_ghl_proposal_booking_id: payload.integration_ghl_proposal_booking_id?.trim() || null,
     integration_google_calendar_id: payload.integration_google_calendar_id?.trim() || null,
     integration_google_oauth_connected: payload.integration_google_oauth_connected,
     integration_sheets_column_map: payload.integration_sheets_column_map,
