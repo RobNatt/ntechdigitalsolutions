@@ -100,18 +100,11 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
             return (
               <GetMoreInfoButton
                 key={`link=${idx}`}
-                onMouseEnter={() => setHovered(idx)}
                 onClick={() => trackNavCta(navItem.link)}
                 className={cn(
                   "relative whitespace-nowrap px-3 py-2 text-xs text-neutral-700 xl:px-4 xl:text-sm dark:text-neutral-200 !ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
                 )}
               >
-                {hovered === idx && (
-                  <motion.div
-                    layoutId="hovered"
-                    className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
-                  />
-                )}
                 <span className="relative z-20">{navItem.name}</span>
               </GetMoreInfoButton>
             );
