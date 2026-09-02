@@ -5,6 +5,7 @@ import { ServiceTopicJsonLd } from "@/components/marketing/ServiceTopicJsonLd";
 import { FaqSection } from "@/components/marketing/FaqSection";
 import { VideoPlaceholder } from "@/components/marketing/VideoPlaceholder";
 import { MarketingInquiryForm } from "@/components/marketing/MarketingInquiryForm";
+import { GhlIntakeFlow } from "@/components/marketing/GhlIntakeFlow";
 import { ReviewRoutingDemo } from "@/components/marketing/demos/ReviewRoutingDemo";
 import { buildFaqJsonLd, canonicalUrl, ogForPath } from "@/lib/seo-metadata";
 import { SITE_SERVICE_AREAS } from "@/constants/site";
@@ -242,6 +243,25 @@ export default function InfrastructurePage() {
         intro="Common questions about how the five components fit together."
         items={FAQ_ITEMS}
       />
+
+      <section
+        id="get-started"
+        className="mt-10 scroll-mt-24 rounded-2xl border border-neutral-200 bg-white/80 p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/50 sm:p-8"
+        aria-labelledby="get-started-heading"
+      >
+        <div className="text-center">
+          <h2 id="get-started-heading" className="text-2xl font-semibold text-neutral-900 dark:text-white">
+            Ready to get started?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Tell us about your business and we&apos;ll follow up to walk through what the system looks
+            like for you.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 max-w-xl">
+          <GhlIntakeFlow analyticsSurface="infrastructure" />
+        </div>
+      </section>
     </MarketingPageShell>
   );
 }

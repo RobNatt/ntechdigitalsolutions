@@ -89,34 +89,32 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         <Logo compact={visible} />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 hidden items-center justify-center lg:flex">
-        <nav
-          aria-label="Main"
-          className="pointer-events-auto flex flex-row items-center justify-center gap-2 text-sm font-medium sm:gap-4 lg:gap-6"
-        >
-          {navItems.map((navItem, idx: number) => (
-            <Link
-              onMouseEnter={() => setHovered(idx)}
-              onClick={() => trackNavCta(navItem.link)}
-              className={cn(
-                "relative px-4 py-2 text-xs text-neutral-700 sm:px-5 lg:px-6 lg:text-sm dark:text-neutral-200",
-                (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
-                  "!ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
-              )}
-              key={`link=${idx}`}
-              href={navItem.link}
-            >
-              {hovered === idx && (
-                <motion.div
-                  layoutId="hovered"
-                  className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
-                />
-              )}
-              <span className="relative z-20">{navItem.name}</span>
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <nav
+        aria-label="Main"
+        className="flex min-w-0 flex-1 flex-row items-center justify-center gap-1 text-sm font-medium xl:gap-2"
+      >
+        {navItems.map((navItem, idx: number) => (
+          <Link
+            onMouseEnter={() => setHovered(idx)}
+            onClick={() => trackNavCta(navItem.link)}
+            className={cn(
+              "relative whitespace-nowrap px-3 py-2 text-xs text-neutral-700 xl:px-4 xl:text-sm dark:text-neutral-200",
+              (navItem.link === "/contact" || navItem.link === PRIMARY_NAV_HREF) &&
+                "!ml-1 rounded-full bg-neutral-900 !text-white hover:!text-white dark:bg-white dark:!text-neutral-900",
+            )}
+            key={`link=${idx}`}
+            href={navItem.link}
+          >
+            {hovered === idx && (
+              <motion.div
+                layoutId="hovered"
+                className="absolute inset-0 h-full w-full rounded-full bg-neutral-100/90 dark:bg-neutral-800/90"
+              />
+            )}
+            <span className="relative z-20">{navItem.name}</span>
+          </Link>
+        ))}
+      </nav>
 
       <div className="relative z-20 flex shrink-0 items-center gap-3 md:gap-4">
         <ModeToggle />

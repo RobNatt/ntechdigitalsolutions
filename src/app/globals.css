@@ -212,6 +212,51 @@
       transform: none;
     }
   }
+  /* Ambient "system is running" idle animations — no hover required. */
+  .ambient-pulse-ring {
+    animation: ambient-pulse-ring 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .ambient-check-pop {
+    animation: ambient-check-pop 4s ease-in-out infinite;
+  }
+  .ambient-dot-travel {
+    animation: ambient-dot-travel 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .ambient-star-glow {
+    animation: ambient-star-glow 3s ease-in-out infinite;
+  }
+  .why-status-dot {
+    animation: ambient-status-blink 2.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-pulse-ring,
+    .ambient-check-pop,
+    .ambient-dot-travel,
+    .ambient-star-glow,
+    .why-status-dot {
+      animation: none;
+    }
+    .ambient-pulse-ring {
+      display: none;
+    }
+  }
+  /* Description reveals on hover only on devices that actually support hovering — always
+     visible on touch, so the content is never hidden behind an interaction that can't happen. */
+  @media (hover: hover) and (pointer: fine) {
+    .why-card-desc {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows 300ms ease-out,
+        opacity 250ms ease-out;
+    }
+    .group:hover .why-card-desc,
+    .group:focus-visible .why-card-desc {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+  }
 }
 
 @keyframes hero-ticker {
@@ -290,5 +335,77 @@
   50% {
     opacity: 1;
     filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.9));
+  }
+}
+
+/* One-system cards — idle "actively working" motion, staggered per card via animation-delay. */
+@keyframes ambient-pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+  70%,
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes ambient-check-pop {
+  0%,
+  55% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  78%,
+  90% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes ambient-dot-travel {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(2.75rem);
+    opacity: 0;
+  }
+}
+
+@keyframes ambient-star-glow {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Why-choose cards — faint status-LED blink, signals the system is quietly running. */
+@keyframes ambient-status-blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
   }
 }
