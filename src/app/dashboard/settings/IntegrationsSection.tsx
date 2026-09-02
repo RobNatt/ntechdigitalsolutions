@@ -60,7 +60,6 @@ export function IntegrationsSection({
 }: IntegrationsSectionProps) {
   const base = webhookBaseUrl.replace(/\/$/, "") || "https://YOUR_DEPLOYED_APP_DOMAIN";
   const sheetsUrl = `${base}/api/webhooks/sheets`;
-  const calendlyUrl = `${base}/api/webhooks/calendly`;
 
   const [sheetsOn, setSheetsOn] = useState(settings.integration_sheets_enabled);
   const [gcalOn, setGcalOn] = useState(settings.integration_google_calendar_enabled);
@@ -218,10 +217,6 @@ function syncAllRowsFromActiveSheet() {
           Enable Google Sheets lead sync (incoming)
         </label>
         <label className="flex items-center gap-2">
-          <input type="checkbox" checked={calOn} onChange={(e) => setCalOn(e.target.checked)} />
-          Enable Calendly booking sync (incoming)
-        </label>
-        <label className="flex items-center gap-2">
           <input type="checkbox" checked={gcalOn} onChange={(e) => setGcalOn(e.target.checked)} />
           Enable Google Calendar sync (outgoing — placeholder; OAuth not wired yet)
         </label>
@@ -230,7 +225,6 @@ function syncAllRowsFromActiveSheet() {
       <div className="mt-6 space-y-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Webhook endpoints</p>
         <p className="font-mono text-xs text-neutral-700 dark:text-neutral-300">{sheetsUrl}</p>
-        <p className="font-mono text-xs text-neutral-700 dark:text-neutral-300">{calendlyUrl}</p>
         <p className="text-xs text-neutral-500">
           Send <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-800">POST</code> JSON with header{" "}
           <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-800">X-Webhook-Token</code> equal to your secret
@@ -241,7 +235,7 @@ function syncAllRowsFromActiveSheet() {
       <div className="mt-6">
         <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Webhook secret token</p>
         <p className="mt-1 text-xs text-neutral-500">
-          Auto-created when you first enable Sheets or Calendly and save. Use the same token for both endpoints.
+          Auto-created when you first enable Sheets and save.
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <input
