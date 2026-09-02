@@ -33,10 +33,8 @@ export type IntegrationSettingsSnapshot = Pick<
   | "uncontacted_stage"
   | "enum_defaults"
   | "integration_sheets_enabled"
-  | "integration_calendly_enabled"
   | "integration_webhook_secret"
   | "integration_sheets_column_map"
-  | "integration_calendly_booked_stage"
 >;
 
 export function mergeSheetsColumnMap(saved: Record<string, string> | null | undefined): Record<SheetLeadFieldKey, string> {
@@ -110,9 +108,7 @@ async function activityInsert(
 export async function loadIntegrationSettings(admin: SupabaseClient): Promise<IntegrationSettingsSnapshot | null> {
   const { data, error } = await admin
     .from("os_settings")
-    .select(
-      "id, uncontacted_stage, enum_defaults, integration_sheets_enabled, integration_calendly_enabled, integration_webhook_secret, integration_sheets_column_map, integration_calendly_booked_stage"
-    )
+    .select("id, uncontacted_stage, enum_defaults, integration_sheets_enabled, integration_webhook_secret, integration_sheets_column_map")
     .eq("id", OS_SETTINGS_SINGLETON_ID)
     .maybeSingle();
   if (error || !data) {
@@ -128,7 +124,6 @@ export async function loadIntegrationSettings(admin: SupabaseClient): Promise<In
         ? (row.enum_defaults as Record<string, string[]>)
         : DEFAULT_OS_SETTINGS.enum_defaults,
     integration_sheets_enabled: Boolean(row.integration_sheets_enabled),
-    integration_calendly_enabled: Boolean(row.integration_calendly_enabled),
     integration_webhook_secret:
       row.integration_webhook_secret != null && String(row.integration_webhook_secret).trim()
         ? String(row.integration_webhook_secret)
@@ -137,7 +132,6 @@ export async function loadIntegrationSettings(admin: SupabaseClient): Promise<In
       row.integration_sheets_column_map && typeof row.integration_sheets_column_map === "object"
         ? (row.integration_sheets_column_map as Record<string, string>)
         : {},
-    integration_calendly_booked_stage: String(row.integration_calendly_booked_stage ?? "Booked"),
   };
 }
 
@@ -337,187 +331,4 @@ export async function handleSheetsWebhook(body: unknown): Promise<{ status: numb
     return { status: 500, json: { ok: false, error: result.error } };
   }
   return { status: 200, json: { ok: true, leadId: result.leadId, created: result.created } };
-}
-
-export type CalendlyParsed = {
-  inviteeName: string;
-  inviteeEmail: string;
-  startIso: string;
-  endIso: string;
-  meetingLink: string;
-  eventTypeName: string;
-};
-
-function asRecord(v: unknown): Record<string, unknown> | null {
-  return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
-}
-
-function firstEmailInString(s: string): string | null {
-  const m = s.match(/[^\s@]+@[^\s@]+\.[^\s@]+/i);
-  return m ? m[0]!.toLowerCase() : null;
-}
-
-/** Best-effort parse for Calendly and custom proxy payloads. */
-export function parseCalendlyPayload(body: unknown): CalendlyParsed | null {
-  const root = asRecord(body);
-  if (!root) return null;
-  const candidates: Record<string, unknown>[] = [root];
-  const p1 = asRecord(root.payload);
-  if (p1) candidates.push(p1);
-  const p2 = asRecord(root.data);
-  if (p2) candidates.push(p2);
-  const scheduled = asRecord(root.scheduled_event) ?? asRecord(p1?.scheduled_event) ?? asRecord(p2?.scheduled_event);
-
-  let inviteeEmail = "";
-  let inviteeName = "";
-  for (const c of candidates) {
-    const inv = asRecord(c.invitee) ?? asRecord(c.invitee_email ? { email: c.invitee_email } : null);
-    const em =
-      (typeof c.email === "string" && c.email) ||
-      (typeof inv?.email === "string" && inv.email) ||
-      (typeof c.invitee_email === "string" && c.invitee_email) ||
-      "";
-    const nm =
-      (typeof c.name === "string" && c.name) ||
-      (typeof inv?.name === "string" && inv.name) ||
-      "";
-    if (em) inviteeEmail = em.trim().toLowerCase();
-    if (typeof inv?.name === "string" && inv.name.trim()) inviteeName = inv.name.trim();
-    else if (typeof c.name === "string" && c.name.trim()) inviteeName = c.name.trim();
-    else if (nm) inviteeName = String(nm).trim();
-    if (inviteeEmail) break;
-  }
-
-  if (!inviteeEmail && typeof body === "string") {
-    inviteeEmail = firstEmailInString(body) ?? "";
-  }
-
-  let startIso = "";
-  let endIso = "";
-  const se = scheduled ?? asRecord(root.event);
-  if (se) {
-    startIso = String(se.start_time ?? se.startTime ?? se.start ?? "");
-    endIso = String(se.end_time ?? se.endTime ?? se.end ?? "");
-  }
-  if (!startIso) startIso = String(root.start_time ?? root.startTime ?? root.start ?? "");
-  if (!endIso) endIso = String(root.end_time ?? root.endTime ?? root.end ?? "");
-
-  let meetingLink = "";
-  meetingLink =
-    String(root.meeting_link ?? root.meetingLink ?? "") ||
-    String(scheduled?.join_url ?? "") ||
-    (() => {
-      const lr = scheduled?.location;
-      if (lr && typeof lr === "object") {
-        const l = lr as Record<string, unknown>;
-        return String(l.join_url ?? l.joinUrl ?? "");
-      }
-      if (typeof lr === "string") return lr;
-      return "";
-    })() ||
-    "";
-
-  let eventTypeName = "";
-  const et = asRecord(scheduled?.event_type) ?? asRecord(root.event_type);
-  eventTypeName =
-    String(et?.name ?? et?.slug ?? root.event_type_name ?? root.eventType ?? scheduled?.name ?? "Booking") || "Booking";
-
-  if (!inviteeEmail || !isValidEmail(inviteeEmail)) return null;
-  if (!startIso || !endIso) {
-    const s = new Date(startIso || Date.now());
-    const e = new Date(s.getTime() + 60 * 60 * 1000);
-    if (!startIso) startIso = s.toISOString();
-    if (!endIso) endIso = e.toISOString();
-  }
-
-  if (!inviteeName) inviteeName = inviteeEmail.split("@")[0] ?? "Invitee";
-
-  return {
-    inviteeName,
-    inviteeEmail,
-    startIso: new Date(startIso).toISOString(),
-    endIso: new Date(endIso).toISOString(),
-    meetingLink: meetingLink.trim(),
-    eventTypeName: String(eventTypeName).trim() || "Booking",
-  };
-}
-
-export async function handleCalendlyWebhook(body: unknown): Promise<{ status: number; json: Record<string, unknown> }> {
-  let admin: ReturnType<typeof createAdminClient>;
-  try {
-    admin = createAdminClient();
-  } catch {
-    return { status: 503, json: { ok: false, error: "Server not configured." } };
-  }
-  const settings = await loadIntegrationSettings(admin);
-  if (!settings?.integration_calendly_enabled) {
-    return { status: 403, json: { ok: false, error: "Calendly integration disabled." } };
-  }
-  const parsed = parseCalendlyPayload(body);
-  if (!parsed) {
-    return { status: 400, json: { ok: false, error: "Could not parse invitee email from payload." } };
-  }
-  const stages = settings.enum_defaults?.lead_stages ?? DEFAULT_OS_SETTINGS.enum_defaults!.lead_stages!;
-  const bookedStage = settings.integration_calendly_booked_stage?.trim() || "Booked";
-  const status = stages.includes(bookedStage) ? bookedStage : stages.includes("Booked") ? "Booked" : stages[0] ?? "New";
-
-  let leadId = await findLeadIdByEmail(admin, parsed.inviteeEmail);
-  if (leadId) {
-    const { error } = await admin
-      .from("os_leads")
-      .update({
-        lead_name: parsed.inviteeName,
-        status,
-      })
-      .eq("id", leadId);
-    if (error) return { status: 500, json: { ok: false, error: error.message } };
-  } else {
-    const temps = settings.enum_defaults?.lead_temperatures ?? DEFAULT_OS_SETTINGS.enum_defaults!.lead_temperatures!;
-    const { data, error } = await admin
-      .from("os_leads")
-      .insert({
-        lead_name: parsed.inviteeName,
-        business_name: "",
-        email: parsed.inviteeEmail,
-        phone: null,
-        source: "Calendly",
-        status,
-        temperature: temps[0] ?? "Cold",
-        tags: [],
-        assigned_user_id: null,
-      })
-      .select("id")
-      .single();
-    if (error || !data?.id) return { status: 500, json: { ok: false, error: error?.message ?? "Insert failed." } };
-    leadId = String(data.id);
-  }
-
-  await activityInsert(admin, "os_lead", leadId!, "calendly_sync", "Calendly booking synced");
-
-  const actorId = await findFirstInternalActorUserId(admin);
-  let eventId: string | null = null;
-  if (actorId) {
-    const title = `Calendly: ${parsed.eventTypeName}`;
-    const { data: ev, error: evErr } = await admin
-      .from("os_events")
-      .insert({
-        title,
-        date_start: parsed.startIso,
-        date_end: parsed.endIso,
-        event_type: "Meeting",
-        status: "Confirmed",
-        related_lead_id: leadId,
-        related_client_id: null,
-        meeting_link: parsed.meetingLink || null,
-        created_by_user_id: actorId,
-      })
-      .select("id")
-      .single();
-    if (!evErr && ev?.id) {
-      eventId = String(ev.id);
-      await activityInsert(admin, "os_event", eventId, "calendly_sync", `Created from Calendly booking (${parsed.inviteeEmail})`);
-    }
-  }
-
-  return { status: 200, json: { ok: true, leadId, eventId } };
 }
