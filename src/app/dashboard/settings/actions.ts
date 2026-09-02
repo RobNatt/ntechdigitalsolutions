@@ -396,20 +396,6 @@ export async function updateProfileLinkedClientAction(profileId: string, osClien
   return { ok: true };
 }
 
-function normalizeCalendlyEventUrl(v: string | null | undefined): string | null {
-  const t = v?.trim() ?? "";
-  if (!t) return null;
-  try {
-    const u = new URL(t);
-    if (u.protocol !== "https:" || !u.hostname.includes("calendly.com")) {
-      return null;
-    }
-    return t.replace(/\/$/, "");
-  } catch {
-    return null;
-  }
-}
-
 export async function saveIntegrationSettingsAction(payload: {
   integration_sheets_enabled: boolean;
   integration_google_calendar_enabled: boolean;
