@@ -1,10 +1,10 @@
-“use client”;
+"use client";
 
-import Link from “next/link”;
-import { CONSTANTS } from “@/constants/links”;
-import { SITE_GHL_CALENDAR_URL } from “@/constants/site”;
-import { getCalendlyEventUrl } from “@/constants/scheduling”;
-import { cn } from “@/lib/utils”;
+import Link from "next/link";
+import { CONSTANTS } from "@/constants/links";
+import { SITE_GHL_CALENDAR_URL } from "@/constants/site";
+import { getCalendlyEventUrl } from "@/constants/scheduling";
+import { cn } from "@/lib/utils";
 
 export type ScheduleCtaLinkProps = {
   children: React.ReactNode;
@@ -13,11 +13,11 @@ export type ScheduleCtaLinkProps = {
   bookCallSearch?: string;
 } & Pick<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  “onClick” | “aria-label” | “id” | “title” | “style”
+  "onClick" | "aria-label" | "id" | "title" | "style"
 >;
 
 /**
- * Primary “schedule / book a call” CTA: prefers GHL calendar on `/book-call`,
+ * Primary "schedule / book a call" CTA: prefers GHL calendar on `/book-call`,
  * falls back to Calendly if available, then in-app `/book-call` with optional `bookCallSearch`.
  */
 export function ScheduleCtaLink({
@@ -25,7 +25,7 @@ export function ScheduleCtaLink({
   className,
   bookCallSearch,
   onClick,
-  “aria-label”: ariaLabel,
+  "aria-label": ariaLabel,
   id,
   title,
   style,
@@ -34,7 +34,7 @@ export function ScheduleCtaLink({
   if (SITE_GHL_CALENDAR_URL) {
     let href = CONSTANTS.BOOK_CALL_PATH;
     if (bookCallSearch) {
-      href += bookCallSearch.startsWith(“?”) ? bookCallSearch : `?${bookCallSearch}`;
+      href += bookCallSearch.startsWith("?") ? bookCallSearch : `?${bookCallSearch}`;
     }
     return (
       <Link
@@ -57,8 +57,8 @@ export function ScheduleCtaLink({
     return (
       <a
         href={cal}
-        target=”_blank”
-        rel=”noopener noreferrer”
+        target="_blank"
+        rel="noopener noreferrer"
         className={cn(className)}
         onClick={onClick}
         aria-label={ariaLabel}
@@ -74,7 +74,7 @@ export function ScheduleCtaLink({
   // Final fallback to in-app /book-call
   let href = CONSTANTS.BOOK_CALL_PATH;
   if (bookCallSearch) {
-    href += bookCallSearch.startsWith(“?”) ? bookCallSearch : `?${bookCallSearch}`;
+    href += bookCallSearch.startsWith("?") ? bookCallSearch : `?${bookCallSearch}`;
   }
 
   return (
