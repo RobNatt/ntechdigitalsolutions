@@ -9,6 +9,7 @@ import {
   type FollowUpDayKey,
 } from "@/lib/os/follow-up-schedule";
 import type { OsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
+import type { OsGhlBookingConfig } from "@/lib/os/ghl-booking";
 import type { AssigneeOption, OsLeadRow } from "@/lib/os/leads-types";
 import { cn } from "@/lib/utils";
 import type { LeadsFollowUpBlockSnapshot } from "@/app/dashboard/leads/follow-up-calendar-actions";
@@ -35,6 +36,7 @@ type LeadsCrmClientProps = {
   sheetsIntegrationEnabled?: boolean;
   settingsIntegrationsUrl?: string;
   calendlyUrls: OsCalendlyBookingUrls;
+  ghlBookingConfig: OsGhlBookingConfig | null;
   timezone: string;
   todayYmd: string;
   followUpBlockToday: LeadsFollowUpBlockSnapshot;
@@ -101,6 +103,7 @@ export function LeadsCrmClient({
   sheetsIntegrationEnabled = false,
   settingsIntegrationsUrl = "/dashboard/settings",
   calendlyUrls,
+  ghlBookingConfig,
   timezone,
   todayYmd,
   followUpBlockToday,
@@ -504,6 +507,7 @@ export function LeadsCrmClient({
           brandColor={brandColor}
           commonTags={commonTags}
           calendlyUrls={calendlyUrls}
+          ghlBookingConfig={ghlBookingConfig}
           timezone={timezone}
           onClose={() => setModal({ mode: "closed" })}
           onSaved={() => {

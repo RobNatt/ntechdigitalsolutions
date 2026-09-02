@@ -26,6 +26,9 @@ export type OsSettingsRow = {
   /** Calendly event URLs for booking from the leads CRM. */
   integration_calendly_discovery_url: string | null;
   integration_calendly_proposal_url: string | null;
+  /** GHL booking widget IDs for booking from the leads CRM. */
+  integration_ghl_discovery_booking_id: string | null;
+  integration_ghl_proposal_booking_id: string | null;
   /** Target Google Calendar ID (placeholder until OAuth). */
   integration_google_calendar_id: string | null;
   integration_google_oauth_connected: boolean;

@@ -33,12 +33,18 @@ import {
   touchChannelLabel,
 } from "@/lib/os/lead-workflow";
 import { CalendlyBookButton } from "@/components/scheduling/CalendlyBookButton";
+import { GhlBookingButton } from "@/components/scheduling/GhlBookingButton";
 import {
   buildLeadCalendlyBookingUrl,
   calendlyEventLabelForLead,
   leadCalendlyInviteeName,
   type OsCalendlyBookingUrls,
 } from "@/lib/os/calendly-booking";
+import {
+  buildGhlBookingUrl,
+  ghlEventLabelForLead,
+  type OsGhlBookingConfig,
+} from "@/lib/os/ghl-booking";
 import {
   defaultNextFollowUpDateValue,
   followUpAtFromDateOnly,
@@ -104,6 +110,7 @@ export function LeadWorkModal({
   brandColor,
   commonTags,
   calendlyUrls,
+  ghlBookingConfig,
   timezone,
   onClose,
   onSaved,
@@ -118,6 +125,7 @@ export function LeadWorkModal({
   brandColor: string;
   commonTags: string[];
   calendlyUrls: OsCalendlyBookingUrls;
+  ghlBookingConfig: OsGhlBookingConfig | null;
   timezone: string;
   onClose: () => void;
   onSaved: () => void;
@@ -154,10 +162,21 @@ export function LeadWorkModal({
   const [docFileName, setDocFileName] = useState("");
   const [docUploadMsg, setDocUploadMsg] = useState<string | null>(null);
 
-  const calendlyBookingUrl = useMemo(
-    () => buildLeadCalendlyBookingUrl(lead, calendlyUrls),
-    [lead, calendlyUrls]
-  );
+  const bookingUrl = useMemo(() => {
+    if (ghlBookingConfig) {
+      return buildGhlBookingUrl(lead, ghlBookingConfig);
+    }
+    return buildLeadCalendlyBookingUrl(lead, calendlyUrls);
+  }, [lead, calendlyUrls, ghlBookingConfig]);
+
+  const bookingLabel = useMemo(() => {
+    if (ghlBookingConfig) {
+      return ghlEventLabelForLead(lead.status);
+    }
+    return calendlyEventLabelForLead(lead.status);
+  }, [lead.status, ghlBookingConfig]);
+
+  const useGhlBooking = ghlBookingConfig !== null;
   const calendlyInviteeName = useMemo(() => leadCalendlyInviteeName(lead), [lead]);
 
   const [form, setForm] = useState<LeadUpsertPayload>(() => ({
@@ -618,10 +637,10 @@ export function LeadWorkModal({
           {isInternal ? (
             <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/60">
               <p className="text-sm font-medium text-neutral-900 dark:text-white">
-                Book {calendlyEventLabelForLead(lead.status).toLowerCase()}
+                Book {bookingLabel.toLowerCase()}
               </p>
               <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-                Opens Calendly with{" "}
+                {useGhlBooking ? "Opens GHL calendar" : "Opens Calendly"} with{" "}
                 {calendlyInviteeName ? (
                   <span className="font-medium text-neutral-800 dark:text-neutral-200">{calendlyInviteeName}</span>
                 ) : (
@@ -635,17 +654,26 @@ export function LeadWorkModal({
                 ) : (
                   " — add an email under Edit lead details for prefill"
                 )}
-                . Enable Calendly webhook sync in Settings to auto-create the meeting here after booking.
+                .
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <CalendlyBookButton
-                  url={calendlyBookingUrl}
-                  label="Book with Calendly"
-                  brandColor={brandColor}
-                  disabled={busy}
-                />
+                {useGhlBooking ? (
+                  <GhlBookingButton
+                    bookingUrl={bookingUrl}
+                    label={`Book ${bookingLabel.toLowerCase()}`}
+                    brandColor={brandColor}
+                    disabled={busy}
+                  />
+                ) : (
+                  <CalendlyBookButton
+                    url={bookingUrl}
+                    label="Book with Calendly"
+                    brandColor={brandColor}
+                    disabled={busy}
+                  />
+                )}
                 <a
-                  href={calendlyBookingUrl}
+                  href={bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-medium text-sky-700 hover:underline dark:text-sky-400"

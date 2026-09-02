@@ -4,6 +4,7 @@ import {
 } from "@/app/dashboard/leads/follow-up-calendar-actions";
 import { LeadsCrmClient } from "@/components/os/leads/LeadsCrmClient";
 import { resolveOsCalendlyBookingUrls } from "@/lib/os/calendly-booking";
+import { resolveOsGhlBookingConfig } from "@/lib/os/ghl-booking";
 import { formatYmdInTimeZone } from "@/lib/os/os-revenue-range";
 import { DEFAULT_OS_SETTINGS } from "@/lib/os/default-settings";
 import { fetchOsLeadsList, isMissingSchemaError, mergeLeadPipelineStages } from "@/lib/os/fetch-os-leads-list";
@@ -108,6 +109,7 @@ export default async function LeadsPage() {
       sheetsIntegrationEnabled={Boolean(session.settings.integration_sheets_enabled)}
       settingsIntegrationsUrl="/dashboard/settings"
       calendlyUrls={resolveOsCalendlyBookingUrls(session.settings)}
+      ghlBookingConfig={resolveOsGhlBookingConfig(session.settings)}
       timezone={session.settings.timezone}
       todayYmd={todayYmd}
       followUpBlockToday={followUpBlockToday}
