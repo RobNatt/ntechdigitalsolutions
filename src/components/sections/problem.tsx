@@ -1,102 +1,109 @@
 "use client";
 
-import { PhoneMissed, SearchX, Star } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 
 /*
- * Chapter 1 of the scroll story: the problem.
+ * Chapter 1: the problem.
  *
- * Framing rule from the sprint notes, and it is not optional here: never lead
- * with what is wrong with the visitor's business. That was tried and it read as
- * criticism rather than a solution. So this chapter describes a situation the
- * visitor recognises, in their words, and lets them decide it applies. It never
- * says "your website is bad".
+ * The first version was three equal icon cards in a row — the single most
+ * template-shaped pattern there is. This is editorial instead: full-width rows
+ * separated by hairlines, oversized outlined numerals, and a stepped indent so
+ * the eye walks down the page rather than scanning a grid.
  *
- * ALL COPY IS PLACEHOLDER. The three items below are shaped from the
- * hypothesised pains in customers.md — which are explicitly marked UNTESTED.
- * They are framed as recognisable situations, never as claims about results or
- * statistics we do not have.
+ * Framing rule from the sprint notes, not optional: never lead with what is
+ * wrong with the visitor's business. That was tried and read as criticism. Each
+ * row describes a situation they recognise and lets them decide it applies.
+ *
+ * ALL COPY IS PLACEHOLDER, shaped from the UNTESTED hypotheses in
+ * customers.md. No results, no statistics, no claims.
  */
 
-interface Problem {
-  icon: LucideIcon;
-  title: string;
-  body: string;
-}
-
 const COPY = {
-  overline: "Placeholder — chapter one",
+  overline: "Chapter one",
   heading: "Placeholder chapter heading about the situation",
-  lead: "Placeholder lead paragraph. One or two sentences that describe the day, not the deficiency — something the visitor nods at rather than defends against.",
-  problems: [
+  lead: "Placeholder lead. One or two sentences describing the day, not the deficiency — something the visitor nods at rather than defends against.",
+  rows: [
     {
-      icon: PhoneMissed,
-      title: "Placeholder — missed calls",
-      body: "Placeholder body copy describing what happens to a call that comes in while you are already on a job.",
+      n: "01",
+      title: "Placeholder — the call that rings out",
+      body: "Placeholder body copy, two or three lines, describing what happens to a call that comes in while you're already under a sink. Concrete, not abstract.",
     },
     {
-      icon: SearchX,
-      title: "Placeholder — hard to find",
-      body: "Placeholder body copy about what someone sees when they go looking for you and cannot find much.",
+      n: "02",
+      title: "Placeholder — the search that finds nothing",
+      body: "Placeholder body copy about what someone actually sees when they go looking for you, and what they do about ten seconds later.",
     },
     {
-      icon: Star,
-      title: "Placeholder — thin reviews",
-      body: "Placeholder body copy about the gap between the work you actually do and what shows up online.",
+      n: "03",
+      title: "Placeholder — the work nobody can see",
+      body: "Placeholder body copy about the gap between the standard of work you do and what a stranger can verify before picking up the phone.",
     },
-  ] satisfies Problem[],
+  ],
 } as const;
 
 export function Problem() {
   return (
     <section
-      id="solutions"
+      id="problem"
       aria-labelledby="problem-heading"
       className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
     >
       <div className="mx-auto max-w-[1280px]">
-        <Reveal tier="chapter" index={0}>
-          <p className="text-overline uppercase text-muted-foreground">
-            {COPY.overline}
-          </p>
-        </Reveal>
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal tier="chapter" index={0}>
+              <p className="flex items-center gap-4 text-overline uppercase text-muted-foreground">
+                <span aria-hidden="true" className="h-px w-12 bg-cta" />
+                {COPY.overline}
+              </p>
+            </Reveal>
+            <Reveal tier="chapter" index={1}>
+              <h2
+                id="problem-heading"
+                className="mt-8 text-h1 text-balance font-heading text-foreground"
+              >
+                {COPY.heading}
+              </h2>
+            </Reveal>
+          </div>
 
-        <Reveal tier="chapter" index={1}>
-          <h2
-            id="problem-heading"
-            className="mt-6 max-w-[20ch] text-h1 text-balance font-heading text-foreground"
-          >
-            {COPY.heading}
-          </h2>
-        </Reveal>
+          <div className="lg:col-span-6 lg:col-start-7 lg:self-end">
+            <Reveal tier="chapter" index={2}>
+              <p className="max-w-[52ch] text-body-lg text-muted-foreground">
+                {COPY.lead}
+              </p>
+            </Reveal>
+          </div>
+        </div>
 
-        <Reveal tier="chapter" index={2}>
-          <p className="mt-6 max-w-[60ch] text-body-lg text-muted-foreground">
-            {COPY.lead}
-          </p>
-        </Reveal>
-
-        <ul className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-16">
-          {COPY.problems.map(({ icon: Icon, title, body }, i) => (
-            // index continues the stagger from the heading above, so the whole
-            // chapter reads as one motion rather than two groups.
+        {/* Editorial rows: hairline-separated, stepped indent, huge numerals. */}
+        <ul className="mt-24 md:mt-32">
+          {COPY.rows.map(({ n, title, body }, i) => (
             <Reveal
-              key={title}
+              key={n}
               as="li"
               tier="reveal"
-              index={i + 3}
-              className="h-full rounded-lg border border-border bg-card p-8 shadow-sm"
+              index={i}
+              className="border-t border-border py-12 md:py-16"
             >
-              <Icon
-                aria-hidden="true"
-                className="size-6 text-cta"
-                strokeWidth={1.5}
-              />
-              <h3 className="mt-6 text-h4 font-heading text-card-foreground">
-                {title}
-              </h3>
-              <p className="mt-3 text-body text-muted-foreground">{body}</p>
+              <div
+                className="grid gap-6 md:grid-cols-12 md:gap-12"
+                style={{ paddingLeft: `calc(${i} * 4%)` }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="select-none font-heading text-h1 leading-none text-transparent md:col-span-2"
+                  style={{ WebkitTextStroke: "1px var(--border-strong)" }}
+                >
+                  {n}
+                </span>
+                <h3 className="text-h3 font-heading text-foreground md:col-span-4">
+                  {title}
+                </h3>
+                <p className="max-w-[46ch] text-body text-muted-foreground md:col-span-5 md:col-start-8">
+                  {body}
+                </p>
+              </div>
             </Reveal>
           ))}
         </ul>

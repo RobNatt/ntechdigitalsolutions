@@ -60,10 +60,10 @@
 
   /* Type scale — fluid. Hits design-system.md's mobile value at 375px and its
      desktop value at 1440px exactly; clamp interpolates between. */
-  --text-display: clamp(2.75rem, 2.046rem + 3.005vw, 4.75rem);
-  --text-display--line-height: 1.05;
+  --text-display: clamp(2.75rem, 1.606rem + 4.883vw, 6rem);
+  --text-display--line-height: 1.02;
   --text-display--font-weight: 600;
-  --text-display--letter-spacing: -0.03em;
+  --text-display--letter-spacing: -0.035em;
   --text-h1: clamp(2.25rem, 1.7rem + 2.347vw, 3.812rem);
   --text-h1--line-height: 1.1;
   --text-h1--font-weight: 600;
@@ -159,7 +159,41 @@
   --stagger: 80ms;
 }
 
-/* Dark mode is NOT designed yet. These are shadcn defaults, left in place so
+/* ---------------------------------------------------------------------------
+   Dark surface — SECTION-SCOPED, not a page-wide theme toggle.
+   Put .surface-dark on a <section> and every token-based utility inside it
+   inverts automatically. This is how a dark chapter sits inside a light page,
+   which is what gives the scroll story its gravity.
+   All pairs contrast-checked; see design-system.md section 2.
+   ------------------------------------------------------------------------ */
+.surface-dark {
+  --background: #0c0a09;
+  --foreground: #fafaf9;        /* 18.92:1 */
+  --card: #1c1917;
+  --card-foreground: #fafaf9;   /* 16.74:1 */
+  --popover: #1c1917;
+  --popover-foreground: #fafaf9;
+  --primary: #fafaf9;
+  --primary-foreground: #0c0a09;
+  --secondary: #292524;
+  --secondary-foreground: #fafaf9;
+  --muted: #292524;
+  --muted-foreground: #a8a29e;  /* 7.83:1 on bg, 6.93:1 on card */
+  --accent: #292524;
+  --accent-foreground: #fafaf9;
+  /* The light-mode gold only reaches 4.01:1 here and fails AA. Lifted. */
+  --cta: #d97706;               /* 6.20:1 */
+  --on-cta: #0c0a09;            /* 6.20:1 */
+  --border: #292524;            /* decorative */
+  --border-strong: #78716c;     /* interactive, 4.12:1 */
+  --input: #78716c;
+  --ring: #d97706;              /* 9.20:1 */
+
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Legacy shadcn dark class. Not designed yet. These are shadcn defaults, left in place so
    its components don't break if .dark is ever applied. They are off-system.
    Do not build dark surfaces against them — raise it and we design it. */
 .dark {
@@ -181,6 +215,16 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.30;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @layer base {
