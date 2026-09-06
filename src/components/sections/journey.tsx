@@ -86,6 +86,7 @@ export function Journey() {
   // dead space makes its range start and end with the text.
   const [colPad, setColPad] = useState({ top: 0, bottom: 0 });
   const padRef = useRef({ top: 0, bottom: 0 });
+  const [nodeTops, setNodeTops] = useState<number[]>([]);
   useEffect(() => {
     const measure = () => {
       // Align the panel's TOP EDGE with the step heading's top edge. Matching
@@ -121,6 +122,16 @@ export function Journey() {
       // so these offsets are directly comparable.
       const colEl = colRef.current;
       if (!colEl) return;
+
+      // Node positions, measured. They used to sit at even fractions of the
+      // section, which only held while every step was an identical 70vh block.
+      // Now the last step has no trailing room, so the fractions drift.
+      setNodeTops(
+        Array.from(ol.children).map((li) => {
+          const c = (li as HTMLElement).firstElementChild as HTMLElement | null;
+          return c ? c.offsetTop + c.offsetHeight / 2 : 0;
+        }),
+      );
 
       const next = {
         top: content.offsetTop - colEl.offsetTop,
@@ -198,7 +209,7 @@ export function Journey() {
           </h2>
         </Reveal>
 
-        <div className="relative mt-24 grid gap-16 lg:grid-cols-2 lg:gap-20">
+        <div className="relative mt-16 grid gap-16 lg:grid-cols-2 lg:gap-20">
           {/* The current, running the gutter. Chapter two was the only section
               off the circuit; now the charge threads it too. Nodes light as the
               panel advances, so the trace and the panel tell the same story. */}
@@ -213,7 +224,7 @@ export function Journey() {
             {COPY.steps.map((s2, i) => (
               <span
                 key={s2.n}
-                style={{ top: `${((i * 2 + 1) / (COPY.steps.length * 2)) * 100}%` }}
+                style={{ top: nodeTops[i] ?? 0, opacity: nodeTops.length ? 1 : 0 }}
                 className={`absolute left-1/2 flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-background transition-[border-color,box-shadow] duration-300 ${
                   i <= active
                     ? "border-cta shadow-[0_0_0_4px_rgba(217,119,6,0.12),0_0_16px_rgba(217,119,6,0.45)]"
@@ -288,15 +299,17 @@ export function Journey() {
           </div>
 
           {/* The steps. Each one takes over the pinned panel as it arrives. */}
-          <ol ref={stepsRef} className="lg:py-[15vh]">
+          <ol ref={stepsRef}>
             {COPY.steps.map(({ n, title, body }, i) => (
               <li
                 key={n}
                 ref={i === 0 ? firstStepRef : undefined}
-                // each step occupies most of a viewport so the panel stays pinned
-                // long enough to read as pinned. Without this the column is
-                // shorter than the travel needed and it releases immediately.
-                className="flex flex-col justify-center border-t border-border py-16 first:border-t-0 first:pt-0 lg:min-h-[70vh] lg:py-0" 
+                // Scroll room lives BELOW each step, not around it. Centring
+                // text in a 70vh block pushed the first description ~330px
+                // clear of the heading and left the same dead space trailing
+                // the last one. The final step carries no trailing room, so
+                // the section ends where its text ends.
+                className="flex flex-col justify-start border-t border-border py-16 first:border-t-0 first:pt-0 lg:py-0 lg:pb-[46vh] lg:last:pb-0" 
               >
                 <Reveal tier="reveal" index={0}>
                   <p className="text-overline uppercase text-cta">{n}</p>
