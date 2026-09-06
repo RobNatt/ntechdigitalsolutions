@@ -59,7 +59,7 @@ const TIERS: Tier[] = [
     featured: true,
   },
   {
-    name: "Infrastructure + Growth",
+    name: "Growth Engine",
     price: "$8,000",
     cadence: "/month",
     note: "plus ad spend, paid directly to Meta and Google",
