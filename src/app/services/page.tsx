@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
+import { PricingTiers } from "@/components/pricing-tiers";
 import { SERVICES, type Service } from "@/lib/services";
 
 export const metadata: Metadata = {
@@ -80,19 +81,23 @@ export default function ServicesIndex() {
           </Reveal>
           <Reveal trigger="mount" tier="chapter" index={1}>
             <h1 className="mt-6 max-w-[18ch] text-display font-heading text-foreground">
-              Seven services. Take one, or take the lot.
+              Six services. Three ways to buy them.
             </h1>
           </Reveal>
           <Reveal trigger="mount" tier="chapter" index={2}>
             <p className="mt-6 max-w-[56ch] text-body-lg text-muted-foreground">
-              Each one solves something on its own. Together they cover for each
-              other — the site brings people in, the receptionist answers, the
-              automations follow up, social keeps you visible, and reviews
+              Take a package, or take a single piece. Either way they&apos;re
+              built to work together — the foundation brings people in, the
+              receptionist answers, social keeps you visible, and reviews
               convince the next person.
             </p>
           </Reveal>
         </div>
       </section>
+
+      {/* Packages first — most people want to know what it costs before they
+          want to know what each piece does. The a la carte detail follows. */}
+      <PricingTiers />
 
       {/* The catalogue, in two groups */}
       <section className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20">
