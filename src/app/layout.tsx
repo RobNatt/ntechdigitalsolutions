@@ -3,6 +3,7 @@ import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ChatWidgetAnchor } from "@/components/chat-widget-anchor";
 import { Analytics } from "@vercel/analytics/next";
 
 // Type pairing is locked in design-system.md — Outfit for headings, Work Sans
@@ -59,6 +60,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           HTML and reported the widget as not installed. React 19 hoists a
           plain script tag into <head> at render time, which is a real tag a
           crawler can see. `async` keeps it off the critical path.
+
+          ChatWidgetAnchor below is not optional decoration — without it the
+          widget mounts inside React's hidden streaming container and never
+          renders. See that file for the full explanation.
         */}
         <script
           src="https://widgets.leadconnectorhq.com/loader.js"
@@ -67,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           data-source="WEB_USER"
           async
         />
+        <ChatWidgetAnchor />
 
         {/*
           Vercel Analytics is cookieless — it sets nothing in the visitor's
