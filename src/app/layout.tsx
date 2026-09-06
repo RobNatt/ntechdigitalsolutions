@@ -24,7 +24,7 @@ const workSans = Work_Sans({
 export const metadata: Metadata = {
   title: "N-Tech Digital Solutions",
   description:
-    "N-Tech Digital Solutions builds websites and AI receptionists for local service businesses around Omaha, NE — so calls, leads, and reviews get handled, even when you're on the job.",
+    "N-Tech Digital Solutions runs the website, phone, follow-up, social, and reviews for local service businesses around Omaha, NE — one connected system instead of five separate tools.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

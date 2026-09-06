@@ -38,7 +38,7 @@ const BOOKING_URL =
 
 const COPY = {
   overline: "Ready when you are",
-  heading: "Let's make sure every call gets answered.",
+  heading: "Let's get your whole digital office running.",
   sub: "Fifteen minutes on the phone. No pressure, nothing to sign today.",
   primaryCta: "Book a Call",
   secondary: "Not ready yet? Email hello@ntechdigitalsolutions.com",

@@ -31,9 +31,9 @@ const BOOKING_URL =
 
 const COPY = {
   overline: "Omaha, Nebraska",
-  headlineA: "You can't run the job and the phone at the same time.",
-  headlineB: "Something else can.",
-  sub: "A website and an AI receptionist working together — so calls, leads, and reviews get handled while you're on the job.",
+  headlineA: "You built the business. It still needs a digital office.",
+  headlineB: "It doesn't need to be you.",
+  sub: "One connected system — website, phone, follow-up, social, and reviews — running your digital office so you don't have to be the one answering it in real time.",
   primaryCta: "Book a Call",
   secondaryCta: "See how it works",
 } as const;
@@ -55,7 +55,7 @@ export function Hero() {
     <section
       ref={ref}
       aria-labelledby="hero-heading"
-      className="surface-dark grain relative isolate flex min-h-screen items-center overflow-hidden px-6 py-24 md:px-12 lg:px-20"
+      className="surface-dark grain relative isolate flex min-h-screen items-center overflow-hidden px-6 py-16 md:px-12 md:py-20 lg:px-20"
     >
       <motion.div
         aria-hidden="true"
@@ -92,7 +92,7 @@ export function Hero() {
           <Reveal trigger="mount" tier="chapter" index={1}>
             <h1
               id="hero-heading"
-              className="mt-8 text-display font-heading text-foreground"
+              className="mt-6 text-display font-heading text-foreground"
             >
               {COPY.headlineA}
               <span className="block text-muted-foreground">
@@ -102,13 +102,13 @@ export function Hero() {
           </Reveal>
 
           <Reveal trigger="mount" tier="chapter" index={2}>
-            <p className="mt-8 max-w-[52ch] text-body-lg text-muted-foreground">
+            <p className="mt-6 max-w-[52ch] text-body-lg text-muted-foreground">
               {COPY.sub}
             </p>
           </Reveal>
 
           <Reveal trigger="mount" tier="chapter" index={3}>
-            <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
               <a
                 href={BOOKING_URL}
                 className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"

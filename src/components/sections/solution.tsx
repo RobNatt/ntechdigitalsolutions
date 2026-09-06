@@ -41,13 +41,13 @@ interface Piece {
 const PIECES: Piece[] = [
   { icon: Globe, name: "Website", body: "The page that answers \"are you legit\" before anyone picks up the phone." },
   { icon: MessagesSquare, name: "Follow-up automations", body: "Every lead gets a text or email before they forget they reached out." },
-  { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even mid-job." },
+  { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even when you can't." },
   { icon: Share2, name: "Social management", body: "Your posts stay active, and the people commenting get followed up with." },
   { icon: Star, name: "Review generator", body: "Happy customers get asked at the right moment, in public. Anything less comes to you first, privately." },
 ];
 
 const COPY = {
-  overline: "Chapter two",
+  overline: "Chapter three",
   heading: "One system, not five tools",
   lead: "A website nobody looks at, a receptionist with no calendar to book into, reviews nobody follows up on — separately, each piece does less. Connected, they cover for each other.",
 } as const;

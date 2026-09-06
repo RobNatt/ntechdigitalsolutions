@@ -1,18 +1,17 @@
 import { Hero } from "@/components/sections/hero";
 import { Problem } from "@/components/sections/problem";
-import { Solution } from "@/components/sections/solution";
 import { Journey } from "@/components/sections/journey";
+import { Solution } from "@/components/sections/solution";
 import { Climax } from "@/components/sections/climax";
 
 /*
- * Order matters, and it changed.
+ * Order follows Rob's copy: problem, how it works, the stack, close.
  *
- * The stack used to sit in chapter three, which meant a visitor didn't learn
- * what the offer actually is until two thirds down the page — everything before
- * it was the AI receptionist, one piece of five. Now the problem is named, the
- * whole offer is shown, and only then does it explain how it works.
- *
- * Say what it is before explaining how it runs.
+ * The stack was briefly moved ahead of "how it works" because the offer arrived
+ * too late on the page. His rewrite fixes that a better way — chapter two now
+ * describes the whole system rather than just the receptionist, and closes on
+ * "five pieces, working as one system". The offer lands in chapter two either
+ * way, and this keeps his structure.
  */
 
 export default function Home() {
@@ -20,8 +19,8 @@ export default function Home() {
     <main className="flex-1">
       <Hero />
       <Problem />
-      <Solution />
       <Journey />
+      <Solution />
       <Climax />
     </main>
   );

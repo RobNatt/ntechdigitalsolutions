@@ -22,8 +22,8 @@ import { SeamTrace } from "@/components/motion/seam-trace";
 
 const COPY = {
   overline: "Chapter one",
-  heading: "The phone doesn't know you're elbow-deep in a job.",
-  lead: "You're on a ladder, under a sink, halfway through something that needs both hands. The phone doesn't wait for a good time to ring.",
+  heading: "The business doesn't pause just because you're busy with one part of it.",
+  lead: "You're with a customer, mid-project, or just heads-down getting the actual work done. Everything else — the phone, the search results, the reviews — is still happening without you.",
   rows: [
     {
       n: "01",

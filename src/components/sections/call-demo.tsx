@@ -2,64 +2,56 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
-import { CalendarCheck, MessageSquare, Phone, PhoneIncoming } from "lucide-react";
+import { CalendarCheck, MessageSquare, PhoneMissed } from "lucide-react";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 
 /*
- * The hero artifact — the product actually working, on a loop.
+ * The hero artifact — two beats, on a loop.
  *
- * It plays a scene: a call comes in, Stuart picks it up, he books the job.
+ * Beat one is the miss, and it is the OWNER'S miss: the call that rang out
+ * while they were with someone else. That has to stay in — a system catching a
+ * call nobody missed isn't a story, and the miss is the part that's relatable.
  *
- * IT MUST NEVER SHOW A MISSED CALL. This panel is labelled as the receptionist
- * working — a missed call here contradicts the entire product. The missed call,
- * the text sent 45 minutes too late, the job that went to whoever answered
- * first: that is the PAIN, and it belongs in the problem chapter, not in the
- * shot that proves the thing works.
+ * Beat two is the catch, and it belongs to the system.
  *
- * Everything is placeholder. The number is a 555 reserved-for-fiction number so
- * it can never route to a real person, and nothing here claims a real customer,
- * a real booking, or a statistic.
+ * The panel label changes between them, and that is what keeps it honest. The
+ * panel is never labelled as the receptionist while showing a missed call: it
+ * says "the call you missed", then it says the receptionist caught it.
  *
- * Under reduced motion the sequence doesn't run — the finished state is shown
- * with all three rows resolved.
+ * The number is a 555 reserved-for-fiction number and can never route to a real
+ * person. Nothing here claims a real customer, booking or statistic.
  */
 
-type Phase = "ringing" | "answering" | "booked";
+type Phase = "missed" | "replying" | "booked";
 
-// What Stuart says when he picks up. COPY PLACEHOLDER — needs Rob's pass.
 const REPLY =
-  "Thanks for calling — I can get you booked in. What do you need done?";
+  "Hi, sorry we missed you — we're with someone right now. What can we help you with?";
 
-// Phase durations in ms. The reply phase is longer because it types.
 const TIMING: Record<Phase, number> = {
-  ringing: 1800,
-  answering: 3200,
-  booked: 3000,
+  missed: 2400,
+  replying: 3400,
+  booked: 3200,
 };
-const ORDER: Phase[] = ["ringing", "answering", "booked"];
+const ORDER: Phase[] = ["missed", "replying", "booked"];
 
 export function CallDemo() {
   const reduce = useReducedMotion();
-  const [phase, setPhase] = useState<Phase>(reduce ? "booked" : "ringing");
+  const [phase, setPhase] = useState<Phase>(reduce ? "booked" : "missed");
   const [typed, setTyped] = useState(reduce ? REPLY.length : 0);
 
-  // Advance the scene. The typed reset happens in the timer callback, never in
-  // the effect body — a synchronous setState there is a render-loop hazard and
-  // the lint rule is right to reject it.
   useEffect(() => {
     if (reduce) return;
     const id = setTimeout(() => {
       const next = ORDER[(ORDER.indexOf(phase) + 1) % ORDER.length];
-      if (next === "ringing") setTyped(0);
+      if (next === "missed") setTyped(0);
       setPhase(next);
     }, TIMING[phase]);
     return () => clearTimeout(id);
   }, [phase, reduce]);
 
-  // The reply types itself out.
   useEffect(() => {
-    if (reduce || phase !== "answering") return;
-    const perChar = Math.max(12, (TIMING.answering - 900) / REPLY.length);
+    if (reduce || phase !== "replying") return;
+    const perChar = Math.max(10, (TIMING.replying - 900) / REPLY.length);
     const id = setInterval(() => {
       setTyped((n) => Math.min(n + 1, REPLY.length));
     }, perChar);
@@ -67,89 +59,75 @@ export function CallDemo() {
   }, [phase, reduce]);
 
   const reached = (p: Phase) => ORDER.indexOf(phase) >= ORDER.indexOf(p);
-  const ringing = phase === "ringing";
+  const caught = phase !== "missed";
 
   return (
     <div className="relative rounded-xl border border-white/10 bg-white/[0.04] p-4 shadow-xl backdrop-blur-[20px] backdrop-saturate-150">
-      <div className="flex items-center justify-between px-3 pb-4 pt-2">
+      <div className="flex items-center justify-between gap-4 px-3 pb-4 pt-2">
+        {/* The label is where the honesty lives. Beat one owns the miss; beat
+            two hands it to the system. It must never say "receptionist" over a
+            missed call. */}
         <span className="text-overline uppercase text-muted-foreground">
-          AI Receptionist — Live
+          {caught
+            ? "Your AI receptionist, catching it live"
+            : "The call you missed"}
         </span>
         <motion.span
           aria-hidden="true"
-          animate={reduce ? undefined : { opacity: [1, 0.3, 1] }}
+          animate={
+            reduce || !caught ? { opacity: 0.35 } : { opacity: [1, 0.3, 1] }
+          }
           transition={
-            reduce
-              ? undefined
+            reduce || !caught
+              ? { duration: 0.4 }
               : { duration: 2, repeat: Infinity, ease: "easeInOut" }
           }
-          className="size-2 rounded-full bg-cta"
+          className="size-2 shrink-0 rounded-full bg-cta"
         />
       </div>
 
-      {/* Announce the outcome once, not every keystroke. */}
       <p className="sr-only" aria-live="polite">
         {reached("booked")
-          ? "Demonstration: an incoming call was answered automatically and a booking was made."
+          ? "Demonstration: a missed call was answered automatically and a booking was made."
           : ""}
       </p>
 
       <ul className="space-y-3" aria-hidden="true">
-        {/* 1 — the call */}
-        <li
-          className={`flex items-start gap-4 rounded-lg border bg-card p-4 transition-[border-color,opacity] duration-300 ${
-            ringing ? "border-cta/40" : "border-border opacity-70"
-          }`}
-        >
-          <motion.span
-            animate={
-              reduce || !ringing ? { scale: 1 } : { scale: [1, 1.12, 1] }
-            }
-            transition={
-              reduce || !ringing
-                ? { duration: 0.2 }
-                : { duration: 0.9, repeat: Infinity, ease: "easeInOut" }
-            }
-            className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors duration-300 ${
-              ringing ? "bg-cta text-on-cta" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {ringing ? (
-              <Phone className="size-4" strokeWidth={1.75} />
-            ) : (
-              <PhoneIncoming className="size-4" strokeWidth={1.75} />
-            )}
-          </motion.span>
+        {/* Beat one — the miss. Yours. */}
+        <li className="flex items-start gap-4 rounded-lg border border-border bg-card p-4">
+          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <PhoneMissed className="size-4" strokeWidth={1.75} />
+          </span>
           <span className="min-w-0 flex-1">
             <span className="flex items-baseline justify-between gap-3">
               <span className="text-body font-medium text-card-foreground">
-                {ringing ? "Incoming call" : "Answered"}
+                Missed call
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
                 10:42am
               </span>
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
-              {ringing ? "(402) 555-0147" : "Picked up on the second ring"}
+              (402) 555-0147 — rang out while you were with someone else
             </span>
           </span>
         </li>
 
-        {/* 2 — the reply, typing itself */}
+        {/* Beat two — the catch. The system's. */}
         <motion.li
           initial={false}
           animate={{
-            opacity: reached("answering") ? 1 : 0.25,
-            y: reached("answering") ? 0 : 6,
+            opacity: reached("replying") ? 1 : 0.25,
+            y: reached("replying") ? 0 : 6,
           }}
           transition={{ duration: DURATION.reveal, ease: EASE_OUT }}
           className={`flex items-start gap-4 rounded-lg border bg-card p-4 transition-colors duration-300 ${
-            phase === "answering" ? "border-cta/40" : "border-border"
+            phase === "replying" ? "border-cta/40" : "border-border"
           }`}
         >
           <span
             className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors duration-300 ${
-              reached("answering")
+              reached("replying")
                 ? "bg-cta text-on-cta"
                 : "bg-muted text-muted-foreground"
             }`}
@@ -159,15 +137,15 @@ export function CallDemo() {
           <span className="min-w-0 flex-1">
             <span className="flex items-baseline justify-between gap-3">
               <span className="text-body font-medium text-card-foreground">
-                Stuart takes it
+                Answered automatically
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
-                live
+                moments later
               </span>
             </span>
-            <span className="mt-1 block min-h-[2.6em] text-small text-muted-foreground">
+            <span className="mt-1 block min-h-[3.4em] text-small text-muted-foreground">
               {REPLY.slice(0, typed)}
-              {phase === "answering" && typed < REPLY.length && (
+              {phase === "replying" && typed < REPLY.length && (
                 <motion.span
                   animate={{ opacity: [1, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity }}
@@ -178,7 +156,7 @@ export function CallDemo() {
           </span>
         </motion.li>
 
-        {/* 3 — the booking */}
+        {/* The outcome. */}
         <motion.li
           initial={false}
           animate={{
@@ -209,7 +187,8 @@ export function CallDemo() {
               </span>
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
-              Tuesday 9:00am — on the calendar before the call ends
+              On the calendar before you&apos;d even seen the missed-call
+              notification
             </span>
           </span>
         </motion.li>

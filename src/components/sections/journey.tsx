@@ -28,29 +28,26 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
  */
 
 const COPY = {
-  overline: "Chapter three",
+  overline: "Chapter two",
   heading: "How it actually works",
   steps: [
     {
       n: "01",
-      title: "It catches the call",
-      body: "Every call gets picked up — mid-job, after hours, back to back. Nothing goes to a dead voicemail box.",
-      stat: "Seconds",
-      statLabel: "to answer",
+      title: "Get seen everywhere",
+      body: "Your website, your listings, your socials — all pointing the same direction, so when someone looks for what you do, they find you first, not five reasons to keep looking.",
+      stat: "Always on",
     },
     {
       n: "02",
-      title: "It answers like you would",
-      body: "It knows what you do, what you charge for, and how to talk to someone who needs it done. It's trained on your business, so it sounds like yours.",
-      stat: "24/7",
-      statLabel: "always on",
+      title: "Follow up with every lead, automatically",
+      body: "The moment someone reaches out, they hear back — a text, an email, a call — without you having to remember to do it. Nobody sits waiting on you to get around to them.",
+      stat: "No lead left waiting",
     },
     {
       n: "03",
-      title: "It books the work",
-      body: "It gets the details, finds the opening, and puts it on your calendar. You find out when you check your phone between jobs — not by chasing the lead down yourself.",
-      stat: "Never",
-      statLabel: "voicemail",
+      title: "Grow without changing how you work",
+      body: "You stop losing business to a missed call or a follow-up that never happened. Nothing about how you actually work changes — you just upgrade what's running behind it. Five pieces, working as one system.",
+      stat: "Nothing to relearn"
     },
   ],
 } as const;
@@ -274,11 +271,12 @@ export function Journey() {
                     >
                       {step.n}
                     </span>
-                    <p className="mt-10 font-heading text-display leading-none text-foreground">
+                    {/* These are phrases now, not numbers — Rob swapped the
+                        invented figures for facts about how the system behaves.
+                        Display size only ever fitted "24/7"; h2 fits a phrase
+                        and still reads as the panel's headline. */}
+                    <p className="mt-10 text-h2 text-balance font-heading leading-tight text-foreground">
                       {step.stat}
-                    </p>
-                    <p className="mt-4 text-overline uppercase text-muted-foreground">
-                      {step.statLabel}
                     </p>
                   </motion.div>
                 </AnimatePresence>
