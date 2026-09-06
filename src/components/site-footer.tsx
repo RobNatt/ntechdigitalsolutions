@@ -7,9 +7,8 @@ import { LogoMark } from "@/components/brand/logo-mark";
  * a prospect checking N-Tech out actually wants, rather than a wall of links to
  * pages that don't exist yet.
  *
- * No privacy policy link until a privacy policy exists. Linking to a page that
- * isn't written is worse than omitting it, and on a site whose pitch is honesty
- * it's the wrong corner to cut.
+ * The legal links are real pages, not placeholders — a dead or missing policy
+ * link on a site that asks for your details is exactly the wrong corner to cut.
  */
 
 export function SiteFooter() {
@@ -37,6 +36,21 @@ export function SiteFooter() {
               className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               hello@ntechdigitalsolutions.com
+            </a>
+          </p>
+
+          <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small">
+            <a
+              href="/privacy"
+              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/terms"
+              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Terms of Service
             </a>
           </p>
         </div>
