@@ -22,9 +22,6 @@ import { LogoMark } from "@/components/brand/logo-mark";
  * shipped as artwork, so it can never drift out of sync with the page's type.
  */
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 /*
  * Now that there are real pages, the nav can't stay in-page anchors: an anchor
  * to "#problem" does nothing from /services. Services is a page link; the two
@@ -100,7 +97,7 @@ export function SiteHeader() {
         </ul>
 
         <a
-          href={BOOKING_URL}
+          href="/book-a-call"
           className="ml-auto shrink-0 rounded-full bg-cta px-5 py-2.5 text-small font-medium text-on-cta transition-transform duration-[180ms] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:ml-0"
         >
           Book a Call

@@ -6,9 +6,6 @@ import { Reveal } from "@/components/motion/reveal";
 import { ServiceCurrent } from "@/components/service-current";
 import { SERVICES, getService } from "@/lib/services";
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 /*
  * One template, five pages.
  *
@@ -100,7 +97,7 @@ export default async function ServicePage({
           <Reveal trigger="mount" tier="chapter" index={3}>
             <div className="mt-10">
               <a
-                href={BOOKING_URL}
+                href="/book-a-call"
                 className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 Book a Call
@@ -272,7 +269,7 @@ export default async function ServicePage({
           <Reveal tier="chapter" index={2}>
             <div className="mt-16 flex flex-col gap-4 sm:flex-row sm:items-center">
               <a
-                href={BOOKING_URL}
+                href="/book-a-call"
                 className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 Book a Call

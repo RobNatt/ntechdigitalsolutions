@@ -26,9 +26,6 @@ import { LocalTime } from "@/components/local-time";
  * ALL COPY IS PLACEHOLDER and claims nothing that isn't true.
  */
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 const COPY = {
   overline: "Omaha, Nebraska",
   headlineA: "You built the business. It still needs a digital office.",
@@ -110,7 +107,7 @@ export function Hero() {
           <Reveal trigger="mount" tier="chapter" index={3}>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
               <a
-                href={BOOKING_URL}
+                href="/book-a-call"
                 className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 {COPY.primaryCta}

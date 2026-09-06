@@ -17,9 +17,6 @@ import { Reveal } from "@/components/motion/reveal";
  * lose trust in month one.
  */
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 interface Tier {
   name: string;
   price: string;
@@ -154,7 +151,7 @@ export function PricingTiers() {
                   </ul>
 
                   <a
-                    href={BOOKING_URL}
+                    href="/book-a-call"
                     className={`group mt-10 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-body font-medium transition-[transform,box-shadow,background-color] duration-[180ms] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
                       featured
                         ? "bg-cta text-on-cta hover:shadow-md"

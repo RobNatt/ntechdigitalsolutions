@@ -33,9 +33,6 @@ import { EASE_OUT } from "@/lib/motion";
  * ALL COPY IS PLACEHOLDER. Nothing claims a client, a result, or a testimonial.
  */
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 const COPY = {
   overline: "Ready when you are",
   heading: "Let's get your whole digital office running.",
@@ -249,7 +246,7 @@ export function Climax() {
               ))}
 
               <a
-                href={BOOKING_URL}
+                href="/book-a-call"
                 className="group relative inline-flex items-center justify-center gap-2 rounded-md bg-cta px-10 py-5 text-body-lg font-medium text-on-cta transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 {COPY.primaryCta}

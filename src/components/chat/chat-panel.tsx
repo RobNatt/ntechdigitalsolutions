@@ -1,6 +1,5 @@
 "use client";
 
-import { ChatContactForm } from "@/components/chat/chat-contact-form";
 import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -136,7 +135,22 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         <div ref={bottomRef} />
       </div>
 
-      <ChatContactForm messages={messages} />
+      {/*
+        The in-chat capture form is parked, not deleted — it still exists in
+        chat-contact-form.tsx and only needs GHL_INQUIRY_WEBHOOK_URL to work.
+        Until that exists it has nowhere to submit, and shipping a control that
+        fails is worse than handing the visitor the intake form that works.
+        Restoring it also restores sending the conversation summary along with
+        the contact details, which this link cannot do.
+      */}
+      <div className="border-t border-border px-4 py-3">
+        <a
+          href="/book-a-call"
+          className="inline-flex text-sm font-medium text-cta underline underline-offset-2"
+        >
+          Share your details with the team →
+        </a>
+      </div>
 
       {error && (
         <div className="border-t border-destructive/30 bg-destructive/10 px-4 py-2 text-xs text-destructive">

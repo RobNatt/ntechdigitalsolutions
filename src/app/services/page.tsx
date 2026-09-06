@@ -11,9 +11,6 @@ export const metadata: Metadata = {
     "The N-Tech stack — website, follow-up automations, AI receptionist, social media management and review generation — plus paid ads and SEO/AEO à la carte.",
 };
 
-const BOOKING_URL =
-  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
-
 /*
  * The catalogue.
  *
@@ -160,7 +157,7 @@ export default function ServicesIndex() {
           <Reveal tier="chapter" index={2}>
             <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
               <a
-                href={BOOKING_URL}
+                href="/book-a-call"
                 className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 Book a Call
