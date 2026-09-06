@@ -1,7 +1,13 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+} from "motion/react";
+import { useRef, useState } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 
@@ -50,19 +56,39 @@ const COPY = {
 
 export function Journey() {
   const reduce = useReducedMotion();
+  const stepsRef = useRef<HTMLOListElement>(null);
   const [active, setActive] = useState(0);
   const step = COPY.steps[active];
+
+  // Derived from scroll position, not from viewport-enter events. Enter events
+  // fire once per entry and don't reverse, so scrolling back up left the panel
+  // stranded on the last step — and jumping the scrollbar fired all three at
+  // once. Progress is deterministic in both directions.
+  const { scrollYProgress } = useScroll({
+    target: stepsRef,
+    offset: ["start center", "end center"],
+  });
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    const last = COPY.steps.length - 1;
+    const i = Math.min(last, Math.max(0, Math.floor(p * COPY.steps.length)));
+    setActive((prev) => (prev === i ? prev : i));
+  });
 
   return (
     <section
       id="journey"
       aria-labelledby="journey-heading"
-      className="surface-dark grain relative isolate overflow-hidden px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
+      className="surface-dark grain relative isolate px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
     >
+      {/* The bloom is clipped by THIS wrapper, not by the section. Putting
+          overflow-hidden on the section made it the scroll container for the
+          sticky panel below, so the panel never stuck. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[80vh] w-[80vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.12),transparent_62%)] blur-[100px]"
-      />
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      >
+        <div className="absolute left-1/2 top-1/2 h-[80vh] w-[80vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.12),transparent_62%)] blur-[100px]" />
+      </div>
 
       <div className="mx-auto max-w-[1280px]">
         <Reveal tier="chapter" index={0}>
@@ -82,8 +108,12 @@ export function Journey() {
 
         <div className="mt-24 grid gap-16 lg:grid-cols-12 lg:gap-12">
           {/* Pinned panel. Advances as the steps on the right come into view. */}
+          {/* NO self-start / self-* here. A sticky element travels only within its
+              parent's box, and self-start shrinks the grid item to content
+              height — leaving nowhere to stick. It must stretch to the full
+              row height, which is the grid default. */}
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-[24vh]">
+            <div className="lg:sticky lg:top-32">
               <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] p-8 shadow-xl backdrop-blur-[20px] backdrop-saturate-150 md:p-12">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
@@ -125,13 +155,14 @@ export function Journey() {
           </div>
 
           {/* The steps. Each one takes over the pinned panel as it arrives. */}
-          <ol className="lg:col-span-6 lg:col-start-7">
-            {COPY.steps.map(({ n, title, body }, i) => (
-              <motion.li
+          <ol ref={stepsRef} className="lg:col-span-6 lg:col-start-7">
+            {COPY.steps.map(({ n, title, body }) => (
+              <li
                 key={n}
-                onViewportEnter={() => setActive(i)}
-                viewport={{ margin: "-45% 0px -45% 0px" }}
-                className="border-t border-border py-16 first:border-t-0 first:pt-0 lg:py-24"
+                // each step occupies most of a viewport so the panel stays pinned
+                // long enough to read as pinned. Without this the column is
+                // shorter than the travel needed and it releases immediately.
+                className="flex flex-col justify-center border-t border-border py-16 first:border-t-0 first:pt-0 lg:min-h-[70vh] lg:py-0" 
               >
                 <Reveal tier="reveal" index={0}>
                   <p className="text-overline uppercase text-cta">{n}</p>
@@ -142,7 +173,7 @@ export function Journey() {
                     {body}
                   </p>
                 </Reveal>
-              </motion.li>
+              </li>
             ))}
           </ol>
         </div>
