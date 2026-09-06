@@ -7,7 +7,7 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { EASE_OUT } from "@/lib/motion";
@@ -15,14 +15,14 @@ import { EASE_OUT } from "@/lib/motion";
 /*
  * The climax CTA — and the end of the current.
  *
- * The charge that runs down the spine in chapter three doesn't stop there. It
- * carries into this section, travels down the same centre line, and lands in
- * the CTA, which lights as it arrives. The button becomes the last node in the
- * infrastructure.
+ * The charge that runs down the spine in chapter three carries into this
+ * section, trails all the way down the centre line behind the type, and lands
+ * in the CTA. The trail then fades out and the button holds a double-beat
+ * pulse: the energy is no longer in the wire, it's in the button.
  *
- * That's the point of doing it this way rather than inventing a fifth unrelated
- * effect: the page reads as one system with a destination, and the thing the
- * visitor is asked to click is literally where the system terminates.
+ * That's why this rather than a fifth unrelated effect — the page reads as one
+ * system with a destination, and the thing the visitor is asked to click is
+ * literally where the system terminates.
  *
  * Centred on purpose. The current runs down the centre line in chapter three,
  * so the landing has to sit under it or the connection doesn't read.
@@ -44,9 +44,31 @@ const COPY = {
 export function Climax() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
+  const ctaRef = useRef<HTMLSpanElement>(null);
   const [arrived, setArrived] = useState(reduce);
 
-  // The current enters at the top of the section and lands on the CTA.
+  // The trail has to reach the button exactly, so measure the gap rather than
+  // guessing a height. Re-measured on resize because the heading rewraps.
+  const [trailHeight, setTrailHeight] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const section = ref.current;
+      const cta = ctaRef.current;
+      if (!section || !cta) return;
+      const top = section.getBoundingClientRect().top;
+      const target = cta.getBoundingClientRect().top;
+      setTrailHeight(Math.max(0, target - top));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (ref.current) ro.observe(ref.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 90%", "start 15%"],
@@ -71,25 +93,28 @@ export function Climax() {
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <motion.div
-          animate={
-            reduce || !arrived ? { opacity: 0.55 } : { opacity: [0.55, 1, 0.8] }
-          }
+          animate={{ opacity: arrived ? 0.95 : 0.5 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="absolute inset-x-0 bottom-[-45%] mx-auto h-[110vh] w-[110vh] rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.24),transparent_60%)] blur-[110px]"
+          className="absolute inset-x-0 bottom-[-45%] mx-auto h-[110vh] w-[110vh] rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.26),transparent_60%)] blur-[110px]"
         />
       </div>
 
-      {/* The current arriving. Continues the centre line from chapter three. */}
-      <div
+      {/* The trail. Runs the full distance from the section top to the button,
+          behind the type, then fades once the charge has landed — the energy is
+          in the button now, not in the wire. */}
+      <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-40 w-px -translate-x-1/2"
+        animate={{ opacity: arrived ? 0 : 1 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        style={{ height: trailHeight }}
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 w-px -translate-x-1/2"
       >
         <span className="absolute inset-0 bg-border" />
         <motion.span
           style={{ scaleY: reduce ? 1 : fill }}
-          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/30 to-cta"
+          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/20 via-cta/70 to-cta"
         />
-      </div>
+      </motion.div>
 
       <div className="mx-auto max-w-[1280px] pt-16">
         <Reveal tier="chapter" index={0}>
@@ -115,18 +140,44 @@ export function Climax() {
 
         <Reveal tier="chapter" index={3}>
           <div className="mt-16 flex flex-col items-center gap-8">
-            {/* The last node. The current lands here and the button charges.
-                Every layer animates opacity and scale only — a box-shadow
-                animation would be a paint property, which the motion rules
-                don't allow, and this composites far better anyway. */}
-            <span className="relative inline-flex isolate">
-              {/* Sustained halo — swells on arrival, then holds. */}
+            {/* The last node. Every layer animates opacity and scale only — an
+                animated box-shadow is a paint property, outside the motion
+                rules, and it composites badly on a phone. */}
+            <span ref={ctaRef} className="relative inline-flex isolate">
+              {/* Outer bloom — the wide field. Double-beat once charged. */}
+              <motion.span
+                aria-hidden="true"
+                initial={false}
+                animate={
+                  reduce
+                    ? { opacity: arrived ? 0.7 : 0, scale: 1 }
+                    : arrived
+                      ? {
+                          opacity: [0.55, 1, 0.7, 1, 0.55],
+                          scale: [1, 1.12, 1.04, 1.12, 1],
+                        }
+                      : { opacity: 0, scale: 0.8 }
+                }
+                transition={
+                  reduce || !arrived
+                    ? { duration: 0.4 }
+                    : {
+                        duration: 2.6,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.9,
+                      }
+                }
+                className="pointer-events-none absolute -inset-16 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.7),transparent_70%)] blur-3xl"
+              />
+
+              {/* Core halo — the swell on arrival, then it holds hot. */}
               <motion.span
                 aria-hidden="true"
                 initial={false}
                 animate={
                   arrived
-                    ? { opacity: [0, 1, 0.85], scale: [0.8, 1.2, 1] }
+                    ? { opacity: [0, 1, 0.95], scale: [0.8, 1.25, 1] }
                     : { opacity: 0, scale: 0.8 }
                 }
                 transition={
@@ -134,43 +185,24 @@ export function Climax() {
                     ? { duration: 0 }
                     : { duration: 0.9, ease: EASE_OUT, times: [0, 0.45, 1] }
                 }
-                className="pointer-events-none absolute -inset-8 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.75),transparent_70%)] blur-2xl"
+                className="pointer-events-none absolute -inset-8 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.95),transparent_68%)] blur-2xl"
               />
 
-              {/* One-shot shockwave — the charge actually arriving. */}
-              <motion.span
-                aria-hidden="true"
-                initial={false}
-                animate={
-                  arrived && !reduce
-                    ? { opacity: [0.85, 0], scale: [0.9, 1.9] }
-                    : { opacity: 0, scale: 0.9 }
-                }
-                transition={{ duration: 0.85, ease: "easeOut" }}
-                className="pointer-events-none absolute -inset-2 -z-10 rounded-md border border-cta"
-              />
-
-              {/* Afterglow — it keeps shining once charged. */}
-              <motion.span
-                aria-hidden="true"
-                initial={false}
-                animate={
-                  arrived && !reduce
-                    ? { opacity: [0.45, 0.95, 0.45] }
-                    : { opacity: arrived ? 0.5 : 0 }
-                }
-                transition={
-                  arrived && !reduce
-                    ? {
-                        duration: 3.2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.9,
-                      }
-                    : { duration: 0.3 }
-                }
-                className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.55),transparent_72%)] blur-xl"
-              />
+              {/* Two shockwave rings, offset — the charge arriving with weight. */}
+              {[0, 0.18].map((delay) => (
+                <motion.span
+                  key={delay}
+                  aria-hidden="true"
+                  initial={false}
+                  animate={
+                    arrived && !reduce
+                      ? { opacity: [0.9, 0], scale: [0.9, 2.1] }
+                      : { opacity: 0, scale: 0.9 }
+                  }
+                  transition={{ duration: 1, ease: "easeOut", delay }}
+                  className="pointer-events-none absolute -inset-2 -z-10 rounded-md border border-cta"
+                />
+              ))}
 
               <a
                 href="#contact"
