@@ -243,7 +243,7 @@ export const SERVICES: Service[] = [
     name: "Review generator",
     icon: Star,
     tagline:
-      "Happy customers get asked at the right moment. Everyone gets asked.",
+      "Happy customers get asked at the right moment, in public. Anything less comes to you first.",
     promise:
       "The work you already do, finally visible to people deciding whether to call.",
     situation: {
@@ -272,24 +272,25 @@ export const SERVICES: Service[] = [
       steps: [
         {
           n: "01",
-          title: "Everyone gets asked",
-          body: "After the work is done, while it's still fresh, every customer gets the same invitation to leave a public review. Nobody is filtered out based on what they might say.",
+          title: "Every customer gets asked",
+          body: "After the work is done, while it's still fresh, everyone gets the same question: how did we do? Nobody is skipped, and nobody is chased twice.",
         },
         {
           n: "02",
-          title: "And everyone gets a way to tell you privately",
-          body: "The same follow-up gives them a direct line to you. If something went wrong, you hear it from them rather than reading it later.",
+          title: "Happy customers get a one-tap link",
+          body: "If they're pleased, they're handed a direct link to your Google listing while they're still in the moment. Most people would leave a review — they just never get round to finding the page.",
         },
         {
           n: "03",
-          title: "Asked at the moment it's easy to say yes",
-          body: "Timing is most of it. Asked right after the job, people say yes. Asked three weeks later, they don't.",
+          title: "If something's off, you hear it first",
+          body: "Anything less and they're asked what would have made it better, straight to you. You get the chance to fix it rather than reading about it later. Nobody is prevented from posting publicly if they want to.",
         },
       ],
     },
     included: [
       "Automatic review requests after every completed job",
-      "A private channel for feedback, offered to everyone",
+      "Happy customers handed a direct link to your Google listing",
+      "Anyone less than happy asked what would have made it better, privately",
       "Timed to go out while the work is still fresh",
       "Requests in your voice, not a generic template",
       "Reviews tracked so you can see what's landing",
