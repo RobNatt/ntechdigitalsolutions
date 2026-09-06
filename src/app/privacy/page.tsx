@@ -85,6 +85,47 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
+      <Section heading="Text messages">
+        <p>
+          If you give us your phone number, we may text you about your enquiry —
+          to confirm we&apos;ve got it, arrange a call, or follow up on
+          something you asked about. That&apos;s the only reason we&apos;d use
+          it.
+        </p>
+        <ul>
+          <li>Message and data rates may apply, per your carrier plan.</li>
+          <li>
+            Reply <strong>STOP</strong> at any time and we&apos;ll stop texting
+            you. Reply <strong>HELP</strong> for help.
+          </li>
+          <li>Message frequency varies depending on your enquiry.</li>
+          <li>
+            <strong>
+              We do not sell, rent, or share your phone number or your consent
+              to be texted with anyone.
+            </strong>
+          </li>
+        </ul>
+        <p>
+          Carriers don&apos;t guarantee delivery, and neither can we — a message
+          can fail for reasons outside anyone&apos;s control.
+        </p>
+      </Section>
+
+      <Section heading="How we protect it">
+        <p>
+          We use reasonable administrative, technical, and organisational
+          safeguards to protect your information, and we keep the number of
+          people and systems that can reach it small.
+        </p>
+        <p>
+          No method of transmission or storage is completely secure, and it
+          would be dishonest to claim otherwise. What we can tell you is that we
+          don&apos;t hold more than we need, and we don&apos;t keep it longer
+          than we need.
+        </p>
+      </Section>
+
       <Section heading="How long we keep it">
         <p>
           As long as we&apos;re talking, and for a reasonable period afterwards

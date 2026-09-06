@@ -114,6 +114,53 @@ export default function TermsOfService() {
         </p>
       </Section>
 
+      <Section heading="Text messages">
+        <p>
+          Where you or your customers provide a phone number and agree to be
+          contacted, the systems we run may send text messages — confirmations,
+          follow-ups, appointment reminders, review requests.
+        </p>
+        <p>
+          Message and data rates may apply. Recipients can reply{" "}
+          <strong>STOP</strong> to opt out at any time, and that opt-out is
+          honoured. Delivery depends on carriers and is not guaranteed.
+        </p>
+        <p>
+          <strong>
+            If we operate messaging on your behalf, you are responsible for
+            having obtained proper consent from the people being contacted.
+          </strong>{" "}
+          We&apos;ll build the system to handle consent and opt-outs correctly,
+          but we can&apos;t verify how a number reached your list in the first
+          place.
+        </p>
+      </Section>
+
+      <Section heading="Disclaimer of warranties">
+        <p>
+          Our services are provided as they are. We don&apos;t warrant that they
+          will be uninterrupted, error-free, or that they will produce any
+          particular result — see the section above on results.
+        </p>
+        <p>
+          Third-party platforms we build on, including GoHighLevel, Google, and
+          the social networks, carry their own terms and their own uptime. We
+          can&apos;t warrant something we don&apos;t operate.
+        </p>
+      </Section>
+
+      <Section heading="Indemnification">
+        <p>
+          You agree to cover us against claims arising from the content you give
+          us to publish, the claims your business makes, and your own compliance
+          obligations — including consent for anyone you ask us to contact.
+        </p>
+        <p>
+          Put plainly: we&apos;re responsible for the work we do. You&apos;re
+          responsible for what your business says and who it says it to.
+        </p>
+      </Section>
+
       <Section heading="Limitation of liability">
         <p>
           We&apos;re liable for doing the work we agreed to do. We aren&apos;t

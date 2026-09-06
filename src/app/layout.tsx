@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ChatWidgetLazy } from "@/components/chat/ChatWidgetLazy";
+import { Analytics } from "@vercel/analytics/next";
 
 // Type pairing is locked in design-system.md — Outfit for headings, Work Sans
 // for body. Weights here match the scale defined there; don't add weights
@@ -47,6 +48,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <SiteFooter />
         <ChatWidgetLazy />
+        {/*
+          Vercel Analytics is cookieless — it sets nothing in the visitor's
+          browser and doesn't fingerprint. That matters here beyond preference:
+          the privacy policy states this site uses no advertising or tracking
+          cookies, and that sentence has to stay true. Google Analytics would
+          have made it false and required a consent banner.
+        */}
+        <Analytics />
       </body>
     </html>
   );
