@@ -8,7 +8,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Globe, MessagesSquare, Share2, Star } from "lucide-react";
+import { Bot, Layers, Share2, Star } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -28,8 +28,13 @@ import { Reveal } from "@/components/motion/reveal";
  * change colour and glow — no layout properties. Under reduced motion the whole
  * spine is drawn and every node is lit from the start, with nothing moving.
  *
- * The five pieces are real (from offers.md). ALL DESCRIPTIVE COPY IS
- * PLACEHOLDER, and no pricing is shown — that is a conversation, not a header.
+ * FOUR pieces, not five: website, CRM and follow-up automations were merged
+ * into the Digital Foundation, because they are one product. Rob's heading
+ * still says "not five tools" — that reads as the pile of separate tools a
+ * business would otherwise juggle, not as a count of what's listed below, but
+ * it's his line to confirm.
+ *
+ * No pricing is shown — that is a conversation, not a header.
  */
 
 interface Piece {
@@ -39,8 +44,11 @@ interface Piece {
 }
 
 const PIECES: Piece[] = [
-  { icon: Globe, name: "Website", body: "The page that answers \"are you legit\" before anyone picks up the phone." },
-  { icon: MessagesSquare, name: "Follow-up automations", body: "Every lead gets a text or email before they forget they reached out." },
+  {
+    icon: Layers,
+    name: "Digital Foundation",
+    body: "Your site, your CRM, and the follow-up that runs between them. One piece, because you can't really have one without the others.",
+  },
   { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even when you can't." },
   { icon: Share2, name: "Social management", body: "Your posts stay active, and the people commenting get followed up with." },
   { icon: Star, name: "Review generator", body: "Happy customers get asked at the right moment, in public. Anything less comes to you first, privately." },

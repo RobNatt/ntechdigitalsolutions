@@ -1,8 +1,7 @@
 import {
   Bot,
-  Globe,
+  Layers,
   Megaphone,
-  MessagesSquare,
   Search,
   Share2,
   Star,
@@ -10,7 +9,13 @@ import {
 } from "lucide-react";
 
 /*
- * The five pieces of the offer, as data.
+ * The offer, as data.
+ *
+ * Website, CRM and follow-up automations are ONE product — the Digital
+ * Foundation — not three. They were briefly separate services and that was
+ * wrong: a site with no CRM behind it is a leaflet, and automations with
+ * nothing to point at have nothing to automate. Selling them apart invites a
+ * client to buy half a thing that can't work.
  *
  * One source drives the catalogue and every service page, so the pages can't
  * drift apart in structure or tone the way five hand-written files would. The
@@ -52,17 +57,17 @@ export interface Service {
 
 export const SERVICES: Service[] = [
   {
-    slug: "website",
+    slug: "digital-foundation",
     tier: "core",
-    name: "Website",
-    icon: Globe,
+    name: "Digital Foundation",
+    icon: Layers,
     tagline:
-      "The page that answers “are you legit” before anyone picks up the phone.",
+      "Your site, your CRM, and the follow-up that runs between them.",
     promise:
-      "A site that holds up when someone checks you out — and that everything else plugs into.",
+      "The foundation everything else is built on — and you can't really have one part without the others.",
     situation: {
-      heading: "Most people decide before they ever contact you.",
-      lead: "Someone hears your name, looks you up, and makes a judgement in about ten seconds. That judgement happens whether or not you have anything for them to look at.",
+      heading: "A site with nothing behind it is a leaflet.",
+      lead: "Someone looks you up, decides in about ten seconds whether you're worth contacting, and reaches out. What happens in the next few minutes decides whether that turns into work — and it usually happens without you.",
       rows: [
         {
           n: "01",
@@ -71,13 +76,13 @@ export const SERVICES: Service[] = [
         },
         {
           n: "02",
-          title: "Nowhere to go next",
-          body: "They found you, they're interested, and there's no obvious way to book, call, or ask a question. Interest with no exit turns back into nothing.",
+          title: "Nowhere for the lead to land",
+          body: "A name on a notepad, a voicemail, a message in an inbox with forty other things. If every enquiry isn't in one place, some of them aren't being worked at all.",
         },
         {
           n: "03",
-          title: "Nothing connected to it",
-          body: "A site that sits on its own is a brochure. It doesn't know who visited, doesn't follow up, and doesn't tell you anything you can act on.",
+          title: "The reply that came too late",
+          body: "They sent it at 4pm. You saw it at 8. By then they'd messaged two other people, and whoever answered first is already talking to them.",
         },
       ],
     },
@@ -86,18 +91,18 @@ export const SERVICES: Service[] = [
       steps: [
         {
           n: "01",
-          title: "Built before you ever sign",
-          body: "You see the finished site for your business first. Not a mockup, not a template with your logo dropped in — the real thing, built and working.",
+          title: "The site gets built first",
+          body: "You see the finished site for your business before you sign anything. Not a mockup, not a template with your logo dropped in — the real thing, built and working.",
         },
         {
           n: "02",
-          title: "Wired into everything else",
-          body: "Forms go into the CRM. Calls route to the receptionist. Bookings land on the calendar. The site stops being a leaflet and starts being the front door.",
+          title: "Every enquiry lands in the CRM",
+          body: "Form, call, message, wherever it came from. One place, with a record of what they wanted and when they asked, so nothing quietly disappears.",
         },
         {
           n: "03",
-          title: "Yours, and kept current",
-          body: "Once it's paid for, the site and its content are yours. It doesn't go stale, and you never have to log in and fight a page builder to change a phone number.",
+          title: "They hear back before they forget",
+          body: "A text or an email goes out straight away, whether you've seen it or not — and again if they go quiet. The chase happens without anyone having to remember to chase.",
         },
       ],
     },
@@ -105,71 +110,13 @@ export const SERVICES: Service[] = [
       "A fully branded site, built for your business specifically",
       "Mobile-first — most people looking you up are on a phone",
       "Built to load fast and be found, not just to look good",
-      "Contact and booking wired into your CRM and calendar",
+      "A CRM holding every lead in one place",
+      "Instant confirmation by text or email when someone reaches out",
+      "Follow-up sequences that run on their own, written in your voice",
       "Hosting and upkeep handled",
     ],
     connects:
-      "Every other piece points back here. The receptionist books into the calendar the site exposes, the automations follow up on the leads the site captures, social sends people to it, and reviews are what convince them once they arrive.",
-  },
-  {
-    slug: "follow-up-automations",
-    tier: "core",
-    name: "Follow-up automations",
-    icon: MessagesSquare,
-    tagline:
-      "Every lead gets a text or email before they forget they reached out.",
-    promise:
-      "Nobody sits waiting on you to get around to them.",
-    situation: {
-      heading: "The gap between reaching out and hearing back is where leads die.",
-      lead: "Someone sends an enquiry at 4pm. You see it at 8. By then they've messaged two other people, and whoever replied first is already talking to them.",
-      rows: [
-        {
-          n: "01",
-          title: "The reply that comes too late",
-          body: "Not because you didn't care — because you were doing the actual work. The lead doesn't know that, and doesn't wait around to find out.",
-        },
-        {
-          n: "02",
-          title: "The follow-up nobody made",
-          body: "Most enquiries need more than one touch. The second one almost never happens, because remembering to chase people isn't anybody's job.",
-        },
-        {
-          n: "03",
-          title: "The lead nobody wrote down",
-          body: "A name on a notepad, a voicemail, a message in an inbox with forty other things. If it isn't in one place, it isn't being worked.",
-        },
-      ],
-    },
-    how: {
-      heading: "How it works",
-      steps: [
-        {
-          n: "01",
-          title: "Every lead lands in one place",
-          body: "Form, call, message, wherever it came from — it goes into the CRM with a record of what they wanted and when they asked.",
-        },
-        {
-          n: "02",
-          title: "They hear back immediately",
-          body: "A text or an email goes out straight away, confirming you've got it and telling them what happens next. It goes out whether you've seen it or not.",
-        },
-        {
-          n: "03",
-          title: "And again, if they go quiet",
-          body: "Follow-ups run on a schedule you set once. The chase happens without anyone having to remember to chase.",
-        },
-      ],
-    },
-    included: [
-      "A CRM holding every lead in one place",
-      "Instant confirmation by text or email when someone reaches out",
-      "Follow-up sequences that run on their own",
-      "Everything logged, so you can see what actually happened",
-      "Written in your voice, not a template",
-    ],
-    connects:
-      "This is the piece that makes the others worth having. The site and the receptionist bring people in; without follow-up, a good share of them quietly go cold before anyone speaks to them.",
+      "This is the piece everything else plugs into. The receptionist books into the calendar the site exposes, ads and SEO send people to it, social points at it, and reviews are what convince them once they arrive. Take any other service without this and it has nowhere to send the work it generates.",
   },
   {
     slug: "ai-receptionist",
