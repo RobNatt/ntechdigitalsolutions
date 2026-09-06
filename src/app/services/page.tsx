@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
-import { SERVICES } from "@/lib/services";
+import { SERVICES, type Service } from "@/lib/services";
 
 export const metadata: Metadata = {
   title: "Services — N-Tech Digital Solutions",
   description:
-    "The five pieces of the N-Tech stack: website, follow-up automations, AI receptionist, social media management, and review generation. Take one or take all five.",
+    "The N-Tech stack — website, follow-up automations, AI receptionist, social media management and review generation — plus paid ads and SEO/AEO à la carte.",
 };
 
 const BOOKING_URL =
@@ -26,7 +26,40 @@ const BOOKING_URL =
  * Flagged for Rob rather than decided.
  */
 
+function ServiceGrid({ items }: { items: Service[] }) {
+  return (
+    <ul className="mt-10 grid gap-6 md:grid-cols-2 lg:gap-8">
+      {items.map(({ slug, name, icon: Icon, tagline }, i) => (
+        <Reveal key={slug} as="li" tier="reveal" index={i} className="group h-full">
+          <Link
+            href={`/services/${slug}`}
+            className="flex h-full flex-col rounded-lg border border-border bg-card p-8 shadow-sm transition-[transform,box-shadow,border-color] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:border-cta/30 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+          >
+            <Icon aria-hidden="true" className="size-6 text-cta" strokeWidth={1.5} />
+            <h3 className="mt-6 text-h3 font-heading text-card-foreground">
+              {name}
+            </h3>
+            <p className="mt-3 max-w-[44ch] flex-1 text-body text-muted-foreground">
+              {tagline}
+            </p>
+            <span className="mt-8 inline-flex items-center gap-2 text-small font-medium text-cta">
+              See how it works
+              <ArrowRight
+                aria-hidden="true"
+                className="size-4 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
+              />
+            </span>
+          </Link>
+        </Reveal>
+      ))}
+    </ul>
+  );
+}
+
 export default function ServicesIndex() {
+  const core = SERVICES.filter((s) => s.tier === "core");
+  const extra = SERVICES.filter((s) => s.tier === "alacarte");
+
   return (
     <main className="flex-1">
       {/* Hero */}
@@ -47,7 +80,7 @@ export default function ServicesIndex() {
           </Reveal>
           <Reveal trigger="mount" tier="chapter" index={1}>
             <h1 className="mt-6 max-w-[18ch] text-display font-heading text-foreground">
-              Five pieces. Take one, or take the lot.
+              Seven services. Take one, or take the lot.
             </h1>
           </Reveal>
           <Reveal trigger="mount" tier="chapter" index={2}>
@@ -61,44 +94,38 @@ export default function ServicesIndex() {
         </div>
       </section>
 
-      {/* The catalogue */}
+      {/* The catalogue, in two groups */}
       <section className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20">
-        <div className="mx-auto max-w-[1280px]">
-          <ul className="grid gap-6 md:grid-cols-2 lg:gap-8">
-            {SERVICES.map(({ slug, name, icon: Icon, tagline }, i) => (
-              <Reveal
-                key={slug}
-                as="li"
-                tier="reveal"
-                index={i}
-                className="group h-full"
-              >
-                <Link
-                  href={`/services/${slug}`}
-                  className="flex h-full flex-col rounded-lg border border-border bg-card p-8 shadow-sm transition-[transform,box-shadow,border-color] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:border-cta/30 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                >
-                  <Icon
-                    aria-hidden="true"
-                    className="size-6 text-cta"
-                    strokeWidth={1.5}
-                  />
-                  <h2 className="mt-6 text-h3 font-heading text-card-foreground">
-                    {name}
-                  </h2>
-                  <p className="mt-3 max-w-[44ch] flex-1 text-body text-muted-foreground">
-                    {tagline}
-                  </p>
-                  <span className="mt-8 inline-flex items-center gap-2 text-small font-medium text-cta">
-                    See how it works
-                    <ArrowRight
-                      aria-hidden="true"
-                      className="size-4 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
-                    />
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
-          </ul>
+        <div className="mx-auto max-w-[1280px] space-y-24">
+          <div>
+            <Reveal tier="chapter" index={0}>
+              <h2 className="text-h2 font-heading text-foreground">
+                The stack
+              </h2>
+            </Reveal>
+            <Reveal tier="chapter" index={1}>
+              <p className="mt-4 max-w-[54ch] text-body text-muted-foreground">
+                The five pieces of The Scalable Digital Infrastructure. Each one
+                stands on its own, and they&apos;re built to run together.
+              </p>
+            </Reveal>
+            <ServiceGrid items={core} />
+          </div>
+
+          <div>
+            <Reveal tier="chapter" index={0}>
+              <h2 className="text-h2 font-heading text-foreground">
+                Also available
+              </h2>
+            </Reveal>
+            <Reveal tier="chapter" index={1}>
+              <p className="mt-4 max-w-[54ch] text-body text-muted-foreground">
+                Standalone services, on their own or alongside the stack. They
+                work harder when there&apos;s something for them to point at.
+              </p>
+            </Reveal>
+            <ServiceGrid items={extra} />
+          </div>
         </div>
       </section>
 

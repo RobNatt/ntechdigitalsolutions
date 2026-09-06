@@ -1,7 +1,9 @@
 import {
   Bot,
   Globe,
+  Megaphone,
   MessagesSquare,
+  Search,
   Share2,
   Star,
   type LucideIcon,
@@ -28,6 +30,15 @@ export interface Service {
   slug: string;
   name: string;
   icon: LucideIcon;
+  /*
+   * "core" = one of the five pieces of The Scalable Digital Infrastructure.
+   * "alacarte" = a standalone service that isn't in the flagship bundle.
+   *
+   * The distinction matters on the catalogue: flattening all of them into one
+   * grid would quietly imply the flagship is seven pieces, which it isn't, and
+   * it would make the bundle harder to sell as a bundle.
+   */
+  tier: "core" | "alacarte";
   /** One line. Matches the home page's stack section word for word. */
   tagline: string;
   /** The promise, for the page's own hero. */
@@ -42,6 +53,7 @@ export interface Service {
 export const SERVICES: Service[] = [
   {
     slug: "website",
+    tier: "core",
     name: "Website",
     icon: Globe,
     tagline:
@@ -101,6 +113,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "follow-up-automations",
+    tier: "core",
     name: "Follow-up automations",
     icon: MessagesSquare,
     tagline:
@@ -160,6 +173,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "ai-receptionist",
+    tier: "core",
     name: "AI receptionist",
     icon: Bot,
     tagline: "Picks up every call and gets it on the calendar, even when you can't.",
@@ -217,6 +231,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "social-media-management",
+    tier: "core",
     name: "Social media management",
     icon: Share2,
     tagline:
@@ -277,6 +292,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "review-generator",
+    tier: "core",
     name: "Review generator",
     icon: Star,
     tagline:
@@ -333,6 +349,125 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "Reviews are what convince someone the site and the social already brought in. They're the last thing a person checks before calling, and the receptionist answers the call they prompt.",
+  },
+  {
+    slug: "paid-ads",
+    tier: "alacarte",
+    name: "Paid ads management",
+    icon: Megaphone,
+    tagline: "Ads on Meta and Google, pointed at a page built to catch them.",
+    promise: "Traffic you can turn on — landing somewhere that actually converts.",
+    situation: {
+      heading: "Most ad money is lost after the click, not before it.",
+      lead: "The ad works. Someone taps it, lands on a page that doesn't answer their question or give them a way to book, and leaves. The money was spent the moment they clicked.",
+      rows: [
+        {
+          n: "01",
+          title: "Boosting posts and hoping",
+          body: "The button is right there and it's easy to press. What it buys is reach, not customers, and there's no way to tell the difference afterwards.",
+        },
+        {
+          n: "02",
+          title: "Nothing tracked",
+          body: "Money goes out, some work comes in, and nobody can say which ad produced which job. Without that, every decision about spend is a guess.",
+        },
+        {
+          n: "03",
+          title: "Traffic landing nowhere",
+          body: "The click arrives at a homepage, or a page with no obvious next step. Paying to send people somewhere that doesn't convert is the most expensive way to run ads.",
+        },
+      ],
+    },
+    how: {
+      heading: "How it works",
+      steps: [
+        {
+          n: "01",
+          title: "Pointed at something that converts",
+          body: "Ads go to a page built to take the click — the offer, a way to book, a reason to trust you. This is why ads work better once the rest of the system is in place.",
+        },
+        {
+          n: "02",
+          title: "Tracked end to end",
+          body: "Clicks are tied to leads, and leads to booked work, in the CRM. You see what a customer actually costs rather than what a click costs.",
+        },
+        {
+          n: "03",
+          title: "Adjusted on what happened",
+          body: "Budget moves toward what produced work and away from what didn't. Not weekly guesswork — decisions made against the numbers.",
+        },
+      ],
+    },
+    included: [
+      "Campaign setup and management on Meta and Google",
+      "Audience, keyword and location targeting for your service area",
+      "Ad creative built from your existing content",
+      "Conversion tracking wired into the CRM",
+      "Plain-language reporting on what produced work",
+      "Ad spend is paid directly to Meta and Google and is separate from the management fee",
+    ],
+    connects:
+      "Ads are the fastest tap you can turn on, and the easiest money to waste. They need the website to land on, the receptionist to answer what they generate, and the automations to follow up — without those, you are paying to send people somewhere that drops them.",
+  },
+  {
+    slug: "seo-aeo",
+    tier: "alacarte",
+    name: "SEO & AEO",
+    icon: Search,
+    tagline:
+      "Get found by search engines — and by the AI tools people now ask instead.",
+    promise: "Be the answer, whether they search for it or ask for it.",
+    situation: {
+      heading: "People stopped scrolling to page two a long time ago.",
+      lead: "And increasingly they aren't scrolling at all — they ask an AI assistant and take the answer it gives. If you aren't in the answer, you were never in the running.",
+      rows: [
+        {
+          n: "01",
+          title: "Ranking nowhere in particular",
+          body: "You come up if someone searches your business name. That only helps people who already know you exist, which is not the group you need.",
+        },
+        {
+          n: "02",
+          title: "A listing nobody maintains",
+          body: "Wrong hours, an old address, no photos, no categories. The local listing is what decides the map result, and it's usually the least tended thing a business owns.",
+        },
+        {
+          n: "03",
+          title: "Invisible to the AI answer",
+          body: "Someone asks an assistant who to call for this in their area. It names three businesses. Being unfindable to those tools is the new version of not being on the first page.",
+        },
+      ],
+    },
+    how: {
+      heading: "How it works",
+      steps: [
+        {
+          n: "01",
+          title: "Fix the foundations",
+          body: "Site speed, structure, mobile, and the technical groundwork search engines read before they read anything else. Unglamorous, and nothing else works without it.",
+        },
+        {
+          n: "02",
+          title: "Answer what people actually ask",
+          body: "Pages built around the real questions people type and speak, in your service area — not keyword stuffing, but genuinely being the best answer available.",
+        },
+        {
+          n: "03",
+          title: "Make it readable to machines",
+          body: "Structured data and clear, well-formed content so search engines and AI assistants can both understand what you do, where, and for whom.",
+        },
+      ],
+    },
+    included: [
+      "Technical SEO — speed, structure, mobile, crawlability",
+      "Local SEO and Google Business Profile management",
+      "Content built around real questions in your service area",
+      "Structured data so AI assistants can read and cite you",
+      "Rank and visibility tracking, reported in plain language",
+      "SEO compounds slowly — this is a months-long play, not a switch",
+    ],
+    connects:
+      "SEO and AEO are slow and compounding; paid ads are fast and stop the moment you stop paying. Run together, one covers the other's weakness — and both need a site worth landing on and a receptionist to answer what they produce.",
   },
 ];
 
