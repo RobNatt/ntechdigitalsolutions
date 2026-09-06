@@ -2,16 +2,19 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
-import { CalendarCheck, MessageSquare, Phone, PhoneMissed } from "lucide-react";
+import { CalendarCheck, MessageSquare, Phone, PhoneIncoming } from "lucide-react";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 
 /*
  * The hero artifact — the product actually working, on a loop.
  *
- * The previous version listed three outcomes side by side, which has no time in
- * it and therefore no drama. This plays the scene instead: a call comes in, it
- * rings out, the reply types itself, the slot fills. Eight seconds. A visitor
- * watches a job get caught while they're still reading the headline.
+ * It plays a scene: a call comes in, Stuart picks it up, he books the job.
+ *
+ * IT MUST NEVER SHOW A MISSED CALL. This panel is labelled as the receptionist
+ * working — a missed call here contradicts the entire product. The missed call,
+ * the text sent 45 minutes too late, the job that went to whoever answered
+ * first: that is the PAIN, and it belongs in the problem chapter, not in the
+ * shot that proves the thing works.
  *
  * Everything is placeholder. The number is a 555 reserved-for-fiction number so
  * it can never route to a real person, and nothing here claims a real customer,
@@ -21,19 +24,19 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
  * with all three rows resolved.
  */
 
-type Phase = "ringing" | "missed" | "replying" | "booked";
+type Phase = "ringing" | "answering" | "booked";
 
+// What Stuart says when he picks up. COPY PLACEHOLDER — needs Rob's pass.
 const REPLY =
-  "Hi, sorry we missed you — we're on a job right now. What do you need done?";
+  "Thanks for calling — I can get you booked in. What do you need done?";
 
 // Phase durations in ms. The reply phase is longer because it types.
 const TIMING: Record<Phase, number> = {
-  ringing: 2600,
-  missed: 1100,
-  replying: 2600,
-  booked: 2800,
+  ringing: 1800,
+  answering: 3200,
+  booked: 3000,
 };
-const ORDER: Phase[] = ["ringing", "missed", "replying", "booked"];
+const ORDER: Phase[] = ["ringing", "answering", "booked"];
 
 export function CallDemo() {
   const reduce = useReducedMotion();
@@ -55,8 +58,8 @@ export function CallDemo() {
 
   // The reply types itself out.
   useEffect(() => {
-    if (reduce || phase !== "replying") return;
-    const perChar = Math.max(12, (TIMING.replying - 700) / REPLY.length);
+    if (reduce || phase !== "answering") return;
+    const perChar = Math.max(12, (TIMING.answering - 900) / REPLY.length);
     const id = setInterval(() => {
       setTyped((n) => Math.min(n + 1, REPLY.length));
     }, perChar);
@@ -87,7 +90,7 @@ export function CallDemo() {
       {/* Announce the outcome once, not every keystroke. */}
       <p className="sr-only" aria-live="polite">
         {reached("booked")
-          ? "Demonstration: a missed call was answered automatically and a booking was made."
+          ? "Demonstration: an incoming call was answered automatically and a booking was made."
           : ""}
       </p>
 
@@ -114,22 +117,20 @@ export function CallDemo() {
             {ringing ? (
               <Phone className="size-4" strokeWidth={1.75} />
             ) : (
-              <PhoneMissed className="size-4" strokeWidth={1.75} />
+              <PhoneIncoming className="size-4" strokeWidth={1.75} />
             )}
           </motion.span>
           <span className="min-w-0 flex-1">
             <span className="flex items-baseline justify-between gap-3">
               <span className="text-body font-medium text-card-foreground">
-                {ringing ? "Incoming call" : "Missed call"}
+                {ringing ? "Incoming call" : "Answered"}
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
-                2:14pm
+                10:42am
               </span>
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
-              {ringing
-                ? "(402) 555-0147"
-                : "Rang out while you were under a sink"}
+              {ringing ? "(402) 555-0147" : "Picked up on the second ring"}
             </span>
           </span>
         </li>
@@ -138,17 +139,17 @@ export function CallDemo() {
         <motion.li
           initial={false}
           animate={{
-            opacity: reached("replying") ? 1 : 0.25,
-            y: reached("replying") ? 0 : 6,
+            opacity: reached("answering") ? 1 : 0.25,
+            y: reached("answering") ? 0 : 6,
           }}
           transition={{ duration: DURATION.reveal, ease: EASE_OUT }}
           className={`flex items-start gap-4 rounded-lg border bg-card p-4 transition-colors duration-300 ${
-            phase === "replying" ? "border-cta/40" : "border-border"
+            phase === "answering" ? "border-cta/40" : "border-border"
           }`}
         >
           <span
             className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors duration-300 ${
-              reached("replying")
+              reached("answering")
                 ? "bg-cta text-on-cta"
                 : "bg-muted text-muted-foreground"
             }`}
@@ -158,15 +159,15 @@ export function CallDemo() {
           <span className="min-w-0 flex-1">
             <span className="flex items-baseline justify-between gap-3">
               <span className="text-body font-medium text-card-foreground">
-                Text sent back
+                Stuart takes it
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
-                moments later
+                live
               </span>
             </span>
             <span className="mt-1 block min-h-[2.6em] text-small text-muted-foreground">
               {REPLY.slice(0, typed)}
-              {phase === "replying" && typed < REPLY.length && (
+              {phase === "answering" && typed < REPLY.length && (
                 <motion.span
                   animate={{ opacity: [1, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity }}
@@ -204,11 +205,11 @@ export function CallDemo() {
                 Booked
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
-                2:21pm
+                10:44am
               </span>
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
-              A new slot on the calendar, before you&apos;ve dried your hands
+              Tuesday 9:00am — on the calendar before the call ends
             </span>
           </span>
         </motion.li>

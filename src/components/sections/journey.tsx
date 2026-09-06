@@ -28,7 +28,7 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
  */
 
 const COPY = {
-  overline: "Chapter two",
+  overline: "Chapter three",
   heading: "How it actually works",
   steps: [
     {

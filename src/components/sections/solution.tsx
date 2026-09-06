@@ -47,7 +47,7 @@ const PIECES: Piece[] = [
 ];
 
 const COPY = {
-  overline: "Chapter three",
+  overline: "Chapter two",
   heading: "One system, not five tools",
   lead: "A website nobody looks at, a receptionist with no calendar to book into, reviews nobody follows up on — separately, each piece does less. Connected, they cover for each other.",
 } as const;

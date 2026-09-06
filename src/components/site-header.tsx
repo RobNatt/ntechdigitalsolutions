@@ -26,8 +26,8 @@ const BOOKING_URL =
 
 const LINKS = [
   { label: "The problem", href: "#problem" },
+  { label: "What you get", href: "#solution" },
   { label: "How it works", href: "#journey" },
-  { label: "The stack", href: "#solution" },
 ];
 
 export function SiteHeader() {
