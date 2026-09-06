@@ -5,7 +5,10 @@ export const runtime = "nodejs";
 /*
  * Leads captured from the chat widget's "share your details" form.
  *
- * This forwards to a GoHighLevel inbound webhook, set as GHL_INQUIRY_WEBHOOK_URL.
+ * Forwards to the GoHighLevel inbound webhook set as GHL_INQUIRY_WEBHOOK_URL,
+ * which creates the contact in the CRM. That is the only path — there is
+ * deliberately no secondary route, because a lead that lands somewhere other
+ * than the CRM is a lead nobody works.
  *
  * THE IMPORTANT PART: if that variable isn't set, this returns an honest error
  * rather than a 200. A route that accepted the submission, showed the visitor a
@@ -21,7 +24,7 @@ export async function POST(req: Request) {
     return Response.json(
       {
         error:
-          "Enquiry forwarding isn't configured yet. Please email hello@ntechdigitalsolutions.com and we'll pick it up there.",
+          "Enquiry forwarding isn't configured yet. Nothing was sent.",
       },
       { status: 503 },
     );
@@ -59,8 +62,7 @@ export async function POST(req: Request) {
       );
       return Response.json(
         {
-          error:
-            "We couldn't get that through just now. Please email hello@ntechdigitalsolutions.com and we'll pick it up.",
+          error: "We couldn't get that through. Please try again shortly.",
         },
         { status: 502 },
       );
@@ -69,8 +71,7 @@ export async function POST(req: Request) {
     console.error("GHL inquiry webhook threw", e);
     return Response.json(
       {
-        error:
-          "We couldn't get that through just now. Please email hello@ntechdigitalsolutions.com and we'll pick it up.",
+        error: "We couldn't get that through. Please try again shortly.",
       },
       { status: 502 },
     );
