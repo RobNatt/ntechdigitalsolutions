@@ -20,6 +20,8 @@ type Trigger = "mount" | "scroll";
 
 interface RevealProps {
   children: ReactNode;
+  /** Element to render. Use `li` inside a list — a div there is invalid HTML. */
+  as?: "div" | "li";
   /** Which motion tier. `reveal` for single elements, `chapter` for section entrances. */
   tier?: Tier;
   /** `mount` for above the fold, `scroll` for everything below it. */
@@ -44,16 +46,22 @@ interface RevealProps {
  */
 export function Reveal({
   children,
+  as = "div",
   tier = "reveal",
   trigger = "scroll",
   index = 0,
   className,
 }: RevealProps) {
   const reduce = useReducedMotion();
+  const Tag = as === "li" ? motion.li : motion.div;
 
   // No animation at all under reduced motion — final state, immediately.
   if (reduce) {
-    return <div className={className}>{children}</div>;
+    return as === "li" ? (
+      <li className={className}>{children}</li>
+    ) : (
+      <div className={className}>{children}</div>
+    );
   }
 
   const transition = {
@@ -67,19 +75,19 @@ export function Reveal({
 
   if (trigger === "mount") {
     return (
-      <motion.div
+      <Tag
         className={className}
         initial={from}
         animate={to}
         transition={transition}
       >
         {children}
-      </motion.div>
+      </Tag>
     );
   }
 
   return (
-    <motion.div
+    <Tag
       className={className}
       initial={from}
       whileInView={to}
@@ -87,6 +95,6 @@ export function Reveal({
       transition={transition}
     >
       {children}
-    </motion.div>
+    </Tag>
   );
 }

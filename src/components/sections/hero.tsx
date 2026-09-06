@@ -51,8 +51,12 @@ export function Hero() {
         style={reduce ? undefined : { y: glowY }}
         className="pointer-events-none absolute inset-0 -z-10 will-change-transform"
       >
-        <div className="absolute left-1/2 top-[-20%] h-[70vh] w-[70vh] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(161,98,7,0.10),transparent_65%)]" />
-        <div className="absolute right-[-10%] top-[30%] h-[45vh] w-[45vh] rounded-full bg-[radial-gradient(circle,rgba(28,25,23,0.07),transparent_70%)]" />
+        {/* Glass needs something behind it or the translucency is invisible on a
+            near-white ground. These are the refraction subject. Palette only:
+            gold is --cta, warm dark is --primary. */}
+        <div className="absolute left-[8%] top-[-15%] h-[80vh] w-[80vh] rounded-full bg-[radial-gradient(circle,rgba(161,98,7,0.28),transparent_62%)] blur-3xl" />
+        <div className="absolute right-[-12%] top-[8%] h-[65vh] w-[65vh] rounded-full bg-[radial-gradient(circle,rgba(28,25,23,0.20),transparent_66%)] blur-3xl" />
+        <div className="absolute bottom-[-25%] left-[35%] h-[60vh] w-[60vh] rounded-full bg-[radial-gradient(circle,rgba(120,113,108,0.22),transparent_68%)] blur-3xl" />
       </motion.div>
 
       <div className="mx-auto max-w-[1280px]">
