@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
+import { SiteHeader } from "@/components/site-header";
 
 // Type pairing is locked in design-system.md — Outfit for headings, Work Sans
 // for body. Weights here match the scale defined there; don't add weights
@@ -39,7 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   );
 }
