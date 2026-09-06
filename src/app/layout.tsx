@@ -31,6 +31,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${outfit.variable} ${workSans.variable} h-full antialiased`}
     >
+      <head>
+        {/* Without JS, motion never clears its initial opacity:0. The design
+            system forbids content that is invisible by default, so force it
+            visible when scripts don't run. */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

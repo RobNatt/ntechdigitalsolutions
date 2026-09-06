@@ -58,6 +58,45 @@
   --shadow-xl: 0 24px 64px rgba(12, 10, 9, 0.12), 0 8px 16px rgba(12, 10, 9, 0.06);
   --shadow-glass: 0 8px 32px rgba(12, 10, 9, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
+  /* Type scale — fluid. Hits design-system.md's mobile value at 375px and its
+     desktop value at 1440px exactly; clamp interpolates between. */
+  --text-display: clamp(2.75rem, 2.046rem + 3.005vw, 4.75rem);
+  --text-display--line-height: 1.05;
+  --text-display--font-weight: 600;
+  --text-display--letter-spacing: -0.03em;
+  --text-h1: clamp(2.25rem, 1.7rem + 2.347vw, 3.812rem);
+  --text-h1--line-height: 1.1;
+  --text-h1--font-weight: 600;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(1.875rem, 1.457rem + 1.784vw, 3.062rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--font-weight: 600;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: clamp(1.625rem, 1.339rem + 1.221vw, 2.438rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--font-weight: 500;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h4: clamp(1.375rem, 1.177rem + 0.8451vw, 1.938rem);
+  --text-h4--line-height: 1.3;
+  --text-h4--font-weight: 500;
+  --text-h4--letter-spacing: -0.01em;
+  --text-body-lg: clamp(1.125rem, 1.081rem + 0.1878vw, 1.25rem);
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--font-weight: 400;
+  --text-body-lg--letter-spacing: 0em;
+  --text-body: clamp(1rem, 0.978rem + 0.0939vw, 1.062rem);
+  --text-body--line-height: 1.65;
+  --text-body--font-weight: 400;
+  --text-body--letter-spacing: 0em;
+  --text-small: clamp(0.875rem, 0.853rem + 0.0939vw, 0.9375rem);
+  --text-small--line-height: 1.55;
+  --text-small--font-weight: 400;
+  --text-small--letter-spacing: 0em;
+  --text-overline: clamp(0.75rem, 0.728rem + 0.0939vw, 0.8125rem);
+  --text-overline--line-height: 1.4;
+  --text-overline--font-weight: 600;
+  --text-overline--letter-spacing: 0.12em;
+
   /* Spacing — 4px base, spacious rhythm */
   --spacing-1: 4px;
   --spacing-2: 8px;
@@ -114,8 +153,8 @@
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-micro: 180ms;
-  --duration-reveal: 600ms;
-  --duration-chapter: 900ms;
+  --duration-reveal: 500ms;   /* was 600ms — entrances must be UNDER 600ms */
+  --duration-chapter: 550ms;  /* was 900ms — same rule */
   --duration-transition: 250ms;
   --stagger: 80ms;
 }
