@@ -23,10 +23,40 @@ const workSans = Work_Sans({
   display: "swap",
 });
 
+const SITE_URL = "https://ntechdigital.solutions";
+const SITE_NAME = "N-Tech Digital Solutions";
+const SITE_DESCRIPTION =
+  "N-Tech Digital Solutions runs the website, phone, follow-up, social, and reviews for local service businesses around Omaha, NE — one connected system instead of five separate tools.";
+
+/*
+ * metadataBase is what turns the file-based opengraph-image into an absolute
+ * URL. Without it Next emits a relative path, and every scraper — Facebook,
+ * LinkedIn, iMessage, the CRM's own link preview — silently drops the image.
+ *
+ * The title template means each page declares only its own name; the suffix is
+ * added here, in one place, instead of being retyped in six files where it can
+ * drift.
+ */
 export const metadata: Metadata = {
-  title: "N-Tech Digital Solutions",
-  description:
-    "N-Tech Digital Solutions runs the website, phone, follow-up, social, and reviews for local service businesses around Omaha, NE — one connected system instead of five separate tools.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    url: SITE_URL,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

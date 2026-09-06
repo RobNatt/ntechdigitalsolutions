@@ -30,7 +30,11 @@ import { EASE_OUT } from "@/lib/motion";
  * No form. The sales motion is a walk-in with the site already built — this
  * page survives the look-up, it doesn't farm leads.
  *
- * ALL COPY IS PLACEHOLDER. Nothing claims a client, a result, or a testimonial.
+ * The copy below is Rob's, from homepage-copy.md, and is no longer
+ * placeholder. Nothing here claims a client, a result, or a testimonial,
+ * and nothing may until there are clients to name — the terms page commits
+ * to guaranteeing the work rather than the outcome, and this section is
+ * where a page like this usually breaks that.
  */
 
 const COPY = {

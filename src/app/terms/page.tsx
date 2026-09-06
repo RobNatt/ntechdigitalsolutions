@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalPage, Section } from "@/components/legal-page";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — N-Tech Digital Solutions",
+  title: "Terms of Service",
   description:
     "The terms you agree to when working with N-Tech Digital Solutions, including what we do, what we don't promise, and who owns what.",
 };

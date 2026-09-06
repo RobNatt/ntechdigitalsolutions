@@ -23,7 +23,10 @@ import { LocalTime } from "@/components/local-time";
  * The hero clips its overflow, so the piece that spans the seam cannot live
  * here.
  *
- * ALL COPY IS PLACEHOLDER and claims nothing that isn't true.
+ * The copy below is Rob's, from homepage-copy.md, applied verbatim — it is
+ * no longer placeholder. What has to survive any future edit is the claim
+ * discipline it was written with: no results, no client counts, no
+ * testimonials, nothing that isn't true today.
  */
 
 const COPY = {

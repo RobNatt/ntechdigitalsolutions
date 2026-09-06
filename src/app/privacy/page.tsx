@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalPage, Section } from "@/components/legal-page";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — N-Tech Digital Solutions",
+  title: "Privacy Policy",
   description:
     "What N-Tech Digital Solutions collects, why, and what we do with it. Short version: we use your details to contact you about your enquiry, and nothing else.",
 };

@@ -16,8 +16,11 @@ import { SeamTrace } from "@/components/motion/seam-trace";
  * wrong with the visitor's business. That was tried and read as criticism. Each
  * row describes a situation they recognise and lets them decide it applies.
  *
- * ALL COPY IS PLACEHOLDER, shaped from the UNTESTED hypotheses in
- * customers.md. No results, no statistics, no claims.
+ * The copy below is Rob's, from homepage-copy.md, and is no longer
+ * placeholder. The situations it describes are still UNTESTED hypotheses
+ * from customers.md rather than anything observed, so they stay written as
+ * situations a reader may recognise — never as statistics, findings, or
+ * claims about what happens to businesses like theirs.
  */
 
 const COPY = {

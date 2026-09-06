@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/reveal";
 
 export const metadata: Metadata = {
-  title: "Book a Call — N-Tech Digital Solutions",
+  title: "Book a Call",
   description:
     "Fifteen minutes on the phone about your website, your calls, and what's falling through. No pressure, nothing to sign.",
 };

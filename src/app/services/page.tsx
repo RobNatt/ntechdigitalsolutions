@@ -6,7 +6,7 @@ import { PricingTiers } from "@/components/pricing-tiers";
 import { SERVICES, type Service } from "@/lib/services";
 
 export const metadata: Metadata = {
-  title: "Services — N-Tech Digital Solutions",
+  title: "Services",
   description:
     "The N-Tech stack — website, follow-up automations, AI receptionist, social media management and review generation — plus paid ads and SEO/AEO à la carte.",
 };

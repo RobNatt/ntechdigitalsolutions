@@ -25,7 +25,9 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
  * and under reduced motion the panel stops swapping and every step is simply
  * present and readable.
  *
- * ALL COPY IS PLACEHOLDER.
+ * The copy below is Rob's, from homepage-copy.md, and is no longer
+ * placeholder. Each step describes what the system does, not what it
+ * achieves — no numbers, no outcomes promised.
  */
 
 const COPY = {
