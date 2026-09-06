@@ -139,7 +139,7 @@ export function Journey() {
           </h2>
         </Reveal>
 
-        <div className="relative mt-24 grid gap-16 lg:grid-cols-12 lg:gap-12">
+        <div className="relative mt-24 grid gap-16 lg:grid-cols-2 lg:gap-20">
           {/* The current, running the gutter. Chapter two was the only section
               off the circuit; now the charge threads it too. Nodes light as the
               panel advances, so the trace and the panel tell the same story. */}
@@ -174,7 +174,11 @@ export function Journey() {
               parent's box, and self-start shrinks the grid item to content
               height — leaving nowhere to stick. It must stretch to the full
               row height, which is the grid default. */}
-          <div className="lg:col-span-5">
+          {/* Equal halves. The old 5-of-12 against 6-of-12 left a dead column
+              between them: the right side ran 110px wider than the left with a
+              157px gutter, so the two columns read as unrelated rather than
+              paired. */}
+          <div>
             {/* The panel itself is the sticky element, offset so its centre
                 lands on the viewport midline. The steps are centred in their own
                 blocks and the list is padded by half the leftover viewport, so
@@ -222,7 +226,7 @@ export function Journey() {
           </div>
 
           {/* The steps. Each one takes over the pinned panel as it arrives. */}
-          <ol ref={stepsRef} className="lg:col-span-6 lg:col-start-7 lg:py-[15vh]">
+          <ol ref={stepsRef} className="lg:py-[15vh]">
             {COPY.steps.map(({ n, title, body }, i) => (
               <li
                 key={n}
