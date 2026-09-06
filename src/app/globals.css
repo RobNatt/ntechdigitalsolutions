@@ -60,10 +60,10 @@
 
   /* Type scale — fluid. Hits design-system.md's mobile value at 375px and its
      desktop value at 1440px exactly; clamp interpolates between. */
-  --text-display: clamp(2.75rem, 1.606rem + 4.883vw, 6rem);
+  --text-display: clamp(2.75rem, 1.958rem + 3.38vw, 5rem);
   --text-display--line-height: 1.02;
   --text-display--font-weight: 600;
-  --text-display--letter-spacing: -0.035em;
+  --text-display--letter-spacing: -0.03em;
   --text-h1: clamp(2.25rem, 1.7rem + 2.347vw, 3.812rem);
   --text-h1--line-height: 1.1;
   --text-h1--font-weight: 600;
