@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 // Type pairing is locked in design-system.md — Outfit for headings, Work Sans
 // for body. Weights here match the scale defined there; don't add weights
@@ -23,7 +24,7 @@ const workSans = Work_Sans({
 export const metadata: Metadata = {
   title: "N-Tech Digital Solutions",
   description:
-    "Websites, automations, and AI that keep local businesses from losing work they've already won.",
+    "N-Tech Digital Solutions builds websites and AI receptionists for local service businesses around Omaha, NE — so calls, leads, and reviews get handled, even when you're on the job.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

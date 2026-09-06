@@ -29,28 +29,28 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
 
 const COPY = {
   overline: "Chapter two",
-  heading: "Placeholder heading for how it actually works",
+  heading: "How it actually works",
   steps: [
     {
       n: "01",
-      title: "Placeholder — it catches the call",
-      body: "Placeholder body copy explaining the first move in plain language, the way you'd say it standing in someone's shop.",
-      stat: "4 sec",
-      statLabel: "Placeholder metric label",
+      title: "It catches the call",
+      body: "Every call gets picked up — mid-job, after hours, back to back. Nothing goes to a dead voicemail box.",
+      stat: "Seconds",
+      statLabel: "to answer",
     },
     {
       n: "02",
-      title: "Placeholder — it answers like you would",
-      body: "Placeholder body copy for the second step. Concrete about what the person on the other end experiences.",
+      title: "It answers like you would",
+      body: "It knows what you do, what you charge for, and how to talk to someone who needs it done. It's trained on your business, so it sounds like yours.",
       stat: "24/7",
-      statLabel: "Placeholder metric label",
+      statLabel: "always on",
     },
     {
       n: "03",
-      title: "Placeholder — it books the work",
-      body: "Placeholder body copy for the third step, ending on the outcome rather than the mechanism.",
-      stat: "0",
-      statLabel: "Placeholder metric label",
+      title: "It books the work",
+      body: "It gets the details, finds the opening, and puts it on your calendar. You find out when you check your phone between jobs — not by chasing the lead down yourself.",
+      stat: "Never",
+      statLabel: "voicemail",
     },
   ],
 } as const;

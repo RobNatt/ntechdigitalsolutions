@@ -39,17 +39,17 @@ interface Piece {
 }
 
 const PIECES: Piece[] = [
-  { icon: Globe, name: "Website", body: "Placeholder — the branded site, connected to everything below it rather than sitting on its own." },
-  { icon: MessagesSquare, name: "Follow-up automations", body: "Placeholder — what happens in the minutes after a lead comes in, without anyone remembering to do it." },
-  { icon: Bot, name: "AI receptionist", body: "Placeholder — answers calls from the site and catches the ones the business line misses." },
-  { icon: Share2, name: "Social management", body: "Placeholder — four posts a week, pointing back at the site." },
-  { icon: Star, name: "Review generator", body: "Placeholder — reaches past customers; happy ones go public, unhappy ones come to you first." },
+  { icon: Globe, name: "Website", body: "The page that answers \"are you legit\" before anyone picks up the phone." },
+  { icon: MessagesSquare, name: "Follow-up automations", body: "Every lead gets a text or email before they forget they reached out." },
+  { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even mid-job." },
+  { icon: Share2, name: "Social management", body: "Your posts stay active, and the people commenting get followed up with." },
+  { icon: Star, name: "Review generator", body: "Happy customers get asked at the right moment, in public. Anything less comes to you first, privately." },
 ];
 
 const COPY = {
   overline: "Chapter three",
-  heading: "Placeholder heading for the whole stack",
-  lead: "Placeholder lead. One or two sentences on why the pieces are worth more connected than they are apart.",
+  heading: "One system, not five tools",
+  lead: "A website nobody looks at, a receptionist with no calendar to book into, reviews nobody follows up on — separately, each piece does less. Connected, they cover for each other.",
 } as const;
 
 export function Solution() {

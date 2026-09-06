@@ -22,23 +22,23 @@ import { SeamTrace } from "@/components/motion/seam-trace";
 
 const COPY = {
   overline: "Chapter one",
-  heading: "Placeholder chapter heading about the situation",
-  lead: "Placeholder lead. One or two sentences describing the day, not the deficiency — something the visitor nods at rather than defends against.",
+  heading: "The phone doesn't know you're elbow-deep in a job.",
+  lead: "You're on a ladder, under a sink, halfway through something that needs both hands. The phone doesn't wait for a good time to ring.",
   rows: [
     {
       n: "01",
-      title: "Placeholder — the call that rings out",
-      body: "Placeholder body copy, two or three lines, describing what happens to a call that comes in while you're already under a sink. Concrete, not abstract.",
+      title: "The call that rings out",
+      body: "It rings. Nobody's near it. It goes to voicemail, or it just goes unanswered — and whoever called is already dialing the next name on their list.",
     },
     {
       n: "02",
-      title: "Placeholder — the search that finds nothing",
-      body: "Placeholder body copy about what someone actually sees when they go looking for you, and what they do about ten seconds later.",
+      title: "The search that finds nothing",
+      body: "Someone searches for exactly what you do, right now. They land on a page with no way to reach you, or a form that goes nowhere — and they're on to the next result before you'd have even seen the notification.",
     },
     {
       n: "03",
-      title: "Placeholder — the work nobody can see",
-      body: "Placeholder body copy about the gap between the standard of work you do and what a stranger can verify before picking up the phone.",
+      title: "The work nobody can see",
+      body: "You know the work is good. A stranger scrolling on their phone has no way to know that yet — nothing to look at, nothing anyone else has said, nothing that tells them you're the one to call.",
     },
   ],
 } as const;

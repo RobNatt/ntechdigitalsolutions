@@ -33,12 +33,15 @@ import { EASE_OUT } from "@/lib/motion";
  * ALL COPY IS PLACEHOLDER. Nothing claims a client, a result, or a testimonial.
  */
 
+const BOOKING_URL =
+  "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
+
 const COPY = {
-  overline: "Placeholder — closing",
-  heading: "Placeholder closing line that asks for one thing",
-  sub: "Placeholder supporting line. Short. It removes the last objection rather than adding a new pitch.",
-  primaryCta: "Placeholder CTA",
-  secondary: "Placeholder — quiet alternative",
+  overline: "Ready when you are",
+  heading: "Let's make sure every call gets answered.",
+  sub: "Fifteen minutes on the phone. No pressure, nothing to sign today.",
+  primaryCta: "Book a Call",
+  secondary: "Not ready yet? Email hello@ntechdigitalsolutions.com",
 } as const;
 
 export function Climax() {
@@ -246,7 +249,7 @@ export function Climax() {
               ))}
 
               <a
-                href="#contact"
+                href={BOOKING_URL}
                 className="group relative inline-flex items-center justify-center gap-2 rounded-md bg-cta px-10 py-5 text-body-lg font-medium text-on-cta transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 {COPY.primaryCta}
@@ -258,7 +261,7 @@ export function Climax() {
             </motion.span>
 
             <a
-              href="#problem"
+              href="mailto:hello@ntechdigitalsolutions.com"
               className="text-body text-muted-foreground underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               {COPY.secondary}

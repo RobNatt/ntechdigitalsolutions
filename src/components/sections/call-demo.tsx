@@ -24,7 +24,7 @@ import { DURATION, EASE_OUT } from "@/lib/motion";
 type Phase = "ringing" | "missed" | "replying" | "booked";
 
 const REPLY =
-  "Hi, sorry we missed you — we're on a job. What do you need done?";
+  "Hi, sorry we missed you — we're on a job right now. What do you need done?";
 
 // Phase durations in ms. The reply phase is longer because it types.
 const TIMING: Record<Phase, number> = {
@@ -70,7 +70,7 @@ export function CallDemo() {
     <div className="relative rounded-xl border border-white/10 bg-white/[0.04] p-4 shadow-xl backdrop-blur-[20px] backdrop-saturate-150">
       <div className="flex items-center justify-between px-3 pb-4 pt-2">
         <span className="text-overline uppercase text-muted-foreground">
-          Placeholder — live
+          AI Receptionist — Live
         </span>
         <motion.span
           aria-hidden="true"
@@ -128,8 +128,8 @@ export function CallDemo() {
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
               {ringing
-                ? "(402) 555-0147 — placeholder"
-                : "Placeholder — rang out while you're on a job"}
+                ? "(402) 555-0147"
+                : "Rang out while you were under a sink"}
             </span>
           </span>
         </li>
@@ -161,7 +161,7 @@ export function CallDemo() {
                 Text sent back
               </span>
               <span className="shrink-0 text-small text-muted-foreground">
-                4 sec later
+                moments later
               </span>
             </span>
             <span className="mt-1 block min-h-[2.6em] text-small text-muted-foreground">
@@ -208,7 +208,7 @@ export function CallDemo() {
               </span>
             </span>
             <span className="mt-1 block text-small text-muted-foreground">
-              Placeholder — slot taken without you touching it
+              A new slot on the calendar, before you&apos;ve dried your hands
             </span>
           </span>
         </motion.li>
