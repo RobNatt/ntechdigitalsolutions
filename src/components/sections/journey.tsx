@@ -75,7 +75,17 @@ export function Journey() {
   // offset, keeps it pinned to the very bottom of the column.
   const panelRef = useRef<HTMLDivElement>(null);
   const firstStepRef = useRef<HTMLLIElement>(null);
+  const colRef = useRef<HTMLDivElement>(null);
   const [stickyTop, setStickyTop] = useState(0);
+  // The card's travel has to be bounded by the descriptions, not by the list
+  // box. The list carries 15vh of padding and each step centres its text in a
+  // 70vh block, so the list starts long before the first description and ends
+  // long after the last — and a sticky element travels its parent's whole
+  // content box, which is why the card appeared above the first description
+  // and was still there below the last. Padding the card's column by the same
+  // dead space makes its range start and end with the text.
+  const [colPad, setColPad] = useState({ top: 0, bottom: 0 });
+  const padRef = useRef({ top: 0, bottom: 0 });
   useEffect(() => {
     const measure = () => {
       // Align the panel's TOP EDGE with the step heading's top edge. Matching
@@ -87,10 +97,59 @@ export function Journey() {
         ?.firstElementChild as HTMLElement | null;
       const contentH = content?.getBoundingClientRect().height ?? 0;
       setStickyTop(Math.max(24, window.innerHeight / 2 - contentH / 2));
+
+      const ol = stepsRef.current;
+      const lastLi = ol?.lastElementChild as HTMLElement | null;
+      const lastContent = lastLi?.firstElementChild as HTMLElement | null;
+      // Stacked layout below lg — no second column, so no dead space to match.
+      if (
+        !ol ||
+        !content ||
+        !lastLi ||
+        !lastContent ||
+        window.innerWidth < 1024
+      ) {
+        setColPad({ top: 0, bottom: 0 });
+        return;
+      }
+      // getBoundingClientRect includes transforms, and the descriptions sit
+      // inside Reveal, which holds them at translateY(24px) until they animate
+      // in — so every rect-based measurement here was reading a position that
+      // moves depending on whether the element has been seen. offsetTop and
+      // offsetHeight are pure layout values and ignore transforms entirely.
+      // Both elements share an offsetParent (the grid wrapper is `relative`),
+      // so these offsets are directly comparable.
+      const colEl = colRef.current;
+      if (!colEl) return;
+
+      const next = {
+        top: content.offsetTop - colEl.offsetTop,
+        bottom:
+          colEl.offsetTop +
+          colEl.offsetHeight -
+          (lastContent.offsetTop + lastContent.offsetHeight),
+      };
+      // Applying this padding changes the grid row height, which restretches
+      // the list the measurement came from — so one pass lands short. Re-check
+      // on the next frame after any change; the chain stops as soon as the
+      // numbers hold still.
+      if (
+        Math.abs(next.top - padRef.current.top) > 0.5 ||
+        Math.abs(next.bottom - padRef.current.bottom) > 0.5
+      ) {
+        padRef.current = next;
+        setColPad(next);
+        requestAnimationFrame(measure);
+      }
     };
     const ro = new ResizeObserver(measure);
     if (panelRef.current) ro.observe(panelRef.current);
     if (firstStepRef.current) ro.observe(firstStepRef.current);
+    // The list too: padding the card's column changes the grid row height,
+    // which restretches the list — so the numbers the padding was derived from
+    // go stale the moment it's applied. Observing the list lets it re-measure
+    // and settle instead of landing ~24px out at the bottom.
+    if (stepsRef.current) ro.observe(stepsRef.current);
     window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
@@ -178,7 +237,10 @@ export function Journey() {
               between them: the right side ran 110px wider than the left with a
               157px gutter, so the two columns read as unrelated rather than
               paired. */}
-          <div>
+          <div
+            ref={colRef}
+            style={{ paddingTop: colPad.top, paddingBottom: colPad.bottom }}
+          >
             {/* The panel itself is the sticky element, offset so its centre
                 lands on the viewport midline. The steps are centred in their own
                 blocks and the list is padded by half the leftover viewport, so
