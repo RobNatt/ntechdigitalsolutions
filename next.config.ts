@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
       { source: "/services/follow-up-automations", destination: "/services/digital-foundation", permanent: true },
     ];
   },
-  /* config options here */
+  // Taken from the old project: tree-shakes the icon and motion imports, both
+  // of which this site uses heavily.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "motion"],
+  },
 };
 
 export default nextConfig;
