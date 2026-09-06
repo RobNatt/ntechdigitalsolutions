@@ -177,9 +177,9 @@ export const SERVICES: Service[] = [
       "Stuart books into the calendar the website exposes, and the automations pick up anyone he couldn't close on the call. He's also the face of the brand — the same character you'll see in the social content.",
   },
   {
-    slug: "social-media-management",
+    slug: "brand-management",
     tier: "core",
-    name: "Social media management",
+    name: "Brand Management",
     icon: Share2,
     tagline:
       "Your posts stay active, and the people commenting get followed up with.",

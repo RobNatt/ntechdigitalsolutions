@@ -50,7 +50,7 @@ const PIECES: Piece[] = [
     body: "Your site, your CRM, and the follow-up that runs between them. One piece, because you can't really have one without the others.",
   },
   { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even when you can't." },
-  { icon: Share2, name: "Social management", body: "Your posts stay active, and the people commenting get followed up with." },
+  { icon: Share2, name: "Brand Management", body: "Your posts stay active, and the people commenting get followed up with." },
   { icon: Star, name: "Review generator", body: "Happy customers get asked at the right moment, in public. Anything less comes to you first, privately." },
 ];
 

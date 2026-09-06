@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/services/website", destination: "/services/digital-foundation", permanent: true },
       { source: "/services/follow-up-automations", destination: "/services/digital-foundation", permanent: true },
+      { source: "/services/social-media-management", destination: "/services/brand-management", permanent: true },
     ];
   },
   // Taken from the old project: tree-shakes the icon and motion imports, both

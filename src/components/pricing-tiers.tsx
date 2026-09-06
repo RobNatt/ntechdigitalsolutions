@@ -50,7 +50,7 @@ const TIERS: Tier[] = [
     features: [
       "Everything in Digital Foundation",
       "AI receptionist answering every call",
-      "Social media management",
+      "Brand Management",
       "Review generation",
     ],
     featured: true,
