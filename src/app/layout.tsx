@@ -3,7 +3,6 @@ import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 
 // Type pairing is locked in design-system.md — Outfit for headings, Work Sans
@@ -48,20 +47,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <SiteFooter />
         {/*
-          GoHighLevel chat widget. Replaces the interim Groq widget that was
-          migrated from the old project — that one stays in the codebase
-          (components/chat) but is no longer mounted, because two floating chat
-          launchers in the same corner is just a bug.
+          GoHighLevel chat widget. Replaces the interim Groq widget migrated
+          from the old project — that one stays in components/chat but is no
+          longer mounted, because two floating chat launchers in the same corner
+          is a bug, not a choice.
 
-          lazyOnload: a chat widget is never needed for first paint, and this is
-          a third-party script on a site that sells page speed.
+          RENDERED AS A PLAIN <script>, NOT next/script. next/script with
+          lazyOnload or afterInteractive injects the tag client-side after
+          hydration, so it never exists in the served HTML — it sits inside
+          React's payload as escaped JSON. GHL's compliance checker reads raw
+          HTML and reported the widget as not installed. React 19 hoists a
+          plain script tag into <head> at render time, which is a real tag a
+          crawler can see. `async` keeps it off the critical path.
         */}
-        <Script
+        <script
           src="https://widgets.leadconnectorhq.com/loader.js"
           data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
           data-widget-id="6a9ddbe73b1bd68305498986"
           data-source="WEB_USER"
-          strategy="lazyOnload"
+          async
         />
 
         {/*
