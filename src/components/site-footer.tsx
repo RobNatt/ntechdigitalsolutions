@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LogoMark } from "@/components/brand/logo-mark";
 
 /*
@@ -40,18 +41,24 @@ export function SiteFooter() {
           </p>
 
           <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small">
-            <a
+            <Link
+              href="/services"
+              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Services
+            </Link>
+            <Link
               href="/privacy"
               className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Privacy Policy
-            </a>
-            <a
+            </Link>
+            <Link
               href="/terms"
               className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Terms of Service
-            </a>
+            </Link>
           </p>
         </div>
       </div>

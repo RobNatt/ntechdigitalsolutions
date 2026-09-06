@@ -2,6 +2,7 @@
 
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useState } from "react";
+import Link from "next/link";
 import { LogoMark } from "@/components/brand/logo-mark";
 
 /*
@@ -24,10 +25,15 @@ import { LogoMark } from "@/components/brand/logo-mark";
 const BOOKING_URL =
   "https://calendar.ntechdigitalsolutions.com/widget/form/R5cLPJUnb6wNr6YN3QXP";
 
+/*
+ * Now that there are real pages, the nav can't stay in-page anchors: an anchor
+ * to "#problem" does nothing from /services. Services is a page link; the two
+ * home-page anchors are prefixed so they work from anywhere.
+ */
 const LINKS = [
-  { label: "The problem", href: "#problem" },
-  { label: "How it works", href: "#journey" },
-  { label: "What you get", href: "#solution" },
+  { label: "Services", href: "/services" },
+  { label: "How it works", href: "/#journey" },
+  { label: "The stack", href: "/#solution" },
 ];
 
 export function SiteHeader() {
@@ -53,8 +59,8 @@ export function SiteHeader() {
             : "border-white/10 bg-[#0C0A09]/90 shadow-[0_4px_24px_rgba(0,0,0,0.45)]"
         }`}
       >
-        <a
-          href="#top"
+        <Link
+          href="/"
           className="flex shrink-0 items-center gap-2.5 rounded-full px-2 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {/* Gold with cut-outs on the black pill; the darker duotone once the
@@ -73,13 +79,13 @@ export function SiteHeader() {
           >
             N-TECH
           </span>
-        </a>
+        </Link>
 
         {/* Room to grow. More sections slot in here. */}
         <ul className="mx-auto hidden items-center gap-1 md:flex">
           {LINKS.map(({ label, href }) => (
             <li key={href}>
-              <a
+              <Link
                 href={href}
                 className={`rounded-full px-4 py-2 text-small transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
                   lifted
@@ -88,7 +94,7 @@ export function SiteHeader() {
                 }`}
               >
                 {label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
