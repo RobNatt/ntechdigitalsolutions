@@ -7,11 +7,12 @@ import { LogoMark } from "@/components/brand/logo-mark";
 /*
  * Floating pill nav.
  *
- * A detached pill sitting ON the page rather than a bar welded to the top. It
- * stays bright white on every surface, which solves a problem the old bar had:
- * it no longer has to restyle itself as it crosses from the dark hero to the
- * light chapters, so the mark can stay in its best treatment — dark letterform
- * with gold circuitry — the whole way down.
+ * A detached pill sitting ON the page rather than a bar welded to the top.
+ *
+ * It starts solid black over the hero and turns bright white on scroll. The
+ * mark follows: gold with the traces cut out on the dark pill, and the darker
+ * duotone treatment once the pill is light. Both readings of the mark get used,
+ * each where it actually works.
  *
  * The centre is deliberately empty. Section links drop in there as the site
  * grows; the pill is already sized to hold them without changing shape.
@@ -32,7 +33,7 @@ export function SiteHeader() {
 
   // The pill only deepens its shadow once it's genuinely floating over content.
   useMotionValueEvent(scrollY, "change", (y) => {
-    const next = y > 40;
+    const next = y > 90;
     setLifted((prev) => (prev === next ? prev : next));
   });
 
@@ -43,24 +44,30 @@ export function SiteHeader() {
     >
       <nav
         aria-label="Main"
-        className={`flex w-full max-w-[820px] items-center gap-2 rounded-full border border-black/[0.06] bg-white/95 py-2 pl-3 pr-2 backdrop-blur-xl transition-shadow duration-300 ${
+        className={`flex w-full max-w-[820px] items-center gap-2 rounded-full border py-2 pl-3 pr-2 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
           lifted
-            ? "shadow-[0_10px_40px_rgba(12,10,9,0.16),0_2px_8px_rgba(12,10,9,0.08)]"
-            : "shadow-[0_4px_20px_rgba(12,10,9,0.10)]"
+            ? "border-black/[0.06] bg-white/95 shadow-[0_10px_40px_rgba(12,10,9,0.16),0_2px_8px_rgba(12,10,9,0.08)]"
+            : "border-white/10 bg-[#0C0A09]/90 shadow-[0_4px_24px_rgba(0,0,0,0.45)]"
         }`}
       >
         <a
           href="#top"
           className="flex shrink-0 items-center gap-2.5 rounded-full px-2 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          {/* The pill is always light, so the mark is always in Rob's preferred
-              treatment: solid dark letterform, gold circuitry. */}
+          {/* Gold with cut-outs on the black pill; the darker duotone once the
+              pill goes white. */}
           <LogoMark
             title="N-Tech Digital Solutions"
-            variant="duotone"
-            className="h-7 w-7 text-[#1C1917]"
+            variant={lifted ? "duotone" : "full"}
+            className={`h-7 w-7 transition-colors duration-500 ${
+              lifted ? "text-[#1C1917]" : "text-cta"
+            }`}
           />
-          <span className="font-heading text-small font-semibold tracking-[0.14em] text-[#1C1917]">
+          <span
+            className={`font-heading text-small font-semibold tracking-[0.14em] transition-colors duration-500 ${
+              lifted ? "text-[#1C1917]" : "text-white"
+            }`}
+          >
             N-TECH
           </span>
         </a>
@@ -71,7 +78,11 @@ export function SiteHeader() {
             <li key={href}>
               <a
                 href={href}
-                className="rounded-full px-4 py-2 text-small text-[#57534E] transition-colors duration-[180ms] hover:bg-[#0C0A09]/[0.05] hover:text-[#1C1917] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className={`rounded-full px-4 py-2 text-small transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+                  lifted
+                    ? "text-[#57534E] hover:bg-[#0C0A09]/[0.05] hover:text-[#1C1917]"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                }`}
               >
                 {label}
               </a>

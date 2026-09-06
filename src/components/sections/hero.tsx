@@ -16,13 +16,12 @@ import { LocalTime } from "@/components/local-time";
  *
  * The artifact plays a scene rather than listing outcomes — see call-demo.tsx.
  *
- * THE ORIGIN: the charge that runs the whole page starts here. A trace leaves
- * the bottom of the hero and energises as you scroll out of it, so the current
- * that threads chapter three and lands in the CTA has a visible source. The
- * page is one circuit with a beginning and an end, not four good sections.
- *
- * The trace is built the same way as the spine — a rail with a scaleY gold fill
- * — so the two read as the same system rather than two separate effects.
+ * The charge that runs the whole page originates at this section's base, but
+ * the trace itself lives in `seam-trace.tsx`, rendered by chapter one. It has
+ * to be ONE element crossing the boundary — split across two sections, the node
+ * sat in the hero and the line started in chapter one with a gap between them.
+ * The hero clips its overflow, so the piece that spans the seam cannot live
+ * here.
  *
  * ALL COPY IS PLACEHOLDER and claims nothing that isn't true.
  */
@@ -48,9 +47,6 @@ export function Hero() {
   const bloomY = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
   const artY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
   // The charge leaves as you scroll out — energising over the last third.
-  // The node shows up first, well before the trace exists.
-  const nodeOpacity = useTransform(scrollYProgress, [0.08, 0.22], [0, 1]);
-  const originFill = useTransform(scrollYProgress, [0.3, 0.98], [0, 1]);
 
   return (
     <section
@@ -140,33 +136,6 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* THE ORIGIN. The charge is born here and leaves down the page. Same
-          construction as the spine in chapter three — a rail with a scaleY
-          gold fill — so they read as one system. */}
-      <motion.div
-        aria-hidden="true"
-        style={reduce ? { opacity: 1 } : { opacity: nodeOpacity }}
-        className="pointer-events-none absolute bottom-0 left-1/2 h-28 w-px -translate-x-1/2"
-      >
-        {/* No unlit rail. The line should not exist before the charge makes it
-            — the node appears first, then the trace draws out of it. */}
-        <motion.span
-          style={{ scaleY: reduce ? 1 : originFill }}
-          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/60 via-cta to-cta"
-        />
-        {/* The node it leaves from — the same node language as the logo. */}
-        <span className="absolute -top-3 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-cta bg-[#0C0A09]">
-          <motion.span
-            animate={reduce ? undefined : { opacity: [0.5, 1, 0.5] }}
-            transition={
-              reduce
-                ? undefined
-                : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
-            }
-            className="size-2 rounded-full bg-cta"
-          />
-        </span>
-      </motion.div>
     </section>
   );
 }

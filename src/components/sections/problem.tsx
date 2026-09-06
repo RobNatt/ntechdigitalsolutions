@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import { Reveal } from "@/components/motion/reveal";
+import { SeamTrace } from "@/components/motion/seam-trace";
 
 /*
  * Chapter 1: the problem.
@@ -42,20 +44,18 @@ const COPY = {
 } as const;
 
 export function Problem() {
+  const ref = useRef<HTMLElement>(null);
+
   return (
     <section
+      ref={ref}
       id="problem"
       aria-labelledby="problem-heading"
       className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
     >
-      {/* The other half of the handoff. The charge that left the hero carries
-          a little way into this chapter and dissipates — it reappears as the
-          spine in chapter three. Without this the trace stops dead at the
-          section boundary and the seam reads as a cut. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-40 w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,var(--cta)_0%,var(--cta)_18%,rgba(161,98,7,0.55)_48%,rgba(161,98,7,0.18)_74%,transparent_100%)]"
-      />
+      {/* The handoff, as one element reaching back over the hero's base. See
+          seam-trace.tsx for why it can't be split across the two sections. */}
+      <SeamTrace target={ref} />
 
       <div className="mx-auto max-w-[1280px]">
         <div className="grid gap-12 lg:grid-cols-12">

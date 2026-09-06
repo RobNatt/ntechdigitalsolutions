@@ -74,14 +74,23 @@ export function Journey() {
   // used to abandon the last step. Sticking the panel itself, at a computed
   // offset, keeps it pinned to the very bottom of the column.
   const panelRef = useRef<HTMLDivElement>(null);
+  const firstStepRef = useRef<HTMLLIElement>(null);
   const [stickyTop, setStickyTop] = useState(0);
   useEffect(() => {
     const measure = () => {
-      const h = panelRef.current?.getBoundingClientRect().height ?? 0;
-      setStickyTop(Math.max(24, (window.innerHeight - h) / 2));
+      // Align the panel's TOP EDGE with the step heading's top edge. Matching
+      // centres looked correct on paper and wrong on screen: the panel is
+      // taller than the step text, so a shared centre puts the panel's top
+      // ~110px above the heading and the two columns read as misaligned.
+      // Two columns side by side share a top edge, not a midpoint.
+      const content = firstStepRef.current
+        ?.firstElementChild as HTMLElement | null;
+      const contentH = content?.getBoundingClientRect().height ?? 0;
+      setStickyTop(Math.max(24, window.innerHeight / 2 - contentH / 2));
     };
     const ro = new ResizeObserver(measure);
     if (panelRef.current) ro.observe(panelRef.current);
+    if (firstStepRef.current) ro.observe(firstStepRef.current);
     window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
@@ -214,9 +223,10 @@ export function Journey() {
 
           {/* The steps. Each one takes over the pinned panel as it arrives. */}
           <ol ref={stepsRef} className="lg:col-span-6 lg:col-start-7 lg:py-[15vh]">
-            {COPY.steps.map(({ n, title, body }) => (
+            {COPY.steps.map(({ n, title, body }, i) => (
               <li
                 key={n}
+                ref={i === 0 ? firstStepRef : undefined}
                 // each step occupies most of a viewport so the panel stays pinned
                 // long enough to read as pinned. Without this the column is
                 // shorter than the travel needed and it releases immediately.
