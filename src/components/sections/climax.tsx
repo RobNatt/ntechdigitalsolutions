@@ -99,6 +99,14 @@ export function Climax() {
         />
       </div>
 
+      {/* The pool the trail vanishes into. Sits ABOVE the trail and BELOW the
+          type, so the current visibly slips behind the copy and is lost. Soft
+          and elliptical so it reads as depth, not a rectangle. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-[18%] -z-[5] mx-auto h-[42%] w-[min(880px,90%)] rounded-[50%] bg-[radial-gradient(ellipse,rgba(12,10,9,0.97)_35%,rgba(12,10,9,0.75)_60%,transparent_78%)] blur-2xl"
+      />
+
       {/* The trail. Runs the full distance from the section top to the button,
           behind the type, then fades once the charge has landed — the energy is
           in the button now, not in the wire. */}
@@ -107,7 +115,7 @@ export function Climax() {
         animate={{ opacity: arrived ? 0 : 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         style={{ height: trailHeight }}
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 w-px -translate-x-1/2"
+        className="pointer-events-none absolute left-1/2 top-0 -z-[6] w-px -translate-x-1/2"
       >
         <span className="absolute inset-0 bg-border" />
         <motion.span
@@ -117,6 +125,14 @@ export function Climax() {
       </motion.div>
 
       <div className="mx-auto max-w-[1280px] pt-16">
+        {/* Contrast is what actually moves the eye: the copy steps back as the
+            button ignites. 0.75 is the floor — at 0.62 the sub-copy and overline
+            fall to 3.59:1 and fail AA for body text. At 0.75 they hold 4.79:1.
+            Never dim text past its contrast budget; dim decoration instead. */}
+        <motion.div
+          animate={{ opacity: arrived && !reduce ? 0.75 : 1 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
+        >
         <Reveal tier="chapter" index={0}>
           <p className="text-overline uppercase text-muted-foreground">
             {COPY.overline}
@@ -137,13 +153,38 @@ export function Climax() {
             {COPY.sub}
           </p>
         </Reveal>
+        </motion.div>
 
         <Reveal tier="chapter" index={3}>
           <div className="mt-16 flex flex-col items-center gap-8">
             {/* The last node. Every layer animates opacity and scale only — an
                 animated box-shadow is a paint property, outside the motion
                 rules, and it composites badly on a phone. */}
-            <span ref={ctaRef} className="relative inline-flex isolate">
+            <motion.span
+              ref={ctaRef}
+              className="relative inline-flex isolate"
+              initial={false}
+              animate={
+                arrived && !reduce
+                  ? { scale: [1, 1.07, 1] }
+                  : { scale: 1 }
+              }
+              transition={{ duration: 0.55, ease: EASE_OUT, times: [0, 0.35, 1] }}
+            >
+              {/* Ignition flash — short, hard, and brighter than anything else
+                  on the page for a quarter second. This is the thing that pulls
+                  the eye; the sustained glow only keeps it there. */}
+              <motion.span
+                aria-hidden="true"
+                initial={false}
+                animate={
+                  arrived && !reduce
+                    ? { opacity: [0, 1, 0], scale: [0.6, 1.5, 1.8] }
+                    : { opacity: 0, scale: 0.6 }
+                }
+                transition={{ duration: 0.5, ease: "easeOut", times: [0, 0.25, 1] }}
+                className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(circle,rgba(255,214,140,0.95),rgba(217,119,6,0.6)_45%,transparent_70%)] blur-2xl"
+              />
               {/* Outer bloom — the wide field. Double-beat once charged. */}
               <motion.span
                 aria-hidden="true"
@@ -214,7 +255,7 @@ export function Climax() {
                   className="size-5 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
                 />
               </a>
-            </span>
+            </motion.span>
 
             <a
               href="#problem"
