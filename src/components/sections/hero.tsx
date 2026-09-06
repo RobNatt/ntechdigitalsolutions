@@ -48,8 +48,9 @@ export function Hero() {
   const bloomY = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
   const artY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
   // The charge leaves as you scroll out — energising over the last third.
-  const originFill = useTransform(scrollYProgress, [0.35, 0.95], [0, 1]);
-  const originOpacity = useTransform(scrollYProgress, [0.2, 0.45], [0, 1]);
+  // The node shows up first, well before the trace exists.
+  const nodeOpacity = useTransform(scrollYProgress, [0.08, 0.22], [0, 1]);
+  const originFill = useTransform(scrollYProgress, [0.3, 0.98], [0, 1]);
 
   return (
     <section
@@ -72,7 +73,7 @@ export function Hero() {
           cut. The trace below sits above this and crosses it. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-[5] h-40 bg-[linear-gradient(to_bottom,transparent,#FAFAF9)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-[5] h-64 bg-[linear-gradient(to_bottom,transparent_0%,rgba(250,250,249,0.02)_14%,rgba(250,250,249,0.07)_27%,rgba(250,250,249,0.16)_39%,rgba(250,250,249,0.30)_50%,rgba(250,250,249,0.47)_61%,rgba(250,250,249,0.65)_71%,rgba(250,250,249,0.81)_81%,rgba(250,250,249,0.93)_91%,#FAFAF9_100%)]"
       />
 
       <div className="mx-auto grid w-full max-w-[1280px] items-center gap-16 lg:grid-cols-12 lg:gap-12">
@@ -144,13 +145,14 @@ export function Hero() {
           gold fill — so they read as one system. */}
       <motion.div
         aria-hidden="true"
-        style={reduce ? { opacity: 1 } : { opacity: originOpacity }}
+        style={reduce ? { opacity: 1 } : { opacity: nodeOpacity }}
         className="pointer-events-none absolute bottom-0 left-1/2 h-28 w-px -translate-x-1/2"
       >
-        <span className="absolute inset-0 bg-border-strong/40" />
+        {/* No unlit rail. The line should not exist before the charge makes it
+            — the node appears first, then the trace draws out of it. */}
         <motion.span
           style={{ scaleY: reduce ? 1 : originFill }}
-          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/20 via-cta/70 to-cta"
+          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/60 via-cta to-cta"
         />
         {/* The node it leaves from — the same node language as the logo. */}
         <span className="absolute -top-3 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-cta bg-[#0C0A09]">

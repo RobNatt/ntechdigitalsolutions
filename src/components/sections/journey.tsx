@@ -6,8 +6,9 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  useTransform,
 } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 
@@ -68,6 +69,29 @@ export function Journey() {
     target: stepsRef,
     offset: ["start center", "end center"],
   });
+  // Centring the panel needs its real height: a full-height sticky wrapper
+  // releases a whole viewport before the parent ends, which is why the panel
+  // used to abandon the last step. Sticking the panel itself, at a computed
+  // offset, keeps it pinned to the very bottom of the column.
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [stickyTop, setStickyTop] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const h = panelRef.current?.getBoundingClientRect().height ?? 0;
+      setStickyTop(Math.max(24, (window.innerHeight - h) / 2));
+    };
+    const ro = new ResizeObserver(measure);
+    if (panelRef.current) ro.observe(panelRef.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  // The current runs the gutter between the two columns.
+  const traceFill = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     const last = COPY.steps.length - 1;
     const i = Math.min(last, Math.max(0, Math.floor(p * COPY.steps.length)));
@@ -106,15 +130,49 @@ export function Journey() {
           </h2>
         </Reveal>
 
-        <div className="mt-24 grid gap-16 lg:grid-cols-12 lg:gap-12">
+        <div className="relative mt-24 grid gap-16 lg:grid-cols-12 lg:gap-12">
+          {/* The current, running the gutter. Chapter two was the only section
+              off the circuit; now the charge threads it too. Nodes light as the
+              panel advances, so the trace and the panel tell the same story. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 lg:block"
+          >
+            <motion.span
+              style={{ scaleY: reduce ? 1 : traceFill }}
+              className="absolute inset-0 origin-top bg-gradient-to-b from-cta/50 via-cta to-cta/70"
+            />
+            {COPY.steps.map((s2, i) => (
+              <span
+                key={s2.n}
+                style={{ top: `${((i * 2 + 1) / (COPY.steps.length * 2)) * 100}%` }}
+                className={`absolute left-1/2 flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-background transition-[border-color,box-shadow] duration-300 ${
+                  i <= active
+                    ? "border-cta shadow-[0_0_0_4px_rgba(217,119,6,0.12),0_0_16px_rgba(217,119,6,0.45)]"
+                    : "border-border-strong/50"
+                }`}
+              >
+                <span
+                  className={`size-1.5 rounded-full transition-colors duration-300 ${
+                    i <= active ? "bg-cta" : "bg-border-strong"
+                  }`}
+                />
+              </span>
+            ))}
+          </div>
           {/* Pinned panel. Advances as the steps on the right come into view. */}
           {/* NO self-start / self-* here. A sticky element travels only within its
               parent's box, and self-start shrinks the grid item to content
               height — leaving nowhere to stick. It must stretch to the full
               row height, which is the grid default. */}
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-32">
-              <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] p-8 shadow-xl backdrop-blur-[20px] backdrop-saturate-150 md:p-12">
+            {/* The panel itself is the sticky element, offset so its centre
+                lands on the viewport midline. The steps are centred in their own
+                blocks and the list is padded by half the leftover viewport, so
+                every step's centre crosses that same midline — they start
+                together and finish together. */}
+            <div className="lg:sticky" style={{ top: `${stickyTop}px` }}>
+              <div ref={panelRef} className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] p-8 shadow-xl backdrop-blur-[20px] backdrop-saturate-150 md:p-12">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={reduce ? "static" : active}
@@ -155,7 +213,7 @@ export function Journey() {
           </div>
 
           {/* The steps. Each one takes over the pinned panel as it arrives. */}
-          <ol ref={stepsRef} className="lg:col-span-6 lg:col-start-7">
+          <ol ref={stepsRef} className="lg:col-span-6 lg:col-start-7 lg:py-[15vh]">
             {COPY.steps.map(({ n, title, body }) => (
               <li
                 key={n}

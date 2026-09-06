@@ -54,7 +54,7 @@ export function Problem() {
           section boundary and the seam reads as a cut. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,var(--cta),transparent)]"
+        className="pointer-events-none absolute left-1/2 top-0 h-40 w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,var(--cta)_0%,var(--cta)_18%,rgba(161,98,7,0.55)_48%,rgba(161,98,7,0.18)_74%,transparent_100%)]"
       />
 
       <div className="mx-auto max-w-[1280px]">
