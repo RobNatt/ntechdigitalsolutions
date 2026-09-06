@@ -25,8 +25,15 @@ interface LogoMarkProps {
    * display — metallic gold gradient, for large-format moments only: hero
    *           lockups, decks, signage, print at size. Never below ~96px, and
    *           never where it has to survive one-colour reproduction.
+   * duotone — solid letterform in currentColor with GOLD traces drawn on top.
+   *           This is the black-N-with-gold-circuitry look, and it's the right
+   *           call on light surfaces. It cannot work on the dark hero — a dark
+   *           N on a dark ground disappears — so dark surfaces use `full`,
+   *           which is the same geometry inverted.
    */
-  variant?: "full" | "simple" | "display";
+  variant?: "full" | "simple" | "display" | "duotone";
+  /** duotone only: the trace colour. Defaults to the brand gold. */
+  traceColor?: string;
   /** Masks need unique ids when more than one instance is on a page. */
   id?: string;
   title?: string;
@@ -39,6 +46,7 @@ const N_PATH =
 export function LogoMark({
   className,
   variant = "full",
+  traceColor = "#A16207",
   id = "ntech-mark",
   title,
 }: LogoMarkProps) {
@@ -67,7 +75,33 @@ export function LogoMark({
         </defs>
       )}
 
-      {variant !== "simple" ? (
+      {variant === "duotone" ? (
+        <>
+          <path d={N_PATH} fill="currentColor" />
+          <g
+            stroke={traceColor}
+            strokeWidth={2.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill={traceColor}
+          >
+            <path d="M26 21 V62" />
+            <path d="M26 31 H33" />
+            <path d="M26 45 H21" />
+            <circle cx="26" cy="20" r="3.2" />
+            <circle cx="33" cy="31" r="2.8" />
+            <circle cx="21" cy="45" r="2.8" />
+            <circle cx="26" cy="63" r="3.2" />
+            <path d="M72 38 V79" />
+            <path d="M72 49 H78" />
+            <path d="M72 63 H66" />
+            <circle cx="72" cy="37" r="3.2" />
+            <circle cx="78" cy="49" r="2.8" />
+            <circle cx="66" cy="63" r="2.8" />
+            <circle cx="72" cy="80" r="3.2" />
+          </g>
+        </>
+      ) : variant !== "simple" ? (
         <>
           <mask id={maskId} maskUnits="userSpaceOnUse">
             {/* White shows, black cuts through. */}

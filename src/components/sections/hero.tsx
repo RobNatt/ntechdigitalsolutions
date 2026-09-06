@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { CallDemo } from "@/components/sections/call-demo";
+import { LocalTime } from "@/components/local-time";
 
 /*
  * Hero — chapter 0: the intro hook, and the origin of the current.
@@ -66,13 +67,25 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-[45vh] bg-[linear-gradient(to_top,rgba(12,10,9,0.95),transparent)]" />
       </motion.div>
 
+      {/* THE HANDOFF. The hero doesn't end, it dissolves — the dark washes out
+          into chapter one's ground so the seam is a transition rather than a
+          cut. The trace below sits above this and crosses it. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-[5] h-40 bg-[linear-gradient(to_bottom,transparent,#FAFAF9)]"
+      />
+
       <div className="mx-auto grid w-full max-w-[1280px] items-center gap-16 lg:grid-cols-12 lg:gap-12">
         {/* Type column — seven of twelve, never centred. */}
         <div className="lg:col-span-7">
           <Reveal trigger="mount" tier="chapter" index={0}>
-            <p className="flex items-center gap-4 text-overline uppercase text-muted-foreground">
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-2 text-overline uppercase text-muted-foreground">
               <span aria-hidden="true" className="h-px w-12 bg-cta" />
               {COPY.overline}
+              <span aria-hidden="true" className="text-border-strong">
+                &middot;
+              </span>
+              <LocalTime />
             </p>
           </Reveal>
 
@@ -134,13 +147,13 @@ export function Hero() {
         style={reduce ? { opacity: 1 } : { opacity: originOpacity }}
         className="pointer-events-none absolute bottom-0 left-1/2 h-28 w-px -translate-x-1/2"
       >
-        <span className="absolute inset-0 bg-border" />
+        <span className="absolute inset-0 bg-border-strong/40" />
         <motion.span
           style={{ scaleY: reduce ? 1 : originFill }}
           className="absolute inset-0 origin-top bg-gradient-to-b from-cta/20 via-cta/70 to-cta"
         />
         {/* The node it leaves from — the same node language as the logo. */}
-        <span className="absolute -top-3 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-cta bg-background">
+        <span className="absolute -top-3 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-cta bg-[#0C0A09]">
           <motion.span
             animate={reduce ? undefined : { opacity: [0.5, 1, 0.5] }}
             transition={

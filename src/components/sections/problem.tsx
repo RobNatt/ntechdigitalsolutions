@@ -48,6 +48,15 @@ export function Problem() {
       aria-labelledby="problem-heading"
       className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
     >
+      {/* The other half of the handoff. The charge that left the hero carries
+          a little way into this chapter and dissipates — it reappears as the
+          spine in chapter three. Without this the trace stops dead at the
+          section boundary and the seam reads as a cut. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,var(--cta),transparent)]"
+      />
+
       <div className="mx-auto max-w-[1280px]">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">

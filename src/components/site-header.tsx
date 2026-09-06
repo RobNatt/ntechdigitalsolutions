@@ -42,8 +42,13 @@ export function SiteHeader() {
           href="#top"
           className="group flex items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
+          {/* On the light surface past the hero this is Rob's preferred
+              treatment: solid dark letterform with gold circuitry. Over the
+              dark hero that would vanish, so it inverts to a gold mark with
+              the traces cut out. Same geometry either way. */}
           <LogoMark
             title="N-Tech Digital Solutions"
+            variant={scrolled ? "duotone" : "full"}
             className={`h-8 w-8 transition-colors duration-300 ${
               scrolled ? "text-primary" : "text-cta"
             }`}
