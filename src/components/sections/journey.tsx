@@ -3,6 +3,7 @@
 import {
   AnimatePresence,
   motion,
+  useInView,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
@@ -54,7 +55,29 @@ const COPY = {
 
 export function Journey() {
   const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
+
+  /*
+   * Below lg the two columns stack, so the panel can't pin and the scroll-driven
+   * advance has nothing to drive — the card would show step one, scroll away,
+   * and never move. On small screens a timer takes over instead, cycling while
+   * the section is actually on screen. Same story, told without the pin.
+   */
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const apply = () => setCompact(mq.matches);
+    // First read runs in a callback, not the effect body.
+    const id = window.setTimeout(apply, 0);
+    mq.addEventListener("change", apply);
+    return () => {
+      window.clearTimeout(id);
+      mq.removeEventListener("change", apply);
+    };
+  }, []);
+
+  const inView = useInView(sectionRef, { margin: "-15% 0px -15% 0px" });
   const [active, setActive] = useState(0);
   const step = COPY.steps[active];
 
@@ -168,7 +191,17 @@ export function Journey() {
   // The current runs the gutter between the two columns.
   const traceFill = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
+  // On small screens the timer owns the active step; don't let scroll fight it.
+  useEffect(() => {
+    if (!compact || !inView || reduce) return;
+    const id = setInterval(() => {
+      setActive((i) => (i + 1) % COPY.steps.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [compact, inView, reduce]);
+
   useMotionValueEvent(scrollYProgress, "change", (p) => {
+    if (compact) return;
     const last = COPY.steps.length - 1;
     const i = Math.min(last, Math.max(0, Math.floor(p * COPY.steps.length)));
     setActive((prev) => (prev === i ? prev : i));
@@ -176,6 +209,7 @@ export function Journey() {
 
   return (
     <section
+      ref={sectionRef}
       id="journey"
       aria-labelledby="journey-heading"
       className="surface-dark grain relative isolate px-6 py-24 md:px-12 md:py-32 lg:px-20 lg:py-40"
