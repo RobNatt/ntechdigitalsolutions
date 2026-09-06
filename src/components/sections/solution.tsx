@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { Bot, Globe, MessagesSquare, Share2, Star } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
@@ -7,12 +15,18 @@ import { Reveal } from "@/components/motion/reveal";
 /*
  * Chapter 3: the solution.
  *
- * The offer is called "The Scalable Digital Infrastructure", so this chapter is
- * built as literal infrastructure: a vertical spine with gold nodes and pieces
- * branching off it, alternating sides. Not a five-column card grid — the shape
- * of the section carries the idea, which is what stops it reading as a
- * template. This layout would make no sense for another business, which is the
- * test it has to pass.
+ * The offer is called "The Scalable Digital Infrastructure", so the section is
+ * built as literal infrastructure: a vertical spine with nodes, pieces
+ * branching off alternating sides. The shape carries the idea — this layout
+ * would make no sense for another business, which is the test it has to pass.
+ *
+ * THE CURRENT: a charge travels down the spine as you scroll, and each node
+ * lights when it arrives. Scroll position drives it directly, so it reads as
+ * one continuous system energising rather than five things fading in.
+ *
+ * Motion rules hold. The travelling line is scaleY (transform) and the nodes
+ * change colour and glow — no layout properties. Under reduced motion the whole
+ * spine is drawn and every node is lit from the start, with nothing moving.
  *
  * The five pieces are real (from offers.md). ALL DESCRIPTIVE COPY IS
  * PLACEHOLDER, and no pricing is shown — that is a conversation, not a header.
@@ -39,6 +53,47 @@ const COPY = {
 } as const;
 
 export function Solution() {
+  const reduce = useReducedMotion();
+  const spineRef = useRef<HTMLDivElement>(null);
+  const [lit, setLit] = useState(reduce ? PIECES.length : 0);
+
+  // The current runs while the spine crosses the middle of the viewport.
+  const { scrollYProgress } = useScroll({
+    target: spineRef,
+    offset: ["start 75%", "end 60%"],
+  });
+
+  // Transform-only: the gold overlay scales from the top down.
+  const fill = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  // The leading edge is positioned with translateY, never `top` — animating a
+  // layout property is banned by the motion rules. That needs the spine's
+  // pixel height, so measure it and keep it current on resize.
+  const [spineHeight, setSpineHeight] = useState(0);
+  useEffect(() => {
+    const el = spineRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) =>
+      setSpineHeight(entry.contentRect.height),
+    );
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  // 64px = the head's own height (h-16), so its BOTTOM edge rides the front of
+  // the current and the glow trails behind it. Baked into the transform because
+  // motion's inline transform would override a Tailwind -translate-y-full.
+  const headY = useTransform(fill, (v) => v * spineHeight - 64);
+
+  // A node lights as the current reaches it.
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    if (reduce) return;
+    const next = PIECES.reduce(
+      (count, _, i) => (p >= (i + 0.5) / PIECES.length ? i + 1 : count),
+      0,
+    );
+    setLit((prev) => (prev === next ? prev : next));
+  });
+
   return (
     <section
       id="solution"
@@ -66,16 +121,31 @@ export function Solution() {
           </Reveal>
         </div>
 
-        {/* The spine. One continuous line, nodes on it, pieces branching off. */}
-        <div className="relative mt-24 md:mt-32">
+        <div ref={spineRef} className="relative mt-24 md:mt-32">
+          {/* Unlit rail */}
           <span
             aria-hidden="true"
-            className="absolute left-[11px] top-0 h-full w-px bg-gradient-to-b from-transparent via-border-strong to-transparent md:left-1/2"
+            className="absolute left-[11px] top-0 h-full w-px bg-border md:left-1/2"
           />
+          {/* The current. scaleY from the top — transform only. */}
+          <motion.span
+            aria-hidden="true"
+            style={{ scaleY: reduce ? 1 : fill }}
+            className="absolute left-[11px] top-0 h-full w-px origin-top bg-gradient-to-b from-cta via-cta to-cta/40 md:left-1/2"
+          />
+          {/* The leading edge — a bright head riding the front of the current. */}
+          {!reduce && (
+            <motion.span
+              aria-hidden="true"
+              style={{ y: headY }}
+              className="absolute left-[11px] top-0 z-10 h-16 w-px bg-gradient-to-b from-transparent to-cta blur-[1px] md:left-1/2"
+            />
+          )}
 
           <ul className="space-y-12 md:space-y-0">
             {PIECES.map(({ icon: Icon, name, body }, i) => {
               const right = i % 2 === 1;
+              const on = i < lit;
               return (
                 <Reveal
                   key={name}
@@ -84,12 +154,20 @@ export function Solution() {
                   index={i}
                   className="relative md:grid md:grid-cols-2 md:gap-16"
                 >
-                  {/* node on the spine */}
+                  {/* Node — lights when the current arrives. */}
                   <span
                     aria-hidden="true"
-                    className="absolute left-0 top-1 flex size-6 items-center justify-center rounded-full border border-cta bg-background md:left-1/2 md:-translate-x-1/2"
+                    className={`absolute left-0 top-1 z-10 flex size-6 items-center justify-center rounded-full border bg-background transition-[border-color,box-shadow] duration-300 md:left-1/2 md:-translate-x-1/2 ${
+                      on
+                        ? "border-cta shadow-[0_0_0_4px_rgba(161,98,7,0.14),0_0_18px_rgba(161,98,7,0.5)]"
+                        : "border-border"
+                    }`}
                   >
-                    <span className="size-2 rounded-full bg-cta" />
+                    <span
+                      className={`size-2 rounded-full transition-colors duration-300 ${
+                        on ? "bg-cta" : "bg-border-strong"
+                      }`}
+                    />
                   </span>
 
                   <div
@@ -101,7 +179,9 @@ export function Solution() {
                   >
                     <Icon
                       aria-hidden="true"
-                      className={`size-6 text-cta ${right ? "" : "md:ml-auto"}`}
+                      className={`size-6 transition-colors duration-300 ${
+                        on ? "text-cta" : "text-border-strong"
+                      } ${right ? "" : "md:ml-auto"}`}
                       strokeWidth={1.5}
                     />
                     <h3 className="mt-6 text-h3 font-heading text-foreground">

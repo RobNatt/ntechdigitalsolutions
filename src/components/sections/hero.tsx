@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CalendarCheck, MessageSquare, PhoneMissed } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
@@ -28,7 +28,6 @@ interface Step {
   label: string;
   detail: string;
   time: string;
-  live?: boolean;
 }
 
 const STEPS: Step[] = [
@@ -49,7 +48,6 @@ const STEPS: Step[] = [
     label: "Booked",
     detail: "Placeholder — slot taken without you touching it",
     time: "2:21pm",
-    live: true,
   },
 ];
 
@@ -65,6 +63,19 @@ const COPY = {
 export function Hero() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
+
+  // The feed runs. A static screenshot of a product is a brochure; a system
+  // visibly working is the demo. The highlight walks the sequence on a loop so
+  // the panel reads as live rather than posed.
+  const [active, setActive] = useState(STEPS.length - 1);
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(
+      () => setActive((i) => (i + 1) % STEPS.length),
+      2200,
+    );
+    return () => clearInterval(id);
+  }, [reduce]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -151,14 +162,22 @@ export function Hero() {
               <span className="text-overline uppercase text-muted-foreground">
                 Placeholder — live
               </span>
-              <span
+              <motion.span
                 aria-hidden="true"
+                animate={reduce ? undefined : { opacity: [1, 0.35, 1] }}
+                transition={
+                  reduce
+                    ? undefined
+                    : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
+                }
                 className="flex size-2 rounded-full bg-cta"
               />
             </div>
 
             <ul className="space-y-3">
-              {STEPS.map(({ icon: Icon, label, detail, time, live }, i) => (
+              {STEPS.map(({ icon: Icon, label, detail, time }, i) => {
+                const on = reduce ? true : i === active;
+                return (
                 <motion.li
                   key={label}
                   initial={reduce ? false : { opacity: 0, y: 16 }}
@@ -170,11 +189,15 @@ export function Hero() {
                     // reads as one motion, not two competing ones
                     delay: reduce ? 0 : (i + 4) * STAGGER,
                   }}
-                  className="flex items-start gap-4 rounded-lg border border-border bg-card p-4"
+                  className={`flex items-start gap-4 rounded-lg border bg-card p-4 transition-[border-color,box-shadow] duration-300 ${
+                    on
+                      ? "border-cta/40 shadow-[0_0_24px_rgba(217,119,6,0.16)]"
+                      : "border-border"
+                  }`}
                 >
                   <span
-                    className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md ${
-                      live
+                    className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors duration-300 ${
+                      on
                         ? "bg-cta text-on-cta"
                         : "bg-muted text-muted-foreground"
                     }`}
@@ -199,7 +222,8 @@ export function Hero() {
                     </span>
                   </span>
                 </motion.li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         </motion.div>
