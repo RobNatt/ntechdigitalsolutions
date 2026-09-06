@@ -1,55 +1,30 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { ArrowRight, CalendarCheck, MessageSquare, PhoneMissed } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
-import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
+import { CallDemo } from "@/components/sections/call-demo";
 
 /*
- * Hero — chapter 0: the intro hook.
+ * Hero — chapter 0: the intro hook, and the origin of the current.
  *
- * Deliberately NOT a centred card. The first build was one, and it read as a
- * template. This is asymmetric: type holds the left seven columns, and a
- * product artifact sits in the right five, offset downward so the two columns
- * never share a baseline.
+ * Deliberately NOT a centred card. Type holds the left seven columns, and the
+ * product artifact holds the right five, offset downward so the columns never
+ * share a baseline.
  *
- * The artifact is the point. A site selling an AI receptionist has to SHOW a
- * missed call being caught, not describe it. That is the difference between a
- * page about a product and a page that demonstrates one.
+ * The artifact plays a scene rather than listing outcomes — see call-demo.tsx.
  *
- * ALL COPY IS PLACEHOLDER and claims nothing that isn't true — no client
- * counts, no results, no testimonials.
+ * THE ORIGIN: the charge that runs the whole page starts here. A trace leaves
+ * the bottom of the hero and energises as you scroll out of it, so the current
+ * that threads chapter three and lands in the CTA has a visible source. The
+ * page is one circuit with a beginning and an end, not four good sections.
+ *
+ * The trace is built the same way as the spine — a rail with a scaleY gold fill
+ * — so the two read as the same system rather than two separate effects.
+ *
+ * ALL COPY IS PLACEHOLDER and claims nothing that isn't true.
  */
-
-interface Step {
-  icon: LucideIcon;
-  label: string;
-  detail: string;
-  time: string;
-}
-
-const STEPS: Step[] = [
-  {
-    icon: PhoneMissed,
-    label: "Missed call",
-    detail: "Placeholder — rings out while you're on a job",
-    time: "2:14pm",
-  },
-  {
-    icon: MessageSquare,
-    label: "Text sent back",
-    detail: "Placeholder — automatic reply, four seconds later",
-    time: "2:14pm",
-  },
-  {
-    icon: CalendarCheck,
-    label: "Booked",
-    detail: "Placeholder — slot taken without you touching it",
-    time: "2:21pm",
-  },
-];
 
 const COPY = {
   overline: "Omaha, Nebraska",
@@ -64,19 +39,6 @@ export function Hero() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
 
-  // The feed runs. A static screenshot of a product is a brochure; a system
-  // visibly working is the demo. The highlight walks the sequence on a loop so
-  // the panel reads as live rather than posed.
-  const [active, setActive] = useState(STEPS.length - 1);
-  useEffect(() => {
-    if (reduce) return;
-    const id = setInterval(
-      () => setActive((i) => (i + 1) % STEPS.length),
-      2200,
-    );
-    return () => clearInterval(id);
-  }, [reduce]);
-
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -84,6 +46,9 @@ export function Hero() {
   // Decorative layers only. Never text, never controls.
   const bloomY = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
   const artY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
+  // The charge leaves as you scroll out — energising over the last third.
+  const originFill = useTransform(scrollYProgress, [0.35, 0.95], [0, 1]);
+  const originOpacity = useTransform(scrollYProgress, [0.2, 0.45], [0, 1]);
 
   return (
     <section
@@ -157,77 +122,36 @@ export function Hero() {
           style={reduce ? undefined : { y: artY }}
           className="lg:col-span-5 lg:translate-y-12"
         >
-          <div className="relative rounded-xl border border-white/10 bg-white/[0.04] p-4 shadow-xl backdrop-blur-[20px] backdrop-saturate-150">
-            <div className="flex items-center justify-between px-3 pb-4 pt-2">
-              <span className="text-overline uppercase text-muted-foreground">
-                Placeholder — live
-              </span>
-              <motion.span
-                aria-hidden="true"
-                animate={reduce ? undefined : { opacity: [1, 0.35, 1] }}
-                transition={
-                  reduce
-                    ? undefined
-                    : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
-                }
-                className="flex size-2 rounded-full bg-cta"
-              />
-            </div>
-
-            <ul className="space-y-3">
-              {STEPS.map(({ icon: Icon, label, detail, time }, i) => {
-                const on = reduce ? true : i === active;
-                return (
-                <motion.li
-                  key={label}
-                  initial={reduce ? false : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: DURATION.reveal,
-                    ease: EASE_OUT,
-                    // continues the left column's stagger so the whole hero
-                    // reads as one motion, not two competing ones
-                    delay: reduce ? 0 : (i + 4) * STAGGER,
-                  }}
-                  className={`flex items-start gap-4 rounded-lg border bg-card p-4 transition-[border-color,box-shadow] duration-300 ${
-                    on
-                      ? "border-cta/40 shadow-[0_0_24px_rgba(217,119,6,0.16)]"
-                      : "border-border"
-                  }`}
-                >
-                  <span
-                    className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors duration-300 ${
-                      on
-                        ? "bg-cta text-on-cta"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    <Icon
-                      aria-hidden="true"
-                      className="size-4"
-                      strokeWidth={1.75}
-                    />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-baseline justify-between gap-3">
-                      <span className="text-body font-medium text-card-foreground">
-                        {label}
-                      </span>
-                      <span className="shrink-0 text-small text-muted-foreground">
-                        {time}
-                      </span>
-                    </span>
-                    <span className="mt-1 block text-small text-muted-foreground">
-                      {detail}
-                    </span>
-                  </span>
-                </motion.li>
-                );
-              })}
-            </ul>
-          </div>
+          <CallDemo />
         </motion.div>
       </div>
+
+      {/* THE ORIGIN. The charge is born here and leaves down the page. Same
+          construction as the spine in chapter three — a rail with a scaleY
+          gold fill — so they read as one system. */}
+      <motion.div
+        aria-hidden="true"
+        style={reduce ? { opacity: 1 } : { opacity: originOpacity }}
+        className="pointer-events-none absolute bottom-0 left-1/2 h-28 w-px -translate-x-1/2"
+      >
+        <span className="absolute inset-0 bg-border" />
+        <motion.span
+          style={{ scaleY: reduce ? 1 : originFill }}
+          className="absolute inset-0 origin-top bg-gradient-to-b from-cta/20 via-cta/70 to-cta"
+        />
+        {/* The node it leaves from — the same node language as the logo. */}
+        <span className="absolute -top-3 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-cta bg-background">
+          <motion.span
+            animate={reduce ? undefined : { opacity: [0.5, 1, 0.5] }}
+            transition={
+              reduce
+                ? undefined
+                : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
+            }
+            className="size-2 rounded-full bg-cta"
+          />
+        </span>
+      </motion.div>
     </section>
   );
 }
