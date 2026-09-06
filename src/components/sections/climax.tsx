@@ -10,6 +10,7 @@ import {
 import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
+import { EASE_OUT } from "@/lib/motion";
 
 /*
  * The climax CTA — and the end of the current.
@@ -54,7 +55,7 @@ export function Climax() {
 
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     if (reduce) return;
-    const next = p >= 0.98;
+    const next = p >= 0.92;
     setArrived((prev) => (prev === next ? prev : next));
   });
 
@@ -114,21 +115,74 @@ export function Climax() {
 
         <Reveal tier="chapter" index={3}>
           <div className="mt-16 flex flex-col items-center gap-8">
-            {/* The last node. The CTA is where the infrastructure terminates. */}
-            <a
-              href="#contact"
-              className={`group relative inline-flex items-center justify-center gap-2 rounded-md bg-cta px-10 py-5 text-body-lg font-medium text-on-cta transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
-                arrived
-                  ? "shadow-[0_0_0_6px_rgba(217,119,6,0.14),0_0_44px_rgba(217,119,6,0.55)]"
-                  : "shadow-none"
-              }`}
-            >
-              {COPY.primaryCta}
-              <ArrowRight
+            {/* The last node. The current lands here and the button charges.
+                Every layer animates opacity and scale only — a box-shadow
+                animation would be a paint property, which the motion rules
+                don't allow, and this composites far better anyway. */}
+            <span className="relative inline-flex isolate">
+              {/* Sustained halo — swells on arrival, then holds. */}
+              <motion.span
                 aria-hidden="true"
-                className="size-5 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
+                initial={false}
+                animate={
+                  arrived
+                    ? { opacity: [0, 1, 0.85], scale: [0.8, 1.2, 1] }
+                    : { opacity: 0, scale: 0.8 }
+                }
+                transition={
+                  reduce
+                    ? { duration: 0 }
+                    : { duration: 0.9, ease: EASE_OUT, times: [0, 0.45, 1] }
+                }
+                className="pointer-events-none absolute -inset-8 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.75),transparent_70%)] blur-2xl"
               />
-            </a>
+
+              {/* One-shot shockwave — the charge actually arriving. */}
+              <motion.span
+                aria-hidden="true"
+                initial={false}
+                animate={
+                  arrived && !reduce
+                    ? { opacity: [0.85, 0], scale: [0.9, 1.9] }
+                    : { opacity: 0, scale: 0.9 }
+                }
+                transition={{ duration: 0.85, ease: "easeOut" }}
+                className="pointer-events-none absolute -inset-2 -z-10 rounded-md border border-cta"
+              />
+
+              {/* Afterglow — it keeps shining once charged. */}
+              <motion.span
+                aria-hidden="true"
+                initial={false}
+                animate={
+                  arrived && !reduce
+                    ? { opacity: [0.45, 0.95, 0.45] }
+                    : { opacity: arrived ? 0.5 : 0 }
+                }
+                transition={
+                  arrived && !reduce
+                    ? {
+                        duration: 3.2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.9,
+                      }
+                    : { duration: 0.3 }
+                }
+                className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-[radial-gradient(circle,rgba(217,119,6,0.55),transparent_72%)] blur-xl"
+              />
+
+              <a
+                href="#contact"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-md bg-cta px-10 py-5 text-body-lg font-medium text-on-cta transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              >
+                {COPY.primaryCta}
+                <ArrowRight
+                  aria-hidden="true"
+                  className="size-5 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
+                />
+              </a>
+            </span>
 
             <a
               href="#problem"
