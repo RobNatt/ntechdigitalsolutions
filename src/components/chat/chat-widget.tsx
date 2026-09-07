@@ -3,7 +3,7 @@
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { cn } from "@/lib/utils";
 import { MessageCircle, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const WELCOME_DELAY_MS = 7000;
