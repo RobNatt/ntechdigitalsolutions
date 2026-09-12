@@ -44,6 +44,19 @@ export interface Package {
   positioning: string;
   /** Who this is the right answer for. */
   forWho: string;
+  /**
+   * ONE UNAMBIGUOUS SENTENCE SAYING WHICH PACKAGE THIS IS AND WHICH IT IS NOT.
+   *
+   * Added 12 September 2026 after the GoHighLevel voice agent confused Digital
+   * Foundation with The Digital Office on live calls. The names are near
+   * synonyms in English and one package contains the other, so a retrieval
+   * system given only prose about "the foundation everything plugs into" has
+   * nothing decisive to latch onto. This field exists to be that decisive
+   * sentence — it names the other package explicitly and states the boundary,
+   * so the nearest match is never ambiguous. Keep it blunt; it is written for a
+   * machine to quote as much as for a person to read.
+   */
+  distinct: string;
   /** The hero headline on the package's own page. */
   promise: string;
   /** Pain: what is happening now, without this. */
@@ -83,6 +96,8 @@ export const PACKAGES: Package[] = [
       "The website, the CRM, and the follow-up — the three that only work as one.",
     forWho:
       "A business with either no website or one that does nothing, and no system holding the people who get in touch.",
+    distinct:
+      "Digital Foundation is the entry package. It is three things: a website, a CRM, and the follow-up automations between them. It does NOT include the AI receptionist, brand management or review generation — those are in the Digital Office, which is the larger package.",
     promise: "The groundwork, done once, properly.",
     pain: {
       heading: "A website on its own is a brochure nobody asked for.",
@@ -139,6 +154,10 @@ export const PACKAGES: Package[] = [
     },
     faqs: [
       {
+        q: "What's the difference between Digital Foundation and The Digital Office?",
+        a: "Digital Foundation is three things: the website, the CRM and the follow-up automations. The Digital Office is those same three plus the AI receptionist, brand management and review generation — six things. Foundation is the smaller package and Infrastructure contains it. The quickest way to tell which one you are being quoted is whether the AI receptionist is included: if it is, that is the Digital Office.",
+      },
+      {
         q: "Do I own the website?",
         a: "Yes. Once you have paid for it, the site's content, branding and copy are yours — that is written into our terms. We keep our own methods and templates, and the platforms we build on keep their own terms.",
       },
@@ -155,18 +174,20 @@ export const PACKAGES: Package[] = [
         a: "No. It is set up and run for you. You can log in and look at it whenever you want, and most people do at the start and then stop bothering.",
       },
     ],
-    relatedPackage: "digital-infrastructure",
+    relatedPackage: "digital-office",
     featuredPost: "website-that-does-nothing",
   },
   {
-    slug: "digital-infrastructure",
-    name: "Digital Infrastructure",
+    slug: "digital-office",
+    name: "The Digital Office",
     icon: Network,
     order: 2,
     positioning:
-      "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
+      "Everything in the Foundation, plus the phone answered, the follow-up run and the reputation kept.",
     forWho:
       "A business where the work is good and the bottleneck is that everything routes through one person.",
+    distinct:
+      "The Digital Office is the middle package, and it contains all of Digital Foundation. It is six things: the website, the CRM and the follow-up automations, plus the AI receptionist, brand management and review generation. It does NOT include paid ads or SEO — those are in Growth Engine.",
     promise: "Your digital office, running without you in it.",
     pain: {
       heading: "The business doesn't stop while you're doing the actual work.",
@@ -236,6 +257,10 @@ export const PACKAGES: Package[] = [
     },
     faqs: [
       {
+        q: "What's the difference between Digital Foundation and The Digital Office?",
+        a: "Digital Foundation is three things: the website, the CRM and the follow-up automations. The Digital Office is those same three plus the AI receptionist, brand management and review generation — six things. Foundation is the smaller package and Infrastructure contains it. The quickest way to tell which one you are being quoted is whether the AI receptionist is included: if it is, that is the Digital Office.",
+      },
+      {
         q: "Will callers know they're talking to an AI?",
         a: "We do not pretend otherwise. In practice most callers care about getting an answer and getting booked in, not about who picked up.",
       },
@@ -268,6 +293,8 @@ export const PACKAGES: Package[] = [
       "The full infrastructure, plus paid traffic and search — demand pointed at a system that can hold it.",
     forWho:
       "A business whose infrastructure already works and whose limit is now how many people know it exists.",
+    distinct:
+      "Growth Engine is the largest package, and it contains all of the Digital Office. It is everything in that package — website, CRM, follow-up automations, AI receptionist, brand management, review generation — plus paid ads management and SEO/AEO. Ad spend is separate and goes directly to Meta or Google.",
     promise: "Turn the volume up on something that already works.",
     pain: {
       heading: "Traffic into a business that can't catch it is money set on fire.",
@@ -313,7 +340,7 @@ export const PACKAGES: Package[] = [
     },
     solution: {
       heading: "What's in it",
-      lead: "Everything in Digital Infrastructure, plus the two that bring people to it.",
+      lead: "Everything in the Digital Office, plus the two that bring people to it.",
       serviceSlugs: [
         "branded-websites",
         "crm-calendar-integrations",
@@ -345,7 +372,7 @@ export const PACKAGES: Package[] = [
         a: "You can, and we would usually talk you out of it. Pointing paid traffic at a business that cannot catch it is the most expensive way to find out the infrastructure was the problem.",
       },
     ],
-    relatedPackage: "digital-infrastructure",
+    relatedPackage: "digital-office",
     featuredPost: "ads-before-infrastructure",
   },
 ];

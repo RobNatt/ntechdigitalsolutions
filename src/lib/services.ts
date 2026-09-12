@@ -49,7 +49,7 @@ export interface Service {
   name: string;
   icon: LucideIcon;
   /*
-   * "core" = one of the five pieces of The Scalable Digital Infrastructure.
+   * "core" = one of the five pieces of The Scalable The Digital Office.
    * "alacarte" = a standalone service that isn't in the flagship bundle.
    *
    * The distinction matters on the catalogue: flattening all of them into one
@@ -395,7 +395,7 @@ export const SERVICES: Service[] = [
         a: "Yes, and that is where most of the value is. The calls you are least able to take are the evening and weekend ones.",
       },
     ],
-    relatedPackageSlug: "digital-infrastructure",
+    relatedPackageSlug: "digital-office",
     featuredPostSlug: "missed-call-math",
   },
   {
@@ -476,7 +476,7 @@ export const SERVICES: Service[] = [
         a: "The ones your customers actually use, which for most local businesses is fewer than people expect. Posting into five feeds badly is worse than two done properly.",
       },
     ],
-    relatedPackageSlug: "digital-infrastructure",
+    relatedPackageSlug: "digital-office",
     featuredPostSlug: "website-that-does-nothing",
   },
   {
@@ -557,7 +557,7 @@ export const SERVICES: Service[] = [
         a: "Google is where most local buying decisions get checked, so that is the default. Others can be added where they matter for your trade.",
       },
     ],
-    relatedPackageSlug: "digital-infrastructure",
+    relatedPackageSlug: "digital-office",
     featuredPostSlug: "website-that-does-nothing",
   },
   {

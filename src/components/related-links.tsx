@@ -12,9 +12,9 @@ import { Reveal } from "@/components/motion/reveal";
  *
  * DE-DUPLICATION IS THE POINT OF THIS COMPONENT, not a nicety. The first
  * version let each page assemble its own four, and on the Digital Foundation
- * package that produced "Digital Infrastructure, Digital Infrastructure, a blog
+ * package that produced "The Digital Office, The Digital Office, a blog
  * post, book a call" — because the package it sends you to next and the best
- * offer in the house are the same page. On the Digital Infrastructure page it
+ * offer in the house are the same page. On the Digital Office page it
  * was worse: the best-offer card linked to the page you were already on.
  *
  * So the component takes candidates in priority order and the current page's

@@ -107,7 +107,7 @@ export default function ServicesIndex() {
             </Reveal>
             <Reveal tier="chapter" index={1}>
               <p className="mt-4 max-w-[54ch] text-body text-muted-foreground">
-                The five pieces of The Scalable Digital Infrastructure. Each one
+                The five pieces of The Scalable The Digital Office. Each one
                 stands on its own, and they&apos;re built to run together.
               </p>
             </Reveal>
@@ -183,10 +183,10 @@ export default function ServicesIndex() {
         links={[
           {
             kind: "The best offer in the house",
-            title: "Digital Infrastructure",
+            title: "The Digital Office",
             blurb:
-              "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
-            href: "/packages/digital-infrastructure",
+              "Everything in the Foundation, plus the phone answered, the follow-up run and the reputation kept.",
+            href: "/packages/digital-office",
           },
           {
             kind: "Packages",

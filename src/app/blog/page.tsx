@@ -117,10 +117,10 @@ export default function BlogIndex() {
         links={[
           {
             kind: "The best offer in the house",
-            title: "Digital Infrastructure",
+            title: "The Digital Office",
             blurb:
-              "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
-            href: "/packages/digital-infrastructure",
+              "Everything in the Foundation, plus the phone answered, the follow-up run and the reputation kept.",
+            href: "/packages/digital-office",
           },
           {
             kind: "Packages",

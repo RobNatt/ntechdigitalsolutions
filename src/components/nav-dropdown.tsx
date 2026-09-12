@@ -50,7 +50,7 @@ export function NavDropdown({
   lifted: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const wide = items.length > 4;
+  const wide = items.length > 6;
   const groupRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelId = useId();
@@ -118,7 +118,7 @@ export function NavDropdown({
         id={panelId}
         hidden={!open}
         className={`absolute left-1/2 top-full z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 pt-3 ${
-          wide ? "w-[600px]" : "w-[340px]"
+          wide ? "w-[460px]" : "w-[280px]"
         }`}
       >
         <div className="overflow-hidden rounded-xl border border-black/[0.06] bg-white/98 p-2 shadow-[0_16px_48px_rgba(12,10,9,0.18),0_2px_8px_rgba(12,10,9,0.08)] backdrop-blur-xl">

@@ -15,7 +15,7 @@ import { Reveal } from "@/components/motion/reveal";
 /*
  * Chapter 3: the solution.
  *
- * The offer is called "The Scalable Digital Infrastructure", so the section is
+ * The offer is called "The Scalable The Digital Office", so the section is
  * built as literal infrastructure: a vertical spine with nodes, pieces
  * branching off alternating sides. The shape carries the idea — this layout
  * would make no sense for another business, which is the test it has to pass.

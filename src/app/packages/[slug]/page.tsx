@@ -54,13 +54,14 @@ export default async function PackagePage({
   const pkg = getPackage(slug);
   if (!pkg) notFound();
 
-  const { name, icon: Icon, promise, forWho, pain, story, solution, faqs } = pkg;
+  const { name, icon: Icon, promise, forWho, distinct, pain, story, solution, faqs } =
+    pkg;
   const pieces = solution.serviceSlugs
     .map((s) => getService(s))
     .filter((s) => s !== undefined);
   const related = getPackage(pkg.relatedPackage);
   const post = getPost(pkg.featuredPost);
-  const flagship = getPackage("digital-infrastructure");
+  const flagship = getPackage("digital-office");
 
   return (
     <main className="flex-1">
@@ -248,12 +249,21 @@ export default async function PackagePage({
                   {solution.heading}
                 </h2>
               </Reveal>
+              {/* The plain statement of which package this is and which it is
+                  not. Sits here because this is where someone comparing two of
+                  them is looking, and where a crawler finds it next to the list
+                  of what is actually inside. */}
               <Reveal tier="chapter" index={1}>
+                <p className="mt-8 max-w-[46ch] rounded-lg border border-border bg-card p-5 text-body text-card-foreground">
+                  {distinct}
+                </p>
+              </Reveal>
+              <Reveal tier="chapter" index={2}>
                 <p className="mt-8 max-w-[44ch] text-body-lg text-muted-foreground">
                   {solution.lead}
                 </p>
               </Reveal>
-              <Reveal tier="chapter" index={2}>
+              <Reveal tier="chapter" index={3}>
                 <p className="mt-8 max-w-[44ch] border-l border-cta/40 pl-6 text-body text-muted-foreground">
                   {solution.together}
                 </p>
@@ -354,10 +364,10 @@ export default async function PackagePage({
           },
           {
             kind: "The best offer in the house",
-            title: flagship ? flagship.name : "Digital Infrastructure",
+            title: flagship ? flagship.name : "The Digital Office",
             blurb:
               "The one we'd put almost anyone on — the whole digital office, running without you in it.",
-            href: "/packages/digital-infrastructure",
+            href: "/packages/digital-office",
           },
           {
             kind: "Reading",

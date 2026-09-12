@@ -38,6 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
+    { url: `${SITE_URL}/meet-the-founder`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 },
     ...POSTS.map((p) => ({
       url: `${SITE_URL}/blog/${p.slug}`,

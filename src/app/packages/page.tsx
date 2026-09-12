@@ -10,7 +10,7 @@ import { POSTS_BY_DATE } from "@/lib/posts";
 export const metadata: Metadata = {
   title: "Packages",
   description:
-    "Three ways to buy the system: the Digital Foundation, the full Digital Infrastructure, and the Growth Engine. What's in each, and which one fits.",
+    "Three ways to buy the system: the Digital Foundation, the full The Digital Office, and the Growth Engine. What's in each, and which one fits.",
   alternates: { canonical: "/packages" },
 };
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const INDEX_FAQS = [
   {
     q: "How do I know which one I need?",
-    a: "Start with what is breaking. If enquiries are getting lost or there is no real website, that is the Foundation. If the work is good and the problem is that everything routes through you, that is Digital Infrastructure. If the system already works and the limit is how many people know you exist, that is the Growth Engine.",
+    a: "Start with what is breaking. If enquiries are getting lost or there is no real website, that is the Foundation. If the work is good and the problem is that everything routes through you, that is the Digital Office. If the system already works and the limit is how many people know you exist, that is the Growth Engine.",
   },
   {
     q: "Can I move up later?",
@@ -162,10 +162,10 @@ export default function PackagesIndex() {
         links={[
           {
             kind: "The best offer in the house",
-            title: "Digital Infrastructure",
+            title: "The Digital Office",
             blurb:
-              "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
-            href: "/packages/digital-infrastructure",
+              "Everything in the Foundation, plus the phone answered, the follow-up run and the reputation kept.",
+            href: "/packages/digital-office",
           },
           {
             kind: "Services",

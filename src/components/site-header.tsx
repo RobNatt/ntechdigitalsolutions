@@ -43,16 +43,28 @@ import { PACKAGES_BY_ORDER } from "@/lib/packages";
  * or package added to lib/ appears in the nav without anyone remembering to put
  * it there — and, more to the point, cannot be missing from it.
  */
-const SERVICE_CHILDREN = SERVICES.map(({ name, slug, tagline }) => ({
+/*
+ * NAMES ONLY — NO DESCRIPTIONS. The dropdowns originally carried each item's
+ * one-liner, which put 1,117 characters of identical text on all 21 pages,
+ * including the full descriptions of Digital Foundation AND Digital
+ * Infrastructure. Stuart's knowledge base is built by crawling this site, so
+ * every page he retrieved described both packages, and he could not reliably
+ * tell them apart on a call. That is not a copywriting problem, it is a
+ * boilerplate problem: the distinguishing content was outweighed by navigation
+ * chrome repeated site-wide.
+ *
+ * The links have to stay server-rendered — that is how the crawler discovers
+ * pages at all — but the descriptions do not, and they belong on the pages they
+ * describe rather than on every page at once.
+ */
+const SERVICE_CHILDREN = SERVICES.map(({ name, slug }) => ({
   label: name,
   href: `/services/${slug}`,
-  blurb: tagline,
 }));
 
-const PACKAGE_CHILDREN = PACKAGES_BY_ORDER.map(({ name, slug, positioning }) => ({
+const PACKAGE_CHILDREN = PACKAGES_BY_ORDER.map(({ name, slug }) => ({
   label: name,
   href: `/packages/${slug}`,
-  blurb: positioning,
 }));
 
 export function SiteHeader() {
@@ -124,6 +136,22 @@ export function SiteHeader() {
             }`}
           >
             Blog
+          </Link>
+          {/*
+            The founder interview. It earns a nav slot rather than living only in
+            the footer because it is the page Rob shows people in person — Stuart
+            asks the questions, and the page is part of what Stuart knows, so it
+            demonstrates the product and introduces the person at once.
+          */}
+          <Link
+            href="/meet-the-founder"
+            className={`rounded-full px-4 py-2 text-small transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+              lifted
+                ? "text-[#57534E] hover:bg-[#0C0A09]/[0.05] hover:text-[#1C1917]"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            Interview
           </Link>
         </div>
 

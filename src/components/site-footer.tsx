@@ -47,6 +47,12 @@ export function SiteFooter() {
               area without shifting the text off its baseline. */}
           <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small">
             <Link
+              href="/meet-the-founder"
+              className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Meet the founder
+            </Link>
+            <Link
               href="/services"
               className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >

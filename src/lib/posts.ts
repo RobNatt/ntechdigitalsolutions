@@ -155,7 +155,7 @@ export const POSTS: Post[] = [
       },
     ],
     relatedServiceSlug: "ai-receptionist",
-    relatedPackageSlug: "digital-infrastructure",
+    relatedPackageSlug: "digital-office",
   },
   {
     slug: "ads-before-infrastructure",
