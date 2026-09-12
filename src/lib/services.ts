@@ -49,7 +49,7 @@ export interface Service {
   name: string;
   icon: LucideIcon;
   /*
-   * "core" = one of the five pieces of The Scalable The Digital Office.
+   * "core" = one of the six pieces of The Digital Office.
    * "alacarte" = a standalone service that isn't in the flagship bundle.
    *
    * The distinction matters on the catalogue: flattening all of them into one
@@ -140,6 +140,10 @@ export const SERVICES: Service[] = [
       "The site is what everything else points at. Ads and search send people to it, social gives them a reason to look, reviews convince them once they arrive, and the receptionist picks up when they'd rather call than click.",
     faqs: [
       {
+        q: "Can I buy just the website?",
+        a: "Not on its own. The website is sold as part of the Digital Foundation, together with the CRM and the follow-up automations. A site with nothing behind it to catch and answer enquiries is the exact problem the Foundation exists to solve, so selling it alone would be selling you half a thing that cannot work.",
+      },
+      {
         q: "Do I own the website?",
         a: "Yes. Once you have paid for it, the site's content, branding and copy are yours. We keep our own methods and templates, and the platforms we build on keep their own terms.",
       },
@@ -219,6 +223,10 @@ export const SERVICES: Service[] = [
       "Automations need something to automate. They watch the CRM, fire on what the site collects and what the receptionist books, and trigger the review request at the point a job is marked done.",
     faqs: [
       {
+        q: "Can I buy just the automations?",
+        a: "Not on its own. The automations are sold as part of the Digital Foundation, together with the website and the CRM. Automations need something to automate — they fire on what the CRM holds and what the site collects, so on their own there is nothing for them to act on.",
+      },
+      {
         q: "Will this feel like spam to my customers?",
         a: "It should not, and that is a writing problem rather than a technical one. The sequences are written in your voice and are about the thing the person actually asked for.",
       },
@@ -297,6 +305,10 @@ export const SERVICES: Service[] = [
       "The CRM is the floor the rest stands on. Automations fire from it, the receptionist books into it, review requests trigger off it, and the site feeds it. Without it, every other service is holding information it has nowhere to put.",
     faqs: [
       {
+        q: "Can I buy just the CRM?",
+        a: "Not on its own. The CRM is sold as part of the Digital Foundation, together with the website and the follow-up automations. A CRM with nothing feeding it is an empty database, which is why the three are one package.",
+      },
+      {
         q: "Do I have to learn the CRM?",
         a: "No. It is set up and run for you. You can log in and look whenever you want, and most people do at the start and then stop bothering.",
       },
@@ -374,6 +386,10 @@ export const SERVICES: Service[] = [
     connects:
       "Stuart books into the calendar the website exposes, and the automations pick up anyone he couldn't close on the call. He's also the face of the brand — the same character you'll see in the social content.",
     faqs: [
+      {
+        q: "Can I buy just the AI receptionist?",
+        a: "Yes. It is one of the services that works on its own, and it is the usual choice for a business that is fine on marketing but losing calls. It works better pointed at a calendar and a CRM it can book into, which is what the Digital Foundation provides, but it does not require them.",
+      },
       {
         q: "Will callers know they're talking to an AI?",
         a: "We do not pretend otherwise. In practice most callers care about getting an answer and getting booked in, not about who picked up.",
@@ -460,6 +476,10 @@ export const SERVICES: Service[] = [
       "Social is the top of the funnel — it sends people to the site, where the receptionist and the automations take over. On its own it's noise; connected, it's the part that makes people aware you exist at all.",
     faqs: [
       {
+        q: "Can I buy just brand management?",
+        a: "Yes. It works on its own. It works better when the posts point at a site built to convert and a CRM that catches whoever arrives, but it does not require them.",
+      },
+      {
         q: "Who writes the posts?",
         a: "We do, in your voice, from what is actually happening in the business. You approve before anything goes out.",
       },
@@ -541,6 +561,10 @@ export const SERVICES: Service[] = [
       "Reviews are what convince someone the site and the social already brought in. They're the last thing a person checks before calling, and the receptionist answers the call they prompt.",
     faqs: [
       {
+        q: "Can I buy just the review generator?",
+        a: "Yes. It works on its own, as long as you have a way to tell us a job is finished — that is the moment the request goes out. It runs more smoothly when that signal comes from a CRM we already manage.",
+      },
+      {
         q: "Are you filtering out bad reviews?",
         a: "No, and that would breach Google's policies. Everyone gets asked. Happy customers get a direct link because that is the step most people never get around to. Anyone less happy is asked privately what would have made it better — and they can still post publicly whenever they like. We are not helping write a bad review; we are not blocking one either.",
       },
@@ -619,6 +643,10 @@ export const SERVICES: Service[] = [
     connects:
       "Ads are the fastest tap you can turn on, and the easiest money to waste. They need the website to land on, the receptionist to answer what they generate, and the automations to follow up — without those, you are paying to send people somewhere that drops them.",
     faqs: [
+      {
+        q: "Can I buy just paid ads?",
+        a: "Yes, and we will still ask what happens after the click. Ads bought on their own point traffic at whatever you already have, so if the page does not convert and the phone rings out, the click cost the same and bought nothing. We would rather say that before you spend than after.",
+      },
       {
         q: "Is ad spend included?",
         a: "No. Ad spend goes directly to Meta or Google and is separate from what we charge to manage it. You see exactly what was spent and where.",
@@ -699,6 +727,10 @@ export const SERVICES: Service[] = [
     connects:
       "SEO and AEO are slow and compounding; paid ads are fast and stop the moment you stop paying. Run together, one covers the other's weakness — and both need a site worth landing on and a receptionist to answer what they produce.",
     faqs: [
+      {
+        q: "Can I buy just SEO and AEO?",
+        a: "Yes. It runs on its own and it compounds over months rather than switching on. It needs a site worth ranking, so if the site is the weak point we will say so before taking the work.",
+      },
       {
         q: "How long until this does anything?",
         a: "Longer than anyone selling it wants to say. It is a compounding channel rather than a switch, which is exactly why it runs alongside paid rather than instead of it.",

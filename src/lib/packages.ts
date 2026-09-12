@@ -253,7 +253,7 @@ export const PACKAGES: Package[] = [
         "review-generator",
       ],
       together:
-        "Each of these is worth something alone and considerably more connected. The receptionist books into the same calendar the automations watch. The automations ask for the review at the point the job is marked done. The reviews feed what a stranger finds when the site brought them in. It is one loop, not four subscriptions.",
+        "Each of these is worth something alone and considerably more connected. The receptionist books into the same calendar the automations watch. The automations ask for the review at the point the job is marked done. The reviews feed what a stranger finds when the site brought them in. It is one loop, not a stack of separate subscriptions.",
     },
     faqs: [
       {

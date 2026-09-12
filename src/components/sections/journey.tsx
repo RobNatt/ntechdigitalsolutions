@@ -49,7 +49,7 @@ const COPY = {
     {
       n: "03",
       title: "Grow without changing how you work",
-      body: "You stop losing business to a missed call or a follow-up that never happened. Nothing about how you actually work changes — you just upgrade what's running behind it. Five pieces, working as one system.",
+      body: "You stop losing business to a missed call or a follow-up that never happened. Nothing about how you actually work changes — you just upgrade what's running behind it. All of it, working as one system.",
       stat: "Nothing to relearn"
     },
   ],

@@ -151,7 +151,7 @@ export function SiteHeader() {
                 : "text-white/70 hover:bg-white/10 hover:text-white"
             }`}
           >
-            Interview
+            Meet the Founder
           </Link>
         </div>
 

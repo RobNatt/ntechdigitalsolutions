@@ -8,55 +8,43 @@ import {
   useTransform,
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Layers, Share2, Star } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
+import { SERVICES } from "@/lib/services";
 
 /*
  * Chapter 3: the solution.
  *
- * The offer is called "The Scalable The Digital Office", so the section is
- * built as literal infrastructure: a vertical spine with nodes, pieces
- * branching off alternating sides. The shape carries the idea — this layout
+ * Built as literal infrastructure — a vertical spine with nodes, pieces
+ * branching off alternating sides. The shape carries the idea, and this layout
  * would make no sense for another business, which is the test it has to pass.
  *
  * THE CURRENT: a charge travels down the spine as you scroll, and each node
  * lights when it arrives. Scroll position drives it directly, so it reads as
- * one continuous system energising rather than five things fading in.
+ * one continuous system energising rather than a list of things fading in.
  *
  * Motion rules hold. The travelling line is scaleY (transform) and the nodes
  * change colour and glow — no layout properties. Under reduced motion the whole
  * spine is drawn and every node is lit from the start, with nothing moving.
  *
- * FOUR pieces, not five: website, CRM and follow-up automations were merged
- * into the Digital Foundation, because they are one product. Rob's heading
- * still says "not five tools" — that reads as the pile of separate tools a
- * business would otherwise juggle, not as a count of what's listed below, but
- * it's his line to confirm.
+ * THE PIECES ARE DERIVED FROM lib/services.ts, NOT HAND-WRITTEN. They used to be
+ * a hand-kept list, and it went stale twice: it still listed "Digital
+ * Foundation" as a piece after Foundation became a package, and it carried a
+ * count that no longer matched the catalogue. That is not cosmetic — the voice
+ * agent's knowledge base is built by crawling this site, so the home page
+ * calling Foundation a piece while the packages pages call it a package is
+ * exactly the kind of contradiction that makes him wrong on a call. Deriving it
+ * means the home page cannot disagree with the catalogue again.
  *
  * No pricing is shown — that is a conversation, not a header.
  */
 
-interface Piece {
-  icon: LucideIcon;
-  name: string;
-  body: string;
-}
-
-const PIECES: Piece[] = [
-  {
-    icon: Layers,
-    name: "Digital Foundation",
-    body: "Your site, your CRM, and the follow-up that runs between them. One piece, because you can't really have one without the others.",
-  },
-  { icon: Bot, name: "AI receptionist", body: "Picks up every call and gets it on the calendar, even when you can't." },
-  { icon: Share2, name: "Brand Management", body: "Your posts stay active, and the people commenting get followed up with." },
-  { icon: Star, name: "Review generator", body: "Happy customers get asked at the right moment, in public. Anything less comes to you first, privately." },
-];
+const PIECES = SERVICES.filter((s) => s.tier === "core").map(
+  ({ icon, name, tagline }) => ({ icon, name, body: tagline }),
+);
 
 const COPY = {
   overline: "Chapter three",
-  heading: "One system, not five tools",
+  heading: "One system, not six subscriptions",
   lead: "A website nobody looks at, a receptionist with no calendar to book into, reviews nobody follows up on — separately, each piece does less. Connected, they cover for each other.",
 } as const;
 

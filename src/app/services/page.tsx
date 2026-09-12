@@ -9,7 +9,7 @@ import { SERVICES, type Service } from "@/lib/services";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "The N-Tech stack — website, follow-up automations, AI receptionist, social media management and review generation — plus paid ads and SEO/AEO à la carte.",
+    "The N-Tech stack — branded websites, CRM and calendar integrations, text and email automations, an AI receptionist, brand management and review generation — plus paid ads and SEO/AEO.",
 };
 
 /*
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  *
  * Every piece is available on its own — that's the à la carte offer — but the
  * page has to keep making the argument that they're worth more connected, or it
- * becomes a menu and the whole "one system, not five tools" position collapses.
+ * becomes a menu and the whole "one system, not six subscriptions" position collapses.
  * So: the pieces are listed as cards, and the section beneath restates the
  * connection rather than letting the grid be the last word.
  *
@@ -107,8 +107,9 @@ export default function ServicesIndex() {
             </Reveal>
             <Reveal tier="chapter" index={1}>
               <p className="mt-4 max-w-[54ch] text-body text-muted-foreground">
-                The five pieces of The Scalable The Digital Office. Each one
-                stands on its own, and they&apos;re built to run together.
+                The six pieces of The Digital Office. Three of them — the
+                website, the CRM and the automations — are sold together as the
+                Digital Foundation. The rest can be added on their own.
               </p>
             </Reveal>
             <ServiceGrid items={core} />

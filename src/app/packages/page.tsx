@@ -43,7 +43,7 @@ const INDEX_FAQS = [
   },
   {
     q: "Can I buy just one piece?",
-    a: "Some of them, yes — paid ads and SEO both run standalone. The Foundation does not split, because a website with no CRM behind it and no follow-up in front of it is the exact problem we built it to solve.",
+    a: "Most of them, yes. The AI receptionist, brand management, review generation, paid ads and SEO can each be bought on their own. The one that does not split is the Digital Foundation: the website, the CRM and the follow-up automations are sold together, because a website with no CRM behind it and no follow-up in front of it is the exact problem we built it to solve.",
   },
 ];
 

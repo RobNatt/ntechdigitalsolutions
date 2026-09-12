@@ -25,8 +25,8 @@ export default function TermsOfService() {
       <Section heading="What we do">
         <p>
           We build and manage digital infrastructure for local businesses:
-          websites, follow-up automations, an AI receptionist, social media
-          management, and review generation. What you receive depends on what
+          websites, CRM and calendar integrations, text and email automations,
+          an AI receptionist, brand management, and review generation. What you receive depends on what
           you&apos;ve agreed to — the specific services, deliverables, and
           amounts are set out separately in your quote or agreement, and that
           document governs if it conflicts with anything here.

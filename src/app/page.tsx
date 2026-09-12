@@ -10,7 +10,7 @@ import { Climax } from "@/components/sections/climax";
  * The stack was briefly moved ahead of "how it works" because the offer arrived
  * too late on the page. His rewrite fixes that a better way — chapter two now
  * describes the whole system rather than just the receptionist, and closes on
- * "five pieces, working as one system". The offer lands in chapter two either
+ * "all of it, working as one system". The offer lands in chapter two either
  * way, and this keeps his structure.
  */
 
