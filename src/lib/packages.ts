@@ -25,11 +25,12 @@ import { Layers, Network, Rocket } from "lucide-react";
 export interface PackageFaq {
   q: string;
   /**
-   * DRAFT. Every answer is written to be true and conservative — no results
-   * promised, no price, no client named — but none of it is Rob's approved
-   * wording yet. This matters more than usual: Stuart's knowledge base is
-   * populated by crawling these pages, so a wrong answer here becomes a wrong
-   * answer on the phone.
+   * APPROVED 12 September 2026, along with every other answer on the site.
+   *
+   * The two disambiguation answers in this file carry more weight than the
+   * rest: they are what stops the voice agent confusing Digital Foundation with
+   * The Digital Office, which it did on live calls before they existed. Changing
+   * them is changing the fix.
    */
   a: string;
 }

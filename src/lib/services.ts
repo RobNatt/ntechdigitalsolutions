@@ -67,10 +67,15 @@ export interface Service {
   /** How this piece is worth more connected than alone. */
   connects: string;
   /**
-   * DRAFT ANSWERS. True and conservative — no results, no price, no client
-   * named — but not Rob's approved wording. These matter more than normal
-   * copy: Stuart's knowledge base is built by crawling these pages, so a wrong
-   * answer here becomes a wrong answer on a call.
+   * APPROVED 12 September 2026. Rob read all 60 answers across the site in one
+   * sitting and signed them off without changes.
+   *
+   * Treat them as shipped copy from here: they are what Stuart says on the
+   * phone, because his knowledge base is built by crawling these pages. A
+   * change to an answer here is a change to what a stranger is told out loud,
+   * so it goes past Rob rather than being tidied in passing. No results
+   * promised, no price, no client named — that constraint holds for anything
+   * added later.
    */
   faqs: { q: string; a: string }[];
   /** The package this service belongs to. One of the four required links. */
