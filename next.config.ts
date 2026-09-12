@@ -6,8 +6,11 @@ const nextConfig: NextConfig = {
   // already have been shared.
   async redirects() {
     return [
-      { source: "/services/website", destination: "/services/digital-foundation", permanent: true },
-      { source: "/services/follow-up-automations", destination: "/services/digital-foundation", permanent: true },
+      // Digital Foundation stopped being a service on 11 September 2026 and became
+      // a package. These three all predate that and must not 404.
+      { source: "/services/website", destination: "/services/branded-websites", permanent: true },
+      { source: "/services/follow-up-automations", destination: "/services/text-email-automations", permanent: true },
+      { source: "/services/digital-foundation", destination: "/packages/digital-foundation", permanent: true },
       { source: "/services/social-media-management", destination: "/services/brand-management", permanent: true },
     ];
   },

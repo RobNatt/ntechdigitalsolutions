@@ -1,7 +1,9 @@
 import {
   Bot,
-  Layers,
+  CalendarCheck,
+  Globe,
   Megaphone,
+  MessagesSquare,
   Search,
   Share2,
   Star,
@@ -11,6 +13,16 @@ import {
 /*
  * The offer, as data.
  *
+ * SPLIT 11 September 2026. Website, CRM and follow-up automations were one
+ * service called the Digital Foundation. They are now three services —
+ * Branded Websites, Text & Email Automations, and CRM & Calendar Integrations —
+ * and the Digital Foundation is a PACKAGE only, in lib/packages.ts. A service
+ * page answers what one thing does; a package page answers what happens when
+ * several run together, and the Foundation was always the second kind of page
+ * wearing the first kind's clothes. /services/digital-foundation redirects to
+ * the package.
+ *
+ * Superseded note, kept for the reasoning:
  * Website, CRM and follow-up automations are ONE product — the Digital
  * Foundation — not three. They were briefly separate services and that was
  * wrong: a site with no CRM behind it is a leaflet, and automations with
@@ -25,10 +37,11 @@ import {
  * ALL LONG-FORM COPY HERE IS A DRAFT written in Rob's register, not final. It's
  * here so the pages are real enough to judge; every line is his to rewrite.
  *
- * NO PRICING ON THESE PAGES, deliberately. The home page holds the same line —
- * price is a conversation, not a header — and the flagship anchors at $3,000
- * with room to move, which published numbers would undercut. Flagged as a
- * question rather than decided unilaterally.
+ * NO PRICING ANYWHERE ON THE SITE. Settled 11 September 2026 and described by
+ * Rob as final after several reversals: no price appears on a service page, a
+ * package page, or anywhere else. The pricing tier component was deleted rather
+ * than unmounted so it cannot quietly return. Price is a conversation on the
+ * call.
  */
 
 export interface Service {
@@ -53,21 +66,30 @@ export interface Service {
   included: string[];
   /** How this piece is worth more connected than alone. */
   connects: string;
+  /**
+   * DRAFT ANSWERS. True and conservative — no results, no price, no client
+   * named — but not Rob's approved wording. These matter more than normal
+   * copy: Stuart's knowledge base is built by crawling these pages, so a wrong
+   * answer here becomes a wrong answer on a call.
+   */
+  faqs: { q: string; a: string }[];
+  /** The package this service belongs to. One of the four required links. */
+  relatedPackageSlug: string;
+  /** The post this service sends people to. One of the four required links. */
+  featuredPostSlug: string;
 }
 
 export const SERVICES: Service[] = [
   {
-    slug: "digital-foundation",
+    slug: "branded-websites",
     tier: "core",
-    name: "Digital Foundation",
-    icon: Layers,
-    tagline:
-      "Your site, your CRM, and the follow-up that runs between them.",
-    promise:
-      "The foundation everything else is built on — and you can't really have one part without the others.",
+    name: "Branded Websites",
+    icon: Globe,
+    tagline: "A site built for your business, not a template with your logo on it.",
+    promise: "A site someone believes before they've spoken to you.",
     situation: {
-      heading: "A site with nothing behind it is a leaflet.",
-      lead: "Someone looks you up, decides in about ten seconds whether you're worth contacting, and reaches out. What happens in the next few minutes decides whether that turns into work — and it usually happens without you.",
+      heading: "Ten seconds decides whether you're worth contacting.",
+      lead: "Someone looks you up before they call. What they find in the first few seconds decides whether there is a call at all, and almost none of that decision is about your actual work.",
       rows: [
         {
           n: "01",
@@ -76,13 +98,13 @@ export const SERVICES: Service[] = [
         },
         {
           n: "02",
-          title: "Nowhere for the lead to land",
-          body: "A name on a notepad, a voicemail, a message in an inbox with forty other things. If every enquiry isn't in one place, some of them aren't being worked at all.",
+          title: "The template everyone else has",
+          body: "The same stock photo, the same three icon boxes, the same wording as the two competitors they just looked at. Nothing in it says why you rather than them.",
         },
         {
           n: "03",
-          title: "The reply that came too late",
-          body: "They sent it at 4pm. You saw it at 8. By then they'd messaged two other people, and whoever answered first is already talking to them.",
+          title: "Slow, and unreadable on a phone",
+          body: "Most people checking you out are on a phone, standing somewhere, half distracted. A site that takes four seconds and then needs pinching to read has already lost them.",
         },
       ],
     },
@@ -91,32 +113,208 @@ export const SERVICES: Service[] = [
       steps: [
         {
           n: "01",
-          title: "The site gets built first",
-          body: "You see the finished site for your business before you sign anything. Not a mockup, not a template with your logo dropped in — the real thing, built and working.",
+          title: "You see it before you sign anything",
+          body: "We build the real site for your business first. Not a mockup and not a template with your logo dropped in — the finished thing, live, so there is nothing to imagine.",
         },
         {
           n: "02",
-          title: "Every enquiry lands in the CRM",
-          body: "Form, call, message, wherever it came from. One place, with a record of what they wanted and when they asked, so nothing quietly disappears.",
+          title: "Built around the one next step",
+          body: "Every page has a single obvious action on it and a reason to take it. That is the difference between a brochure and a front door.",
         },
         {
           n: "03",
-          title: "They hear back before they forget",
-          body: "A text or an email goes out straight away, whether you've seen it or not — and again if they go quiet. The chase happens without anyone having to remember to chase.",
+          title: "Fast, findable, and yours",
+          body: "Built to load quickly and to be read by search engines and AI assistants alike. Once you've paid for it, the content and the branding belong to you.",
         },
       ],
     },
     included: [
-      "A fully branded site, built for your business specifically",
+      "A fully branded site, designed for your business specifically",
       "Mobile-first — most people looking you up are on a phone",
       "Built to load fast and be found, not just to look good",
-      "A CRM holding every lead in one place",
-      "Instant confirmation by text or email when someone reaches out",
-      "Follow-up sequences that run on their own, written in your voice",
+      "A clear next step on every page, wired into the CRM",
+      "Written to be readable by search engines and AI assistants",
       "Hosting and upkeep handled",
     ],
     connects:
-      "This is the piece everything else plugs into. The receptionist books into the calendar the site exposes, ads and SEO send people to it, social points at it, and reviews are what convince them once they arrive. Take any other service without this and it has nowhere to send the work it generates.",
+      "The site is what everything else points at. Ads and search send people to it, social gives them a reason to look, reviews convince them once they arrive, and the receptionist picks up when they'd rather call than click.",
+    faqs: [
+      {
+        q: "Do I own the website?",
+        a: "Yes. Once you have paid for it, the site's content, branding and copy are yours. We keep our own methods and templates, and the platforms we build on keep their own terms.",
+      },
+      {
+        q: "Can I see it before I commit?",
+        a: "That is how we work. The site is built before any conversation about signing, so you are looking at the real thing rather than imagining it.",
+      },
+      {
+        q: "What happens to my existing site?",
+        a: "It stays up until the new one is ready, then we point the domain across. There is no window where nothing is live.",
+      },
+      {
+        q: "Can I make changes myself?",
+        a: "Changes go through us and are part of what you pay monthly. That is deliberate — it is how the site stays fast and consistent instead of slowly filling up with plugins.",
+      },
+    ],
+    relatedPackageSlug: "digital-foundation",
+    featuredPostSlug: "website-that-does-nothing",
+  },
+  {
+    slug: "text-email-automations",
+    tier: "core",
+    name: "Text & Email Automations",
+    icon: MessagesSquare,
+    tagline: "The follow-up that runs whether you remember it or not.",
+    promise: "Nobody sits waiting on you to get around to them.",
+    situation: {
+      heading: "The follow-up is where most of the work gets lost.",
+      lead: "Not at the enquiry and not at the quote — in the gap between them, where a reply was owed and the day got in the way.",
+      rows: [
+        {
+          n: "01",
+          title: "The reply that came too late",
+          body: "They sent it at 4pm. You saw it at 8. By then they had messaged two other people, and whoever answered first is already talking to them.",
+        },
+        {
+          n: "02",
+          title: "The quote nobody chased",
+          body: "You sent it. They said they would think about it. Neither of you mentioned it again, and it was never a decision — it just expired.",
+        },
+        {
+          n: "03",
+          title: "The no-show a reminder would have caught",
+          body: "They booked, they forgot, the slot went empty. The fix was one message the day before that nobody had time to send.",
+        },
+      ],
+    },
+    how: {
+      heading: "How it works",
+      steps: [
+        {
+          n: "01",
+          title: "They hear back immediately",
+          body: "A text or an email goes out the moment someone reaches out, whether you have seen it or not — and it says something useful rather than confirming receipt.",
+        },
+        {
+          n: "02",
+          title: "The chase runs on its own",
+          body: "If they go quiet, they get followed up. If they booked, they get reminded. If the job is done, they get asked how it went. Written in your voice, sent on a schedule nobody has to remember.",
+        },
+        {
+          n: "03",
+          title: "You step in only when it matters",
+          body: "The sequence hands off to you at the point a person is actually needed, with the whole history attached rather than a name and a phone number.",
+        },
+      ],
+    },
+    included: [
+      "Instant confirmation by text or email when someone reaches out",
+      "Follow-up sequences that run on their own, written in your voice",
+      "Appointment reminders before, and check-ins after",
+      "Quote and estimate chasing without you doing the chasing",
+      "Consent and opt-out handled correctly, with STOP honoured",
+      "Every message logged against the contact in the CRM",
+    ],
+    connects:
+      "Automations need something to automate. They watch the CRM, fire on what the site collects and what the receptionist books, and trigger the review request at the point a job is marked done.",
+    faqs: [
+      {
+        q: "Will this feel like spam to my customers?",
+        a: "It should not, and that is a writing problem rather than a technical one. The sequences are written in your voice and are about the thing the person actually asked for.",
+      },
+      {
+        q: "What about text message consent rules?",
+        a: "Consent is collected explicitly, opt-outs are honoured automatically when someone replies STOP, and messaging runs on a carrier-registered number. If we operate messaging on your behalf, you remain responsible for how the numbers on your list were obtained.",
+      },
+      {
+        q: "Can I still message people myself?",
+        a: "Yes, and it lands in the same thread the automation is using, so nobody gets the same message twice from two directions.",
+      },
+      {
+        q: "What if someone replies?",
+        a: "The sequence stops and it comes to you. A reply means a person is ready to talk, and continuing to send scheduled messages at that point is the fastest way to undo the good the system just did.",
+      },
+    ],
+    relatedPackageSlug: "digital-foundation",
+    featuredPostSlug: "missed-call-math",
+  },
+  {
+    slug: "crm-calendar-integrations",
+    tier: "core",
+    name: "CRM & Calendar Integrations",
+    icon: CalendarCheck,
+    tagline: "Every lead in one place, every booking on one calendar.",
+    promise: "Stop keeping the list in your head.",
+    situation: {
+      heading: "An enquiry in four places is an enquiry in no place.",
+      lead: "Most businesses this size run on a mix of a phone, an inbox, a notepad and memory. None of it is one system, so nothing gets handled the same way twice.",
+      rows: [
+        {
+          n: "01",
+          title: "Nowhere for the lead to land",
+          body: "A name on a notepad, a voicemail, a message in an inbox with forty other things. If every enquiry is not in one place, some of them are not being worked at all.",
+        },
+        {
+          n: "02",
+          title: "Double bookings and dead slots",
+          body: "The calendar on your phone, the one on the wall and the one in your head disagree. Someone gets booked twice, or the day has a hole in it nobody noticed.",
+        },
+        {
+          n: "03",
+          title: "No idea what is actually happening",
+          body: "How many people got in touch last month? How many turned into work? For most businesses this size the honest answer is a guess.",
+        },
+      ],
+    },
+    how: {
+      heading: "How it works",
+      steps: [
+        {
+          n: "01",
+          title: "One place, every channel",
+          body: "Form, call, text, message — wherever it came from, it arrives as the same kind of record with the same history attached.",
+        },
+        {
+          n: "02",
+          title: "One calendar everything writes to",
+          body: "The booking link on the site, the receptionist on the phone and you in person all write to the same availability, so a slot cannot be sold twice.",
+        },
+        {
+          n: "03",
+          title: "You can finally see the shape of it",
+          body: "How many came in, where from, and what happened to them. Not a dashboard to study — just the answer when you want it.",
+        },
+      ],
+    },
+    included: [
+      "A CRM holding every lead in one place, whatever channel it arrived through",
+      "Full history on every contact — what they asked and when",
+      "Calendar and booking integration running on real availability",
+      "Pipeline stages that match how you actually work",
+      "Set up and run for you, not handed over as homework",
+    ],
+    connects:
+      "The CRM is the floor the rest stands on. Automations fire from it, the receptionist books into it, review requests trigger off it, and the site feeds it. Without it, every other service is holding information it has nowhere to put.",
+    faqs: [
+      {
+        q: "Do I have to learn the CRM?",
+        a: "No. It is set up and run for you. You can log in and look whenever you want, and most people do at the start and then stop bothering.",
+      },
+      {
+        q: "Can it work with the calendar I already use?",
+        a: "Usually, yes. Which calendar you are on is one of the first things we check, because a second calendar nobody looks at is worse than no calendar.",
+      },
+      {
+        q: "What happens to my existing contacts?",
+        a: "They come across, as long as they are in something we can export. Bringing history with you is the point — a CRM that starts empty is a CRM you will not trust.",
+      },
+      {
+        q: "Who owns the data?",
+        a: "You do. If you ever leave, you take your contacts and their history with you. We will not hold your accounts or your data hostage on the way out, and that is written into our terms.",
+      },
+    ],
+    relatedPackageSlug: "digital-foundation",
+    featuredPostSlug: "website-that-does-nothing",
   },
   {
     slug: "ai-receptionist",
@@ -175,6 +373,30 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "Stuart books into the calendar the website exposes, and the automations pick up anyone he couldn't close on the call. He's also the face of the brand — the same character you'll see in the social content.",
+    faqs: [
+      {
+        q: "Will callers know they're talking to an AI?",
+        a: "We do not pretend otherwise. In practice most callers care about getting an answer and getting booked in, not about who picked up.",
+      },
+      {
+        q: "What happens to calls it can't handle?",
+        a: "It hands off. Anything outside what it has been given goes to you as a message with the context attached, rather than the caller being stuck in a loop.",
+      },
+      {
+        q: "Can I keep my existing phone number?",
+        a: "Usually yes. It depends on your current carrier and how the number is held, and it is one of the first things we check.",
+      },
+      {
+        q: "How does it know what to say about my business?",
+        a: "It is given a knowledge base built from your website and from what you tell us about how you actually work. If the site does not answer a question, neither can it — which is why the pages and the phone get built together.",
+      },
+      {
+        q: "Does it work outside business hours?",
+        a: "Yes, and that is where most of the value is. The calls you are least able to take are the evening and weekend ones.",
+      },
+    ],
+    relatedPackageSlug: "digital-infrastructure",
+    featuredPostSlug: "missed-call-math",
   },
   {
     slug: "brand-management",
@@ -236,6 +458,26 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "Social is the top of the funnel — it sends people to the site, where the receptionist and the automations take over. On its own it's noise; connected, it's the part that makes people aware you exist at all.",
+    faqs: [
+      {
+        q: "Who writes the posts?",
+        a: "We do, in your voice, from what is actually happening in the business. You approve before anything goes out.",
+      },
+      {
+        q: "Do I have to send you photos?",
+        a: "It helps enormously and it is the single biggest thing you can do to make this work. Real photographs of real jobs beat anything we can source.",
+      },
+      {
+        q: "What happens when someone comments or messages?",
+        a: "It gets picked up and answered rather than sitting there. An unanswered comment from three weeks ago says more about a business than the post above it.",
+      },
+      {
+        q: "Which platforms?",
+        a: "The ones your customers actually use, which for most local businesses is fewer than people expect. Posting into five feeds badly is worse than two done properly.",
+      },
+    ],
+    relatedPackageSlug: "digital-infrastructure",
+    featuredPostSlug: "website-that-does-nothing",
   },
   {
     slug: "review-generator",
@@ -297,6 +539,26 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "Reviews are what convince someone the site and the social already brought in. They're the last thing a person checks before calling, and the receptionist answers the call they prompt.",
+    faqs: [
+      {
+        q: "Are you filtering out bad reviews?",
+        a: "No, and that would breach Google's policies. Everyone gets asked. Happy customers get a direct link because that is the step most people never get around to. Anyone less happy is asked privately what would have made it better — and they can still post publicly whenever they like. We are not helping write a bad review; we are not blocking one either.",
+      },
+      {
+        q: "When does the request go out?",
+        a: "At the point the job is marked done, which is when someone is most likely to say yes. A request that arrives three weeks later gets ignored.",
+      },
+      {
+        q: "What if someone leaves a bad review anyway?",
+        a: "It happens, and a page of nothing but five stars reads as fake in any case. What matters is that it sits among a steady stream of real ones rather than being the only thing there.",
+      },
+      {
+        q: "Does this work for platforms other than Google?",
+        a: "Google is where most local buying decisions get checked, so that is the default. Others can be added where they matter for your trade.",
+      },
+    ],
+    relatedPackageSlug: "digital-infrastructure",
+    featuredPostSlug: "website-that-does-nothing",
   },
   {
     slug: "paid-ads",
@@ -356,6 +618,26 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "Ads are the fastest tap you can turn on, and the easiest money to waste. They need the website to land on, the receptionist to answer what they generate, and the automations to follow up — without those, you are paying to send people somewhere that drops them.",
+    faqs: [
+      {
+        q: "Is ad spend included?",
+        a: "No. Ad spend goes directly to Meta or Google and is separate from what we charge to manage it. You see exactly what was spent and where.",
+      },
+      {
+        q: "How much should I spend?",
+        a: "Enough to learn something, which is usually less than people fear and more than they hope. We would rather start small and let the results decide than commit you to a number on day one.",
+      },
+      {
+        q: "Why won't you run ads on their own?",
+        a: "Because the click costs the same whether the business can catch the person or not. Pointing paid traffic at a site that collects nothing and a phone that rings out is the most expensive possible way to discover the infrastructure was the problem.",
+      },
+      {
+        q: "Who owns the ad accounts?",
+        a: "You do. We work inside your accounts, so if we ever part ways the history and the audiences stay with you.",
+      },
+    ],
+    relatedPackageSlug: "growth-engine",
+    featuredPostSlug: "ads-before-infrastructure",
   },
   {
     slug: "seo-aeo",
@@ -416,6 +698,26 @@ export const SERVICES: Service[] = [
     ],
     connects:
       "SEO and AEO are slow and compounding; paid ads are fast and stop the moment you stop paying. Run together, one covers the other's weakness — and both need a site worth landing on and a receptionist to answer what they produce.",
+    faqs: [
+      {
+        q: "How long until this does anything?",
+        a: "Longer than anyone selling it wants to say. It is a compounding channel rather than a switch, which is exactly why it runs alongside paid rather than instead of it.",
+      },
+      {
+        q: "What is AEO?",
+        a: "Answer Engine Optimisation — being the source an AI assistant uses when someone asks it a question instead of running a search. It overlaps heavily with good SEO, and it is increasingly where the answer actually gets given.",
+      },
+      {
+        q: "Can you guarantee a ranking?",
+        a: "No, and anyone who does is either guessing or lying. Rankings are set by companies whose algorithms nobody outside them controls.",
+      },
+      {
+        q: "Is this different from what my last SEO person did?",
+        a: "Probably in one specific way: the target is terms with buying intent rather than terms with volume. Ranking for something nobody searches with money in hand moves a report and nothing else.",
+      },
+    ],
+    relatedPackageSlug: "growth-engine",
+    featuredPostSlug: "ads-before-infrastructure",
   },
 ];
 

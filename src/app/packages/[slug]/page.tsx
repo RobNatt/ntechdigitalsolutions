@@ -3,31 +3,31 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
-import { ServiceCurrent } from "@/components/service-current";
 import { FaqSection } from "@/components/faq-section";
 import { RelatedLinks } from "@/components/related-links";
-import { SERVICES, getService } from "@/lib/services";
-import { getPackage } from "@/lib/packages";
+import { PACKAGES, getPackage } from "@/lib/packages";
+import { getService } from "@/lib/services";
 import { getPost } from "@/lib/posts";
 
 /*
- * One template, eight service pages.
+ * One template, three package pages.
  *
  * The arc is the standard one for every content page on this site: pain, then
  * story, then solution, then the call to action, then the FAQ, then the
- * four-way link block. A package page uses the identical shape — what differs
- * is that a service page answers "what is this and what does it do", where a
- * package page answers "what happens when several of these run together".
+ * four-way link block. A visitor who has read a service page should recognise
+ * the shape immediately — that repetition is the point, not a shortcut.
  *
- * The block that used to close this page listed the other services — five cards
- * of them, which was both one too many against the four-link rule and a dead
- * end: it sent people sideways forever without ever offering the package, the
- * reading or the call. The RelatedLinks component replaced it and enforces
- * four distinct destinations by construction.
+ * What makes a package page different from a service page is the solution
+ * section. A service page explains what one thing does. This explains what
+ * happens when several of them run together, and every piece in it is a link to
+ * that service's own page, which is where most of the internal linking on the
+ * site now comes from.
+ *
+ * NO PRICES. See lib/packages.ts.
  */
 
 export function generateStaticParams() {
-  return SERVICES.map(({ slug }) => ({ slug }));
+  return PACKAGES.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -36,37 +36,31 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
-  if (!service) return {};
+  const pkg = getPackage(slug);
+  if (!pkg) return {};
   return {
-    title: service.name,
-    description: service.tagline,
-    alternates: { canonical: `/services/${service.slug}` },
+    title: pkg.name,
+    description: pkg.positioning,
+    alternates: { canonical: `/packages/${pkg.slug}` },
   };
 }
 
-export default async function ServicePage({
+export default async function PackagePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = getService(slug);
-  if (!service) notFound();
+  const pkg = getPackage(slug);
+  if (!pkg) notFound();
 
-  const {
-    name,
-    icon: Icon,
-    promise,
-    situation,
-    how,
-    included,
-    connects,
-    faqs,
-  } = service;
-
-  const pkg = getPackage(service.relatedPackageSlug);
-  const post = getPost(service.featuredPostSlug);
+  const { name, icon: Icon, promise, forWho, pain, story, solution, faqs } = pkg;
+  const pieces = solution.serviceSlugs
+    .map((s) => getService(s))
+    .filter((s) => s !== undefined);
+  const related = getPackage(pkg.relatedPackage);
+  const post = getPost(pkg.featuredPost);
+  const flagship = getPackage("digital-infrastructure");
 
   return (
     <main className="flex-1">
@@ -82,11 +76,11 @@ export default async function ServicePage({
         <div className="mx-auto max-w-[1280px]">
           <Reveal trigger="mount" tier="chapter" index={0}>
             <Link
-              href="/services"
+              href="/packages"
               className="inline-flex min-h-[24px] items-center gap-2 text-overline uppercase text-muted-foreground transition-colors duration-[180ms] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <ArrowLeft aria-hidden="true" className="size-3" />
-              All services
+              All packages
             </Link>
           </Reveal>
 
@@ -108,13 +102,13 @@ export default async function ServicePage({
               </Reveal>
 
               <Reveal trigger="mount" tier="chapter" index={2}>
-                <h1 className="mt-8 max-w-[20ch] text-display font-heading text-foreground">
+                <h1 className="mt-8 max-w-[18ch] text-display font-heading text-foreground">
                   {promise}
                 </h1>
               </Reveal>
 
               <Reveal trigger="mount" tier="chapter" index={3}>
-                <div className="mt-10">
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                   <Link
                     href="/book-a-call"
                     className="group inline-flex items-center justify-center gap-2 rounded-md bg-cta px-8 py-4 text-body font-medium text-on-cta transition-[transform,box-shadow] duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
@@ -129,59 +123,45 @@ export default async function ServicePage({
               </Reveal>
             </div>
 
-            {/* Which package this belongs to — a link, offset from the headline. */}
-            {pkg ? (
-              <div className="lg:col-span-4 lg:col-start-9 lg:pt-24">
-                <Reveal trigger="mount" tier="chapter" index={3}>
-                  <div className="border-l border-cta/40 pl-6">
-                    <p className="text-overline uppercase text-muted-foreground">
-                      Part of
-                    </p>
-                    <Link
-                      href={`/packages/${pkg.slug}`}
-                      className="group mt-4 inline-flex min-h-[24px] items-center gap-2 text-body-lg font-medium text-foreground transition-colors duration-[180ms] hover:text-cta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                    >
-                      {pkg.name}
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="size-4 shrink-0 transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
-                      />
-                    </Link>
-                    <p className="mt-3 text-small text-muted-foreground">
-                      {pkg.positioning}
-                    </p>
-                  </div>
-                </Reveal>
-              </div>
-            ) : null}
+            {/* Who it's for, offset so the columns never share a baseline. */}
+            <div className="lg:col-span-4 lg:col-start-9 lg:pt-24">
+              <Reveal trigger="mount" tier="chapter" index={3}>
+                <div className="border-l border-cta/40 pl-6">
+                  <p className="text-overline uppercase text-muted-foreground">
+                    Who it&apos;s for
+                  </p>
+                  <p className="mt-4 text-body text-muted-foreground">
+                    {forWho}
+                  </p>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
 
       {/* PAIN */}
       <section className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20">
-        <ServiceCurrent />
-
         <div className="mx-auto max-w-[1280px]">
           <div className="grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-6">
               <Reveal tier="chapter" index={0}>
                 <h2 className="text-h1 text-balance font-heading text-foreground">
-                  {situation.heading}
+                  {pain.heading}
                 </h2>
               </Reveal>
             </div>
             <div className="lg:col-span-5 lg:col-start-8 lg:self-end">
               <Reveal tier="chapter" index={1}>
                 <p className="max-w-[52ch] text-body-lg text-muted-foreground">
-                  {situation.lead}
+                  {pain.lead}
                 </p>
               </Reveal>
             </div>
           </div>
 
           <ul className="mt-20 md:mt-24">
-            {situation.rows.map(({ n, title, body }, i) => (
+            {pain.rows.map(({ n, title, body }, i) => (
               <Reveal
                 key={n}
                 as="li"
@@ -223,14 +203,25 @@ export default async function ServicePage({
         </div>
 
         <div className="mx-auto max-w-[1280px]">
-          <Reveal tier="chapter" index={0}>
-            <h2 className="max-w-[18ch] text-h1 text-balance font-heading text-foreground">
-              {how.heading}
-            </h2>
-          </Reveal>
+          <div className="grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-6">
+              <Reveal tier="chapter" index={0}>
+                <h2 className="max-w-[18ch] text-h1 text-balance font-heading text-foreground">
+                  {story.heading}
+                </h2>
+              </Reveal>
+            </div>
+            <div className="lg:col-span-5 lg:col-start-8 lg:self-end">
+              <Reveal tier="chapter" index={1}>
+                <p className="max-w-[50ch] text-body-lg text-muted-foreground">
+                  {story.lead}
+                </p>
+              </Reveal>
+            </div>
+          </div>
 
-          <ol className="mt-20 grid gap-12 md:grid-cols-3 md:gap-10">
-            {how.steps.map(({ n, title, body }, i) => (
+          <ol className="mt-20 grid gap-12 md:grid-cols-2 md:gap-x-16 lg:grid-cols-4 lg:gap-10">
+            {story.beats.map(({ n, title, body }, i) => (
               <Reveal key={n} as="li" tier="reveal" index={i}>
                 <p className="text-overline uppercase text-cta">{n}</p>
                 <span
@@ -247,38 +238,61 @@ export default async function ServicePage({
         </div>
       </section>
 
-      {/* SOLUTION */}
+      {/* SOLUTION — every piece links to its own service page. */}
       <section className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20">
-        <div className="mx-auto grid max-w-[1280px] gap-12 lg:grid-cols-2 lg:gap-20">
-          <div>
-            <Reveal tier="chapter" index={0}>
-              <h2 className="max-w-[16ch] text-h1 text-balance font-heading text-foreground">
-                What&apos;s included
-              </h2>
-            </Reveal>
-            <Reveal tier="chapter" index={1}>
-              <p className="mt-8 max-w-[46ch] text-body text-muted-foreground">
-                {connects}
-              </p>
-            </Reveal>
-          </div>
-
-          <ul className="space-y-4">
-            {included.map((item, i) => (
-              <Reveal key={item} as="li" tier="reveal" index={i}>
-                <span className="flex items-start gap-4 rounded-lg border border-border bg-card p-5">
-                  <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-cta/10">
-                    <Check
-                      aria-hidden="true"
-                      className="size-3.5 text-cta"
-                      strokeWidth={2.5}
-                    />
-                  </span>
-                  <span className="text-body text-card-foreground">{item}</span>
-                </span>
+        <div className="mx-auto max-w-[1280px]">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
+            <div className="lg:col-span-5">
+              <Reveal tier="chapter" index={0}>
+                <h2 className="max-w-[14ch] text-h1 text-balance font-heading text-foreground">
+                  {solution.heading}
+                </h2>
               </Reveal>
-            ))}
-          </ul>
+              <Reveal tier="chapter" index={1}>
+                <p className="mt-8 max-w-[44ch] text-body-lg text-muted-foreground">
+                  {solution.lead}
+                </p>
+              </Reveal>
+              <Reveal tier="chapter" index={2}>
+                <p className="mt-8 max-w-[44ch] border-l border-cta/40 pl-6 text-body text-muted-foreground">
+                  {solution.together}
+                </p>
+              </Reveal>
+            </div>
+
+            <div className="lg:col-span-6 lg:col-start-7">
+              <ul className="space-y-4">
+                {pieces.map((service, i) => (
+                  <Reveal key={service.slug} as="li" tier="reveal" index={i}>
+                    <Link
+                      href={`/services/${service.slug}`}
+                      className="group flex items-start gap-4 rounded-lg border border-border bg-card p-5 transition-[transform,border-color] duration-[180ms] hover:-translate-y-0.5 hover:border-cta/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                    >
+                      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-cta/10">
+                        <Check
+                          aria-hidden="true"
+                          className="size-3.5 text-cta"
+                          strokeWidth={2.5}
+                        />
+                      </span>
+                      <span>
+                        <span className="flex items-center gap-2 text-body font-medium text-card-foreground">
+                          {service.name}
+                          <ArrowRight
+                            aria-hidden="true"
+                            className="size-3.5 shrink-0 text-muted-foreground transition-transform duration-[180ms] group-hover:translate-x-0.5 motion-reduce:transition-none"
+                          />
+                        </span>
+                        <span className="mt-1 block text-small text-muted-foreground">
+                          {service.tagline}
+                        </span>
+                      </span>
+                    </Link>
+                  </Reveal>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -286,15 +300,14 @@ export default async function ServicePage({
       <section className="surface-dark grain relative isolate px-6 py-24 md:px-12 md:py-32 lg:px-20">
         <div className="mx-auto max-w-[1280px] text-center">
           <Reveal tier="chapter" index={0}>
-            <h2 className="mx-auto max-w-[22ch] text-h1 text-balance font-heading text-foreground">
-              Fifteen minutes tells you whether this is the piece you&apos;re
-              missing.
+            <h2 className="mx-auto max-w-[20ch] text-h1 text-balance font-heading text-foreground">
+              Fifteen minutes tells you whether this is the right one.
             </h2>
           </Reveal>
           <Reveal tier="chapter" index={1}>
             <p className="mx-auto mt-6 max-w-[52ch] text-body-lg text-muted-foreground">
-              We&apos;ll look at what you already have and say plainly whether
-              this is worth doing — including when the answer is not yet.
+              We&apos;ll look at what you have, tell you which package fits, and
+              say so plainly if the answer is none of them.
             </p>
           </Reveal>
           <Reveal tier="chapter" index={2}>
@@ -327,23 +340,23 @@ export default async function ServicePage({
         lead="If the question you have isn't here, ask it on the call — we'd rather tell you straight than let you find out later."
       />
 
-      {/* Four distinct destinations, enforced by the component. */}
+      {/* The four-way link block. */}
       <RelatedLinks
-        currentHref={`/services/${service.slug}`}
+        currentHref={`/packages/${pkg.slug}`}
         links={[
           {
             kind: "Package",
-            title: pkg ? pkg.name : "All packages",
-            blurb: pkg
-              ? pkg.positioning
-              : "How the services are actually bought.",
-            href: pkg ? `/packages/${pkg.slug}` : "/packages",
+            title: related ? related.name : "All packages",
+            blurb: related
+              ? related.positioning
+              : "The three ways these services are bought.",
+            href: related ? `/packages/${related.slug}` : "/packages",
           },
           {
             kind: "The best offer in the house",
-            title: "Digital Infrastructure",
+            title: flagship ? flagship.name : "Digital Infrastructure",
             blurb:
-              "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
+              "The one we'd put almost anyone on — the whole digital office, running without you in it.",
             href: "/packages/digital-infrastructure",
           },
           {

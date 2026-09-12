@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
-import { PricingTiers } from "@/components/pricing-tiers";
+import { RelatedLinks } from "@/components/related-links";
+import { POSTS_BY_DATE } from "@/lib/posts";
 import { SERVICES, type Service } from "@/lib/services";
 
 export const metadata: Metadata = {
@@ -94,7 +95,6 @@ export default function ServicesIndex() {
 
       {/* Packages first — most people want to know what it costs before they
           want to know what each piece does. The a la carte detail follows. */}
-      <PricingTiers />
 
       {/* The catalogue, in two groups */}
       <section className="relative px-6 py-24 md:px-12 md:py-32 lg:px-20">
@@ -176,6 +176,40 @@ export default function ServicesIndex() {
           </Reveal>
         </div>
       </section>
+
+      {/* The catalogue was the one page with no four-way block of its own. */}
+      <RelatedLinks
+        currentHref="/services"
+        links={[
+          {
+            kind: "The best offer in the house",
+            title: "Digital Infrastructure",
+            blurb:
+              "The whole digital office — the phone answered, the follow-up run, the reputation kept.",
+            href: "/packages/digital-infrastructure",
+          },
+          {
+            kind: "Packages",
+            title: "Three ways in",
+            blurb:
+              "How these services are actually bought, and which one fits.",
+            href: "/packages",
+          },
+          {
+            kind: "Reading",
+            title: POSTS_BY_DATE[0].title,
+            blurb: POSTS_BY_DATE[0].excerpt,
+            href: `/blog/${POSTS_BY_DATE[0].slug}`,
+          },
+          {
+            kind: "Talk to us",
+            title: "Book a call",
+            blurb:
+              "Fifteen minutes on the phone. No pressure, nothing to sign today.",
+            href: "/book-a-call",
+          },
+        ]}
+      />
     </main>
   );
 }

@@ -4,6 +4,9 @@ import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useState } from "react";
 import Link from "next/link";
 import { LogoMark } from "@/components/brand/logo-mark";
+import { NavDropdown } from "@/components/nav-dropdown";
+import { SERVICES } from "@/lib/services";
+import { PACKAGES_BY_ORDER } from "@/lib/packages";
 
 /*
  * Floating pill nav.
@@ -23,15 +26,34 @@ import { LogoMark } from "@/components/brand/logo-mark";
  */
 
 /*
- * Now that there are real pages, the nav can't stay in-page anchors: an anchor
- * to "#problem" does nothing from /services. Services is a page link; the two
- * home-page anchors are prefixed so they work from anywhere.
+ * Three page links, no in-page anchors.
+ *
+ * The anchors that used to sit here ("How it works", "The stack") pointed at
+ * home-page sections. They worked, but they made the nav a mix of two kinds of
+ * destination, and an anchor is not a page — it cannot be linked to from a
+ * service page, cannot carry its own metadata, and gives a crawler nothing to
+ * index. Since Stuart's knowledge base is built by crawling this site, every
+ * nav entry is now a real page.
  */
-const LINKS = [
-  { label: "Services", href: "/services" },
-  { label: "How it works", href: "/#journey" },
-  { label: "The stack", href: "/#solution" },
-];
+/*
+ * Services and Packages open a list of their own pages; Blog is a plain link
+ * because a dropdown of post titles goes stale the moment a fourth is written.
+ *
+ * Both lists are derived from the same data that builds the pages, so a service
+ * or package added to lib/ appears in the nav without anyone remembering to put
+ * it there — and, more to the point, cannot be missing from it.
+ */
+const SERVICE_CHILDREN = SERVICES.map(({ name, slug, tagline }) => ({
+  label: name,
+  href: `/services/${slug}`,
+  blurb: tagline,
+}));
+
+const PACKAGE_CHILDREN = PACKAGES_BY_ORDER.map(({ name, slug, positioning }) => ({
+  label: name,
+  href: `/packages/${slug}`,
+  blurb: positioning,
+}));
 
 export function SiteHeader() {
   const { scrollY } = useScroll();
@@ -50,7 +72,7 @@ export function SiteHeader() {
     >
       <nav
         aria-label="Main"
-        className={`flex w-full max-w-[820px] items-center gap-2 rounded-full border py-2 pl-3 pr-2 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
+        className={`flex w-full max-w-[880px] items-center gap-2 rounded-full border py-2 pl-3 pr-2 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
           lifted
             ? "border-black/[0.06] bg-white/95 shadow-[0_10px_40px_rgba(12,10,9,0.16),0_2px_8px_rgba(12,10,9,0.08)]"
             : "border-white/10 bg-[#0C0A09]/90 shadow-[0_4px_24px_rgba(0,0,0,0.45)]"
@@ -78,23 +100,32 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Room to grow. More sections slot in here. */}
-        <ul className="mx-auto hidden items-center gap-1 md:flex">
-          {LINKS.map(({ label, href }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`rounded-full px-4 py-2 text-small transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
-                  lifted
-                    ? "text-[#57534E] hover:bg-[#0C0A09]/[0.05] hover:text-[#1C1917]"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="mx-auto hidden items-center gap-1 md:flex">
+          <NavDropdown
+            label="Services"
+            indexHref="/services"
+            indexLabel="See all services"
+            items={SERVICE_CHILDREN}
+            lifted={lifted}
+          />
+          <NavDropdown
+            label="Packages"
+            indexHref="/packages"
+            indexLabel="Compare all packages"
+            items={PACKAGE_CHILDREN}
+            lifted={lifted}
+          />
+          <Link
+            href="/blog"
+            className={`rounded-full px-4 py-2 text-small transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+              lifted
+                ? "text-[#57534E] hover:bg-[#0C0A09]/[0.05] hover:text-[#1C1917]"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            Blog
+          </Link>
+        </div>
 
         <a
           href="/book-a-call"
