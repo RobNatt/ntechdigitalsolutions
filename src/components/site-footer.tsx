@@ -34,28 +34,33 @@ export function SiteFooter() {
           <p className="mt-2">
             <a
               href="mailto:hello@ntechdigitalsolutions.com"
-              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               hello@ntechdigitalsolutions.com
             </a>
           </p>
 
+          {/* min-h-[24px] on each link is the design system's target-size rule, not
+              decoration: these rendered at 23px (and the email above at 20px), under the
+              24x24 WCAG 2.5.8 minimum. The inline exception covers a link inside a running
+              sentence; a row of navigation links is not that. inline-flex grows the hit
+              area without shifting the text off its baseline. */}
           <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-small">
             <Link
               href="/services"
-              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Services
             </Link>
             <Link
               href="/privacy"
-              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex min-h-[24px] items-center underline-offset-4 transition-colors duration-[180ms] hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Terms of Service
             </Link>
