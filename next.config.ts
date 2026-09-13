@@ -11,10 +11,6 @@ const nextConfig: NextConfig = {
       { source: "/services/website", destination: "/services/branded-websites", permanent: true },
       { source: "/services/follow-up-automations", destination: "/services/text-email-automations", permanent: true },
       { source: "/services/digital-foundation", destination: "/packages/digital-foundation", permanent: true },
-      // Digital Infrastructure was renamed to The Digital Office on 12 September
-      // 2026, because the old name and Digital Foundation are near synonyms and
-      // the voice agent could not tell them apart on live calls.
-      { source: "/packages/digital-infrastructure", destination: "/packages/digital-office", permanent: true },
       { source: "/services/social-media-management", destination: "/services/brand-management", permanent: true },
     ];
   },
