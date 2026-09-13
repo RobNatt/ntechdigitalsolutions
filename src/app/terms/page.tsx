@@ -24,7 +24,7 @@ export default function TermsOfService() {
 
       <Section heading="What we do">
         <p>
-          We build and manage digital infrastructure for local businesses:
+          We build and manage the digital side of local businesses:
           websites, CRM and calendar integrations, text and email automations,
           an AI receptionist, brand management, and review generation. What you receive depends on what
           you&apos;ve agreed to — the specific services, deliverables, and
